@@ -38,13 +38,13 @@ Examples:
 Derive the frozen contract from `<brief>` and start immediately. Do NOT ask the
 user to confirm the contract first. Produce, in one pass:
 
-- `ticket_id` (`LS-####`) — reuse existing or assign next free ID
+- `ticket_id` (`<PREFIX>-####`, prefix from `ticket-traceability` bindings) — reuse existing or assign next free ID
 - linked `requirements` IDs — map to `.planning/REQUIREMENTS.md`; create new req
   IDs there if the brief is not yet a requirement
 - numbered, machine-checkable **acceptance criteria** (each provable by a command
   or explicit manual step)
 - non-goals / out-of-scope
-- risk tier (Normal or High-risk per `.claude/rules/ticket-invariant.md`)
+- risk tier (Normal or High-risk per the `ticket-traceability` skill)
 
 Freeze the criteria. They are the exit condition. Do not relax or reinterpret
 them mid-run — even though intake was autonomous, the contract is locked once the
@@ -62,7 +62,7 @@ of the default 3. All other feature-loop rules stay intact.
 ### Escapes — stop and surface only on these
 
 1. **PASS** — judge confirms all criteria + the three coverage gates green →
-   write `.planning/evidence/LS-####.md`, stop, present it as the result.
+   write `.planning/evidence/<PREFIX>-####.md`, stop, present it as the result.
 2. **N-cap reached without PASS** — stop. Report residual unmet criteria + the
    evidence gathered so far. Do NOT auto-extend; the user decides next steps.
 3. **No convergence** — open findings did not shrink vs. the previous cycle →

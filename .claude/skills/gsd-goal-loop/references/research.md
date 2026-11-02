@@ -11,12 +11,13 @@ always on with `--autonomous`.
 
 | kind | example | goes to |
 |---|---|---|
-| `code` | "how does the cost engine split diurnă across sites today?" | `researcher` (repo only) → `research-interpreter` |
-| `library` | "does nuqs 2 replay transitions with startTransition?" | `researcher` (context7, installed version) → interpreter |
-| `external` | "what does art. 135 Codul muncii say about daily rest?" | `researcher` (primary sources) → interpreter — legal answers are never more than `recommend` |
-| `decision` | "should Șef Flotă see tools?", "round per day or per month?" | **the user, directly** — evidence can inform it, never settle it |
+| `code` | "how does the billing service split a charge across periods today?" | `researcher` (repo only) → `research-interpreter` |
+| `library` | "does library X v2 support option Y?" | `researcher` (context7, installed version) → interpreter |
+| `external` | "what does the applicable regulation say about Z?" | `researcher` (primary sources) → interpreter — legal answers are never more than `recommend` |
+| `decision` | "should role A see records of type B?", "round per day or per month?" | **the user, directly** — evidence can inform it, never settle it |
 
-If in doubt between `decision` and anything else, it is a `decision`.
+If in doubt between `decision` and anything else, it is a `decision`. Without researcher agents,
+do the gathering and interpreting yourself, but keep the two steps and the written note.
 
 ## 2. The pipeline per research question
 
@@ -27,7 +28,7 @@ Q-n  → Agent(researcher, kind)          writes research/Q-n.md: findings, sour
          answered     → apply; GOAL.md "Decided without a question": <answer> — research/Q-n.md
          recommend    → interactive: ask the user with the recommendation pre-selected
                         autonomous: apply ONLY if reversible and not high-risk; GOAL.md
-                        "Decided by research — review" (the morning report lists these)
+                        "Decided by research — review" (the run report lists these)
          needs-human  → interactive: AskUserQuestion with the interpreter's options + evidence
                         autonomous: PARK (references/autonomous.md)
 ```
@@ -45,7 +46,7 @@ user is choosing, not researching. Record the answer in GOAL.md with `— user, 
 
 The retro (`references/retro.md`) reads the research notes' classes: many `needs-human` answers on
 one ticket means DESIGN asked too late or the brief was a decision in disguise. Keep the
-`- class:` line on every interpretation so `pnpm ticket:retro` can count it.
+`- class:` line on every interpretation so it can be counted.
 
 ## 5. In PLAN — discovery without filling the orchestrator's context
 
@@ -54,15 +55,15 @@ today", "which ticket solved this shape", "every caller of Y", "which gates cove
 go to `researcher` with `kind: code` and the question phrased so a list of file:line claims
 answers it. Skip the interpreter: a code finding with a file:line is the answer.
 
-The orchestrator still reads, itself and whole: every file the plan will change, and anything on
-the high-risk list (schema, authz, RLS, cost engine, pontaj / diurnă / money). A summary is how a
-detail goes missing, and those are the files where a missing detail costs the most.
+The orchestrator still reads, itself and whole: every file the plan will change, and anything
+HIGH_RISK (schema, authz, access policy, money and derived figures). A summary is how a detail
+goes missing, and those are the files where a missing detail costs the most.
 
 Number these `Q-n` like any other research question, so the retro can see what discovery cost.
 
 ## 6. What research mode never does
 
-- Settle a business rule with two defensible answers. P4T may be sold to other companies: that is
-  an Administrator setting, and proposing it is the user's call.
+- Settle a business rule with two defensible answers. That is a configurable setting, and
+  proposing it is the user's call.
 - Override a Key Decision or an Out-of-Scope fence because a web page disagrees.
 - Treat its own `recommend` as `answered` to save a park.

@@ -40,7 +40,7 @@ End LOOP-PLAN.md with exactly one fenced block whose info string is `json tasks`
     "depends_on": [],
     "closes": ["SC-1"],
     "done_when": ["pnpm test src/server/services/cost-engine/compute/__tests__/pt0400-x.acceptance.test.ts"],
-    "context": ["skill:p4t-react-feature-architecture", "memory:pontaj-day-bucketing-divergence"]
+    "context": ["skill:react-feature-architecture", "memory:pontaj-day-bucketing-divergence"]
   }
 ]
 ```

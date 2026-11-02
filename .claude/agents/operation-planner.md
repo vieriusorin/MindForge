@@ -126,7 +126,7 @@ module P4T already has.
 | Quality, defects, warranty | `calitate/list-outstanding.ts` (`listOutstandingNeconformitati`), `calitate/warranty/`, `calitate/punch-list/` |
 | Crew paperwork, pre-start | `conformitate/read-crew-compliance.ts`, `get-santier-compliance.ts`; `allocations/get-prestart-check.ts` |
 | Working time and labour law | `src/lib/legal-rules-registry.ts` + `legal-rules.ts` (`legalRuleAt`, `isRuleVerified`); `pontaj/evaluate-working-time.ts`, `pontaj/get-monthly-norma.ts`; 8 h per-day cap across sites (PT-0330) |
-| Tools, transfers, custody | `src/server/services/inventar/` — load `p4t-asset-custody` for tool state or transfer questions |
+| Tools, transfers, custody | `src/server/services/inventar/` — load `state-machine-design` for tool state or transfer questions |
 | Authorization | `.planning/input/RBAC-MATRIX.md`, `src/server/authz/` |
 
 **Readiness today** (`readiness/derive-readiness.ts`) applies only to an activity not yet begun:
@@ -291,7 +291,7 @@ UNKNOWNS: supplier delivery time, Site B manager's view on Wednesday, hour-level
   `.planning/PROJECT.md` Key Decisions row; propose it, do not assume it. Business rules with two
   defensible answers become Administrator-chosen settings (P4T may be sold to other companies).
 - **If a request is a design/architecture change** to a high-risk area (`server/db/schema/`,
-  `server/authz/`, the RBAC matrix), say so and point at `p4t-ticket-invariant` and `gsd-goal-loop`
+  `server/authz/`, the RBAC matrix), say so and point at `ticket-traceability` and `gsd-goal-loop`
   rather than proceeding as if it were a plan.
 - **Verification:** run only what you need, with `pnpm test <paths>` (never bare `pnpm vitest run`),
   redirecting output to a log in the scratchpad and reading the log — never `| tail`.

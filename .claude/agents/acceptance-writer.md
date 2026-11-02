@@ -8,7 +8,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit, Skill
 You write the contract. For each Success Criterion in `.planning/tasks/<ID>/GOAL.md` that a test
 can prove, write one acceptance test file that fails today for the reason the SC describes.
 
-Load `p4t-testing` first. Read the GOAL, the surfaces it names, and the existing tests next to
+Load `testing-strategy` first. Read the GOAL, the surfaces it names, and the existing tests next to
 them for fixtures and conventions.
 
 ## Rules

@@ -19,7 +19,7 @@ const RULES = [
   {
     id: "rsc-page",
     test: /src\/app\/.*\/(page|layout|template)\.tsx$/,
-    skill: "p4t-nextjs-data",
+    skill: "nextjs-data",
     text: `RSC page/layout. Cache Components is ON (\`cacheComponents: true\`).
 - Any \`cookies()\` / \`getUser()\` / \`searchParams\` read must sit under a \`<Suspense>\` with a real skeleton — not \`loading.js\` at the route root, not an empty fallback around \`<body>\`.
 - NEVER \`export const runtime | dynamic | revalidate | fetchCache\`, \`unstable_cache\`, \`unstable_noStore\`. All blocked under the flag.
@@ -30,7 +30,7 @@ const RULES = [
   {
     id: "route-handler",
     test: /src\/app\/api\/.*route\.ts$/,
-    skill: "p4t-nextjs-data",
+    skill: "nextjs-data",
     text: `Route Handler. GET handlers follow the page prerendering model under Cache Components.
 - No \`export const runtime\` — Node.js is the default and route segment config is blocked.
 - Export routes SERIALIZE only. Every figure comes from the same \`server/services/cost-engine/\` function the screen calls. Never a "quick" alternative SQL query — screen/export divergence is called trust-destroying in PROJECT.md.
@@ -39,7 +39,7 @@ const RULES = [
   {
     id: "server-action",
     test: /src\/modules\/.*\/actions\.ts$/,
-    skill: "p4t-nextjs-data",
+    skill: "nextjs-data",
     text: `Server Action. Reachable by direct POST — the user never had to see the button.
 - Shape: authorize → parse (zod \`.strict()\`) → call a service → invalidate → return. No business logic here.
 - \`requireCapability(...)\` / \`getUser()\` inside EVERY action. Never \`getSession()\`.
@@ -50,7 +50,7 @@ const RULES = [
   {
     id: "module-component",
     test: /src\/modules\/.*\.tsx$/,
-    skill: "p4t-react-client-patterns + p4t-ui-shadcn",
+    skill: "react-client-patterns + ui-shadcn",
     text: `Component under modules/. Per-component FOLDER layout:
 \`components/<name>/\` → \`index.ts\` (barrel) + \`<name>.tsx\` (markup only) + \`types.ts\` + \`utils.ts\` (pure) + \`hooks/use-<name>.ts\` (behaviour). Child pieces go in a nested \`components/\` subfolder with no barrel.
 - Presentational file holds NO data reads, NO \`getUser()\`, NO role derivation. If it fetches or authorizes it is in the wrong layer.
@@ -61,7 +61,7 @@ const RULES = [
   {
     id: "db-schema",
     test: /(src\/server\/db\/|drizzle\/.*\.sql$|supabase\/.*\.sql$)/,
-    skill: "p4t-ticket-invariant + supabase-postgres-best-practices",
+    skill: "ticket-traceability + supabase-postgres-best-practices",
     text: `HIGH-RISK TIER (schema / RLS / migrations). Ticket-invariant applies: PT-#### id (LS-#### is the legacy series), linked requirements, automated tests, reviewer checkpoint, and an evidence bundle at \`.planning/evidence/PT-####.md\`.
 - NEVER \`drizzle-kit push\` — it does not reliably apply \`pgPolicy\` / \`.enableRLS()\`. \`pnpm drizzle-kit generate\` → review the SQL → \`pnpm drizzle-kit migrate\`.
 - Temporal tables (\`santier_allocations\`, \`vehicle_allocations\`, \`vehicle_documents\`, \`tool_transfers\`) are append-only or closed-not-deleted. History is a \`valid_from/valid_to\` query, never an audit-log replay.
@@ -72,7 +72,7 @@ const RULES = [
   {
     id: "authz",
     test: /src\/server\/authz\//,
-    skill: "p4t-ticket-invariant",
+    skill: "ticket-traceability",
     text: `HIGH-RISK TIER (authz). Acceptance criteria live in \`.planning/input/RBAC-MATRIX.md\` — check against it, do not infer.
 - \`getUser()\` never \`getSession()\`.
 - Column-level restriction is DTO field-stripping here; RLS cannot do it.
@@ -81,7 +81,7 @@ const RULES = [
   {
     id: "service-read",
     test: /src\/server\/services\/(?!cost-engine)/,
-    skill: "p4t-react-feature-architecture",
+    skill: "react-feature-architecture",
     text: `Service layer. One single-purpose read per domain noun — \`getSantier\`, not \`getSantierWithPontaj\`. No permutations of nested relations.
 - A service in \`services/a/\` must not import \`services/b/\` to widen its read. Compose at the page, or write one deliberate joined read (allowed only where the alternative is N+1).
 - Any figure that also lands in an export — salarii, diurnă, cazare, cost/km, casare totals — belongs in \`server/services/cost-engine/\`, NOT in a \`utils/\` helper here. A "small helper" that recomputes part of a figure is exactly how screen and export drift.
@@ -91,7 +91,7 @@ const RULES = [
   {
     id: "cost-engine",
     test: /src\/server\/services\/cost-engine\//,
-    skill: "p4t-react-feature-architecture",
+    skill: "react-feature-architecture",
     text: `COST ENGINE — calculation parity invariant. One function per figure, called by BOTH the RSC page and \`app/api/export/[report]\`.
 - The export route serializes; it never recalculates.
 - Chart numbers are figures too: same function as the table beside them, never a separate query.
@@ -102,7 +102,7 @@ const RULES = [
   {
     id: "tests",
     test: /__tests__\/.*\.test\.tsx?$|^e2e\/|\/e2e\//,
-    skill: "p4t-testing",
+    skill: "testing-strategy",
     text: `Test file. Vitest + Playwright are installed and in active use (~750 Vitest files).
 - Mock at the façade, not deeper — \`get-current-identity.test.ts\` is the reference (mocks \`getAuthUser\`, runs the rest against the real local DB).
 - DB-backed suites run ONLY via \`pnpm test <paths>\` (the test stack, \`.env.test.local\`); bare \`vitest run\` hits the prod-clone \`.env.local\`. Fixtures come from \`pnpm db:test:seed\`, never \`db:seed\`.

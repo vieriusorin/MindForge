@@ -21,9 +21,9 @@ only merge authority.
 
 ## Preconditions
 
-- Feature is Normal or High-risk tier (see `.claude/rules/ticket-invariant.md`).
+- Feature is Normal or High-risk tier (see the `ticket-traceability` skill).
   Spikes do not use this loop.
-- A `ticket_id` (`LS-####`) exists or is assigned in step 1.
+- A `ticket_id` (`<PREFIX>-####`, prefix from `ticket-traceability` bindings) exists or is assigned in step 1.
 
 ## The loop
 
@@ -31,7 +31,7 @@ only merge authority.
 
 Produce a frozen contract. Do NOT proceed until these exist:
 
-- `ticket_id` (`LS-####`)
+- `ticket_id` (`<PREFIX>-####`, prefix from `ticket-traceability` bindings)
 - linked `requirements` IDs from `.planning/REQUIREMENTS.md` (create new req IDs
   there first if the feature is not yet a requirement)
 - **acceptance criteria** as a numbered, machine-checkable list (each must be
@@ -106,7 +106,7 @@ Spawn `gsd-verifier`. It compares **evidence vs. the frozen acceptance criteria*
 and the three coverage gates (requirement / test-evidence / reviewer). Verdict:
 
 - **PASS** — every criterion has evidence, all gates green → write
-  `.planning/evidence/LS-####.md`, exit loop, hand to user for manual commit.
+  `.planning/evidence/<PREFIX>-####.md`, exit loop, hand to user for manual commit.
 - **FAIL** — list unmet criteria + blocking findings → orchestrator routes each
   finding back to its owner (step 4 for code, step 3 if the plan was wrong) and
   re-runs from there.

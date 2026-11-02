@@ -1,67 +1,72 @@
 ---
 name: api-design
-description: Response shape, status codes, and pagination conventions for P4T's Route Handlers. Use when touching app/api/cron/notifications or app/api/export/[report], or when designing a paginated/filterable list read.
+description: Response shape, status codes, error envelope, and pagination/filtering conventions for Next.js Route Handlers in an app where mutations are Server Actions. Use when designing or editing a Route Handler (route.ts) — export, cron/webhook, or any JSON endpoint — or when designing a paginated/filterable list read.
 ---
 
-# API Design — P4T
+# API Design — Route Handlers in a Server-Actions app
 
-> **Provenance.** Sections grounded in a planning doc cite it. Anything tagged
-> **(proposed)** is this file's own suggestion, *not* logged in
-> `.planning/PROJECT.md` → Key Decisions — treat it as a starting point to confirm, not
-> a decision. The status-code-for-invisible-rows question in particular is downstream of
-> the unresolved **Phase 0 RLS-vs-app-layer** boundary decision (CLAUDE.md
-> §"Open decision"): under RLS-as-boundary the row simply isn't returned and 404 falls
-> out for free; under app-layer-as-boundary someone has to choose. Do not treat this file
-> as having chosen.
+> **Provenance.** Anything tagged **(proposed)** is this file's default, not a project
+> decision. If the project has recorded a different choice (CLAUDE.md, ADRs, decisions log),
+> the project wins — update this file's bindings, not the code. The status code for rows the
+> caller may not see is downstream of the project's authorization boundary (DB-level RLS vs
+> app-layer checks): under RLS the row simply isn't returned and 404 falls out for free; under
+> app-layer checks someone has to choose. Don't treat this file as having chosen.
 
-**Scope warning.** P4T has exactly two legitimate Route Handlers:
+## Project bindings
 
-- `src/app/api/cron/notifications/route.ts` — called by `pg_cron`, derives alerts
-- `src/app/api/export/[report]/route.ts` — serializes an already-computed report
+Resolve from `package.json`, `CLAUDE.md`/`AGENTS.md` and the codebase before writing code.
 
-Everything else — every create, update, transfer, pontaj mutation — is a **Server
-Action** in `src/modules/<feature>/actions.ts`. Do not add REST CRUD endpoints, do not
-add `/api/v1/` versioning, do not build a public API surface. See CLAUDE.md §Architecture
-and `.claude/rules/react-feature-architecture.md`.
+| Binding | What to look for | Default if absent |
+|---|---|---|
+| Legitimate Route Handlers | the list of `app/api/**/route.ts` the project allows | export + scheduled job/webhook only |
+| Action files | where Server Actions live | `src/modules/<feature>/actions.ts` |
+| Auth read | server-verified user read | `getUser()`, never a cookie-only `getSession()` |
+| Capability check + DTO strip | authz helper and field-stripping layer | `requireCapability` + `server/authz/dto.ts` |
+| Elevated DB client | service-role / admin client | `getServiceDb()` — allowed only where listed |
+| Calculation engine | single owner of derived figures | `server/services/<calc>/` |
+| Denied-route policy | what a denied *page* does (redirect / 403 / 404) | ask — it is a product decision |
+| UI language | language of user-facing `message` strings | English |
+| JSON key casing | camelCase vs snake_case | camelCase **(proposed)** |
+| URL param parsers | shared nuqs/zod parsers location | `src/lib/` |
 
-This file therefore covers only: the response/error shape both handlers use, status
-codes, and the pagination conventions a filterable read follows (whether it is reached
-by a Server Component or by TanStack Query).
+**Scope warning.** In a Server-Actions app, Route Handlers are the exception. Typical
+legitimate ones: an **export** endpoint that serializes an already-computed report, and a
+**scheduled job / webhook** endpoint called by a machine. Every create, update, transfer or
+state change is a **Server Action**. Do not add REST CRUD endpoints, `/api/v1/` versioning,
+or a public API surface unless the project explicitly wants one (see the
+`react-feature-architecture` skill).
+
+This file covers: the response/error shape, status codes, and pagination conventions for a
+filterable read (whether reached by a Server Component or a client query library).
 
 ## Route Handler rules
 
-```typescript
-// Both handlers need this — exceljs and @react-pdf/renderer are not Edge-compatible.
-export const runtime = "nodejs";
-```
+**Runtime.** Export handlers using Node-only libraries (exceljs, `@react-pdf/renderer`) must run
+on Node.js. Under `cacheComponents: true` that is the default and `export const runtime` is
+blocked — omit it (see `nextjs-data`). On the previous model, set `export const runtime = "nodejs"`.
 
-**The export handler never recalculates.** It calls the same
-`server/services/cost-engine/` function the on-screen page calls, then serializes.
-No alternative SQL, no "quick" recompute, no rounding of its own. Screen/export
-divergence is called trust-destroying in `.planning/PROJECT.md`.
+**The export handler never recalculates.** It calls the same calculation-engine function the
+on-screen page calls, then serializes. No alternative SQL, no "quick" recompute, no rounding of
+its own. A screen and an export that disagree destroy trust.
 
 ```typescript
-// src/app/api/export/[report]/route.ts
-export const runtime = "nodejs";
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ report: string }> },
 ) {
   const { report } = await params;
-  // 1. auth — getUser(), never getSession()
-  // 2. authz — capability check + DTO strip (tarif_orar / PII by role)
-  // 3. figures — the SAME cost-engine function the page uses
+  // 1. auth — server-verified user read, never a cookie-only session
+  // 2. authz — capability check + DTO strip (PII / financial fields by role)
+  // 3. figures — the SAME engine function the page uses
   // 4. serialize only
 }
 ```
 
-**The cron handler is the one place `getServiceDb()` is legitimate** (the other is the
-admin-invite flow). It authenticates the caller with a **shared secret header, distinct
-from any user session** — `ARCHITECTURE.md` §366 and §441 — since it runs with elevated
-privileges. Dedupe via the UNIQUE constraint on
-`(user_id, alert_type, subject_id, period_bucket)` + `ON CONFLICT DO NOTHING`, never an
-application-side existence check.
+**A machine-called handler (cron, webhook) is where an elevated DB client may be legitimate.**
+It authenticates the caller with a **shared secret header (or signature), distinct from any user
+session**, since it runs with elevated privileges. Make it idempotent: dedupe via a UNIQUE
+constraint on the natural key (e.g. `(user_id, kind, subject_id, period_bucket)`) +
+`ON CONFLICT DO NOTHING`, never an application-side existence check (it races).
 
 ## Status codes
 
@@ -71,31 +76,25 @@ application-side existence check.
 204 No Content            — accepted, nothing to return
 
 400 Bad Request           — malformed JSON, missing required param
-401 Unauthorized          — no valid session (getUser() returned nothing)
+401 Unauthorized          — no valid session (auth read returned nothing)
 403 Forbidden             — authenticated but capability check failed
 404 Not Found             — resource absent, or present but invisible to this role
-409 Conflict              — state conflict (e.g. overlapping pontaj, transfer already accepted)
+409 Conflict              — state conflict (overlapping record, transition no longer valid)
 422 Unprocessable Entity  — valid JSON, failed zod validation
 500 Internal Server Error — unexpected; never expose details
 ```
 
-Two P4T-specific notes:
+Notes:
 
-- **Denied *page* routes do not use either code.** Decision **D-21**
-  (`.planning/phases/P4T-01-…/01-CONTEXT.md`): a denied route **redirects to
-  `/dashboard`** with no explanation, and the denial is logged server-side. A Romanian
-  403 page was rejected (confirms the route exists to a prober) and so was a 404 (hides
-  real routing bugs). That is settled — do not add a 403 or 404 page.
-- **What a *Route Handler* returns for a row the caller may not see is open (proposed).**
-  D-21 covers page navigation, not JSON. The two candidates pull opposite ways: 404 leaks
-  less, 403 keeps genuine bugs visible — which is exactly the reason D-21 rejected 404 for
-  pages. Resolve alongside the Phase 0 RLS decision and log it; until then, follow whatever
-  the export/cron handlers already do and flag the choice in review.
-- **409 for the domain conflicts (proposed)**, not 400: duplicate/overlapping pontaj
-  (enforced by a DB exclusion constraint per `PITFALLS.md`, so catch the constraint
-  violation rather than pre-checking), and a `tool_transfers` state-machine transition
-  that is no longer valid. The constraint-not-app-check part is sourced; the specific
-  status code is this file's suggestion.
+- **Denied *page* routes follow the project's denied-route policy**, not this table. A common
+  choice is redirect-to-home with a server-side log: a 403 page confirms the route exists to a
+  prober, a 404 hides real routing bugs. Once the project decides, don't add a competing page.
+- **What a *Route Handler* returns for a row the caller may not see is a decision (proposed:
+  follow the existing handlers).** 404 leaks less, 403 keeps genuine bugs visible. Resolve it
+  alongside the authorization-boundary decision, log it, and flag the choice in review.
+- **409 for domain conflicts (proposed)**, not 400: duplicate/overlapping records and
+  state-machine transitions that are no longer valid. Enforce uniqueness/overlap with a DB
+  constraint and catch the violation — don't pre-check in the app (it races).
 
 ### Anti-patterns
 
@@ -105,24 +104,19 @@ Two P4T-specific notes:
 
 // GOOD — HTTP status carries the outcome
 // HTTP/1.1 404 Not Found
-{ "error": { "code": "not_found", "message": "Șantierul nu a fost găsit" } }
+{ "error": { "code": "not_found", "message": "Project not found" } }
 ```
 
 `500` for a validation failure, and `200` for a created resource, are both bugs.
 
 ## Response shape — (proposed)
 
-No planning doc specifies a response envelope. The shapes below are a consistent default,
-not a decision; if the first real handler does something else, change this file to match it
-rather than the reverse.
-
-Success:
+A consistent default, not a decision; if the first real handler does something else, change
+this file to match it rather than the reverse.
 
 ```json
-{ "data": { "id": "abc-123", "nume": "Șantier Copou" } }
+{ "data": { "id": "abc-123", "name": "Example" } }
 ```
-
-Collection with pagination:
 
 ```json
 {
@@ -131,45 +125,26 @@ Collection with pagination:
 }
 ```
 
-Error:
-
 ```json
 {
   "error": {
     "code": "validation_error",
-    "message": "Datele trimise nu sunt valide",
-    "details": [
-      { "field": "ore", "message": "Trebuie între 0 și 24", "code": "out_of_range" }
-    ]
+    "message": "The submitted data is not valid",
+    "details": [{ "field": "hours", "message": "Must be between 0 and 24", "code": "out_of_range" }]
   }
 }
 ```
 
 ```typescript
-// src/lib/api-response.ts
-export interface ApiResponse<T> {
-  data: T;
-  meta?: PaginationMeta;
-}
-
-export interface FieldError {
-  field: string;
-  message: string;
-  code: string;
-}
-
-export interface ApiError {
-  error: { code: string; message: string; details?: FieldError[] };
-}
+export interface ApiResponse<T> { data: T; meta?: PaginationMeta }
+export interface FieldError { field: string; message: string; code: string }
+export interface ApiError { error: { code: string; message: string; details?: FieldError[] } }
 ```
 
-`message` is Romanian — it is user-facing. `code` and `field` are English machine keys.
-This follows CLAUDE.md §Language (UI strings ro-RO, code identifiers English). The
-`camelCase`-not-`snake_case` JSON convention is **(proposed)** — consistent with the TS
-side, but not written down anywhere yet.
+`message` is user-facing, in the UI language. `code` and `field` are English machine keys.
 
-`details` comes from zod. Map it explicitly rather than dumping `error.issues` —
-a raw dump can leak schema internals:
+`details` comes from zod. Map it explicitly rather than dumping `error.issues` — a raw dump can
+leak schema internals:
 
 ```typescript
 const parsed = Schema.safeParse(body);
@@ -178,11 +153,9 @@ if (!parsed.success) {
     {
       error: {
         code: "validation_error",
-        message: "Datele trimise nu sunt valide",
+        message: "The submitted data is not valid",
         details: parsed.error.issues.map((i) => ({
-          field: i.path.join("."),
-          message: i.message,
-          code: i.code,
+          field: i.path.join("."), message: i.message, code: i.code,
         })),
       },
     },
@@ -193,48 +166,45 @@ if (!parsed.success) {
 
 ## Pagination and filtering
 
-Offset pagination is the default **(proposed)**. Grounding: `PROJECT.md` §Scale and
-`REQUIREMENTS.md` O-5 record tens of employees, a handful of parallel șantiere, 3 vehicles
-— "pagination and bulk pontaj required, no extreme-scale engineering" — and `PLAT-02`
-mandates shadcn `Table` + TanStack Table for every paginated table. Offset follows from
-that; the docs do not name it explicitly.
+Offset pagination is the default **(proposed)** for small-to-medium business data (hundreds to
+low thousands of rows per list, paged tables). Check the project's stated scale first.
 
 ```
 ?page=2&perPage=20
-?sort=-data,angajat        // - prefix = descending, comma-separated
-?santierId=abc&status=activ
-?dataFrom=2026-06-01&dataTo=2026-06-30
+?sort=-date,name           // - prefix = descending, comma-separated
+?projectId=abc&status=active
+?dateFrom=2026-06-01&dateTo=2026-06-30
 ```
 
-Cursor pagination is only worth it if a list genuinely exceeds ~10K rows and is scrolled
-rather than paged. Do not pre-emptively build it.
+Cursor pagination is only worth it if a list genuinely exceeds ~10K rows and is scrolled rather
+than paged. Do not pre-emptively build it.
 
-Query params are parsed with **nuqs parsers** shared between the URL and the read, so the
-same shape is used client- and server-side. Put the parsers in `src/lib/` — one
-definition, imported by the page, the client table, and the export handler, so a filtered
-export matches the filtered screen. See the `nuqs-typescript-zod` skill.
+Parse query params with **shared parsers** (nuqs + zod) used by the URL and the read, so the
+same shape applies client- and server-side. One definition, imported by the page, the client
+table and the export handler — so a filtered export matches the filtered screen. See the
+`nuqs-typescript-zod` skill.
 
-**Never accept a client-supplied field list** (`?fields=id,tarif_orar`). Which columns a
-role may see is decided server-side in `server/authz/dto.ts` — a client-driven projection
-is an authz bypass.
+**Never accept a client-supplied field list** (`?fields=id,salary`). Which columns a role may
+see is decided server-side in the DTO layer — a client-driven projection is an authz bypass.
 
-Sort keys must be validated against an allow-list of column names before reaching
-Drizzle. An interpolated sort key is SQL injection.
+Sort keys must be validated against an allow-list of column names before reaching the query
+builder. An interpolated sort key is SQL injection.
 
 ## Checklist
 
 Before shipping a Route Handler change:
 
 - [ ] This genuinely belongs in a Route Handler, not a Server Action
-- [ ] `export const runtime = "nodejs"` present
-- [ ] Auth via `supabase.auth.getUser()` — never `getSession()`
-- [ ] Capability check + DTO field-stripping applied (`tarif_orar`, PII)
-- [ ] Figures come from the cost-engine function the screen uses — no recalculation
+- [ ] Runtime correct for its libraries (and no `export const runtime` under Cache Components)
+- [ ] Auth via the server-verified user read — never a cookie-only session
+- [ ] Capability check + DTO field-stripping applied (PII, financial fields)
+- [ ] Figures come from the engine function the screen uses — no recalculation
 - [ ] Input validated with zod; `details` mapped explicitly, not dumped
 - [ ] Sort/filter keys validated against an allow-list
-- [ ] Denied page routes redirect to `/dashboard` + server-side log (D-21) — no 403/404 page
-- [ ] Status code for an invisible row is a conscious choice, flagged in review (still open)
+- [ ] Denied page routes follow the project's policy — no competing 403/404 page
+- [ ] Status code for an invisible row is a conscious choice, flagged in review
 - [ ] Domain conflicts caught as DB constraint violations, not pre-checked
+- [ ] Machine-called handlers authenticate with a secret/signature and are idempotent
 - [ ] Error body leaks no stack trace, SQL, or schema internals
-- [ ] Romanian `message`, English `code`, `camelCase` keys
-- [ ] `getServiceDb()` used only in the cron handler or admin-invite flow
+- [ ] `message` in the UI language, English `code`, consistent key casing
+- [ ] Elevated DB client used only in the handlers the project allows

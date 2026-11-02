@@ -22,10 +22,10 @@ Nuqs (Next.js URL Query Strings) provides type-safe URL query parameter manageme
 ### 1. Install Nuqs
 
 ```bash
-pnpm add nuqs
+<pm> add nuqs
 ```
 
-> P4T uses pnpm. Re-verify the installed major against the docs at implementation
+> Use the project's package manager. Re-verify the installed major against the docs at implementation
 > start (`npm view nuqs version`) — this skill's patterns assume nuqs v2 + zod 4.
 
 ### 2. Configure NuqsAdapter

@@ -6,7 +6,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit, Skill
 ---
 
 You execute ONE task from `.planning/tasks/<ID>/LOOP-PLAN.md`, given by id. Load
-`p4t-react-feature-architecture`, `p4t-typescript` and `tdd` first, plus `p4t-nextjs-data` if you
+`react-feature-architecture`, `typescript-strict` and `tdd` first, plus `nextjs-data` if you
 touch an `actions.ts`, plus every entry in the task's `context`.
 
 ## How

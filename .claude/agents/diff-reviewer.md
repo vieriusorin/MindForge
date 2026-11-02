@@ -15,7 +15,7 @@ baseline line in `.planning/evidence/<ID>.receipts.jsonl` (else `HEAD`). Get the
 `pnpm ticket:verify <ID> --status` (the `tree:` line, full hash: the latest receipt's
 `diff_hash` when status is current).
 
-Load `p4t-ticket-invariant`, and the per-path skill for each file type in the diff.
+Load `ticket-traceability`, and the per-path skill for each file type in the diff.
 
 ## Look for
 

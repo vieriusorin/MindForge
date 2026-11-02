@@ -1,7 +1,8 @@
 # Templates
 
 Shapes for every artifact this loop writes. Field names are what resume reads — keep them.
-Prose in these files is English; quote Romanian UI strings and domain nouns as they appear.
+Prose in these files is English; quote UI strings and domain nouns as they appear in the product.
+`<ID>` below is `<PREFIX>-####` from the Project bindings.
 
 ---
 
@@ -11,16 +12,16 @@ Written in INTAKE, completed in DESIGN, frozen before PLAN. The Iteration Log is
 
 ```markdown
 ---
-ticket_id: PT-0310
+ticket_id: <PREFIX>-0042
 tier: normal                      # spike | normal | high-risk
 stage: design                     # intake | design | plan | build | test | handoff | watch
-branch: staging                   # the branch the work sits on; this loop never creates one
-builds_on: [PT-0308, PT-0309]     # tickets whose uncommitted work this depends on, or []
+branch: main                      # the branch the work sits on; this loop never creates one
+builds_on: [<PREFIX>-0040]        # tickets whose uncommitted work this depends on, or []
 last_iteration: 0
 goal_status: in-progress          # reserved | in-progress | blocked-on-<owner> |
                                   # complete-pending-manual-commit | withdrawn
 autonomy: ready                   # optional: set by the USER after the freeze; admits
-                                  # the ticket to `pnpm agents:night`
+                                  # the ticket to an unattended run
 ---
 
 ## Objective
@@ -29,29 +30,29 @@ autonomy: ready                   # optional: set by the USER after the freeze; 
 
 ## Affected
 
-- **Roles:** <from RBAC-MATRIX.md — who sees / does what differently>
+- **Roles:** <from ACCESS_DOC — who sees / does what differently>
 - **Surfaces:** <routes, components, services, tables>
 
 ## Constraints
 
 - <a rule this must respect> → <how it is met>
-- Pontaj / money / diurnă figures come from `server/services/cost-engine/` (calculation parity).
+- Derived figures come from the one domain service that owns them (calculation parity).
 
 ## Decided without a question
 
-- <decision> — follows from <PT-#### / Key Decision / code fact at file:line>.
+- <decision> — follows from <ticket / Key Decision / code fact at file:line>.
 
 ## Success Criteria
 
 - [ ] SC-1: <falsifiable outcome>. Proof: <oracle test in X | DB test | gate | browser: …>
 - [ ] SC-2: …
-- [ ] SC-n: ro + en strings; evidence file; every gate; browser check of <screen>.
+- [ ] SC-n: strings in every locale; evidence file; every gate; browser check of <screen>.
 
 ## Concerns
 
 | # | Collision | Owner | Status |
 |---|-----------|-------|--------|
-| C-1 | <rule A vs rule B, or two readings of the brief> | user / client / <ticket> | open / resolved: … |
+| C-1 | <rule A vs rule B, or two readings of the brief> | user / stakeholder / <ticket> | open / resolved: … |
 
 ## Out of Scope
 
@@ -73,7 +74,7 @@ autonomy: ready                   # optional: set by the USER after the freeze; 
 ```markdown
 ---
 phase: <N>-planning
-ticket_id: PT-0310
+ticket_id: <ID>
 status: executing                 # executing | superseded
 verdict: IN_PROGRESS
 started_at: "<YYYY-MM-DD>"
@@ -85,24 +86,24 @@ resume_with: /gsd-goal-loop
 ## Discovery summary
 
 <what exists, with file:line; the precedent ticket and the pattern it set; current vs required
-behaviour; which gates the touched paths sit on (component-split, i18n, allowlists)>
+behaviour; which gates the touched paths sit on>
 
 ## SC coverage
 
 | SC | Steps | Proof |
 |----|-------|-------|
-| SC-1 | 2, 3 | `src/…/__tests__/x.test.ts` — oracle cases a, b, c |
+| SC-1 | 2, 3 | `<path>/__tests__/x.test.ts` — oracle cases a, b, c |
 
 ## Steps
 
-1. `src/server/…/x.ts` — <exact change>
-2. `src/server/…/__tests__/x.test.ts` — <cases, with the expected values written out>
+1. `<path>/x.ts` — <exact change>
+2. `<path>/__tests__/x.test.ts` — <cases, with the expected values written out>
 3. …
 
 ## Riskiest step
 
 <which one, why, and how the proof catches it going wrong>
-For every UI predicate that gates a write (a disabled button, a canX() helper), name the SERVER refusal that holds when the UI is bypassed (stale tab, double click, direct action call, two concurrent requests) and the test that calls the service twice and expects the second refused. "Only the UI stops it" is a blocking plan defect (PT-0382 retro).
+For every UI predicate that gates a write (a disabled button, a canX() helper), name the SERVER refusal that holds when the UI is bypassed (stale tab, double click, direct action call, two concurrent requests) and the test that calls the service twice and expects the second refused. "Only the UI stops it" is a blocking plan defect.
 
 ## Rejected options
 
@@ -110,54 +111,61 @@ For every UI predicate that gates a write (a disabled button, a canX() helper), 
 
 ## Verify
 
-- `pnpm ticket:verify PT-0310` — the receipt; `--status` must say DONE
-- `pnpm ticket:eval PT-0310` — the process read back from these files
+- VERIFY `<ID>` — the receipt must say DONE for this tree
+- EVAL `<ID>` — the process read back from these files
 - browser: <screen, role, what must be seen>
 
 ## Tasks — the graph the orchestrator dispatches; exactly one block
 
 ```json tasks
 [
-  { "id": "T1", "title": "overtime rule + inner tests", "agent": "service-builder",
-    "owns": ["src/server/services/pontaj/overtime/**", "src/lib/overtime*.ts"],
+  { "id": "T1", "title": "discount rule + inner tests", "agent": "service-builder",
+    "owns": ["src/<services>/billing/discount/**"],
     "depends_on": [], "closes": ["SC-1", "SC-2"],
-    "done_when": ["pnpm test src/server/services/pontaj/overtime/__tests__/pt0310-overtime.acceptance.test.ts", "pnpm typecheck"],
-    "context": ["skill:p4t-typescript", "memory:pt0310-0311-norm-and-overtime"] },
+    "done_when": ["<TEST> src/<services>/billing/discount/__tests__/<id>-discount.acceptance.test.ts", "<TYPECHECK>"],
+    "context": ["skill:typescript-strict"] },
   { "id": "T2", "title": "settings screen", "agent": "ui-builder",
-    "owns": ["src/modules/setari/**", "src/i18n/dictionaries/*.ts"],
+    "owns": ["src/<features>/settings/**", "<i18n dictionaries>"],
     "depends_on": ["T1"], "closes": ["SC-3"],
-    "done_when": ["pnpm gate:component-split", "pnpm gate:i18n", "pnpm typecheck"],
-    "context": ["skill:p4t-ui-shadcn"] }
+    "done_when": ["<GATES>", "<TYPECHECK>"],
+    "context": ["skill:ui-shadcn"] }
 ]
 ```
 ```
 
-`agent` ∈ schema-builder · service-builder · ui-builder · acceptance-writer. `owns` are globs the
-`ticket:eval`'s `scope` row enforces (the scope HOOK enforces the coarser per-role table in
-`.claude/hooks/lib/agent-scopes.mjs`, not `owns`); tasks that may run in parallel need disjoint `owns`.
-`done_when` are commands the orchestrator re-runs itself — a builder's STATUS line is a claim.
+`agent` ∈ schema-builder · service-builder · ui-builder · acceptance-writer (or `inline` when the
+project has no role agents). `owns` are globs; EVAL's scope check compares the diff against them
+(a scope hook, if any, enforces coarser per-role limits). Tasks that may run in parallel need
+disjoint `owns`. `done_when` are commands the orchestrator re-runs itself — a builder's STATUS
+line is a claim.
 
-Two plan-time checks (PT-0384 retro):
+Two plan-time checks:
 
-1. **Definer consumers.** A task whose migration does `create or replace function` on an existing `app.*` / `public.*` definer, or changes a column's type or shape, lists the function's consumers in its `context`. Run `grep -rln '<function_name>' src e2e scripts` and put every test hit into that task's `owns`, or into a named "update existing assertion" step. A definer's output shape is a contract; a test outside every `owns` is otherwise caught only by `ticket:verify`.
-2. **Key Decisions written up front.** When a step justifies a protected edit or a behaviour change by citing a Key Decision, that entry is a `done_when` of the task that makes the change: `grep -n '<PT-####>' .planning/PROJECT.md` must hit. Do not defer it to a final "orchestrator only" step, because the reviewer will find it missing.
+1. **Shared-contract consumers.** A task that replaces an existing DB function / view, or changes
+   a column's type or shape, lists its consumers in `context`. `grep -rln '<name>' src e2e scripts`
+   and put every test hit into that task's `owns`, or a named "update existing assertion" step. An
+   output shape is a contract; a test outside every `owns` is otherwise caught only by VERIFY.
+2. **Key Decisions written up front.** When a step justifies a protected edit or a behaviour
+   change by citing a Key Decision, that entry is a `done_when` of the task making the change
+   (`grep -n '<ID>' <PROJECT_DOC>` must hit). Do not defer it to a final step; the reviewer will
+   find it missing.
 
 ---
 
-## REVIEW.md — `.planning/tasks/<ID>/REVIEW.md` (diff-reviewer only)
+## REVIEW.md — `.planning/tasks/<ID>/REVIEW.md` (diff reviewer only)
 
 ```markdown
 ---
 verdict: approve                  # approve | changes-requested
-reviewed_hash: <64-char tree hash from `pnpm ticket:verify <ID> --status`>
-reviewed_at: 2026-10-24T23:10:00Z
+reviewed_hash: <tree hash from the latest VERIFY receipt>
+reviewed_at: <ISO timestamp>
 ---
 ## Findings
 - [blocking] src/x.ts:42 — <what is wrong> — <what it breaks>
 - [note] …
 ```
 
-A review whose `reviewed_hash` is not the current tree is void (`ticket:eval` → review ✗).
+A review whose `reviewed_hash` is not the current tree is void.
 
 ---
 
@@ -166,7 +174,7 @@ A review whose `reviewed_hash` is not the current tree is void (`ticket:eval` �
 ```markdown
 ---
 phase: <N>-verification
-ticket_id: PT-0310
+ticket_id: <ID>
 status: complete                  # complete | needs-iteration | blocked
 verdict: PASS                     # PASS | FAIL
 started_at: "<YYYY-MM-DD>"
@@ -176,11 +184,11 @@ resume_with: /gsd-goal-loop
 
 # Verification — Iteration <N>
 
-## RED at freeze (Stage 2b, from `pnpm ticket:freeze`)
+## RED at freeze (Stage 2b)
 
 | SC | Acceptance test | Red reason at freeze (pasted) |
 |----|-----------------|-------------------------------|
-| SC-1 | `pt0310-x.acceptance.test.ts` | `AssertionError: expected 0 to be 1234_00` — the figure does not exist yet |
+| SC-1 | `<id>-x.acceptance.test.ts` | `AssertionError: expected 0 to be 1234_00` — the figure does not exist yet |
 
 | SC | Verdict | Evidence |
 |----|---------|----------|
@@ -189,9 +197,12 @@ resume_with: /gsd-goal-loop
 
 ## Gates and suite
 
-Last Stop gate banner, verbatim: `✓ Stop gate green: typecheck · 11 gates · …` (or the RED one).
-typecheck <result> · gates <n>/<n> · lint <result> · full suite <pass>/<total>; failures outside
-this ticket named, with why they are not this diff's.
+Last gate output, verbatim (or the RED one). typecheck <result> · gates <n>/<n> · lint <result> ·
+full suite <pass>/<total>; failures outside this ticket named, with why they are not this diff's.
+
+## Receipt (when VERIFY has no script)
+
+`<UTC timestamp> · tree <sha256 of git diff HEAD> · typecheck <exit> · gates <n>/<n> · lint <exit> · test <pass>/<total> · PASS|FAIL` — append-only, one line per run.
 
 ## Not verified
 
@@ -207,19 +218,19 @@ this ticket named, with why they are not this diff's.
 The durable record; the LOOP files are working copies.
 
 ```markdown
-# PT-0310 — <title in plain English>
+# <ID> — <title in plain English>
 
-**Tier:** normal (<one-line why>). **Date:** <YYYY-MM-DD>. **Goal:** `.planning/tasks/PT-0310/GOAL.md`.
+**Tier:** normal (<one-line why>). **Date:** <YYYY-MM-DD>. **Goal:** `.planning/tasks/<ID>/GOAL.md`.
 
 | Proof | Result |
 |-------|--------|
 | <test file — what its cases assert> | 17/17 |
 | <DB test on the test stack> | 3/3 |
-| Gates / types / lint | <n>/<n>, typecheck, ESLint 0 errors |
-| Browser (:3100, test stack, role <x>) | <what was seen> |
+| Gates / types / lint | <n>/<n>, typecheck, 0 lint errors |
+| Browser (test stack, role <x>) | <what was seen> |
 | Reviewer (high-risk only) | passed / failed / waived: <reason> |
-| Receipt (`pnpm ticket:verify <ID> --status`) | DONE — <verdict>, tree <first 12 of hash>, <n> receipts, chain intact |
-| Process eval (`pnpm ticket:eval <ID>`) | HEALTHY / the failing rows |
+| Receipt (VERIFY) | DONE — <verdict>, tree <first 12 of hash>, <n> receipts |
+| Process eval (EVAL) | healthy / the failing rows |
 
 ## Notes for the committer
 
@@ -228,7 +239,7 @@ The durable record; the LOOP files are working copies.
 ## Files
 
 New: …
-Modified (PT-0310 hunks): …
+Modified (<ID> hunks): …
 ```
 
 ---
@@ -246,7 +257,7 @@ completed_at: "<YYYY-MM-DD>"
 ```
 
 **Result:** <PASS: all SCs. FAIL: which SC, what was observed, what the next iteration changes.>
-**Suggested commit message:** `PT-0310 feat: <description>`
+**Suggested commit message:** `<ID> feat: <description>`
 ~~~
 
 ---
@@ -254,30 +265,32 @@ completed_at: "<YYYY-MM-DD>"
 ## Hand-off message (to the user, Stage 5)
 
 ```
-PT-0310 — <title>: all <n> Success Criteria pass.
+<ID> — <title>: all <n> Success Criteria pass.
 
 Changed files
   new       src/…
-  modified  src/…            (also holds PT-0308 hunks — stage by hunk)
+  modified  src/…            (also holds <OTHER-ID> hunks — stage by hunk)
 
 Suggested commit
-  PT-0310 feat: <description>
+  <ID> feat: <description>
 
 Before / after committing
-  - commit PT-0308 first (this builds on its uncommitted proposal changes)
-  - `pnpm db:migrate` on the dev clone (migration 0322)
-  - staging: `pnpm db:migrate:staging:run` after the push
+  - commit <OTHER-ID> first (this builds on its uncommitted changes)
+  - run migration <n> on the dev database
+  - staging: run migrations after the push
 
 Not verified
-  - <e.g. the e-mail send, which needs a real RESEND key>
+  - <e.g. the e-mail send, which needs a real provider key>
 ```
 
 ---
 
 ## RETRO.md — `.planning/tasks/<ID>/RETRO.md`
 
-The shape is owned by `.claude/agents/retro.md` (front matter with the closed `causes` /
-`actions` sets that `pnpm ticket:retro --across` counts). Do not restate it here.
+If the project has a `retro` agent, its definition owns the shape. Otherwise: front matter with
+`causes` (closed set: none · plan-gap · sc-wrong · fixture · tooling · scope · research-late ·
+other), `actions` (memory-add/update/delete · skill-edit · gate), `lesson_keys`, `applied`; then
+Right / Wrong / Cause / Actions sections.
 
 ---
 

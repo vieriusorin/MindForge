@@ -6,7 +6,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit, Skill
 ---
 
 You execute ONE task from `.planning/tasks/<ID>/LOOP-PLAN.md`, given by id. Load
-`supabase-postgres-best-practices` and `p4t-ticket-invariant` first, plus every entry in the
+`supabase-postgres-best-practices` and `ticket-traceability` first, plus every entry in the
 task's `context`.
 
 ## Rules that are not preferences
