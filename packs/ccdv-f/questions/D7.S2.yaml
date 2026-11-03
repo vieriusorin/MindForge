@@ -1,0 +1,54 @@
+skill: D7.S2
+questions:
+  - id: ccdv-f.D7.S2.q1
+    status: unreviewed
+    stem: "A public-facing chatbot built on a large model is being targeted by users who craft jailbreak attempts. The team wants an additional guardrail layer that inspects user input before it reaches the main conversation, without adding much cost. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Rely on the main model alone, since Claude is inherently resilient to jailbreaks."
+        correct: false
+        rationale: "Claude is resilient, but the guidance recommends additional layers to strengthen guardrails; relying on one layer is not defense in depth."
+      - id: B
+        text: "Pre-screen each user message with a lightweight model such as Haiku, using structured outputs to return a simple harmful/not-harmful classification, and treat a refusal from the screen as a harmful verdict."
+        correct: true
+        rationale: "A harmlessness screen with a lightweight model constrained to a structured classification is a documented mitigation, and a stop_reason of refusal from the screen should be treated as harmful."
+      - id: C
+        text: "Raise the main model's effort so it reasons more carefully about each message."
+        correct: false
+        rationale: "Effort changes how many tokens the model spends; it is not an input-screening guardrail."
+      - id: D
+        text: "Hide the system prompt by base64-encoding it."
+        correct: false
+        rationale: "Obfuscating the system prompt does not screen inputs or prevent policy violations."
+    source:
+      title: "Mitigate jailbreaks and prompt injections"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
+  - id: ccdv-f.D7.S2.q2
+    status: unreviewed
+    stem: "A security team must ensure Claude Code cannot read .env files on any developer machine in the organization, and that individual developers cannot loosen this rule. Which two controls best fit? (Select TWO.)"
+    select: 2
+    options:
+      - id: A
+        text: "Deploy a Read deny rule for the .env files (for example Read(./.env) and Read(./.env.*)) through managed settings."
+        correct: true
+        rationale: "Deny rules are evaluated before ask and allow rules from any scope, and managed settings sit at the top of the precedence stack, so developers cannot override them."
+      - id: B
+        text: "Add a line to each repository's CLAUDE.md saying \"never read .env files\"."
+        correct: false
+        rationale: "CLAUDE.md is guidance the model may decide does not apply; it is not an enforced control."
+      - id: C
+        text: "List .env in a .claudeignore file in every repository."
+        correct: false
+        rationale: "A .claudeignore file has no effect; its entries need to be moved into Read deny rules."
+      - id: D
+        text: "Ask each developer to add an allow rule for everything except .env in ~/.claude/settings.json."
+        correct: false
+        rationale: "User settings are controlled by each developer, so they can loosen the rule; it is not organization-enforced."
+      - id: E
+        text: "Enable the sandbox for OS-level enforcement, since Read deny rules do not cover arbitrary subprocesses (such as a script) that open files themselves."
+        correct: true
+        rationale: "Read deny rules apply to Claude's file tools and recognized file commands, not to every subprocess; the sandbox provides OS-level enforcement for all processes."
+    source:
+      title: "Configure permissions"
+      url: "https://code.claude.com/docs/en/permissions"

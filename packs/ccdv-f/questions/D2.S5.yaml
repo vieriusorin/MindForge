@@ -1,0 +1,50 @@
+skill: D2.S5
+questions:
+  - id: ccdv-f.D2.S5.q1
+    status: unreviewed
+    stem: "An app sends Claude a single prompt containing task instructions, a long user-uploaded contract, and two sample outputs, all as plain paragraphs. Claude sometimes treats sentences from the contract as instructions and copies phrasing from the samples into its answer. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Repeat the instructions in capital letters at the start and the end of the prompt."
+        correct: false
+        rationale: "Emphasis does not tell Claude where instructions end and content begins; the problem is ambiguous boundaries."
+      - id: B
+        text: "Wrap each kind of content in its own descriptive XML tag, such as <instructions>, <contract> and <example> tags, and place the long document near the top with the query at the end."
+        correct: true
+        rationale: "XML tags help Claude parse prompts that mix instructions, context, examples and inputs unambiguously; examples belong in <example> tags, and long documents work best placed above the query and instructions."
+      - id: C
+        text: "Remove the samples entirely, since examples always cause copying."
+        correct: false
+        rationale: "Examples are one of the most reliable ways to steer output; the fix is to mark them clearly as examples, not to drop them."
+      - id: D
+        text: "Split the contract into many separate user messages without labels."
+        correct: false
+        rationale: "Unlabeled fragments make the boundaries even less clear."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: ccdv-f.D2.S5.q2
+    status: unreviewed
+    stem: "In a long Claude Code session, a developer has corrected the same mistake twice and Claude still gets it wrong. The session also contains history from two earlier, unrelated tasks. What should the developer do?"
+    select: 1
+    options:
+      - id: A
+        text: "Send a third, more detailed correction in the same session."
+        correct: false
+        rationale: "A third correction adds to a conversation that already contains two failed attempts for Claude to keep re-reading."
+      - id: B
+        text: "Keep working in the same session, since previous unrelated tasks have no cost."
+        correct: false
+        rationale: "Every request sends the whole conversation, so unrelated history keeps costing tokens on every turn."
+      - id: C
+        text: "Move the correction into a new Skill so it loads automatically next time."
+        correct: false
+        rationale: "This does not address the polluted session in front of the developer, and a Skill is for reusable procedures rather than a one-off correction."
+      - id: D
+        text: "Run /clear and start over with one new prompt that folds in what was learned from the failed attempts."
+        correct: true
+        rationale: "After two failed corrections, /clear plus a better prompt works better almost every time, and /clear between unrelated tasks stops the next task paying for the previous one's history."
+    source:
+      title: "Best practices for Claude Code"
+      url: "https://code.claude.com/docs/en/best-practices"

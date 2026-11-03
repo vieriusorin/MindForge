@@ -1,0 +1,50 @@
+skill: D1.S3
+questions:
+  - id: ccdv-f.D1.S3.q1
+    status: unreviewed
+    stem: "A developer adopted a multi-agent framework for a simple retrieval-plus-answer feature. When outputs go wrong, the team struggles to see which prompts and responses the framework actually sent to the model. What should the developer do?"
+    select: 1
+    options:
+      - id: A
+        text: "Add another framework layer on top to log the agent's high-level decisions."
+        correct: false
+        rationale: "More abstraction makes the underlying prompts and responses harder, not easier, to see and debug."
+      - id: B
+        text: "Switch to a larger model so the framework's hidden prompts matter less."
+        correct: false
+        rationale: "Model size does not address the observability problem; the team still cannot see what is being sent."
+      - id: C
+        text: "Turn the feature into a fully autonomous agent so the framework can handle more of the logic."
+        correct: false
+        rationale: "Adding autonomy increases complexity and cost for a task that only needs a simple pattern."
+      - id: D
+        text: "Implement the pattern directly against the LLM API, which takes only a few lines of code, and if a framework is kept, make sure the team understands the underlying code it generates."
+        correct: true
+        rationale: "Frameworks can obscure the underlying prompts and responses, making them harder to debug; the guidance is to start with LLM APIs directly and, if using a framework, understand what it does underneath."
+    source:
+      title: "Building effective agents"
+      url: "https://www.anthropic.com/engineering/building-effective-agents"
+  - id: ccdv-f.D1.S3.q2
+    status: unreviewed
+    stem: "An agent works on a multi-day migration with clear milestones. Each working session starts with a fresh context window, and the agent keeps losing track of which milestones are already done. Which memory technique best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Use a model with a larger context window so the whole history fits in one session."
+        correct: false
+        rationale: "The work spans separate sessions, and more context is not automatically better because recall degrades as token count grows."
+      - id: B
+        text: "Structured note-taking: have the agent write progress notes (for example a to-do or progress file) outside the context window and read them back at the start of each session."
+        correct: true
+        rationale: "Structured note-taking persists notes outside the context window and reloads them later; it is best for iterative development with clear milestones."
+      - id: C
+        text: "Spawn parallel sub-agents for each milestone and discard their results after they finish."
+        correct: false
+        rationale: "Sub-agents give clean context for parallel exploration, but discarding their results does nothing to preserve progress across sessions."
+      - id: D
+        text: "Raise max_tokens so the agent can write longer answers in each session."
+        correct: false
+        rationale: "max_tokens limits output length per response; it does not carry state between sessions."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"

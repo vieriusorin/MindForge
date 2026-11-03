@@ -28,7 +28,6 @@ import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, rmSync, writeSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { LockBusyError, withTestDbLock } from "../../scripts/lib/test-db-lock.mjs";
 import {
   classifyTestResults,
   colocatedTests,
@@ -37,7 +36,6 @@ import {
   isRelevantSource,
   parseTscErrors,
   redAllowedIn,
-  testDbBusyNote,
   unverifiedFiles,
 } from "./lib/gate-core.mjs";
 import {
@@ -55,8 +53,7 @@ const BIN = join(ROOT, "node_modules", ".bin");
 /** @returns {Promise<{ code: number | null, out: string }>} */
 function run(cmd, args, timeoutMs, extraEnv = {}) {
   return new Promise((resolve) => {
-    // Its own process group, so a timeout kills env-run AND the vitest it spawned: an orphaned
-    // vitest would keep writing to the test DB after env-run's lock is gone (PT-0363 review S2).
+    // Its own process group, so a timeout kills the whole tree (e.g. vitest and its workers).
     const child = spawn(cmd, args, {
       cwd: ROOT,
       detached: true,
@@ -103,7 +100,7 @@ const listDir = (dir) => {
 };
 
 async function main() {
-  if (process.env.P4T_STOP_GATE === "off") return;
+  if (process.env.MF_STOP_GATE === "off" || process.env.P4T_STOP_GATE === "off") return;
   const input = readStdinJson();
   if (!input) return;
   const sessionId = input.session_id;
@@ -149,7 +146,7 @@ async function main() {
   // ── Launch everything in parallel.
   const tsTouched = live.some((p) => /\.(ts|tsx|mts|cts)$|^tsconfig[^/]*\.json$/.test(p));
   const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
-  const gates = Object.entries(pkg.scripts)
+  const gates = Object.entries(pkg.scripts ?? {})
     .filter(([k]) => k.startsWith("gate:") && k !== "gate:client-bundle")
     .map(([name, cmd]) => ({ name, argv: cmd.split(" ") }));
   const lintable = live.filter((p) => /\.(ts|tsx|js|jsx|mjs|cjs|json|css)$/.test(p));
@@ -161,7 +158,7 @@ async function main() {
       );
   const report = join(
     tmpdir(),
-    `claude-p4t-gate-vitest-${String(sessionId).replace(/\W/g, "")}.json`,
+    `claude-mf-gate-vitest-${String(sessionId).replace(/\W/g, "")}.json`,
   );
   rmSync(report, { force: true });
 
@@ -184,40 +181,23 @@ async function main() {
           120_000,
         )
       : null,
-    eslintable.length
+    eslintable.length && existsSync(join(BIN, "eslint"))
       ? run("eslint", ["--quiet", "--no-warn-ignored", ...eslintable], 180_000)
       : null,
     testTargets.length
-      ? // PT-0363: one test DB for every session and night lane. Wait a bounded slice of the
-        // 600 s hook for it, then report "busy" instead of being killed mid-wait.
-        withTestDbLock(
-          `stop-gate ${String(sessionId).slice(0, 8)} (${ROOT})`,
-          (ctx) =>
-            run(
-              "node",
-              [
-                "scripts/env-run.mjs",
-                "--env",
-                "test",
-                "--if-present",
-                "--",
-                "vitest",
-                full ? "related" : "run",
-                "--run",
-                "--passWithNoTests",
-                "--reporter=json",
-                `--outputFile=${report}`,
-                ...testTargets,
-              ],
-              // The 540 s the tests always had, minus what the lock wait used (review S1).
-              Math.max(60_000, 540_000 - (Date.now() - lockAskedAt)),
-              ctx.env,
-            ),
-          { maxWaitMs: 240_000 },
-        ).catch((e) => {
-          if (e instanceof LockBusyError) return { busy: e.holder };
-          throw e;
-        })
+      ? // MF-0001: no shared test DB here (yet), so vitest runs directly.
+        run(
+          "vitest",
+          [
+            full ? "related" : "run",
+            "--run",
+            "--passWithNoTests",
+            "--reporter=json",
+            `--outputFile=${report}`,
+            ...testTargets,
+          ],
+          540_000,
+        )
       : null,
   ]);
 
@@ -228,7 +208,7 @@ async function main() {
 
   if (tampered.length) {
     blocking.push(
-      `FROZEN TEST CHANGED without a re-freeze — the acceptance contract moved:\n${tampered.map((t) => `  - ${t}`).join("\n")}\n  Restore it, or ask the user and re-freeze with \`node scripts/freeze-tests.mjs <ID> --refreeze --reason "<why>" <file>\`.`,
+      `FROZEN TEST CHANGED without a re-freeze — the acceptance contract moved:\n${tampered.map((t) => `  - ${t}`).join("\n")}\n  Restore it, or ask the user and re-freeze (new sha256 + a reason in FROZEN.json \`history\`).`,
     );
   }
   if (tsc) {
@@ -260,10 +240,8 @@ async function main() {
   }
   // Tests that never ran prove nothing: the turn is not blocked, but it is not green either, and
   // the files are NOT recorded as verified, so the next turn runs them again (review B2).
-  const testsDidNotRun = vitest?.busy !== undefined;
-  if (testsDidNotRun) {
-    notes.push(testDbBusyNote(vitest.busy));
-  } else if (vitest) {
+  const testsDidNotRun = false;
+  if (vitest) {
     let parsed = null;
     try {
       parsed = JSON.parse(readFileSync(report, "utf8"));
@@ -325,7 +303,7 @@ async function main() {
       1,
       JSON.stringify({
         decision: "block",
-        reason: `PT-0315 Stop gate — RED (attempt ${state.blocks}/${CAP}). Fix these before ending the turn. If a failure is outside your change (a file you never touched, another session's work, a calendar-dependent test), do not edit around it: say so explicitly to the user, naming the file.\n\n${body}${noteText}`,
+        reason: `MindForge Stop gate — RED (attempt ${state.blocks}/${CAP}). Fix these before ending the turn. If a failure is outside your change (a file you never touched, another session's work, a calendar-dependent test), do not edit around it: say so explicitly to the user, naming the file.\n\n${body}${noteText}`,
       }),
     );
     return;

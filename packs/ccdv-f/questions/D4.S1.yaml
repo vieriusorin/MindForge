@@ -1,0 +1,50 @@
+skill: D4.S1
+questions:
+  - id: ccdv-f.D4.S1.q1
+    status: unreviewed
+    stem: "A pipeline's logs show two kinds of Claude API failures: intermittent 529 overloaded_error responses during peak hours, and a steady trickle of 400 invalid_request_error responses on certain inputs. Which recovery strategy best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Retry both error types immediately with no delay until they succeed."
+        correct: false
+        rationale: "Immediate retries add load during overload, and a 400 will keep failing because the request itself is wrong."
+      - id: B
+        text: "Treat both as permanent failures and drop the affected inputs."
+        correct: false
+        rationale: "529 indicates the API is temporarily overloaded, so those requests can succeed on a later attempt."
+      - id: C
+        text: "Retry the 529 errors with exponential backoff, and investigate and fix the requests that produce 400 errors instead of retrying them."
+        correct: true
+        rationale: "529 means the API is temporarily overloaded, a transient condition suited to backoff retries; 400 means there is an issue with the format or content of the request, which retrying will not fix."
+      - id: D
+        text: "Switch to a larger model, since both errors indicate the model could not handle the input."
+        correct: false
+        rationale: "Neither error is a model-quality problem: one is capacity, the other is a malformed or invalid request."
+    source:
+      title: "Claude API errors"
+      url: "https://platform.claude.com/docs/en/api/errors"
+  - id: ccdv-f.D4.S1.q2
+    status: unreviewed
+    stem: "After a developer adds a feature that inserts a short status text block (\"Here are the results:\") at the start of the user message that carries tool results, every tool-using conversation begins failing with a 400 error. Which diagnosis and fix best fit?"
+    select: 1
+    options:
+      - id: A
+        text: "The model is producing malformed tool calls; switch to a more capable model."
+        correct: false
+        rationale: "The failure started after a change in how the application builds messages, and it is a request validation error, not a model-output problem."
+      - id: B
+        text: "The tool descriptions are too short; expand them so Claude calls tools correctly."
+        correct: false
+        rationale: "Better descriptions help tool selection but do not fix a message-structure validation error."
+      - id: C
+        text: "max_tokens is too low; raise it so tool results fit."
+        correct: false
+        rationale: "max_tokens limits output length and has nothing to do with the order of content blocks in the request."
+      - id: D
+        text: "It is an integration-layer bug: in the user message carrying tool results, the tool_result blocks must come first, so move any text after all tool_result blocks."
+        correct: true
+        rationale: "In a user message containing tool results, tool_result blocks must come first in the content array and any text must come after them; putting text before them causes a 400 error."
+    source:
+      title: "Handle tool calls"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls"

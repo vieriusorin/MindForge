@@ -1,0 +1,37 @@
+$ node scripts/dev-setup.mjs
+
+▸ Checking prerequisites
+  Node 24.20.0 ✓
+  Docker 29.7.2 ✓
+
+▸ Starting the local Supabase stack (first run downloads images; this can take a few minutes)
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+{"DB_URL":"postgresql://postgres:postgres@127.0.0.1:54322/postgres","API_URL":"http://127.0.0.1:54321","REST_URL":"http://127.0.0.1:54321/rest/v1","GRAPHQL_URL":"http://127.0.0.1:54321/graphql/v1","FUNCTIONS_URL":"http://127.0.0.1:54321/functions/v1","MCP_URL":"http://127.0.0.1:54321/mcp","STUDIO_URL":"http://127.0.0.1:54323","PUBLISHABLE_KEY":"<redacted>","SECRET_KEY":"<redacted>","JWT_SECRET":"<redacted>","ANON_KEY":"<redacted>","SERVICE_ROLE_KEY":"<redacted>","MAILPIT_URL":"http://127.0.0.1:54324","INBUCKET_URL":"http://127.0.0.1:54324","STORAGE_S3_URL":"http://127.0.0.1:54321/storage/v1/s3","S3_PROTOCOL_ACCESS_KEY_ID":"<redacted>","S3_PROTOCOL_ACCESS_KEY_SECRET":"<redacted>","S3_PROTOCOL_REGION":"local","message":""}
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+
+▸ Applying pending migrations (your local data is kept)
+Connecting to local database...
+{"applied":[],"message":"Migrations applied"}
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+
+▸ Syncing answer keys from packs/*/questions
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+ccdv-f: 53 key(s) synced
+team-onboarding-sample: 0 key(s) synced
+
+▸ Writing .env.local
+  already up to date (/Users/sorinvieriu/Projects/mind-forge/.env.local)
+
+✓ Local stack ready.
+
+  App        pnpm dev  →  http://localhost:3000
+  Mailpit    http://127.0.0.1:54324   (sign-in links land here)
+  Studio     http://127.0.0.1:54323   (browse the local database)
+
+  Checks: pnpm typecheck · pnpm lint · pnpm test · pnpm test:db · pnpm build
+

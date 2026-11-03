@@ -1,0 +1,8 @@
+docker on PATH: NONE
+$ node scripts/dev-setup.mjs
+▸ Checking prerequisites
+  Node 24.20.0 ✓
+✗ Docker is not installed. The local Supabase stack runs in Docker.
+  Install Docker Desktop (https://docs.docker.com/get-docker/), OrbStack or Colima, start it, then re-run `pnpm dev:setup`.
+[ELIFECYCLE] Command failed with exit code 1.
+exit 1

@@ -1,0 +1,50 @@
+skill: D6.S1
+questions:
+  - id: ccdv-f.D6.S1.q1
+    status: unreviewed
+    stem: "A long-running agent calls search and file-reading tools dozens of times. The raw outputs of early tool calls stay in the conversation long after they are useful, and answer quality degrades as the context grows. Which first step best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Switch to a model with a larger context window so nothing needs to be removed."
+        correct: false
+        rationale: "More context is not automatically better: as token count grows, accuracy and recall degrade (context rot)."
+      - id: B
+        text: "Preload all relevant documents at the start so the agent needs fewer tool calls."
+        correct: false
+        rationale: "Front-loading everything adds even more tokens; just-in-time retrieval with lightweight references keeps context lean."
+      - id: C
+        text: "Clear old tool results that are no longer needed (tool result clearing), keeping the rest of the conversation intact."
+        correct: true
+        rationale: "Tool result clearing is described as one of the safest, lightest-touch forms of compaction, removing stale raw tool outputs that consume the attention budget."
+      - id: D
+        text: "Increase max_tokens so the agent has room to reason over the accumulated outputs."
+        correct: false
+        rationale: "max_tokens caps output length; it does not reduce the bloat in the input context."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  - id: ccdv-f.D6.S1.q2
+    status: unreviewed
+    stem: "During a Claude Code session, the main task needs the answer to \"which modules import the legacy auth client?\" Finding it requires a wide search that produces a lot of output, but the main conversation only needs the final list. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Delegate the search to a subagent, which works in its own context window and returns only a summary to the main conversation."
+        correct: true
+        rationale: "Subagents run in their own context window and return only the summary, keeping exploration output out of the main conversation."
+      - id: B
+        text: "Run the search in the main conversation and then run /compact to summarize everything."
+        correct: false
+        rationale: "This first fills the main context with the search output and then spends a large request summarizing the whole conversation; isolation avoids the bloat in the first place."
+      - id: C
+        text: "Run /clear before the search so there is room for its output."
+        correct: false
+        rationale: "/clear discards the context of the main task the search was meant to serve."
+      - id: D
+        text: "Paste the search results into CLAUDE.md so they load in every session."
+        correct: false
+        rationale: "CLAUDE.md loads into every session, so this would make the bloat permanent rather than isolating it."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"

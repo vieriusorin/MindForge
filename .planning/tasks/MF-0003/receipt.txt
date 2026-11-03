@@ -1,0 +1,3 @@
+2026-11-03T08:43:51Z · tree a2ee89bac03abf775b129642d45f4a54f7124aa123a07f8f2916c0b6fd001f61 · db:reset 0 (2 migrations, 53 keys) · typecheck 0 · gates 0/0 · lint 0 · test 48/48 (15 files) · test:db 10/10 (2 files) · build 0 · check-hooks 0 · advisors warn+: none · frozen MF-0001/2/3 ok · PASS
+2026-11-03T08:44:01Z · tree 44a6fc1763a5e391b14af968f67856b818e65f06974ec83b2da500b0d073bdfa · README.md only since a2ee89bac03a · lint 0 · (all other checks from the line above, unchanged code) · PASS
+2026-11-03T08:50:33Z · tree 0293104946228b321e631d731cfcb37bc74f7e30d5b8ee3af1596e6c5471a6cb · db:reset 0 · typecheck 0 · gates 0/0 · lint 0 · test 49 passed · test:db 12 passed · build 0 · check-hooks 0 · advisors warn+: none · frozen True · PASS (after review fixes)

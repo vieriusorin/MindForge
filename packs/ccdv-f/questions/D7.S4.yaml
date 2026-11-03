@@ -1,0 +1,50 @@
+skill: D7.S4
+questions:
+  - id: ccdv-f.D7.S4.q1
+    status: unreviewed
+    stem: "A production service running on a cloud platform, plus its CI/CD pipeline, call the Claude API. The security team wants to eliminate long-lived static API secrets from these environments. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Commit an encrypted API key to the repository and decrypt it at deploy time."
+        correct: false
+        rationale: "This is still a long-lived static secret that must be distributed and rotated."
+      - id: B
+        text: "Use the lead developer's personal API key, set to never expire."
+        correct: false
+        rationale: "A shared personal key acts as one person and breaks when they leave; shared workloads need their own identity."
+      - id: C
+        text: "Create a workspace API key and store it in an environment variable on every runner."
+        correct: false
+        rationale: "Workspace keys are legacy and are still static secrets; identity-backed keys or federation are preferred."
+      - id: D
+        text: "Use Workload Identity Federation, exchanging the platform's identity token for a short-lived Claude API access token tied to a service account."
+        correct: true
+        rationale: "Workload Identity Federation is designed for production workloads on cloud platforms and CI/CD where you want to eliminate static secrets; the SDK refreshes the short-lived token automatically."
+    source:
+      title: "Authentication"
+      url: "https://platform.claude.com/docs/en/manage-claude/authentication"
+  - id: ccdv-f.D7.S4.q2
+    status: unreviewed
+    stem: "A company issues short-lived Claude API credentials from a secrets vault and rotates them frequently. Developers using Claude Code keep pasting new keys into their shell profiles. How should Claude Code obtain credentials?"
+    select: 1
+    options:
+      - id: A
+        text: "Configure the apiKeyHelper setting to run a script that fetches the current key from the vault."
+        correct: true
+        rationale: "apiKeyHelper runs a shell script that returns an API key and is intended for dynamic or rotating credentials, such as short-lived tokens fetched from a vault."
+      - id: B
+        text: "Put the key in the env block of the committed .claude/settings.json so everyone shares it."
+        correct: false
+        rationale: "Committing a secret to the repository exposes it to everyone with access and does not solve rotation."
+      - id: C
+        text: "Generate a long-lived token with claude setup-token and share it with the team."
+        correct: false
+        rationale: "setup-token produces a long-lived OAuth token tied to a subscription, intended for CI or scripts; sharing it defeats short-lived, per-identity credentials."
+      - id: D
+        text: "Paste the current key into the project's CLAUDE.md so Claude knows it."
+        correct: false
+        rationale: "CLAUDE.md is model context, not credential configuration; putting secrets there leaks them into prompts."
+    source:
+      title: "Authentication"
+      url: "https://code.claude.com/docs/en/authentication"

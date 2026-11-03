@@ -1,0 +1,54 @@
+skill: D6.S2
+questions:
+  - id: ccdv-f.D6.S2.q1
+    status: unreviewed
+    stem: "A prompt asks Claude to turn support transcripts into a structured case summary. The instructions describe the format in prose, but the output's structure and tone vary between runs. Which change best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Add one example and repeat it several times so Claude sees the format clearly."
+        correct: false
+        rationale: "Repeating a single example gives no diversity, so Claude may pick up unintended patterns from it."
+      - id: B
+        text: "Add a long list of rules covering every edge case instead of examples."
+        correct: false
+        rationale: "Laundry lists of edge-case rules are less effective than a small set of diverse, canonical examples."
+      - id: C
+        text: "Write the format instructions in all capital letters."
+        correct: false
+        rationale: "Emphasis does not show Claude what good output looks like; examples are one of the most reliable ways to steer format, tone and structure."
+      - id: D
+        text: "Add 3–5 relevant, diverse examples of transcript-to-summary pairs, wrapped in <example> tags inside <examples>."
+        correct: true
+        rationale: "A few well-crafted, relevant and diverse examples improve accuracy and consistency; wrapping them in <example> tags separates them from instructions, and 3–5 examples is the recommended range."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: ccdv-f.D6.S2.q2
+    status: unreviewed
+    stem: "A voice assistant's system prompt says \"NEVER use ellipses. Do not use markdown.\" Claude still occasionally produces both, which breaks the text-to-speech output. Which two revisions best fit? (Select TWO.)"
+    select: 2
+    options:
+      - id: A
+        text: "Explain why: the response will be read aloud by a text-to-speech engine that cannot pronounce ellipses or render formatting."
+        correct: true
+        rationale: "Giving the context or motivation behind an instruction helps Claude understand the goal and generalize from the explanation."
+      - id: B
+        text: "Repeat the prohibitions three times with more capital letters."
+        correct: false
+        rationale: "More emphasis does not add information about the goal or the desired output."
+      - id: C
+        text: "Prefill the assistant turn with plain text so Claude continues without markdown."
+        correct: false
+        rationale: "Prefilling the last assistant turn is not supported on current models and returns a 400 error."
+      - id: D
+        text: "State what to do instead, for example \"Write your response as smoothly flowing plain prose paragraphs.\""
+        correct: true
+        rationale: "Telling Claude what to do instead of what not to do is a documented, effective way to steer output format."
+      - id: E
+        text: "Move the instructions into a tool result so Claude treats them as data."
+        correct: false
+        rationale: "Claude treats tool-result content as untrusted data, so instructions placed there might be ignored."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"

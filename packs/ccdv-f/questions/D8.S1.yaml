@@ -1,0 +1,54 @@
+skill: D8.S1
+questions:
+  - id: ccdv-f.D8.S1.q1
+    status: unreviewed
+    stem: "An agent has three tools named search, lookup and find, each with a one-line description. Claude often picks the wrong one, and the team plans to add tools for two more services. Which change best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Add more tools, one per narrow action, so each has a very specific purpose."
+        correct: false
+        rationale: "The guidance is the opposite: consolidate related operations into fewer, more capable tools to reduce selection ambiguity."
+      - id: B
+        text: "Force a specific tool on every request with tool_choice."
+        correct: false
+        rationale: "Forcing a tool removes Claude's ability to choose correctly and is not supported on some current models; it does not fix ambiguous definitions."
+      - id: C
+        text: "Write detailed descriptions (what each tool does, when to use it and when not, what each parameter means, and its limitations), and prefix tool names with their service, for example crm_search_contacts."
+        correct: true
+        rationale: "Extremely detailed descriptions are by far the most important factor in tool performance, and service-prefixed names make tool selection unambiguous as the library grows."
+      - id: D
+        text: "Keep the descriptions short to save tokens and put tool-selection rules in the user's message each time."
+        correct: false
+        rationale: "Short descriptions leave Claude guessing; the recommendation is at least 3–4 sentences per tool description."
+    source:
+      title: "Define tools"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"
+  - id: ccdv-f.D8.S1.q2
+    status: unreviewed
+    stem: "A client-side get_weather tool sometimes fails because the upstream weather service is down, and occasionally Claude calls it without the required location parameter. How should the harness handle these cases? (Select TWO.)"
+    select: 2
+    options:
+      - id: A
+        text: "When the tool fails, skip the tool_result and send a plain text user message saying the service is down."
+        correct: false
+        rationale: "Every tool_use block needs a matching tool_result immediately after; omitting it causes an error."
+      - id: B
+        text: "When the tool fails, return a tool_result with is_error set to true and an instructive message, such as what went wrong and what to try next."
+        correct: true
+        rationale: "Tool execution errors should be returned in the tool_result content with is_error true; instructive messages give Claude the context to recover or adapt."
+      - id: C
+        text: "Raise an exception in the harness and end the conversation whenever any tool fails."
+        correct: false
+        rationale: "Ending the conversation discards the chance for Claude to incorporate the error and respond helpfully."
+      - id: D
+        text: "Set strict: true on the tool definition so tool inputs always match the schema, preventing missing required parameters."
+        correct: true
+        rationale: "Strict tool use guarantees tool inputs match the schema exactly, eliminating missing parameters and type mismatches."
+      - id: E
+        text: "Report tool errors by appending them to the system prompt on the next request."
+        correct: false
+        rationale: "Errors belong in the tool_result for the matching tool_use; changing the system prompt also invalidates prompt caching."
+    source:
+      title: "Handle tool calls"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls"
