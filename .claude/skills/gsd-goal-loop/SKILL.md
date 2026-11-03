@@ -115,6 +115,15 @@ does not, move those SCs to their own `reserved` ticket owned by the user, with 
 deliverable, and keep this ticket to what the local stack can prove. Do not carry them as a `T8 human`
 task inside the code ticket.
 
+Before the checkpoint, preflight each SC's proof. (1) Run `pnpm typecheck && pnpm lint && pnpm test`
+read-only. If any of them is red and an SC's proof is "that command exits 0", the baseline red is part of
+this ticket's scope question: put it in the checkpoint with the file named, as either "fix it as task T0
+(listed in the hand-off as a separate hunk)" or "park until its owner fixes it". Do not leave it for BUILD.
+(2) List every proof command that wipes or restarts shared local state (`pnpm db:reset`, `supabase stop`,
+`supabase start`, `supabase db reset`). For each, either get the user's approval at the checkpoint, or write
+the SC's proof so it does not need it (an in-place revert, a scratch schema, a separate worktree). Record
+both outcomes under "Decided by the user". Nothing here is asked mid-BUILD.
+
 Then run `grill-with-docs` against the draft and fold the answers back. With `--research`, triage
 each question (`references/research.md`) before putting it to the user: facts go to the researcher
 → interpreter pipeline and come back as answers to confirm; decisions come to the user with the

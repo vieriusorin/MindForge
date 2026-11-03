@@ -1,0 +1,19 @@
+{
+  "ticket": "MF-0005",
+  "frozen_at": "2026-11-03T14:32:12Z",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0005-ci.acceptance.test.ts",
+      "sha256": "b3a784562eedc1d1ed1d1689f77b0494aa4a373fe3970ee610e49ddecb363049",
+      "first_failure": "SC-1/2/4/5/6 x8: Error: missing .github/workflows/ci.yml"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0005-grants.db.acceptance.test.ts",
+      "sha256": "7f549f8111695a55769f95c12aaec40b3938c4878ff67686a6f155d8a3cbdf92",
+      "frozen_green": true,
+      "reason": "SC-3 is a regression lock: the current migrations are already correct, so the gate is green today. Its red is proven at TEST on scratch migrations (grant truncate; table without revoke all), logged in evidence and reverted.",
+      "first_failure": null
+    }
+  ],
+  "history": []
+}

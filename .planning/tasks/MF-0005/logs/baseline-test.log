@@ -1,0 +1,163 @@
+$ vitest run --project unit --project ui
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.5 /Users/sorinvieriu/Projects/mind-forge
+
+ ❯ |unit| src/test/__tests__/mf-0005-ci.acceptance.test.ts (8 tests | 8 failed) 7ms
+   ❯ MF-0005 CI workflow (8)
+     × SC-1: runs on pull_request and push to main 4ms
+     × SC-1: job `checks` runs install, typecheck, lint, test, hooks check, build in order 1ms
+     × SC-1: Node 24, and pnpm from packageManager (no version override) 0ms
+     × SC-2: job `db` runs install, pinned `supabase start`, db:reset, test:db in order 0ms
+     × SC-4: a PR-only step in `checks` warns about the key sync when questions change 0ms
+     × SC-5: the runbook names the required checks exactly as the workflow job ids 0ms
+     × SC-6: no hosted project or secret is referenced 0ms
+     × SC-6: every action is pinned to a full commit SHA, and the token is read-only 0ms
+ ❯ |unit| src/features/groups/__tests__/mf-0004-rotate-invite.acceptance.test.ts (3 tests | 1 failed) 89ms
+   ❯ MF-0004 rotateInviteCode (3)
+     × SC-9: a refused rotation returns an error result with a message 87ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/test/__tests__/mf-0005-ci.acceptance.test.ts > MF-0005 CI workflow > SC-1: runs on pull_request and push to main
+Error: missing /Users/sorinvieriu/Projects/mind-forge/.github/workflows/ci.yml
+ ❯ readText src/test/__tests__/mf-0005-ci.acceptance.test.ts:31:32
+     29|
+     30| function readText(path: string): string {
+     31|   if (!existsSync(path)) throw new Error(`missing ${path}`);
+       |                                ^
+     32|   return readFileSync(path, "utf8");
+     33| }
+ ❯ workflow src/test/__tests__/mf-0005-ci.acceptance.test.ts:36:16
+ ❯ src/test/__tests__/mf-0005-ci.acceptance.test.ts:67:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  |unit| src/test/__tests__/mf-0005-ci.acceptance.test.ts > MF-0005 CI workflow > SC-1: job `checks` runs install, typecheck, lint, test, hooks check, build in order
+Error: missing /Users/sorinvieriu/Projects/mind-forge/.github/workflows/ci.yml
+ ❯ readText src/test/__tests__/mf-0005-ci.acceptance.test.ts:31:32
+     29|
+     30| function readText(path: string): string {
+     31|   if (!existsSync(path)) throw new Error(`missing ${path}`);
+       |                                ^
+     32|   return readFileSync(path, "utf8");
+     33| }
+ ❯ workflow src/test/__tests__/mf-0005-ci.acceptance.test.ts:36:16
+ ❯ steps src/test/__tests__/mf-0005-ci.acceptance.test.ts:40:17
+ ❯ commands src/test/__tests__/mf-0005-ci.acceptance.test.ts:47:10
+ ❯ order src/test/__tests__/mf-0005-ci.acceptance.test.ts:57:17
+ ❯ src/test/__tests__/mf-0005-ci.acceptance.test.ts:73:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  |unit| src/test/__tests__/mf-0005-ci.acceptance.test.ts > MF-0005 CI workflow > SC-1: Node 24, and pnpm from packageManager (no version override)
+Error: missing /Users/sorinvieriu/Projects/mind-forge/.github/workflows/ci.yml
+ ❯ readText src/test/__tests__/mf-0005-ci.acceptance.test.ts:31:32
+     29|
+     30| function readText(path: string): string {
+     31|   if (!existsSync(path)) throw new Error(`missing ${path}`);
+       |                                ^
+     32|   return readFileSync(path, "utf8");
+     33| }
+ ❯ workflow src/test/__tests__/mf-0005-ci.acceptance.test.ts:36:16
+ ❯ steps src/test/__tests__/mf-0005-ci.acceptance.test.ts:40:17
+ ❯ src/test/__tests__/mf-0005-ci.acceptance.test.ts:86:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  |unit| src/test/__tests__/mf-0005-ci.acceptance.test.ts > MF-0005 CI workflow > SC-2: job `db` runs install, pinned `supabase start`, db:reset, test:db in order
+Error: missing /Users/sorinvieriu/Projects/mind-forge/.github/workflows/ci.yml
+ ❯ readText src/test/__tests__/mf-0005-ci.acceptance.test.ts:31:32
+     29|
+     30| function readText(path: string): string {
+     31|   if (!existsSync(path)) throw new Error(`missing ${path}`);
+       |                                ^
+     32|   return readFileSync(path, "utf8");
+     33| }
+ ❯ workflow src/test/__tests__/mf-0005-ci.acceptance.test.ts:36:16
+ ❯ steps src/test/__tests__/mf-0005-ci.acceptance.test.ts:40:17
+ ❯ commands src/test/__tests__/mf-0005-ci.acceptance.test.ts:47:10
+ ❯ order src/test/__tests__/mf-0005-ci.acceptance.test.ts:57:17
+ ❯ src/test/__tests__/mf-0005-ci.acceptance.test.ts:99:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  |unit| src/test/__tests__/mf-0005-ci.acceptance.test.ts > MF-0005 CI workflow > SC-4: a PR-only step in `checks` warns about the key sync when questions change
+Error: missing /Users/sorinvieriu/Projects/mind-forge/.github/workflows/ci.yml
+ ❯ readText src/test/__tests__/mf-0005-ci.acceptance.test.ts:31:32
+     29|
+     30| function readText(path: string): string {
+     31|   if (!existsSync(path)) throw new Error(`missing ${path}`);
+       |                                ^
+     32|   return readFileSync(path, "utf8");
+     33| }
+ ❯ workflow src/test/__tests__/mf-0005-ci.acceptance.test.ts:36:16
+ ❯ steps src/test/__tests__/mf-0005-ci.acceptance.test.ts:40:17
+ ❯ src/test/__tests__/mf-0005-ci.acceptance.test.ts:109:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  |unit| src/test/__tests__/mf-0005-ci.acceptance.test.ts > MF-0005 CI workflow > SC-5: the runbook names the required checks exactly as the workflow job ids
+Error: missing /Users/sorinvieriu/Projects/mind-forge/.github/workflows/ci.yml
+ ❯ readText src/test/__tests__/mf-0005-ci.acceptance.test.ts:31:32
+     29|
+     30| function readText(path: string): string {
+     31|   if (!existsSync(path)) throw new Error(`missing ${path}`);
+       |                                ^
+     32|   return readFileSync(path, "utf8");
+     33| }
+ ❯ workflow src/test/__tests__/mf-0005-ci.acceptance.test.ts:36:16
+ ❯ src/test/__tests__/mf-0005-ci.acceptance.test.ts:118:29
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  |unit| src/test/__tests__/mf-0005-ci.acceptance.test.ts > MF-0005 CI workflow > SC-6: no hosted project or secret is referenced
+Error: missing /Users/sorinvieriu/Projects/mind-forge/.github/workflows/ci.yml
+ ❯ readText src/test/__tests__/mf-0005-ci.acceptance.test.ts:31:32
+     29|
+     30| function readText(path: string): string {
+     31|   if (!existsSync(path)) throw new Error(`missing ${path}`);
+       |                                ^
+     32|   return readFileSync(path, "utf8");
+     33| }
+ ❯ src/test/__tests__/mf-0005-ci.acceptance.test.ts:126:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  |unit| src/test/__tests__/mf-0005-ci.acceptance.test.ts > MF-0005 CI workflow > SC-6: every action is pinned to a full commit SHA, and the token is read-only
+Error: missing /Users/sorinvieriu/Projects/mind-forge/.github/workflows/ci.yml
+ ❯ readText src/test/__tests__/mf-0005-ci.acceptance.test.ts:31:32
+     29|
+     30| function readText(path: string): string {
+     31|   if (!existsSync(path)) throw new Error(`missing ${path}`);
+       |                                ^
+     32|   return readFileSync(path, "utf8");
+     33| }
+ ❯ workflow src/test/__tests__/mf-0005-ci.acceptance.test.ts:36:16
+ ❯ src/test/__tests__/mf-0005-ci.acceptance.test.ts:137:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  |unit| src/features/groups/__tests__/mf-0004-rotate-invite.acceptance.test.ts > MF-0004 rotateInviteCode > SC-9: a refused rotation returns an error result with a message
+ReferenceError: rotateInviteRpcError is not defined
+ ❯ rotateInviteCode src/features/groups/actions.ts:83:41
+     81|     p_group_id: parsed.data,
+     82|   });
+     83|   if (error) return { ok: false, error: rotateInviteRpcError(error) };
+       |                                         ^
+     84|   refresh();
+     85|   return { ok: true } satisfies ActionResult;
+ ❯ rotate src/features/groups/__tests__/mf-0004-rotate-invite.acceptance.test.ts:30:11
+ ❯ src/features/groups/__tests__/mf-0004-rotate-invite.acceptance.test.ts:44:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+
+ Test Files  2 failed | 26 passed (28)
+      Tests  9 failed | 84 passed (93)
+   Start at  16:34:30
+   Duration  1.19s (environment 39%, import 28%, tests 18%, setup 10%, transform 4%, worker 1%)
+
+[ELIFECYCLE] Test failed. See above for more details.

@@ -3,12 +3,13 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { formErrorFromZod } from "@/lib/action-result";
+import { type ActionResult, formErrorFromZod } from "@/lib/action-result";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { listPacks } from "@/server/packs/list-packs";
 import { createServerSupabase } from "@/server/supabase/server";
 import { CreateGroupInput } from "./schemas";
-import type { CreateGroupResult } from "./types";
+import type { CreateGroupResult, RotateInviteResult } from "./types";
+import { createGroupRpcError, rotateInviteRpcError } from "./utils/rpc-errors";
 
 /**
  * Called from `useCreateGroupForm` through `useMutation`. Takes `unknown`: the client's types
@@ -40,10 +41,7 @@ export async function createGroup(input: unknown): Promise<CreateGroupResult> {
   });
   // MF-0004: the DB refuses unknown packs and the 11th group; say which.
   if (error || !data)
-    return {
-      ok: false,
-      error: { message: "Could not create the group. Try again." },
-    };
+    return { ok: false, error: createGroupRpcError(error ?? {}) };
   return { ok: true, groupId: data };
 }
 
