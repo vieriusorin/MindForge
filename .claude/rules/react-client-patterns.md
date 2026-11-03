@@ -8,10 +8,16 @@ file wins. No gate enforces it yet, so review holds the line.
 
 UI mixed with client state, action calls and inline interfaces is the shape a codebase keeps
 regressing to: one dialog grows to hundreds of lines and nobody can change it safely. The cost
-is not aesthetic. `@testing-library/react`, `jsdom` and `happy-dom` are deliberately not
-installed, so `renderHook` is unavailable and co-located tests can only assert against pure
-modules like `utils.ts`, never against a component or a hook.
-**Logic that stays inside a `.tsx` is logic that cannot be tested at all.** The split exists to move decisions into a place where they can be asserted.
+is not aesthetic. The split puts each kind of logic where it is cheapest to test (ADR 0002):
+
+| Layer | Holds | Tested with |
+|---|---|---|
+| `utils.ts` | pure decisions: mapping, validation, formatting, branching | plain Vitest, required, fastest |
+| `hooks/use-<name>.ts` | orchestration: state, mutation calls, navigation, effects | `renderHook` (`@testing-library/react`) when the hook branches |
+| `<name>.tsx` | markup bound to props | `render` + `user-event` for interaction and accessible roles |
+
+**A decision left inside a `.tsx` can only be tested through the DOM, which is slow and
+brittle.** Move it to `utils.ts` first, and keep component tests for what only the DOM can show.
 
 ## The folder
 

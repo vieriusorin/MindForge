@@ -1,0 +1,6 @@
+# Graphify code graph: index the app, not agent tooling or generated output.
+.claude/
+.planning/
+graphify-out/
+*.log
+src/server/db/database.types.ts

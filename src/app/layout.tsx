@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Work_Sans } from "next/font/google";
+import { AppProviders } from "@/components/app-providers";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
@@ -34,7 +35,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider>{children}</TooltipProvider>
+          <AppProviders>
+            <TooltipProvider>{children}</TooltipProvider>
+          </AppProviders>
         </ThemeProvider>
       </body>
     </html>

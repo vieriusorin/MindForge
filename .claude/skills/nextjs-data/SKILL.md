@@ -272,8 +272,8 @@ import { refresh } from "next/cache";
 
 export const correctEntry = async (input: unknown): Promise<ActionResult> => {
   const actor = await requireCapability("entries:correct"); // server-verified user read
-  const parsed = correctEntrySchema.safeParse(input);
-  if (!parsed.success) return { ok: false, errors: parsed.error.flatten() };
+  const parsed = correctEntrySchema.safeParse(input);   // schema from the feature's schemas.ts
+  if (!parsed.success) return { ok: false, error: formErrorFromZod(parsed.error) };
 
   await correctEntryService(parsed.data, actor);
   refresh(); // entries are uncached (§3) — no tag to expire; client table still invalidates
@@ -292,8 +292,11 @@ Rules:
   pass them as `action` / `formAction` / props.
 - **`redirect()` last.** It throws a control-flow exception; anything after it — including
   `updateTag` / `refresh()` — never runs.
-- Pending state via `useActionState`. The client dispatches Server Actions one at a time; do not
-  use them for parallel reads.
+- Call actions from client code through `useMutation` in the component's hook; pending state is
+  `mutation.isPending` (MindForge: `.claude/rules/state-and-data.md` §3, `forms-rhf-zod`). No new
+  `useActionState`. An action called that way returns `ActionResult` and doesn't `redirect()` on
+  success; the hook navigates. The client dispatches Server Actions one at a time, so never use
+  them for reads (`client-data-tanstack-query` §2).
 - Setting or deleting a cookie in an action re-renders the current tree; no extra refresh needed.
 - If audit logging is done by a DB trigger, the action is what threads the actor into the same
   transaction (e.g. `set_config('app.current_user_id', …, true)`).
