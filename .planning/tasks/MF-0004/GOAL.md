@@ -2,10 +2,10 @@
 ticket_id: MF-0004
 tier: high-risk                   # infra + auth wiring + a migration on create_group
 stage: design
-branch: main
+branch: feat/MF-0004
 builds_on: []
 last_iteration: 0
-goal_status: reserved
+goal_status: in-progress
 track: P                          # seat Coder A (docs/plan/ROADMAP.md §6)
 week: W1
 depends_on: [Phase 0]
@@ -41,6 +41,10 @@ a written post-merge checklist (migrations, answer keys, promote).
 - One hosted Supabase project, Frankfurt region; previews share it, behind Vercel Authentication. Staging / Supabase branching after Dec 7 (ROADMAP Q12).
 - Resend for SMTP; default `*.vercel.app` domain until a company subdomain exists (user, 2026-11-03).
 - Group cap: 10 groups created per user (enough for study groups + a cohort group; stops spam).
+- Site origin = a server-only `SITE_URL` env var (no `NEXT_PUBLIC_`); when it's unset, dev falls back to `http://localhost:3001` and production throws (fail closed). It also replaces header-derived origins for invite URLs (src/app/(app)/groups/[groupId]/page.tsx:34), so `requestOrigin()` is deleted. Source: SC-4 + MF-0002 REVIEW note 2.
+- The group cap is race-safe: a per-user `pg_advisory_xact_lock` inside `private.create_group`, plus distinct errcodes (unknown pack / cap reached) so the action can show the right message. Source: SC-6 + correctness.
+- `pnpm dev` runs on port 3001 to match `site_url` (memory: 3000 belongs to another project).
+- Local allowlist paths narrowed to `/auth/callback**` per exact origin. Source: SC-4.
 
 ## Success Criteria
 
@@ -60,6 +64,9 @@ a written post-merge checklist (migrations, answer keys, promote).
 |---|-----------|-------|--------|
 | C-1 | `create_group` needs a list of known pack slugs in the DB. This ticket owns it (`private.packs`, written by the sync script); MF-0007 does not depend on it. | Coder A | resolved 2026-11-03 |
 | C-2 | `db:sync-keys` against hosted needs the DB password locally; keep it out of the repo and out of Vercel. | Coder A | open |
+| C-3 | Resend won't send to other people's inboxes until a sending domain is verified by DNS. With only `*.vercel.app` (which has no DNS we control), SC-3's "two real inboxes" can't pass. | user / DNS owner | open |
+| C-4 | Installing Resend through the Vercel Marketplace puts `RESEND_API_KEY` in Vercel env, which breaks SC-8 (only three vars). The app sends no mail: Supabase Auth sends it over SMTP, so the key belongs in Supabase, not in Vercel. | user | open |
+| C-5 | Preview sign-in: a wildcard allowlist entry `mindforge-*-<team>.vercel.app` can be matched by another Vercel team whose slug ends in `-<team>`, so it isn't an exact origin (SC-4). Exact origins only means previews can't receive magic links. | user | open |
 
 ## Out of Scope
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * PT-0315 — records which files THIS session changed, for `stop-gate.mjs`.
+ * records which files THIS session changed, for `stop-gate.mjs`.
  *
  *   PreToolUse  Bash                  -> snapshot `git status` (+ mtimes)
  *   PostToolUse Bash                  -> diff against the snapshot; the delta is this session's

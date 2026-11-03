@@ -1,5 +1,5 @@
 /**
- * PT-0315 — the I/O half shared by the verification hooks: session state, git snapshots, and the
+ * the I/O half shared by the verification hooks: session state, git snapshots, and the
  * frozen-test manifests. Decisions live in `gate-core.mjs`.
  *
  * Sessions share one worktree, so "what changed" cannot be read from `git status`: another
@@ -13,7 +13,7 @@ import { join, relative, sep } from "node:path";
 import { isActiveGoal, parseGoalFrontmatter } from "./gate-core.mjs";
 
 export const ROOT = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-const STATE_DIR = join(tmpdir(), "claude-p4t-gate");
+const STATE_DIR = join(tmpdir(), "claude-mf-gate");
 
 export function readStdinJson() {
   try {

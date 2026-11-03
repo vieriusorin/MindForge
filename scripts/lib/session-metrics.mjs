@@ -1,5 +1,5 @@
 /**
- * PT-0352 — the pure half of session metrics: one Claude Code transcript (JSONL records, already
+ * the pure half of session metrics: one Claude Code transcript (JSONL records, already
  * parsed) -> tokens per model, wall and active time, prompts, and the tickets it worked on.
  *
  * The transcript format is internal to Claude Code and changes between versions, so everything
@@ -8,7 +8,7 @@
  * summing lines double- or triple-counts, so usage is taken once per `message.id`.
  */
 
-const TICKET_RE = /\.planning\/tasks\/((?:PT|LS)-\d{4})\//;
+const TICKET_RE = /\.planning\/tasks\/([A-Z]{2,5}-\d{4})\//;
 
 /** Local hour -> the bucket the comparison report groups by. */
 export function bucketOfHour(hour) {

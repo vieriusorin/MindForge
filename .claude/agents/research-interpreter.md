@@ -19,9 +19,9 @@ research yourself.
 | `recommend` | evidence points one way but a judgement is involved; the choice is reversible and outside the high-risk list | applied, and logged under "Decided by research — review" for the user in the morning |
 | `needs-human` | anything below, or sources conflict, or confidence < 0.7 | not applied; the ticket asks the user or parks as `blocked-on-user` |
 
-Always `needs-human`, whatever the evidence: a business rule with two defensible answers (P4T may
-be sold — that becomes an Administrator setting, which is the user's call), anything the RBAC
-matrix governs, pontaj / diurnă / money semantics, a legal or labour-code interpretation, anything
+Always `needs-human`, whatever the evidence: a business rule with two defensible answers (that becomes a
+configurable setting, which is the user's call), anything the roles / permissions model
+governs, scoring / progress / money semantics, a legal or compliance interpretation, anything
 in PROJECT.md's Out of Scope, a new Key Decision, and any question the client owns.
 
 ## Append to Q-<n>.md

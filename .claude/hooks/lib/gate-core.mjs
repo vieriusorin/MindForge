@@ -1,5 +1,5 @@
 /**
- * PT-0315 — the pure half of the Claude Code verification hooks.
+ * the pure half of the Claude Code verification hooks.
  *
  * Everything here is a decision with no I/O, so `scripts/__tests__/claude-hooks.test.ts` can
  * assert it. The hooks themselves (`track-changes.mjs`, `guard-protected.mjs`, `stop-gate.mjs`)
@@ -34,7 +34,7 @@ export const PROTECTED = [
     reason: "a gate or verification script (allowlist additions need a Key Decisions entry)",
   },
   {
-    test: /^scripts\/lib\/(ticket-receipts|ticket-eval|test-db-lock|clean-room)\.mjs$/,
+    test: /^scripts\/lib\/(ticket-receipts|ticket-eval|clean-room)\.mjs$/,
     reason: "the rules that decide whether a ticket is done",
   },
   {
@@ -193,17 +193,6 @@ export function classifyTestResults(report, root, expectedRed) {
     }
   }
   return out;
-}
-
-/**
- * PT-0363: the test-DB lock stayed held past the Stop gate's slice (a parallel lane's verify, a
- * hand-run suite). The tests did not run, so nothing is claimed: a non-blocking NOT VERIFIED note,
- * the same class as a stack that refused connections — never a pass, never a block.
- * @param {{ label?: string, at?: string } | null | undefined} holder
- * @returns {string}
- */
-export function testDbBusyNote(holder) {
-  return `NOT VERIFIED — the test DB is busy (held by ${holder?.label ?? "?"} since ${holder?.at ?? "?"}); tests did not run this turn`;
 }
 
 /**

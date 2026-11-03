@@ -1,4 +1,4 @@
-// PT-0390 — another ticket's frozen acceptance tests are red by design until that ticket builds;
+// another ticket's frozen acceptance tests are red by design until that ticket builds;
 // `ticket:verify` for THIS ticket must not count them as its own new failures. The owning ticket's
 // own verify still runs them, and judges them, as absolute (`files` mode), so nothing is loosened.
 
@@ -9,7 +9,7 @@ import { join } from "node:path";
  * Paths of every acceptance file frozen by a ticket other than `ownTicket`. A missing or
  * unreadable FROZEN.json contributes nothing.
  * @param {string} tasksDir absolute path of `.planning/tasks`
- * @param {string} ownTicket e.g. "PT-0384"
+ * @param {string} ownTicket e.g. "MF-0004"
  * @returns {string[]} sorted, repo-relative
  */
 export function foreignFrozenPaths(tasksDir, ownTicket) {

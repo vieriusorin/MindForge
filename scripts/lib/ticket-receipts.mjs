@@ -1,5 +1,5 @@
 /**
- * PT-0352 — the pure half of `pnpm ticket:verify`: what a receipt is, when it is stale, what the
+ * the pure half of `pnpm ticket:verify`: what a receipt is, when it is stale, what the
  * verdict is, and when a loop should stop. No I/O, so `pt0352-receipts.acceptance.test.ts` can
  * assert every decision.
  *
@@ -43,7 +43,7 @@ export function diffHash(entries) {
 /**
  * Checks that are judged on their own, never against a baseline. The frozen acceptance tests are
  * red at baseline BY DESIGN — comparing them would turn "still red after the build" into
- * `preexisting` and pass a ticket where nothing was built (PT-0352 review, blocking 1).
+ * `preexisting` and pass a ticket where nothing was built.
  */
 export const ABSOLUTE_CHECKS = new Set([
   "frozen-integrity",
@@ -211,7 +211,7 @@ export function testFailures(report, root) {
 
 /**
  * Prose output (a gate, biome, eslint) -> failure items, so a check that was already red at
- * baseline still shows a NEW violation as new (PT-0352 review, blocking 3). Items are the lines
+ * baseline still shows a NEW violation as new. Items are the lines
  * that name a repo path, with line/column numbers and durations stripped so an unrelated edit
  * that shifts lines does not invent a "new" failure. Output naming no path collapses to one item
  * keyed on its digit-free text.
@@ -259,7 +259,7 @@ export function numberDuplicates(items) {
 
 /**
  * biome `--reporter=json` + eslint `--format json` -> one key per diagnostic: file, rule, message
- * (PT-0352 re-review: default eslint output names the file on its own line, so plain-text keys
+ * (default eslint output names the file on its own line, so plain-text keys
  * were per FILE and a new rule violation in an already-red file read as preexisting).
  * @param {string} biomeText
  * @param {string} eslintText
@@ -302,7 +302,7 @@ export function lintKeys(biomeText, eslintText, root) {
  * The frozen manifest a verify must still satisfy: every entry the baseline recorded is present
  * with the same sha256, unless FROZEN.json's history records a refreeze of that path AFTER the
  * baseline (which `ticket:eval` then lists for a human). Catches a Bash rewrite of a frozen test
- * together with its sha, and a dropped entry (PT-0352 re-review, blocking 2).
+ * together with its sha, and a dropped entry.
  * @param {{ path: string, sha256: string }[] | undefined} pinned from the baseline receipt
  * @param {{ files?: { path: string, sha256: string }[], history?: { action: string, path: string, at: string }[] }} frozen
  * @param {string} baselineAt
@@ -334,8 +334,7 @@ export function frozenManifestProblems(pinned, frozen, baselineAt) {
 /**
  * The baseline a verify may compare against: the FIRST baseline line, and only when the chain up
  * to it is intact and (when the runner pinned one) its sha matches. A later line claiming to be a
- * baseline is ignored — appending a forged baseline must not rewrite what was red before
- * (PT-0352 review, blocking 2).
+ * baseline is ignored — appending a forged baseline must not rewrite what was red before.
  * @param {string[]} lines
  * @param {string | null} expectedSha sha256 of the baseline line, held by the runner
  * @returns {{ receipt: any | null, problem: string | null }}
@@ -359,7 +358,7 @@ export function trustedBaseline(lines, expectedSha) {
       receipt: null,
       problem: `receipt chain broken at line ${chain.brokenAt + 1}`,
     };
-  // A baseline written after a verify is not a "before" (PT-0352 re-review, blocking 3).
+  // A baseline written after a verify is not a "before".
   if (lines.slice(0, idx).some((l) => l.includes('"kind":"verify"'))) {
     return {
       receipt: null,
@@ -381,8 +380,7 @@ export const lineSha = (line) => sha256(line);
 /**
  * Every frozen acceptance file must have RUN: present in the vitest report, at least one passed
  * assertion, nothing skipped or todo. `--passWithNoTests` plus a file outside vitest's `include`
- * (a frozen `.test.tsx`), an edited `exclude`, or an all-skipped suite otherwise reads as a pass
- * (PT-0352 third review, blocking 4).
+ * (a frozen `.test.tsx`), an edited `exclude`, or an all-skipped suite otherwise reads as a pass.
  * @param {any} report vitest JSON report
  * @param {string} root
  * @param {string[]} files frozen repo-relative paths
@@ -421,7 +419,7 @@ export function unranFrozen(report, root, files) {
 
 /**
  * Paths a night lane may never change: what decides whether work counts, and what runs it. A lane
- * whose diff touches one is judged by tooling it rewrote (PT-0352 third review, blocking 1).
+ * whose diff touches one is judged by tooling it rewrote.
  */
 const TOOLING_RE =
   /^(package\.json|pnpm-lock\.yaml|scripts\/|\.claude\/|\.github\/|\.husky\/|vitest[^/]*\.config\.[cm]?[jt]s|playwright[^/]*\.config\.[cm]?[jt]s|biome\.json|eslint\.config\.[cm]?[jt]s|tsconfig[^/]*\.json)/;

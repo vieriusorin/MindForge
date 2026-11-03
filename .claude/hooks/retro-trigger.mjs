@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * PT-0383 — Stop: a ticket this session finished or parked does not end without a retrospective.
+ * Stop: a ticket this session finished or parked does not end without a retrospective.
  *
  * Reads the session's touched files (`track-changes.mjs`), maps them to tickets, and blocks the
  * stop while one of them owes a retro (`retroDue` in lib/retro-trigger.mjs). In an interactive
  * session that did any work, a merged night retro marked `applied: deferred` is due as well.
  * Blocks up to CAP times for the same set, then releases with a banner — never loops.
  *
- * Off switch for one session: P4T_RETRO=off. Never fails loudly: a broken trigger costs a missed
+ * Off switch for one session: MF_RETRO=off. Never fails loudly: a broken trigger costs a missed
  * retro, which `pnpm ticket:retro --across` still shows as a ticket without one.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -46,10 +46,10 @@ function retroOf(ticket) {
 }
 
 function main() {
-  if (process.env.MF_RETRO === "off" || process.env.P4T_RETRO === "off") return;
+  if (process.env.MF_RETRO === "off") return;
   const input = readStdinJson();
   if (!input) return;
-  const autonomous = Boolean(process.env.P4T_AUTONOMOUS);
+  const autonomous = Boolean(process.env.MF_AUTONOMOUS);
   const touched = Object.keys(loadState(input.session_id).touched);
   if (touched.length === 0) return;
 
