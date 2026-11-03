@@ -197,6 +197,37 @@ Every concept gets a **nature card**:
 | Streaming | **A river** delivering water continuously vs a lake you collect from once | |
 | Least privilege | **Cell membrane**: only lets through what the cell needs | |
 | Evals | **Field ecologist sampling plots**: measure systematically, don't judge by one walk | |
+| Temperature (sampling) | **Seed dispersal on a windy day**: in calm air almost every seed lands under the parent tree (the most likely token); in strong wind seeds scatter far, a few onto fertile new ground (creativity), many onto rock (nonsense) | Wind pushes seeds in a *direction*; temperature never changes which token is most likely, only how strongly it dominates. Calm air still spreads seeds a little, but T=0 is (near-)greedy. T=0 does not guarantee identical outputs |
+
+**Example full card: Temperature** (skill: LLM Fundamentals, proposed for review):
+
+| Field | Content |
+|---|---|
+| **Simply** | Temperature controls how adventurous the model is when picking the next token. Low: it almost always takes the top choice. High: less likely choices get picked more often. The model's knowledge (its logits) is unchanged; only the sampling is reshaped. |
+| **In nature** | Seeds in the wind. Calm air drops them under the tree; strong wind scatters them, sometimes onto fertile ground, often onto rock. Temperature is the wind. |
+| **Where it breaks** | (1) Wind has a direction; temperature only flattens or sharpens the distribution and keeps the ranking. (2) T=0 picks the top token every time, while calm air still spreads seeds a little. (3) T=0 is not a guarantee of identical outputs across calls. (4) "Less likely" is not "wrong": for extraction it usually is, for brainstorming it is often the useful choice. |
+| **Why "temperature"?** | It is the same formula physics uses for molecules (Boltzmann distribution): P(state) ∝ e^(−E/kT) vs P(token) ∝ e^(logit/T). Heat lets particles reach higher-energy states; heat lets the model reach lower-probability tokens. |
+| **Diagram** | One bar chart at three temperatures, next to seeds landing near or far from the tree (see below). |
+| **Contrast** | Temperature *reshapes* the whole distribution; top-p / top-k *cut off* the tail. Low temperature for classification and extraction, higher for ideation. |
+| **Sources** | Claude API docs, `temperature` parameter (range and default to be verified against current docs before approval) |
+
+Worked numbers for the diagram (logits `[2, 1, 0]`, softmax of `logit / T`):
+
+| Temperature | Token A | Token B | Token C | Seeds |
+|---|---|---|---|---|
+| 0.5 (calm) | 87% | 12% | 2% | almost all under the tree |
+| 1.0 (as trained) | 67% | 24% | 9% | a natural spread |
+| 2.0 (storm) | 51% | 31% | 19% | scattered far |
+
+```mermaid
+flowchart LR
+  L[Model logits<br/>parent tree] --> T{Temperature<br/>wind strength}
+  T -- low --> C[Seeds land under the tree<br/>top token, consistent]
+  T -- medium --> M[Natural spread<br/>model's own distribution]
+  T -- high --> H[Seeds scatter far<br/>rare tokens: fresh ideas or nonsense]
+```
+
+**Game hooks:** *Diagram Builder*: "set the wind to the temperature that produced this distribution". *Scenario Duel*: "A JSON extraction pipeline returns inconsistent fields between runs. What do you change first?"
 
 Later (Phase 2): a **personal analogy profile** (hobbies, profession, own projects) as extra themes. Nature stays the default because it's universal and visual.
 
