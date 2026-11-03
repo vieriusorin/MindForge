@@ -1,5 +1,6 @@
 "use client";
 
+import { Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,8 +27,8 @@ import { useCreateGroupForm } from "./hooks/use-create-group-form";
 import type { CreateGroupFormProps } from "./types";
 
 export function CreateGroupForm({ packs }: CreateGroupFormProps) {
-  const { state, formAction, isPending } = useCreateGroupForm();
-  const error = state.status === "error" ? state.message : null;
+  const { control, register, errors, onSubmit, isSubmitting } =
+    useCreateGroupForm(packs[0]?.slug ?? "");
   return (
     <Card>
       <CardHeader>
@@ -35,30 +36,56 @@ export function CreateGroupForm({ packs }: CreateGroupFormProps) {
         <CardDescription>Invite colleagues once it exists.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={formAction}>
+        <form onSubmit={onSubmit} noValidate>
           <FieldGroup>
-            <Field data-invalid={Boolean(error)}>
+            <Field data-invalid={Boolean(errors.name)}>
               <FieldLabel htmlFor="group-name">Group name</FieldLabel>
-              <Input id="group-name" name="name" required maxLength={80} />
+              <Input
+                id="group-name"
+                aria-invalid={Boolean(errors.name)}
+                {...register("name")}
+              />
+              <FieldError errors={errors.name ? [errors.name] : undefined} />
             </Field>
-            <Field>
-              <FieldLabel htmlFor="pack">Learning pack</FieldLabel>
-              <Select name="packSlug" required defaultValue={packs[0]?.slug}>
-                <SelectTrigger id="pack" className="w-full">
-                  <SelectValue placeholder="Choose a pack" />
-                </SelectTrigger>
-                <SelectContent>
-                  {packs.map((p) => (
-                    <SelectItem key={p.slug} value={p.slug}>
-                      {p.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <FieldError errors={error ? [{ message: error }] : undefined} />
-            <Button type="submit" disabled={isPending}>
-              {isPending ? "Creating…" : "Create group"}
+            <Controller
+              control={control}
+              name="packSlug"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="pack">Learning pack</FieldLabel>
+                  <Select
+                    name={field.name}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger
+                      id="pack"
+                      className="w-full"
+                      aria-invalid={fieldState.invalid}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                    >
+                      <SelectValue placeholder="Choose a pack" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {packs.map((p) => (
+                        <SelectItem key={p.slug} value={p.slug}>
+                          {p.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
+            <FieldError
+              errors={errors.root?.server ? [errors.root.server] : undefined}
+            />
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Creating…" : "Create group"}
             </Button>
           </FieldGroup>
         </form>

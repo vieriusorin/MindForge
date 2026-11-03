@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { ResetLink } from "./components/reset-link";
 import type { InviteLinkProps } from "./types";
 
 export function InviteLink({
@@ -35,13 +35,7 @@ export function InviteLink({
             className="font-mono text-xs"
           />
         </Field>
-        {canRotate && (
-          <form action={rotateAction}>
-            <Button type="submit" variant="link" size="sm" className="px-0">
-              Reset link (old links stop working)
-            </Button>
-          </form>
-        )}
+        {canRotate && <ResetLink rotateAction={rotateAction} />}
       </CardContent>
     </Card>
   );

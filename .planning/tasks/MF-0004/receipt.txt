@@ -1,0 +1,12 @@
+MF-0004 receipt, local slice (default VERIFY: no ticket:verify script in package.json)
+tree: git diff HEAD | shasum -a 256 = 359c930e88d16035fac41631c50c03d14404a33cde9f06cf79315d0e1e5fd87f  (includes the other session's staged change; untracked MF-0004 files listed in REVIEW.md)
+pnpm db:reset   exit 0
+pnpm typecheck  exit 0
+pnpm lint       exit 0 (Checked 196+ files, no fixes)
+pnpm test       Test Files 27 passed (27) | Tests 85 passed (85)
+pnpm test:db    Test Files 5 passed (5)  | Tests 14 passed (14)
+supabase db advisors --local --type security --level warn --fail-on warn   exit 0, No issues found
+pnpm build (SITE_URL unset)  exit 0
+frozen hashes: match FROZEN.json
+review: approve, reviewed_hash = 359c930e88d16035fac41631c50c03d14404a33cde9f06cf79315d0e1e5fd87f
+VERDICT: PASS for the local slice (SC-5, SC-6, SC-9 tests, SC-4 code+local config). NOT DONE for the ticket: SC-1, SC-2, SC-3, SC-8 (env list), SC-4 hosted allowlist, SC-7 hosted dry run are open (T8).

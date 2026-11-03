@@ -3,51 +3,46 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { type ActionResult, formErrorFromZod } from "@/lib/action-result";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { listPacks } from "@/server/packs/list-packs";
 import { createServerSupabase } from "@/server/supabase/server";
-import type { CreateGroupState } from "./types";
+import { CreateGroupInput } from "./schemas";
+import type { CreateGroupResult, RotateInviteResult } from "./types";
+import { createGroupRpcError, rotateInviteRpcError } from "./utils/rpc-errors";
 
-const CreateGroupInput = z.strictObject({
-  name: z
-    .string()
-    .trim()
-    .min(1, "Give the group a name.")
-    .max(80, "Keep the name under 80 characters."),
-  packSlug: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
-});
-
-export async function createGroup(
-  _prev: CreateGroupState,
-  formData: FormData,
-): Promise<CreateGroupState> {
+/**
+ * Called from `useCreateGroupForm` through `useMutation`. Takes `unknown`: the client's types
+ * are not a boundary, the schema is. Returns a result instead of redirecting on success, so
+ * the hook owns navigation (`redirect()` stays only for the auth guard).
+ */
+export async function createGroup(input: unknown): Promise<CreateGroupResult> {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in?next=/groups");
 
-  const parsed = CreateGroupInput.safeParse({
-    name: formData.get("name"),
-    packSlug: formData.get("packSlug"),
-  });
+  const parsed = CreateGroupInput.safeParse(input);
   if (!parsed.success)
-    return {
-      status: "error",
-      message: parsed.error.issues[0]?.message ?? "Invalid input.",
-    };
+    return { ok: false, error: formErrorFromZod(parsed.error) };
+
   const packs = await listPacks();
   if (!packs.some((p) => p.slug === parsed.data.packSlug))
-    return { status: "error", message: "Pick a learning pack." };
+    return {
+      ok: false,
+      error: {
+        message: "Pick a learning pack.",
+        fieldErrors: { packSlug: "Pick a learning pack." },
+      },
+    };
 
   const supabase = await createServerSupabase();
   const { data, error } = await supabase.rpc("create_group", {
     p_name: parsed.data.name,
     p_pack_slug: parsed.data.packSlug,
   });
+  // MF-0004: the DB refuses unknown packs and the 11th group; say which.
   if (error || !data)
-    return {
-      status: "error",
-      message: "Could not create the group. Try again.",
-    };
-  redirect(`/groups/${data}`);
+    return { ok: false, error: createGroupRpcError(error ?? {}) };
+  return { ok: true, groupId: data };
 }
 
 const Code = z.string().regex(/^[0-9a-f]{16,64}$/);
@@ -64,11 +59,26 @@ export async function joinGroup(code: string): Promise<void> {
   redirect(`/groups/${data}`);
 }
 
-export async function rotateInviteCode(groupId: string): Promise<void> {
+const GroupId = z.uuid();
+
+/**
+ * MF-0004: reports failure instead of refreshing as if it worked. The DB refuses non-admins
+ * (private.rotate_invite_code); the button is only a convenience.
+ */
+export async function rotateInviteCode(
+  groupId: unknown,
+): Promise<RotateInviteResult> {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in?next=/groups");
+  const parsed = GroupId.safeParse(groupId);
+  if (!parsed.success)
+    return { ok: false, error: "This group link is not valid." };
+
   const supabase = await createServerSupabase();
-  // The DB refuses non-admins (private.rotate_invite_code); the button is only a convenience.
-  await supabase.rpc("rotate_invite_code", { p_group_id: groupId });
+  const { error } = await supabase.rpc("rotate_invite_code", {
+    p_group_id: parsed.data,
+  });
+  if (error) return { ok: false, error: rotateInviteRpcError(error) };
   refresh();
+  return { ok: true } satisfies ActionResult;
 }

@@ -56,9 +56,10 @@ const RULES = [
     id: "tests",
     test: /__tests__\/.*\.test\.tsx?$|^e2e\/|\/e2e\//,
     skill: "testing-strategy",
-    text: `Test file. Vitest (\`pnpm test\`), node environment, files under \`src/**/__tests__/\`.
+    text: `Test file. Vitest (\`pnpm test\`), files under \`src/**/__tests__/\`: \`*.test.ts\` run in node (project "unit"), \`*.test.tsx\` in jsdom (project "ui").
+- Components/hooks: React Testing Library via \`renderWithProviders\` / \`renderHookWithProviders\` from \`@/test/render\`; query by role/label, act with \`user-event\`; mock \`next/navigation\` and the feature's \`actions\` at the import (ADR 0002).
 - No snapshot tests. Expected values come from the requirement/spec, never from calling the code under test.
-- React Testing Library, msw and Playwright are NOT installed — propose before adding.
+- msw and Playwright are NOT installed — propose before adding.
 - A test listed in a ticket's \`FROZEN.json\` is the contract: never edit it to go green (the guard hook asks the user).
 - Full check: \`pnpm typecheck && pnpm lint && pnpm test && pnpm build\`. The Stop gate runs the fast half for you.`,
   },

@@ -120,3 +120,7 @@ surface).
 | the gate table above, pasted | "gates green" |
 | "the dialog lists *Item A · 10 units · no price*" | "UI works" |
 | "not verified: the e-mail send" | silence about it |
+
+- A runbook or doc is verified by copy-pasting its commands from the file and running them as written.
+  The only allowed edit is a documented substitution (e.g. `--linked` to `--local`). Record the log of the
+  pasted command. A command typed from memory in the dry run does not count.

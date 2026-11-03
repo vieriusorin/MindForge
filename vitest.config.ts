@@ -19,6 +19,16 @@ export default defineConfig({
         },
       },
       {
+        // ADR 0002: components and hooks, rendered in jsdom with React Testing Library.
+        extends: true,
+        test: {
+          name: "ui",
+          include: ["src/**/__tests__/**/*.test.tsx"],
+          environment: "jsdom",
+          setupFiles: ["src/test/setup-dom.ts"],
+        },
+      },
+      {
         // MF-0002: needs the local Supabase stack (`supabase start`). Run with `pnpm test:db`.
         extends: true,
         test: {

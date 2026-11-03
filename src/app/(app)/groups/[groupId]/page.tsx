@@ -12,7 +12,7 @@ import { MemberList } from "@/features/groups/components/member-list";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getGroup } from "@/server/groups/get-group";
 import { listMembers } from "@/server/groups/list-members";
-import { requestOrigin } from "@/server/http/request-origin";
+import { siteOrigin } from "@/server/http/site-origin";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
 
@@ -28,10 +28,9 @@ async function GroupSlot({
   const group = await getGroup(groupId);
   if (!group) notFound();
 
-  const [members, pack, origin, attempts] = await Promise.all([
+  const [members, pack, attempts] = await Promise.all([
     listMembers(group.id),
     getPack(group.packSlug),
-    requestOrigin(),
     listMyAttempts(user.id, group.packSlug),
   ]);
   // MF-0003: the signed-in learner's own forest, replayed from DB-graded attempts.
@@ -51,7 +50,7 @@ async function GroupSlot({
       <div className="mb-8 grid gap-6 md:grid-cols-2">
         <MemberList members={members} currentUserId={user.id} />
         <InviteLink
-          inviteUrl={`${origin}/join/${group.inviteCode}`}
+          inviteUrl={`${siteOrigin()}/join/${group.inviteCode}`}
           canRotate={isAdmin}
           rotateAction={rotateInviteCode.bind(null, group.id)}
         />
