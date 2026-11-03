@@ -1,7 +1,8 @@
 skill: D2.S6
 questions:
   - id: ccdv-f.D2.S6.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A repository commits .claude/settings.json with the team's permissions and hooks. One developer wants to use a different model for themselves in this project only, without affecting teammates and without committing anything. Where should they set it?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Settings files and precedence"
       url: "https://code.claude.com/docs/en/settings"
   - id: ccdv-f.D2.S6.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A team wants production behavior to stay stable and changes in model behavior to be deliberate and reviewable. Developers currently pick whatever model they like in different services. Which approach best fits?"
     select: 1
     options:

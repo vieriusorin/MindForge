@@ -1,7 +1,8 @@
 skill: D2.S1
 questions:
   - id: ccdv-f.D2.S1.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A product owner's requirement for a new sentiment-classification feature reads: \"The model should classify customer sentiment well.\" The developer must turn this business requirement into something the team can build and test against. Which requirement best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Define your success criteria"
       url: "https://platform.claude.com/docs/en/test-and-evaluate/define-success"
   - id: ccdv-f.D2.S1.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A call-center business requirement says support agents must see a suggested reply while the customer is still on the phone, the feature must stay within budget, and replies must never expose other customers' data. The developer is writing the requirements the solution will be evaluated against. Which approach best fits?"
     select: 1
     options:

@@ -1,7 +1,8 @@
 skill: D2.S5
 questions:
   - id: ccdv-f.D2.S5.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "An app sends Claude a single prompt containing task instructions, a long user-uploaded contract, and two sample outputs, all as plain paragraphs. Claude sometimes treats sentences from the contract as instructions and copies phrasing from the samples into its answer. Which approach best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Prompting best practices"
       url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
   - id: ccdv-f.D2.S5.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "In a long Claude Code session, a developer has corrected the same mistake twice and Claude still gets it wrong. The session also contains history from two earlier, unrelated tasks. What should the developer do?"
     select: 1
     options:

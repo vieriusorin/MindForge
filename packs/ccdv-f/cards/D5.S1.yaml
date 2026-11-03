@@ -1,0 +1,29 @@
+skill: D5.S1
+cards:
+  # MINDFORGE.md §2.4 "Example full card: Temperature", copied verbatim (MF-0006 SC-6).
+  - id: ccdv-f.D5.S1.card-temperature
+    concept: Temperature (sampling)
+    origin: human
+    author: vlad.parvana@ddroidd.com
+    simply: >-
+      Temperature controls how adventurous the model is when picking the next token. Low: it
+      almost always takes the top choice. High: less likely choices get picked more often. The
+      model's knowledge (its logits) is unchanged; only the sampling is reshaped.
+    inNature: >-
+      Seeds in the wind. Calm air drops them under the tree; strong wind scatters them, sometimes
+      onto fertile ground, often onto rock. Temperature is the wind.
+    whereItBreaks:
+      - "Wind has a direction; temperature only flattens or sharpens the distribution and keeps the ranking."
+      - "T=0 picks the top token every time, while calm air still spreads seeds a little."
+      - "T=0 is not a guarantee of identical outputs across calls."
+      - "\"Less likely\" is not \"wrong\": for extraction it usually is, for brainstorming it is often the useful choice."
+    contrast: >-
+      Temperature reshapes the whole distribution; top-p / top-k cut off the tail. Low
+      temperature for classification and extraction, higher for ideation.
+    whyTheName: >-
+      It is the same formula physics uses for molecules (Boltzmann distribution):
+      P(state) ∝ e^(−E/kT) vs P(token) ∝ e^(logit/T). Heat lets particles reach higher-energy
+      states; heat lets the model reach lower-probability tokens.
+    diagram: ccdv-f.D5.S1.diagram-temperature
+    sources:
+      - https://platform.claude.com/docs/en/api/messages

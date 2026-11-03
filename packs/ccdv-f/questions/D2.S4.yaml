@@ -1,7 +1,8 @@
 skill: D2.S4
 questions:
   - id: ccdv-f.D2.S4.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A client app retries any request that times out. After an incident, the team finds duplicate orders: the original POST /orders had actually succeeded on the server, and the automatic retry created a second order. Which understanding best guides the fix?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Idempotent - MDN Web Docs Glossary"
       url: "https://developer.mozilla.org/en-US/docs/Glossary/Idempotent"
   - id: ccdv-f.D2.S4.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "An integration calling a third-party REST API starts receiving HTTP 429 Too Many Requests responses that include a Retry-After header during traffic spikes. What should the developer do?"
     select: 1
     options:

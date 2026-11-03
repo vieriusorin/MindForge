@@ -15,6 +15,7 @@ exam:
   passScaled: 720
   scaleMin: 100
   scaleMax: 1000
+  date: "2026-12-07"
 domains:
   - code: D1
     name: Agents and Workflows

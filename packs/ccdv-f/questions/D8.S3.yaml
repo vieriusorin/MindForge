@@ -1,7 +1,7 @@
 skill: D8.S3
 questions:
   - id: ccdv-f.D8.S3.official-1
-    status: official
+    origin: official
     stem: "A team needs Claude to call an internal inventory service exposed as a REST API. They want the capability to be reusable across several Claude applications and maintained independently of any one app. Which approach best fits?"
     select: 1
     options:
@@ -25,7 +25,8 @@ questions:
       title: "Claude Certified Developer – Foundations Exam Guide v1.0, Sample 3"
       url: "https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf"
   - id: ccdv-f.D8.S3.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A team using Claude Code keeps pasting the same multi-step release checklist, plus several long reference documents, into chat whenever they cut a release. They want Claude to pick up this procedure when a release is being prepared, without paying the context cost in every other session. Which approach best fits?"
     select: 1
     options:
@@ -49,7 +50,8 @@ questions:
       title: "Extend Claude with skills"
       url: "https://code.claude.com/docs/en/skills"
   - id: ccdv-f.D8.S3.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "An application built on the Messages API must answer questions about current events with cited sources. The team does not want to build or host any search infrastructure. Which approach best fits?"
     select: 1
     options:

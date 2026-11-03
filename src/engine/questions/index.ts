@@ -9,5 +9,4 @@ export type {
   Question,
   QuestionFile,
   QuestionOption,
-  QuestionStatus,
 } from "./types";

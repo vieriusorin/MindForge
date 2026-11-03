@@ -1,7 +1,8 @@
 skill: D6.S3
 questions:
   - id: ccdv-f.D6.S3.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "An app uses structured outputs (output_config.format with a JSON schema) to extract order data, including a status field with enum values. Which two checks should the application still perform before trusting a response? (Select TWO.)"
     select: 2
     options:
@@ -29,7 +30,8 @@ questions:
       title: "Structured outputs"
       url: "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
   - id: ccdv-f.D6.S3.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A coding agent reports, in confident language, that it has fixed a bug and that \"all tests pass\". The team has been burned before by confident but incorrect claims. Which approach best fits?"
     select: 1
     options:

@@ -1,7 +1,8 @@
 skill: D1.S1
 questions:
   - id: ccdv-f.D1.S1.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A support team wants Claude to handle incoming tickets. Every ticket falls into one of four known categories (billing, login, shipping, refunds), and each category needs its own specialized prompt and follow-up steps. The steps for each category are well understood and should behave predictably. Which approach best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Building effective agents"
       url: "https://www.anthropic.com/engineering/building-effective-agents"
   - id: ccdv-f.D1.S1.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A developer is building a coding assistant that receives change requests such as \"rename this concept across the product\". Which files need to change, and how many, depends entirely on the request and cannot be known in advance. Which architecture best fits?"
     select: 1
     options:

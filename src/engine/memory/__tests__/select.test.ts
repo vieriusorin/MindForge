@@ -20,7 +20,8 @@ domains:
 const q = (id: string, skillCode: string): Question => ({
   id,
   skillCode,
-  status: "unreviewed",
+  origin: "ai",
+  author: "author@example.com",
   stem: id,
   select: 1,
   options: [

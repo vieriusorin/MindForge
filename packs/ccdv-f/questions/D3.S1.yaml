@@ -1,7 +1,8 @@
 skill: D3.S1
 questions:
   - id: ccdv-f.D3.S1.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "In a monorepo, a developer adds packages/web/CLAUDE.md with frontend conventions and starts Claude Code from the repository root, which has its own CLAUDE.md. When do the frontend conventions reach Claude's context?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "How Claude remembers your project"
       url: "https://code.claude.com/docs/en/memory"
   - id: ccdv-f.D3.S1.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A CI job runs Claude Code to summarize a repository. The result must be machine-readable, and the run must behave the same on every machine, unaffected by hooks, MCP servers, or CLAUDE.md files a developer may have in ~/.claude. Which invocation best fits?"
     select: 1
     options:

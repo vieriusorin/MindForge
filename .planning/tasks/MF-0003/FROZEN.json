@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "src/engine/questions/__tests__/mf-0003-questions.acceptance.test.ts",
-      "sha256": "77081ab09eb2d716a8e1a1e8997d3d871a1193771223129c11461d6dba5a75e0",
+      "sha256": "676eec940716bc0e72e20ff3620ae87c5ff9924c36c8d227ed2b135f06495616",
       "first_failure": "SC-1/2/6: Error: not implemented (load-questions.ts / playable.ts stubs)"
     },
     {
@@ -18,5 +18,13 @@
       "first_failure": "SC-5: Cannot find module scripts/sync-question-keys.mjs; SC-4a: expected null to be true (record_attempt absent); same on 2nd run"
     }
   ],
-  "history": []
+  "history": [
+    {
+      "at": "2026-11-03T14:18:13Z",
+      "reason": "MF-0006 C-2: rename-only - status -> origin (fixture: status: unreviewed -> origin: ai + author), q.status -> q.origin in SC-2, DTO key \"status\" -> \"origin\" in SC-6. Every key/rationale assertion otherwise byte-identical. Approved by user 2026-11-03. Hash over LF content (as stored by git; this Windows checkout is CRLF).",
+      "previous": {
+        "src/engine/questions/__tests__/mf-0003-questions.acceptance.test.ts": "77081ab09eb2d716a8e1a1e8997d3d871a1193771223129c11461d6dba5a75e0"
+      }
+    }
+  ]
 }

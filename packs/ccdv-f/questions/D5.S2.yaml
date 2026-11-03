@@ -1,7 +1,8 @@
 skill: D5.S2
 questions:
   - id: ccdv-f.D5.S2.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A team wrote its own HTTP wrapper around the Claude API. It has no retry logic, and it detects error types by string-matching error messages. Transient failures such as rate limits and 5xx errors frequently surface to users. What should the developer do?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Claude API errors"
       url: "https://platform.claude.com/docs/en/api/errors"
   - id: ccdv-f.D5.S2.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A developer streams responses that include tool calls over server-sent events. Their code calls JSON.parse on each input_json_delta event and keeps throwing parse errors. What should the developer do?"
     select: 1
     options:

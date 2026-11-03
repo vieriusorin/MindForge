@@ -197,6 +197,9 @@ Order: schema/types → pure logic + its oracle tests → service → action →
 - Diverged from the plan? Update `LOOP-PLAN.md` before continuing, not after.
 - Stay inside the ticket. Pre-existing breakage you trip over is noted, not fixed.
 - Format/fix only your own paths. Never commit.
+- One-off content migrations: match indentation with `[ \t]+`, never `\s` — with the `m` flag JS
+  treats `\r` as a line end, so `^\s+` swallows the newline in CRLF files. Check the diff's line
+  count against the expected count before running tests (MF-0006 retro).
 
 ## Stage 4 — TEST (the feedback loop)
 

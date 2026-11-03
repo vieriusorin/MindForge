@@ -1,7 +1,8 @@
 skill: D7.S3
 questions:
   - id: ccdv-f.D7.S3.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A team wants Claude Code to be stopped before it runs any Bash command that deletes files recursively in the repository, and wants Claude to be told why the command was blocked. Which control best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Hooks reference"
       url: "https://code.claude.com/docs/en/hooks"
   - id: ccdv-f.D7.S3.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A developer writes a PreToolUse hook that returns permissionDecision \"allow\" for git push commands, to avoid prompts. The organization's managed settings contain a deny rule matching git push. What happens when Claude tries to run git push?"
     select: 1
     options:

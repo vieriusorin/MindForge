@@ -1,7 +1,8 @@
 skill: D8.S1
 questions:
   - id: ccdv-f.D8.S1.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "An agent has three tools named search, lookup and find, each with a one-line description. Claude often picks the wrong one, and the team plans to add tools for two more services. Which change best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Define tools"
       url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"
   - id: ccdv-f.D8.S1.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A client-side get_weather tool sometimes fails because the upstream weather service is down, and occasionally Claude calls it without the required location parameter. How should the harness handle these cases? (Select TWO.)"
     select: 2
     options:

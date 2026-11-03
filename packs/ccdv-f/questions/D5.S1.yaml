@@ -1,7 +1,8 @@
 skill: D5.S1
 questions:
   - id: ccdv-f.D5.S1.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A developer estimates context usage by counting only the tokens in user messages. Their agent, which has many tool definitions and returns large tool results, starts receiving a 400 \"prompt is too long\" error even though the user messages are short. Which understanding best explains this and guides the fix?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Context windows"
       url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"
   - id: ccdv-f.D5.S1.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A high-volume service uses Claude for short, simple classification requests. Quality on the team's evals is already good, but the team wants lower latency and fewer tokens per response without switching models. What should the developer do?"
     select: 1
     options:
