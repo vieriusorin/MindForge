@@ -1,0 +1,54 @@
+skill: D5.S4
+questions:
+  - id: ccdv-f.D5.S4.q1
+    status: unreviewed
+    stem: "A chatbot sends a large, unchanging reference document on every request and enables prompt caching. However, usage shows cache_read_input_tokens is always 0. The system prompt starts with a line containing the current timestamp, followed by the reference document. What should the developer do?"
+    select: 1
+    options:
+      - id: A
+        text: "Move the timestamp and other per-request content after the cached prefix, so the cache breakpoint sits on the last block that is identical across requests."
+        correct: true
+        rationale: "Caching matches the full prefix up to the breakpoint and requires identical segments; content that changes every request, such as a timestamp, inside the prefix means the cache never hits."
+      - id: B
+        text: "Switch to the 1-hour cache TTL so entries live longer."
+        correct: false
+        rationale: "A longer TTL does not help when the prefix differs on every request."
+      - id: C
+        text: "Add more cache breakpoints throughout the conversation."
+        correct: false
+        rationale: "Extra breakpoints do not fix a prefix that changes at its very start."
+      - id: D
+        text: "Disable caching, because large documents cannot be cached."
+        correct: false
+        rationale: "Large reference documents are exactly the kind of stable content caching is meant for."
+    source:
+      title: "Prompt caching"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+  - id: ccdv-f.D5.S4.q2
+    status: unreviewed
+    stem: "A developer is building a cost and throughput model for an app that relies heavily on prompt caching. Which two statements are accurate? (Select TWO.)"
+    select: 2
+    options:
+      - id: A
+        text: "The input_tokens usage field reports the total number of input tokens in the request."
+        correct: false
+        rationale: "input_tokens covers only tokens after the last cache breakpoint, so with caching it can be much smaller than the total input."
+      - id: B
+        text: "Total input tokens equal cache_read_input_tokens + cache_creation_input_tokens + input_tokens."
+        correct: true
+        rationale: "This is the documented formula for total input when prompt caching is used."
+      - id: C
+        text: "Setting a high max_tokens reduces available output-tokens-per-minute (OTPM) capacity even if the model writes a short answer."
+        correct: false
+        rationale: "OTPM counts only the output tokens actually generated; max_tokens does not factor into OTPM."
+      - id: D
+        text: "Cached prompt prefixes no longer occupy the context window."
+        correct: false
+        rationale: "Cached prefixes still occupy the context window; caching changes what you pay, not whether they count."
+      - id: E
+        text: "For most current models, cache_read_input_tokens do not count toward the input-tokens-per-minute (ITPM) rate limit."
+        correct: true
+        rationale: "For most models only uncached input tokens (input_tokens plus cache_creation_input_tokens) count toward ITPM, which makes caching a way to raise effective throughput."
+    source:
+      title: "Rate limits"
+      url: "https://platform.claude.com/docs/en/api/rate-limits"

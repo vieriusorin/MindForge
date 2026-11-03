@@ -1,0 +1,20 @@
+# Placeholder second pack (spec G6 / ❓Q-7): proves a non-exam curriculum loads with zero code changes.
+# Replace with a real pack when the team picks one.
+slug: team-onboarding-sample
+name: Team onboarding (sample)
+kind: onboarding
+version: 1
+domains:
+  - code: W
+    name: Ways of working
+    weight: 60
+    skills:
+      - { code: W.1, name: Git workflow and reviews, weight: 25 }
+      - { code: W.2, name: Ticket lifecycle (SDLC loop), weight: 20 }
+      - { code: W.3, name: Release and deployment, weight: 15 }
+  - code: P
+    name: Product basics
+    weight: 40
+    skills:
+      - { code: P.1, name: Who our users are, weight: 20 }
+      - { code: P.2, name: The core learning loop, weight: 20 }

@@ -1,0 +1,50 @@
+skill: D3.S1
+questions:
+  - id: ccdv-f.D3.S1.q1
+    status: unreviewed
+    stem: "In a monorepo, a developer adds packages/web/CLAUDE.md with frontend conventions and starts Claude Code from the repository root, which has its own CLAUDE.md. When do the frontend conventions reach Claude's context?"
+    select: 1
+    options:
+      - id: A
+        text: "When Claude reads, writes, or edits a file in packages/web, because CLAUDE.md files in subdirectories load on demand."
+        correct: true
+        rationale: "Files in the directory hierarchy above the working directory load at launch; CLAUDE.md files in subdirectories load once Claude reads, writes, or edits a file in that subdirectory."
+      - id: B
+        text: "At launch, together with the root CLAUDE.md, because every CLAUDE.md in the repository is loaded at startup."
+        correct: false
+        rationale: "Only files in the working directory and directories above it load at launch; subdirectory files load on demand."
+      - id: C
+        text: "Never, unless the root CLAUDE.md imports it with an @path import."
+        correct: false
+        rationale: "Imports are one option, but subdirectory CLAUDE.md files are discovered and loaded on demand without them."
+      - id: D
+        text: "Only if the file is renamed CLAUDE.local.md."
+        correct: false
+        rationale: "CLAUDE.local.md is for personal, uncommitted preferences; it does not change when subdirectory instructions load."
+    source:
+      title: "How Claude remembers your project"
+      url: "https://code.claude.com/docs/en/memory"
+  - id: ccdv-f.D3.S1.q2
+    status: unreviewed
+    stem: "A CI job runs Claude Code to summarize a repository. The result must be machine-readable, and the run must behave the same on every machine, unaffected by hooks, MCP servers, or CLAUDE.md files a developer may have in ~/.claude. Which invocation best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "claude --continue \"Summarize this project\""
+        correct: false
+        rationale: "--continue resumes the most recent conversation; it neither runs non-interactively on its own nor produces structured output."
+      - id: B
+        text: "claude --bare -p \"Summarize this project\" --output-format json --allowedTools \"Read\""
+        correct: true
+        rationale: "-p runs non-interactively, --output-format json returns structured output with the result and metadata, and --bare skips auto-discovery of hooks, skills, MCP servers, auto memory and CLAUDE.md for reproducible scripted runs."
+      - id: C
+        text: "Start an interactive claude session in the CI container and pipe keystrokes into it."
+        correct: false
+        rationale: "Interactive sessions are for human use; non-interactive mode with -p is the supported way to run in scripts and CI."
+      - id: D
+        text: "claude -p \"Summarize this project\" with the default text output, relying on the repository's CLAUDE.md for consistency."
+        correct: false
+        rationale: "Default text output is not structured, and without --bare the run loads hooks, MCP servers and CLAUDE.md from the environment, so it can differ across machines."
+    source:
+      title: "Run Claude Code programmatically"
+      url: "https://code.claude.com/docs/en/headless"

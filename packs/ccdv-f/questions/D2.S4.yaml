@@ -1,0 +1,50 @@
+skill: D2.S4
+questions:
+  - id: ccdv-f.D2.S4.q1
+    status: unreviewed
+    stem: "A client app retries any request that times out. After an incident, the team finds duplicate orders: the original POST /orders had actually succeeded on the server, and the automatic retry created a second order. Which understanding best guides the fix?"
+    select: 1
+    options:
+      - id: A
+        text: "All HTTP methods are idempotent, so the duplicates must come from a server bug unrelated to the retry."
+        correct: false
+        rationale: "Not all methods are idempotent; POST and PATCH are not guaranteed to be."
+      - id: B
+        text: "GET is the safest method, so the client should send order creation as a GET request with query parameters."
+        correct: false
+        rationale: "Safe methods are read-only; using GET to create resources violates its semantics."
+      - id: C
+        text: "POST is not guaranteed to be idempotent, so blind retries can repeat its effect; the retry design must make repeated requests have the same effect as one (for example, creating the order with PUT to a client-chosen resource URI, since PUT is idempotent)."
+        correct: true
+        rationale: "A method is idempotent when several identical requests have the same intended effect as one; PUT and DELETE are idempotent, while POST is not guaranteed to be, so retrying POST can add a second row."
+      - id: D
+        text: "Idempotent requests never have side effects, so the server must avoid writing anything during order creation."
+        correct: false
+        rationale: "Idempotency is about the intended effect of repeated requests being the same as one request, not about having no side effects at all."
+    source:
+      title: "Idempotent - MDN Web Docs Glossary"
+      url: "https://developer.mozilla.org/en-US/docs/Glossary/Idempotent"
+  - id: ccdv-f.D2.S4.q2
+    status: unreviewed
+    stem: "An integration calling a third-party REST API starts receiving HTTP 429 Too Many Requests responses that include a Retry-After header during traffic spikes. What should the developer do?"
+    select: 1
+    options:
+      - id: A
+        text: "Treat 429 as a permanent failure and drop the request."
+        correct: false
+        rationale: "429 means the client sent too many requests in a given time; it asks the client to slow down, not that the request is invalid."
+      - id: B
+        text: "Wait at least as long as the Retry-After header indicates before retrying, and slow the request rate."
+        correct: true
+        rationale: "429 is rate limiting, and Retry-After may be included to tell the client how long to wait before making the request again."
+      - id: C
+        text: "Retry immediately in a tight loop until the request succeeds."
+        correct: false
+        rationale: "Immediate retries add to the request rate that triggered the rate limit in the first place."
+      - id: D
+        text: "Handle it the same way as a 500 error by alerting on-call and stopping the service."
+        correct: false
+        rationale: "429 is a client-side rate-limit signal, not a server fault, and it comes with guidance on when to retry."
+    source:
+      title: "429 Too Many Requests - MDN Web Docs"
+      url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/429"

@@ -1,0 +1,74 @@
+skill: D7.S1
+questions:
+  - id: ccdv-f.D7.S1.official-1
+    status: official
+    stem: "A Claude-powered agent summarizes web pages submitted by end users. One page contains hidden text instructing the model to ignore previous instructions and reveal its system prompt. Which mitigation is most effective?"
+    select: 1
+    options:
+      - id: A
+        text: "Raise the model's temperature so its behavior is harder to predict."
+        correct: false
+        rationale: "Temperature is irrelevant to injection."
+      - id: B
+        text: "Treat retrieved page content as untrusted input, keep it separate from trusted instructions, and use guardrails or hooks so injected instructions cannot trigger sensitive actions."
+        correct: true
+        rationale: "Prompt injection is addressed by isolating untrusted content from trusted instructions and enforcing least-privilege guardrails so injected text cannot invoke sensitive tools."
+      - id: C
+        text: "Add a line to the system prompt asking users not to include malicious instructions."
+        correct: false
+        rationale: "A polite request is not an enforceable control."
+      - id: D
+        text: "Switch to a larger model that follows instructions more reliably."
+        correct: false
+        rationale: "A more instruction-following model can be more susceptible, not less."
+    source:
+      title: "Claude Certified Developer – Foundations Exam Guide v1.0, Sample 2"
+      url: "https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf"
+  - id: ccdv-f.D7.S1.q1
+    status: unreviewed
+    stem: "An email-triage agent reads inbound emails from unknown senders on behalf of a trusted user. The developer currently concatenates each email body into the system prompt before asking Claude to triage it. How should the application deliver the email content?"
+    select: 1
+    options:
+      - id: A
+        text: "Keep the email in the system prompt, because content there is treated as most authoritative."
+        correct: false
+        rationale: "That is exactly the problem: untrusted content should never be placed where trusted instructions live."
+      - id: B
+        text: "Strip the phrase \"ignore previous instructions\" from emails and keep the current structure."
+        correct: false
+        rationale: "Filtering one known phrase is easily bypassed and does not separate untrusted data from instructions."
+      - id: C
+        text: "Deliver the email inside a tool_result block, JSON-encoded and labeled with its source (an inbound email from an unknown sender), and state in the system prompt that tool content is untrusted data that must never override instructions."
+        correct: true
+        rationale: "The guidance for indirect injection is to put untrusted content only in tool results, make its nature and source explicit, JSON-encode it so it cannot break out of its delimiters, and state the untrusted-content policy in the system prompt."
+      - id: D
+        text: "Put the developer's own triage instructions inside the same tool result as the email so they stay together."
+        correct: false
+        rationale: "Claude treats tool-result content as untrusted, so the developer's instructions placed there might be ignored or flagged; instructions belong in a user turn after the tool_result."
+    source:
+      title: "Mitigate jailbreaks and prompt injections"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
+  - id: ccdv-f.D7.S1.q2
+    status: unreviewed
+    stem: "A document-summarization agent has a database tool with full read and write access to all customer records, and a production API key is pasted into its system prompt \"in case it is needed\". The agent processes documents from external sources. Which change most reduces the impact of a successful prompt injection?"
+    select: 1
+    options:
+      - id: A
+        text: "Add a sentence to the system prompt telling Claude never to reveal the API key."
+        correct: false
+        rationale: "An instruction is not an enforceable control; the secret is still in context and can be leaked by a successful injection."
+      - id: B
+        text: "Use a larger model that is harder to manipulate."
+        correct: false
+        rationale: "Model choice does not limit what an attacker can reach once an injection succeeds."
+      - id: C
+        text: "Log every tool call for later review but keep the current access."
+        correct: false
+        rationale: "Monitoring is useful, but it detects damage after the fact rather than limiting it."
+      - id: D
+        text: "Apply least privilege: remove secrets the agent does not need from its context, scope the database tool to the minimum read-only operations required, and run tools in a sandbox."
+        correct: true
+        rationale: "Limiting access to sensitive data and actions means a successful injection can do minimal damage: no unneeded secrets, sandboxed tools, and permissions scoped as narrowly as possible."
+    source:
+      title: "Mitigate jailbreaks and prompt injections"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"

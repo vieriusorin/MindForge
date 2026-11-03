@@ -1,0 +1,50 @@
+skill: D5.S3
+questions:
+  - id: ccdv-f.D5.S3.q1
+    status: unreviewed
+    stem: "A team needs to classify and route millions of short incoming messages per day. Latency must be very low and cost per message is a major concern; the task is straightforward. Which model choice best fits as a starting point?"
+    select: 1
+    options:
+      - id: A
+        text: "The most capable model available, to guarantee the highest accuracy."
+        correct: false
+        rationale: "The most capable models are slower and costlier; they suit demanding reasoning and long-horizon work, not high-volume simple routing."
+      - id: B
+        text: "An Opus model at maximum effort, since routing errors are costly."
+        correct: false
+        rationale: "Opus at maximum effort maximizes capability at the expense of latency and cost, the opposite of what this workload needs."
+      - id: C
+        text: "Any model, because model choice does not affect latency or cost."
+        correct: false
+        rationale: "Models differ in comparative latency and price; choosing a model means balancing capabilities, speed and cost."
+      - id: D
+        text: "A Haiku model, then evaluate on real data and upgrade only if there is a capability gap."
+        correct: true
+        rationale: "Haiku is positioned for high-volume, latency-sensitive tasks such as classification, extraction and routing, and the efficiency-first approach starts there and upgrades only if needed."
+    source:
+      title: "Choosing the right model"
+      url: "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model"
+  - id: ccdv-f.D5.S3.q2
+    status: unreviewed
+    stem: "A team plans to move a production integration to a newer Claude model release. The integration forces tool use with tool_choice and has carefully tuned prompts. What should the developer do before switching?"
+    select: 1
+    options:
+      - id: A
+        text: "Change the model ID in production, since newer models are strictly better and fully backward compatible."
+        correct: false
+        rationale: "Newer releases can include breaking changes; for example, some current models reject forced tool use."
+      - id: B
+        text: "Review the release's breaking changes, then run the team's own evaluation set with real prompts and data against both models and compare accuracy, quality, edge cases and cost before switching."
+        correct: true
+        rationale: "Creating use-case-specific benchmark tests is the most important step when deciding whether to change models, and integrations that force tool use should check the breaking changes before switching."
+      - id: C
+        text: "Rely on public benchmark results, since they predict performance on any workload."
+        correct: false
+        rationale: "The guidance is to test with your actual prompts and data, because public benchmarks do not reflect your use case."
+      - id: D
+        text: "Never upgrade, because any behavior change is a risk."
+        correct: false
+        rationale: "Older models are eventually deprecated and retired, so avoiding upgrades only delays a forced migration."
+    source:
+      title: "Choosing the right model"
+      url: "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model"

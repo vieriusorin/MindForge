@@ -1,0 +1,50 @@
+skill: D2.S1
+questions:
+  - id: ccdv-f.D2.S1.q1
+    status: unreviewed
+    stem: "A product owner's requirement for a new sentiment-classification feature reads: \"The model should classify customer sentiment well.\" The developer must turn this business requirement into something the team can build and test against. Which requirement best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "\"The model should be accurate and produce good results for customers.\""
+        correct: false
+        rationale: "This is still vague: it is neither specific about the task nor measurable."
+      - id: B
+        text: "\"The model should be at least as good as the best published model on any benchmark.\""
+        correct: false
+        rationale: "Targets should be achievable and relevant to the application; an arbitrary benchmark comparison is neither tied to this use case nor necessarily realistic."
+      - id: C
+        text: "\"On a held-out test set of diverse, representative customer messages, the classifier achieves an F1 score of at least an agreed threshold, improving on the current baseline.\""
+        correct: true
+        rationale: "Good success criteria are specific, measurable, achievable and relevant: a defined task, a quantitative metric, a representative held-out set, and a target grounded in the current baseline."
+      - id: D
+        text: "\"The model should never misclassify a message.\""
+        correct: false
+        rationale: "A zero-error target is unrealistic for current model capabilities; criteria should be achievable."
+    source:
+      title: "Define your success criteria"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/define-success"
+  - id: ccdv-f.D2.S1.q2
+    status: unreviewed
+    stem: "A call-center business requirement says support agents must see a suggested reply while the customer is still on the phone, the feature must stay within budget, and replies must never expose other customers' data. The developer is writing the requirements the solution will be evaluated against. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Define several measurable criteria together: task fidelity on a representative test set, a response-time target that fits a live call, a per-call cost budget, and a privacy criterion for handling personal data."
+        correct: true
+        rationale: "Most use cases need multidimensional criteria; latency, price and privacy preservation are common criteria alongside task fidelity, and each should be measurable."
+      - id: B
+        text: "Define a single accuracy metric, since quality is what customers notice."
+        correct: false
+        rationale: "A single metric ignores the stated latency, cost and privacy requirements, which are also part of what success means here."
+      - id: C
+        text: "Write \"responses must be fast and safe\" and let the team interpret it during implementation."
+        correct: false
+        rationale: "\"Fast\" and \"safe\" are not measurable; vague criteria cannot be tested or used to compare designs."
+      - id: D
+        text: "Specify only the response-time target, because the phone-call constraint is the hardest requirement."
+        correct: false
+        rationale: "Latency alone leaves fidelity, cost and privacy undefined, so a fast but wrong or leaky system would pass."
+    source:
+      title: "Define your success criteria"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/define-success"

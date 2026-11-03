@@ -1,0 +1,157 @@
+# Claude Certified Developer – Foundations (CCDV-F)
+# Every name and weight below is copied from the official Exam Guide v1.0 (July 2026), section 6.
+# Skill codes (D<domain>.S<n>) are MindForge's, assigned in the guide's order.
+slug: ccdv-f
+name: Claude Certified Developer – Foundations
+kind: exam
+version: 1
+source:
+  title: Claude Certified Developer – Foundations Exam Guide v1.0 (Anthropic, July 2026)
+  url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+exam:
+  code: CCDV-F
+  questions: 53
+  minutes: 120
+  passScaled: 720
+  scaleMin: 100
+  scaleMax: 1000
+domains:
+  - code: D1
+    name: Agents and Workflows
+    weight: 14.7
+    skills:
+      - code: D1.S1
+        name: Agent Architecture
+        weight: 4.5
+        description: Workflow vs agent decision criteria, manager/supervisor hierarchies, and the role of subagents.
+      - code: D1.S2
+        name: Agent Construction with Claude
+        weight: 5.3
+        description: Claude Agent SDK, custom agent loops and harnesses, self-hosted vs Anthropic-hosted agents, hooks for deterministic actions.
+      - code: D1.S3
+        name: Agent Patterns and Frameworks
+        weight: 4.9
+        description: Tool-use loops, sub-agents, memory, context-window management, and frameworks such as Strands, LangGraph, PydanticAI.
+
+  - code: D2
+    name: Applications and Integration
+    weight: 33.1
+    skills:
+      - code: D2.S1
+        name: Understanding Requirements
+        weight: 3.4
+        description: Functional and infrastructure requirements derived from business requirements and solution architecture.
+      - code: D2.S2
+        name: Systems Life Cycle
+        weight: 2.8
+        description: Life cycle management concepts for developing, implementing, operating and maintaining IT systems.
+      - code: D2.S3
+        name: Claude API Mechanics
+        weight: 6.8
+        description: Messages, tools, streaming, vision, thinking, caching, third-party vendors, data access patterns, batch API, realtime vs batch tradeoffs.
+      - code: D2.S4
+        name: Software Engineering Foundations
+        weight: 7.4
+        description: REST APIs, JSON, async programming, version control, SDLC integration, code review, refactoring.
+      - code: D2.S5
+        name: Claude Application Design
+        weight: 8.6
+        description: How Claude interprets instructions across interfaces, content boundaries, schema design, session hygiene, plugin management.
+      - code: D2.S6
+        name: Configuration Management
+        weight: 4.1
+        description: CLAUDE.md files, settings.json, model version pinning, prompt versioning, plugin dependencies.
+
+  - code: D3
+    name: Claude Code
+    weight: 3.1
+    skills:
+      - code: D3.S1
+        name: Claude Code Operation
+        weight: 3.1
+        description: Rules, Skills, Commands, Agents, Agent Memory; sessions, slash commands, headless/streaming/auto modes; CLAUDE.md hierarchy; settings.json.
+
+  - code: D4
+    name: Eval, Testing, and Debugging
+    weight: 2.6
+    skills:
+      - code: D4.S1
+        name: Debugging and Error Handling
+        weight: 2.6
+        description: Error types, recovery strategies, trace analysis of failure modes, isolating integration-layer vs model-output problems.
+
+  - code: D5
+    name: Model Selection and Optimization
+    weight: 16.8
+    skills:
+      - code: D5.S1
+        name: LLM Fundamentals
+        weight: 5.2
+        description: Tokens, context windows, sampling, non-determinism; fast mode, extended/adaptive thinking, effort levels; zero/single/multi-shot prompting.
+      - code: D5.S2
+        name: Technical Fundamentals
+        weight: 6.1
+        description: Engineering practices for AI apps, including SDKs that wrap REST APIs and websockets.
+      - code: D5.S3
+        name: Model Selection and Tradeoffs
+        weight: 2.7
+        description: Opus vs Sonnet vs Haiku use cases, quality/latency/cost tradeoffs, breaking behavior changes across releases.
+      - code: D5.S4
+        name: Cost and Token Management
+        weight: 2.8
+        description: Token budgeting, usage tracking, cost modeling, prompt caching and cache check-pointing.
+
+  - code: D6
+    name: Prompt and Context Engineering
+    weight: 11.0
+    skills:
+      - code: D6.S1
+        name: Context Engineering
+        weight: 3.8
+        description: Context window management, preventing drift and bloat (tool output pruning, compaction), context isolation via subagents.
+      - code: D6.S2
+        name: Prompt Engineering
+        weight: 4.6
+        description: Instruction clarity, few-shot examples, system vs user placement, output constraints, iterative refinement, input sanitization.
+      - code: D6.S3
+        name: Output Handling
+        weight: 2.6
+        description: Structured output patterns, response validation, defensive parsing, skepticism toward confident output.
+
+  - code: D7
+    name: Security and Safety
+    weight: 8.1
+    skills:
+      - code: D7.S1
+        name: AI Application Security
+        weight: 3.2
+        description: Prompt injection and jailbreak defense, untrusted input, data leakage, PII handling, authn/authz, confidentiality and integrity.
+      - code: D7.S2
+        name: Guardrails and Safe Deployment
+        weight: 2.3
+        description: Content policy, guardrail layering, secure-by-design, privacy, IAM, least privilege.
+      - code: D7.S3
+        name: Claude Hooks
+        weight: 1.0
+        description: Hooks as guardrails and safety controls that prevent destructive actions.
+      - code: D7.S4
+        name: Identity, Secrets, and Key Management
+        weight: 1.6
+        description: Secrets, credentials and API keys across environments; identity validation, access approval, authorized access monitoring.
+
+  - code: D8
+    name: Tools and MCPs
+    weight: 10.6
+    skills:
+      - code: D8.S1
+        name: Tool Implementation
+        weight: 4.4
+        description: Function calling, tool descriptions, error handling, harness dispatch, client vs server-side tools, approval patterns, tool set design.
+      - code: D8.S2
+        name: MCP Server Development
+        weight: 2.1
+        description: Authoring and deploying MCP servers; resources, tools and prompts; stdio, sockets, client vs server.
+      - code: D8.S3
+        name: Agentic Customization
+        weight: 4.1
+        description: Tradeoffs among built-in tools, custom tools, Skills and MCPs for a given use case.

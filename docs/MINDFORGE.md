@@ -74,7 +74,7 @@ MindForge turns any structured curriculum into a **living forest you grow by rem
 |---|---|---|
 | G1 | Everyone in the first cohort passes CCDV-F on 2026-12-07 | Exam results (shared voluntarily) |
 | G2 | Each member's forest is ≥ 80% "healthy" (FSRS retrievability ≥ 0.85) 5 days before the exam | App |
-| G3 | All 27 skills have a nature card, a diagram, and ≥ 15 approved questions | Coverage dashboard |
+| G3 | All 25 skills have a nature card, a diagram, and ≥ 15 approved questions | Coverage dashboard |
 | G4 | Content is correct | Each item needs ≥ 2 human approvals; 0 open "flagged as wrong" items in exam week |
 | G5 | People come back because they want to | ≥ 5 sessions/week per member, without notification spam |
 | G6 | The engine is truly pack-agnostic | A second, small pack (e.g. a 5-skill internal topic) loads **with zero code changes** before Dec 7 |
@@ -197,6 +197,37 @@ Every concept gets a **nature card**:
 | Streaming | **A river** delivering water continuously vs a lake you collect from once | |
 | Least privilege | **Cell membrane**: only lets through what the cell needs | |
 | Evals | **Field ecologist sampling plots**: measure systematically, don't judge by one walk | |
+| Temperature (sampling) | **Seed dispersal on a windy day**: in calm air almost every seed lands under the parent tree (the most likely token); in strong wind seeds scatter far, a few onto fertile new ground (creativity), many onto rock (nonsense) | Wind pushes seeds in a *direction*; temperature never changes which token is most likely, only how strongly it dominates. Calm air still spreads seeds a little, but T=0 is (near-)greedy. T=0 does not guarantee identical outputs |
+
+**Example full card: Temperature** (skill: LLM Fundamentals, proposed for review):
+
+| Field | Content |
+|---|---|
+| **Simply** | Temperature controls how adventurous the model is when picking the next token. Low: it almost always takes the top choice. High: less likely choices get picked more often. The model's knowledge (its logits) is unchanged; only the sampling is reshaped. |
+| **In nature** | Seeds in the wind. Calm air drops them under the tree; strong wind scatters them, sometimes onto fertile ground, often onto rock. Temperature is the wind. |
+| **Where it breaks** | (1) Wind has a direction; temperature only flattens or sharpens the distribution and keeps the ranking. (2) T=0 picks the top token every time, while calm air still spreads seeds a little. (3) T=0 is not a guarantee of identical outputs across calls. (4) "Less likely" is not "wrong": for extraction it usually is, for brainstorming it is often the useful choice. |
+| **Why "temperature"?** | It is the same formula physics uses for molecules (Boltzmann distribution): P(state) ∝ e^(−E/kT) vs P(token) ∝ e^(logit/T). Heat lets particles reach higher-energy states; heat lets the model reach lower-probability tokens. |
+| **Diagram** | One bar chart at three temperatures, next to seeds landing near or far from the tree (see below). |
+| **Contrast** | Temperature *reshapes* the whole distribution; top-p / top-k *cut off* the tail. Low temperature for classification and extraction, higher for ideation. |
+| **Sources** | Claude API docs, `temperature` parameter (range and default to be verified against current docs before approval) |
+
+Worked numbers for the diagram (logits `[2, 1, 0]`, softmax of `logit / T`):
+
+| Temperature | Token A | Token B | Token C | Seeds |
+|---|---|---|---|---|
+| 0.5 (calm) | 87% | 12% | 2% | almost all under the tree |
+| 1.0 (as trained) | 67% | 24% | 9% | a natural spread |
+| 2.0 (storm) | 51% | 31% | 19% | scattered far |
+
+```mermaid
+flowchart LR
+  L[Model logits<br/>parent tree] --> T{Temperature<br/>wind strength}
+  T -- low --> C[Seeds land under the tree<br/>top token, consistent]
+  T -- medium --> M[Natural spread<br/>model's own distribution]
+  T -- high --> H[Seeds scatter far<br/>rare tokens: fresh ideas or nonsense]
+```
+
+**Game hooks:** *Diagram Builder*: "set the wind to the temperature that produced this distribution". *Scenario Duel*: "A JSON extraction pipeline returns inconsistent fields between runs. What do you change first?"
 
 Later (Phase 2): a **personal analogy profile** (hobbies, profession, own projects) as extra themes. Nature stays the default because it's universal and visual.
 
@@ -295,15 +326,17 @@ Principles: every generated item carries citations and the prompt version. Untru
 
 ### 2.10 Open questions
 
-- **❓Q-1** Supabase or Drizzle+Turso? *Proposal: Supabase.*
-- **❓Q-2** Who pays for the Claude API, and what's the monthly cap?
-- **❓Q-3** Hosting: Vercel?
-- **❓Q-4** Group visibility: are individual forests visible to the group, or only aggregated? *Proposal: aggregated by default, individual opt-in.*
-- **❓Q-5** UI language: English only for v1?
-- **❓Q-6** First cohort size, and who codes vs. who reviews content?
-- **❓Q-7** Which pack is second (to prove G6)?
-- **❓Q-8** Who owns reviewing the nature analogy library?
-- **❓Q-9** Visual style of the forest: pixel art, flat illustration, or minimal geometric? (A designer is welcome.)
+All answered 2026-11-03. Details: `docs/plan/ROADMAP.md` §2, glossary `CONTEXT.md`, `docs/adr/`.
+
+- **Q-1** Supabase or Drizzle+Turso? → **Supabase** (auth + RLS).
+- **Q-2** Claude API → company pays; one key in a `mindforge` Console workspace, **$100/month cap**; AI runs only as a local generation script, never in the app (v1).
+- **Q-3** Hosting → **Vercel** + hosted Supabase (EU, Frankfurt) + **Resend** for email.
+- **Q-4** Group visibility → **aggregated heatmap only** (shown from 3 active members), avatar list; individual opt-in after Dec 7.
+- **Q-5** UI language → **English** for v1.
+- **Q-6** Team → **5–6 coders**, cohort of **~30**; every learner reviews (~2 reviews/day).
+- **Q-7** Second pack → G6 already met by `packs/team-onboarding-sample`; a real second pack after Dec 7.
+- **Q-8** Analogy library owner → the **Coder F** seat (analogy owner; required approval on every card).
+- **Q-9** Forest style → **minimal geometric**.
 
 ---
 
@@ -314,7 +347,7 @@ Principles: every generated item carries citations and the prompt version. Untru
 | # | Slice | Done when | Week |
 |---|---|---|---|
 | B1 | Scaffold: Next.js 16, Tailwind, shadcn, Supabase auth, CI | Logged-in user sees an empty forest | W1 |
-| B2 | Pack format + loader + CCDV-F pack | `packs/ccdv-f/` validates and loads; 8 regions, 27 seeds visible | W1 |
+| B2 | Pack format + loader + CCDV-F pack | `packs/ccdv-f/` validates and loads; 8 regions, 25 seeds visible | W1 |
 | B3 | Docs corpus fetch + cache | Official doc pages per skill stored and refreshable | W1 |
 | B4 | AI writers + verifier (batch) | ≥ 1 nature card, 1 diagram, 10 draft questions per skill, all with citations | W1–W2 |
 | B5 | Pollination (review workflow) | 2 approvals → approved; flag/reject works | W2 |
@@ -329,7 +362,7 @@ Principles: every generated item carries citations and the prompt version. Untru
 
 ### 3.2 Conventions
 
-- Every non-trivial change gets a ticket ID (`MF-###`) and goes through Plan → Design → Build → Test.
+- Every non-trivial change gets a ticket ID (`MF-####`) and goes through Plan → Design → Build → Test.
 - TypeScript strict. The engine lives in `src/engine/` (pure, framework-free). Server reads go in `src/server/services/`; components are UI-only.
 - Packs live in `packs/<slug>/`. Prompts live in `prompts/` with a version header. No secrets in the repo.
 

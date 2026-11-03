@@ -1,0 +1,10 @@
+imports: 13 relative imports checked
+ok   PreToolUse[Edit|Write] inject-rule-context.mjs" exit=0
+ok   PreToolUse[Edit|Write|NotebookEdit] guard-protected.mjs" exit=0
+ok   PreToolUse[Edit|Write|NotebookEdit] agent-scope.mjs" exit=0
+ok   PreToolUse[Bash] track-changes.mjs" exit=0
+ok   PostToolUse[Edit|Write|NotebookEdit|Bash] track-changes.mjs" exit=0
+ok   Stop stop-gate.mjs" exit=0
+ok   Stop retro-trigger.mjs" exit=0
+commands: 7 hook commands run
+check-hooks: PASS

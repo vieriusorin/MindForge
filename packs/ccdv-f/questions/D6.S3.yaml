@@ -1,0 +1,54 @@
+skill: D6.S3
+questions:
+  - id: ccdv-f.D6.S3.q1
+    status: unreviewed
+    stem: "An app uses structured outputs (output_config.format with a JSON schema) to extract order data, including a status field with enum values. Which two checks should the application still perform before trusting a response? (Select TWO.)"
+    select: 2
+    options:
+      - id: A
+        text: "Wrap every response in a regex-based JSON extractor, because structured outputs often return invalid JSON on normal completions."
+        correct: false
+        rationale: "On normal completions, structured outputs use constrained decoding and are always valid against the schema, so a regex extractor is unnecessary."
+      - id: B
+        text: "Prefill the assistant turn with an opening brace to force JSON."
+        correct: false
+        rationale: "Prefill is not supported on current models; structured outputs is the replacement for forcing a format."
+      - id: C
+        text: "Check stop_reason: if it is refusal or max_tokens, the output might not match the schema and must be handled separately (for example by retrying with a higher max_tokens)."
+        correct: true
+        rationale: "With a refusal the refusal message takes precedence over the schema, and with max_tokens the output may be incomplete, so schema compliance is not guaranteed in those cases."
+      - id: D
+        text: "Skip all checks, because structured outputs guarantee every response matches the schema exactly in every case."
+        correct: false
+        rationale: "The guarantee does not cover refusals or truncated outputs, and enum capitalization is not guaranteed."
+      - id: E
+        text: "Compare enum values case-insensitively, and avoid enum values that differ only in capitalization."
+        correct: true
+        rationale: "Structured outputs do not guarantee the capitalization of string enum and const values, so comparisons should be case-insensitive."
+    source:
+      title: "Structured outputs"
+      url: "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
+  - id: ccdv-f.D6.S3.q2
+    status: unreviewed
+    stem: "A coding agent reports, in confident language, that it has fixed a bug and that \"all tests pass\". The team has been burned before by confident but incorrect claims. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Give the agent a check it must run, such as the test suite or typecheck, and enforce it with a Stop hook so the turn cannot end until the check actually passes."
+        correct: true
+        rationale: "Confident output should be verified: a Stop hook is enforced by the harness and sends Claude back to work until the check passes, rather than relying on the model's own claim."
+      - id: B
+        text: "Accept the claim, since the model would not state that tests pass unless it had run them."
+        correct: false
+        rationale: "A model's statement is not evidence; claims should be backed by a check the harness or team can verify."
+      - id: C
+        text: "Ask the agent to rate its confidence from 1 to 10 and accept anything above 8."
+        correct: false
+        rationale: "A self-reported confidence score is still the model's own claim, not an independent verification."
+      - id: D
+        text: "Add \"Always run the tests before you finish\" to CLAUDE.md and trust that it happened."
+        correct: false
+        rationale: "A CLAUDE.md line works most of the time but not every time; enforcing a passing check is a job for a Stop hook."
+    source:
+      title: "Best practices for Claude Code"
+      url: "https://code.claude.com/docs/en/best-practices"

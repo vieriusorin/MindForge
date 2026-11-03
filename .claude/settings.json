@@ -9,7 +9,7 @@
             "type": "command",
             "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/inject-rule-context.mjs\"",
             "timeout": 5,
-            "statusMessage": "Checking P4T rules for this path"
+            "statusMessage": "Checking MindForge rules for this path"
           }
         ]
       },
@@ -51,17 +51,6 @@
         ]
       }
     ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/scripts/session-metrics.mjs\"",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "hooks": [
@@ -69,7 +58,7 @@
             "type": "command",
             "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/stop-gate.mjs\"",
             "timeout": 600,
-            "statusMessage": "PT-0315 Stop gate: typecheck, gates, lint, tests on changed files"
+            "statusMessage": "MindForge Stop gate: typecheck, gates, lint, tests on changed files"
           },
           {
             "type": "command",

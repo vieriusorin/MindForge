@@ -1,0 +1,50 @@
+skill: D2.S2
+questions:
+  - id: ccdv-f.D2.S2.q1
+    status: unreviewed
+    stem: "A production application depends on a Claude model that Anthropic has just marked as deprecated, with a recommended replacement and a retirement date. The application works fine today. What should the team do?"
+    select: 1
+    options:
+      - id: A
+        text: "Keep using the deprecated model, because deprecated models remain functional indefinitely."
+        correct: false
+        rationale: "Deprecated models are still functional only until the retirement date; after retirement, requests to the model fail."
+      - id: B
+        text: "Test the application against the recommended replacement well before the retirement date, then migrate all usage to it."
+        correct: true
+        rationale: "Once a model is deprecated, all usage should be migrated before the retirement date, and the guidance is to test applications with the new models well before retirement."
+      - id: C
+        text: "Wait until the retirement date and switch the model ID on that day to avoid unnecessary work."
+        correct: false
+        rationale: "Requests to retired models fail, and switching on the last day leaves no time to test and fix behavior differences."
+      - id: D
+        text: "Swap in the replacement model ID immediately in production without testing, since replacements are always backward compatible."
+        correct: false
+        rationale: "New models can behave differently; the guidance is thorough testing of the replacement on your tasks before relying on it."
+    source:
+      title: "Model deprecations"
+      url: "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+  - id: ccdv-f.D2.S2.q2
+    status: unreviewed
+    stem: "Several teams in one organization call the Claude API with different API keys. A platform engineer must find every remaining caller of a deprecated model before its retirement date. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Wait for the retirement date and fix whichever services start failing."
+        correct: false
+        rationale: "Waiting for failures turns a planned migration into a production incident."
+      - id: B
+        text: "Ask Anthropic to extend the retirement date for the organization."
+        correct: false
+        rationale: "This does not identify the callers, and the documented path is to migrate before the retirement date."
+      - id: C
+        text: "Search only the main repository for the model's name."
+        correct: false
+        rationale: "Other teams' services and configuration may live elsewhere, so a single-repo search can miss callers."
+      - id: D
+        text: "Export usage from the Usage page in the Claude Console and review the CSV, which breaks usage down by API key and model."
+        correct: true
+        rationale: "The documented audit is to export usage from the Console's Usage page; the CSV is broken down by API key and model, which identifies where deprecated models are still used."
+    source:
+      title: "Model deprecations"
+      url: "https://platform.claude.com/docs/en/about-claude/model-deprecations"

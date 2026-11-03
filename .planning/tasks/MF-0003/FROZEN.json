@@ -1,0 +1,22 @@
+{
+  "ticket": "MF-0003",
+  "frozen_at": "2026-11-03T08:00:27.768776Z",
+  "files": [
+    {
+      "path": "src/engine/questions/__tests__/mf-0003-questions.acceptance.test.ts",
+      "sha256": "77081ab09eb2d716a8e1a1e8997d3d871a1193771223129c11461d6dba5a75e0",
+      "first_failure": "SC-1/2/6: Error: not implemented (load-questions.ts / playable.ts stubs)"
+    },
+    {
+      "path": "src/engine/memory/__tests__/mf-0003-replay.acceptance.test.ts",
+      "sha256": "91cabad8f95f437f934b82ff374b436ecc2c957ad64f637c015a8f25d5e88cd6",
+      "first_failure": "SC-3/7: Error: not implemented (replay.ts / select.ts stubs)"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0003-attempts.db.acceptance.test.ts",
+      "sha256": "aaaeeb3cef141117fe41e109983f868bd139af9d9ee0c5dc1946c9e459e74562",
+      "first_failure": "SC-5: Cannot find module scripts/sync-question-keys.mjs; SC-4a: expected null to be true (record_attempt absent); same on 2nd run"
+    }
+  ],
+  "history": []
+}

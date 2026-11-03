@@ -1,0 +1,12 @@
+{
+  "ticket": "MF-0002",
+  "frozen_at": "2026-11-03T06:38:39.524165Z",
+  "files": [
+    {
+      "path": "src/server/db/__tests__/mf-0002-rls.db.acceptance.test.ts",
+      "sha256": "84ef58af06717fbd499dcddbee03e537d07f4e0e799ce25411db3349d709d867",
+      "first_failure": "SC-6: PostgresError relation \"public.profiles\" does not exist; SC-5/SC-3: PGRST202 function not found; SC-2/7/4: null data (tables absent). Same on a 2nd run."
+    }
+  ],
+  "history": []
+}

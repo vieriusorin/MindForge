@@ -1,0 +1,74 @@
+skill: D8.S3
+questions:
+  - id: ccdv-f.D8.S3.official-1
+    status: official
+    stem: "A team needs Claude to call an internal inventory service exposed as a REST API. They want the capability to be reusable across several Claude applications and maintained independently of any one app. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Hard-code the inventory logic into each application's system prompt."
+        correct: false
+        rationale: "Hard-coding logic into prompts is neither reusable nor maintainable."
+      - id: B
+        text: "Build an MCP server that exposes the inventory operations as tools so multiple Claude applications can connect to it."
+        correct: true
+        rationale: "An MCP server exposes reusable tools that multiple Claude applications can share and that can be maintained independently."
+      - id: C
+        text: "Paste the current inventory data into the context window on every request."
+        correct: false
+        rationale: "Pasting data gives no live access and wastes context."
+      - id: D
+        text: "Rely on a built-in tool, since built-in tools can reach any internal REST API."
+        correct: false
+        rationale: "Built-in tools do not automatically reach arbitrary internal APIs."
+    source:
+      title: "Claude Certified Developer – Foundations Exam Guide v1.0, Sample 3"
+      url: "https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf"
+  - id: ccdv-f.D8.S3.q1
+    status: unreviewed
+    stem: "A team using Claude Code keeps pasting the same multi-step release checklist, plus several long reference documents, into chat whenever they cut a release. They want Claude to pick up this procedure when a release is being prepared, without paying the context cost in every other session. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Package it as a Skill: a SKILL.md with a description of when to use it, with the reference documents as supporting files."
+        correct: true
+        rationale: "Skills fit repeated procedures; only the description stays in context, the body loads when the skill is used, and supporting files load only as needed."
+      - id: B
+        text: "Add the checklist and all reference documents to the project's CLAUDE.md."
+        correct: false
+        rationale: "CLAUDE.md loads into every session, so the long procedure and references would cost context even when no release is happening."
+      - id: C
+        text: "Build an MCP server that returns the checklist text from a tool."
+        correct: false
+        rationale: "MCP connects Claude to external tools and data sources; a static internal procedure does not need a server to host and maintain."
+      - id: D
+        text: "Write a custom client tool whose description contains the whole checklist."
+        correct: false
+        rationale: "Tool definitions are sent with every request, so this pays the full context cost all the time and misuses a tool as a document."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: ccdv-f.D8.S3.q2
+    status: unreviewed
+    stem: "An application built on the Messages API must answer questions about current events with cited sources. The team does not want to build or host any search infrastructure. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Write a custom client tool that scrapes search results, and run it in the application."
+        correct: false
+        rationale: "Client tools run in your application, so the team would have to build and operate the search and scraping themselves."
+      - id: B
+        text: "Upload a custom Skill that tells Claude how to search the web."
+        correct: false
+        rationale: "Skills on the Claude API run in a sandboxed container with no network access, so a Skill cannot fetch live web results there."
+      - id: C
+        text: "Enable the web search server tool, which runs on Anthropic's infrastructure and returns cited results in the same response."
+        correct: true
+        rationale: "Server tools such as web search run on Anthropic's infrastructure with no handler code in your application, and web search returns cited results."
+      - id: D
+        text: "Build and deploy an MCP server that wraps a third-party search API."
+        correct: false
+        rationale: "An MCP server is a good way to share custom capabilities, but it means building and hosting infrastructure the team wants to avoid."
+    source:
+      title: "Tool use with Claude"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview"

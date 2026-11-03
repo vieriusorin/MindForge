@@ -1,0 +1,50 @@
+skill: D5.S2
+questions:
+  - id: ccdv-f.D5.S2.q1
+    status: unreviewed
+    stem: "A team wrote its own HTTP wrapper around the Claude API. It has no retry logic, and it detects error types by string-matching error messages. Transient failures such as rate limits and 5xx errors frequently surface to users. What should the developer do?"
+    select: 1
+    options:
+      - id: A
+        text: "Switch to the official client SDK, which automatically retries transient failures with exponential backoff and honors retry-after, and catch its typed exception classes instead of matching message strings."
+        correct: true
+        rationale: "The official SDK retries connection errors, rate limits and 5xx errors with exponential backoff by default, honoring retry-after, and raises typed exceptions that should be caught instead of string-matching messages."
+      - id: B
+        text: "Keep the wrapper and extend the string matching to cover more error messages."
+        correct: false
+        rationale: "Error type values may expand over time, so string matching is brittle; typed SDK classes are the recommended approach."
+      - id: C
+        text: "Retry every failed request, including 400 errors, a fixed number of times with no delay."
+        correct: false
+        rationale: "Invalid requests will not succeed on retry, and retries without backoff add load during rate limiting and overload."
+      - id: D
+        text: "Open a new HTTP connection for every request to avoid transient errors."
+        correct: false
+        rationale: "Connection churn does not prevent rate limits or server-side errors and adds overhead."
+    source:
+      title: "Claude API errors"
+      url: "https://platform.claude.com/docs/en/api/errors"
+  - id: ccdv-f.D5.S2.q2
+    status: unreviewed
+    stem: "A developer streams responses that include tool calls over server-sent events. Their code calls JSON.parse on each input_json_delta event and keeps throwing parse errors. What should the developer do?"
+    select: 1
+    options:
+      - id: A
+        text: "Disable streaming for all requests, since tool use cannot be streamed."
+        correct: false
+        rationale: "Tool use can be streamed; tool_use input arrives as input_json_delta events."
+      - id: B
+        text: "Ask Claude in the system prompt to emit smaller JSON objects so each delta is complete."
+        correct: false
+        rationale: "Deltas are partial JSON strings by design; prompting cannot make each event a complete object."
+      - id: C
+        text: "Accumulate the partial_json strings for the content block and parse once the content_block_stop event arrives, or use the SDK's streaming helpers."
+        correct: true
+        rationale: "Input JSON deltas are partial JSON strings while the final tool_use input is an object; accumulate the deltas and parse at content_block_stop, or let the SDK helpers do it."
+      - id: D
+        text: "Treat the parse errors as overloaded_error events and retry the stream."
+        correct: false
+        rationale: "Stream error events are explicit error events; these parse failures come from the client parsing fragments too early."
+    source:
+      title: "Streaming messages"
+      url: "https://platform.claude.com/docs/en/build-with-claude/streaming"

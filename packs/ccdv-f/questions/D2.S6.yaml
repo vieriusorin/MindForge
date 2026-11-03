@@ -1,0 +1,50 @@
+skill: D2.S6
+questions:
+  - id: ccdv-f.D2.S6.q1
+    status: unreviewed
+    stem: "A repository commits .claude/settings.json with the team's permissions and hooks. One developer wants to use a different model for themselves in this project only, without affecting teammates and without committing anything. Where should they set it?"
+    select: 1
+    options:
+      - id: A
+        text: "In .claude/settings.json, and simply avoid committing the change."
+        correct: false
+        rationale: "That file is the shared, committed project file; an uncommitted edit is easy to commit by accident and is not the intended place for personal overrides."
+      - id: B
+        text: "In ~/.claude/settings.json, the user settings file."
+        correct: false
+        rationale: "User settings apply to every project, and shared project settings sit above user settings, so a team value in .claude/settings.json would override it."
+      - id: C
+        text: "In .claude/settings.local.json in the project."
+        correct: true
+        rationale: "Project local settings are personal to one project, sit above the shared project file in precedence, and Claude Code keeps the file out of git when it creates it."
+      - id: D
+        text: "In managed settings, so the value cannot be overridden."
+        correct: false
+        rationale: "Managed settings are for organization-wide policy deployed to everyone, not a single developer's preference."
+    source:
+      title: "Settings files and precedence"
+      url: "https://code.claude.com/docs/en/settings"
+  - id: ccdv-f.D2.S6.q2
+    status: unreviewed
+    stem: "A team wants production behavior to stay stable and changes in model behavior to be deliberate and reviewable. Developers currently pick whatever model they like in different services. Which approach best fits?"
+    select: 1
+    options:
+      - id: A
+        text: "At startup, query the Models API and automatically use the newest model returned."
+        correct: false
+        rationale: "Automatically adopting new models makes behavior change without review or evaluation."
+      - id: B
+        text: "Let each developer choose the model per call so they can optimize locally."
+        correct: false
+        rationale: "Inconsistent per-call choices make behavior unpredictable and hard to audit."
+      - id: C
+        text: "Hard-code a different model string in every call site so each is explicit."
+        correct: false
+        rationale: "Scattered model strings are hard to change consistently and easy to miss during an upgrade."
+      - id: D
+        text: "Pin an exact model ID (a pinned snapshot) in version-controlled configuration and change it only through a reviewed change after running evals on the new model."
+        correct: true
+        rationale: "Claude model IDs are pinned snapshots, so pinning the ID in versioned config keeps behavior stable, and upgrades become deliberate, evaluated changes."
+    source:
+      title: "Models overview"
+      url: "https://platform.claude.com/docs/en/about-claude/models/overview"

@@ -10,7 +10,7 @@
  * still applies to everyone). Bash writes are not seen by an Edit/Write hook; `ticket:eval`'s
  * scope check catches those after the fact against the plan's `owns`.
  */
-import { globToRegExp } from "../../../scripts/lib/ticket-eval.mjs";
+import { globToRegExp } from "./util.mjs";
 
 const TASK = ".planning/tasks/*";
 
@@ -26,6 +26,9 @@ export const SCOPES = {
     `${TASK}/LOOP-PLAN.md`,
   ],
   "service-builder": [
+    "src/engine/**",
+    "src/server/**",
+    "packs/**",
     "src/server/services/**",
     "src/server/authz/**",
     "src/lib/**",
@@ -36,6 +39,7 @@ export const SCOPES = {
     `${TASK}/LOOP-PLAN.md`,
   ],
   "ui-builder": [
+    "src/features/**",
     "src/modules/**",
     "src/app/**",
     "src/components/**",

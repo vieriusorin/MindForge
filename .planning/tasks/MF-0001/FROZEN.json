@@ -1,0 +1,34 @@
+{
+  "ticket": "MF-0001",
+  "frozen_at": "2026-11-02T15:11:45.216872Z",
+  "files": [
+    {
+      "path": "src/engine/pack/__tests__/mf-0001-pack.acceptance.test.ts",
+      "sha256": "0a8ff7ebc2207bbb0c034f11ba97950b9ab6fea92b37c376deb34d8c3d5f2775",
+      "first_failure": "SC-1..SC-4: Error: not implemented (load-pack.ts stub)"
+    },
+    {
+      "path": "src/engine/forest/__tests__/mf-0001-stage.acceptance.test.ts",
+      "sha256": "7e8c2b2e313ff0aa492a64ea818745b7f7c1482b9dc19cf625ed59a2f42c832c",
+      "first_failure": "SC-5a/b: Error: not implemented (tree-stage.ts stub)"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-02T15:13:26.765168Z",
+      "reason": "biome format only: line wrapping + trailing commas in call arguments; content identical after stripping whitespace and trailing commas; YAML fixture byte-identical; approved by user 2026-11-02",
+      "previous": {
+        "src/engine/pack/__tests__/mf-0001-pack.acceptance.test.ts": "ce0aaffb6570612ae0371a60578ae2aa358d84503595a84ccc6b8319ba3262f3",
+        "src/engine/forest/__tests__/mf-0001-stage.acceptance.test.ts": "dbd6edcbd6c08ee1becec9e364023e42bf8f1d1ccae768aaef99d1811a67b013"
+      }
+    },
+    {
+      "at": "2026-11-02T15:18:36.107372Z",
+      "reason": "SC-1 literal corrected 27 -> 25 skills: Exam Guide v1.0 \u00a76 lists 25 (3+6+1+1+4+3+4+3); 27 was a counting error in the spec. Approved by user 2026-11-02",
+      "previous": {
+        "src/engine/pack/__tests__/mf-0001-pack.acceptance.test.ts": "6fd68e874feaf81a2b3864710226676401e1a201aa5c7ac14e0593f820408011",
+        "src/engine/forest/__tests__/mf-0001-stage.acceptance.test.ts": "7e8c2b2e313ff0aa492a64ea818745b7f7c1482b9dc19cf625ed59a2f42c832c"
+      }
+    }
+  ]
+}

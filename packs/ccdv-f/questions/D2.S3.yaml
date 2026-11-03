@@ -1,0 +1,74 @@
+skill: D2.S3
+questions:
+  - id: ccdv-f.D2.S3.official-1
+    status: official
+    stem: "A developer must process 10,000 documents overnight to produce a non-urgent analytics report. Cost is the primary concern, and results are not needed until the following morning. Which approach best fits the requirement?"
+    select: 1
+    options:
+      - id: A
+        text: "Send every request synchronously through the Messages API in parallel to finish as quickly as possible."
+        correct: false
+        rationale: "Sending requests synchronously in parallel does not reduce per-token cost."
+      - id: B
+        text: "Use the Message Batches API, which processes large asynchronous workloads within a 24-hour window at reduced cost."
+        correct: true
+        rationale: "The Message Batches API is designed for latency-tolerant, high-volume workloads at lower cost, which matches an overnight, non-urgent job."
+      - id: C
+        text: "Lower max_tokens on synchronous calls to minimize cost."
+        correct: false
+        rationale: "Lowering max_tokens does not address the batch-versus-realtime tradeoff."
+      - id: D
+        text: "Switch to the smallest available model regardless of output quality."
+        correct: false
+        rationale: "Blindly downsizing the model does not address the batch-versus-realtime tradeoff."
+    source:
+      title: "Claude Certified Developer – Foundations Exam Guide v1.0, Sample 1"
+      url: "https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf"
+  - id: ccdv-f.D2.S3.q1
+    status: unreviewed
+    stem: "A nightly Message Batch has ended. Most results are succeeded, but some are errored with invalid_request_error and some are expired because the batch hit its 24-hour limit before they were processed. What should the developer do?"
+    select: 1
+    options:
+      - id: A
+        text: "Resubmit the entire batch, because a batch with any failures must be rerun as a unit."
+        correct: false
+        rationale: "Each request in a batch has its own result; rerunning succeeded requests wastes cost and time."
+      - id: B
+        text: "Resubmit the errored and expired requests unchanged in a new batch."
+        correct: false
+        rationale: "Expired requests can be resubmitted, but invalid requests will fail again until the request itself is fixed."
+      - id: C
+        text: "Use each result's custom_id to match it to its original request, resubmit the expired requests, and fix the invalid requests before resubmitting them."
+        correct: true
+        rationale: "custom_id identifies each Messages request in the batch; expired requests were never sent to the model, while invalid_request_error results need a corrected request. Errored and expired requests are not billed."
+      - id: D
+        text: "Switch the failed requests to synchronous streaming calls, since batch requests cannot be retried."
+        correct: false
+        rationale: "Nothing prevents resubmitting requests in a new batch, and moving to synchronous calls gives up the batch cost advantage for a non-urgent job."
+    source:
+      title: "Batch processing"
+      url: "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
+  - id: ccdv-f.D2.S3.q2
+    status: unreviewed
+    stem: "A service generates long reports with a large max_tokens value using non-streaming Messages API calls. Some requests fail because the connection is dropped or times out before any response arrives. The service does not need to show partial output to users. What should the developer do?"
+    select: 1
+    options:
+      - id: A
+        text: "Use the streaming Messages API (for example via the SDK helper that consumes the stream and returns the final message), or the Message Batches API if the work is not time-sensitive."
+        correct: true
+        rationale: "For long-running requests the guidance is to use streaming or the Message Batches API; idle connections can be dropped on long non-streaming calls, and the SDK can consume a stream and return the complete message."
+      - id: B
+        text: "Keep the non-streaming call and simply raise the HTTP client's timeout."
+        correct: false
+        rationale: "Some networks drop idle connections regardless of client timeout, and the SDK validates that non-streaming requests are not expected to exceed its timeout."
+      - id: C
+        text: "Retry the same non-streaming request in a tight loop until it succeeds."
+        correct: false
+        rationale: "Repeating the same long idle request keeps hitting the same failure mode."
+      - id: D
+        text: "Lower max_tokens drastically so every report fits in a short response."
+        correct: false
+        rationale: "Truncating output changes the product requirement instead of fixing how long requests are transported."
+    source:
+      title: "Claude API errors"
+      url: "https://platform.claude.com/docs/en/api/errors"

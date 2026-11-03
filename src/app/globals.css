@@ -1,0 +1,180 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* next-themes sets `.dark` on <html> (light / dark / system); shadcn's `dark:` variants key off it. */
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * MindForge theme = shadcn/ui tokens with the palette sampled from docs/design/refs/.
+ * Normative: .claude/rules/ui-design.md. Components come from src/components/ui (shadcn CLI);
+ * screens style them only through these tokens.
+ */
+:root {
+  --radius: 0.75rem;
+
+  --background: #ffffff; /* white work area; lavender lives in muted/secondary */
+  --foreground: #17143a; /* navy ink */
+  --card: #f7f6fc; /* lavender card on the white work area */
+  --card-foreground: #17143a;
+  --popover: #ffffff;
+  --popover-foreground: #17143a;
+  --primary: #7259d6; /* violet: actions, active bar, focus */
+  --primary-foreground: #ffffff;
+  --secondary: #e9e4fb;
+  --secondary-foreground: #4a36b0;
+  --muted: #eeebfa;
+  --muted-foreground: #6a6788; /* ≥ 4.5:1 on white, card and muted (sampled #8a88a3 failed AA) */
+  --accent: #ebe7fb;
+  --accent-foreground: #4a36b0;
+  --destructive: #b02e3e;
+  --border: #ebe9f3;
+  --input: #e3e1ec;
+  --ring: #7259d6;
+
+  /* One violet hue, light → dark. Forest stages map seed → ancient onto chart-1 → chart-5. */
+  --chart-1: #d9d3f5;
+  --chart-2: #b3a5ef;
+  --chart-3: #9480e5;
+  --chart-4: #7259d6;
+  --chart-5: #4a36b0;
+
+  /* Deep-indigo sidebar from the reference. */
+  --sidebar: #2a1f6e;
+  --sidebar-foreground: #e7e4fb;
+  --sidebar-primary: #8e76ee;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgb(255 255 255 / 0.12);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgb(255 255 255 / 0.1);
+  --sidebar-ring: #9b8af0;
+
+  /* Brand surfaces (briefing banner, sign-in backdrop). */
+  --hero-from: #322884;
+  --hero-via: #705cbe;
+  --hero-to: #e4aeea;
+  --backdrop-from: #917ce3;
+  --backdrop-via: #e4aeea;
+  --backdrop-to: #f9edb0;
+}
+
+/* Derived, not sampled: the references are light-only. */
+.dark {
+  --background: #0f0c27;
+  --foreground: #eeedfa;
+  --card: #1b1742;
+  --card-foreground: #eeedfa;
+  --popover: #1b1742;
+  --popover-foreground: #eeedfa;
+  --primary: #765de0; /* white on it: 4.8:1 */
+  --primary-foreground: #ffffff;
+  --secondary: #2e2766;
+  --secondary-foreground: #ddd6ff;
+  --muted: #241f52;
+  --muted-foreground: #aaa6cf;
+  --accent: #2e2766;
+  --accent-foreground: #ddd6ff;
+  --destructive: #f0717f;
+  --border: #332d6b;
+  --input: #3b347a;
+  --ring: #9b86f5;
+
+  /* Brighter ramp so marks separate from the card surface. */
+  --chart-1: #423a8c;
+  --chart-2: #5f50bf;
+  --chart-3: #7d6ae0;
+  --chart-4: #a08cf7;
+  --chart-5: #cfc4ff;
+
+  --sidebar: #1d1658; /* indigo, distinct from the near-black canvas */
+  --sidebar-foreground: #e7e4fb;
+  --sidebar-primary: #8e76ee;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgb(255 255 255 / 0.1);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgb(255 255 255 / 0.08);
+  --sidebar-ring: #8e76ee;
+}
+
+@theme inline {
+  --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Deep-indigo briefing banner with the violet → pink glow (applied to a shadcn Card). */
+@utility bg-hero {
+  background:
+    radial-gradient(120% 160% at 100% 100%, var(--hero-to) 0%, transparent 45%),
+    radial-gradient(80% 120% at 75% 0%, var(--hero-via) 0%, transparent 55%),
+    var(--hero-from);
+  color: #ffffff;
+}
+
+/* Sign-in / join backdrop only — never app screens. */
+@utility bg-backdrop {
+  background: linear-gradient(
+    160deg,
+    var(--backdrop-from) 0%,
+    var(--backdrop-via) 55%,
+    var(--backdrop-to) 100%
+  );
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1 {
+    @apply font-semibold tracking-tight;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}

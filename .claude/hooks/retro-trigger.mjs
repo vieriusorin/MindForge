@@ -12,7 +12,7 @@
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { frontmatter } from "../../scripts/lib/ticket-eval.mjs";
+import { frontmatter } from "./lib/util.mjs";
 import { loadState, ROOT, readStdinJson, saveState } from "./lib/gate-io.mjs";
 import { deferredRetro, retroDue, retroInstruction, ticketsTouched } from "./lib/retro-trigger.mjs";
 
@@ -46,7 +46,7 @@ function retroOf(ticket) {
 }
 
 function main() {
-  if (process.env.P4T_RETRO === "off") return;
+  if (process.env.MF_RETRO === "off" || process.env.P4T_RETRO === "off") return;
   const input = readStdinJson();
   if (!input) return;
   const autonomous = Boolean(process.env.P4T_AUTONOMOUS);

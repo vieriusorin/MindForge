@@ -1,0 +1,12 @@
+{
+  "ticket": "MF-0018",
+  "frozen_at": "2026-11-03T09:37:05.255241Z",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0018-env-file.acceptance.test.ts",
+      "sha256": "6eb0f7769ff825c1f6799b42bf410c3d5f6226f503df408c38452c6d3134ebd3",
+      "first_failure": "SC-2a/b/c: Error: not implemented (scripts/lib/env-file.mjs stub)"
+    }
+  ],
+  "history": []
+}
