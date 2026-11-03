@@ -1,7 +1,8 @@
 skill: D8.S2
 questions:
   - id: ccdv-f.D8.S2.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A platform team is building one central MCP server that many employees' AI applications will connect to over the network, with authenticated access. Which transport best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Architecture overview - Model Context Protocol"
       url: "https://modelcontextprotocol.io/docs/learn/architecture"
   - id: ccdv-f.D8.S2.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A developer is designing an MCP server for a company database. It should (1) offer the database schema as read-only context the host application can attach, (2) let the model run parameterized queries when it decides they are needed, and (3) provide a reusable \"weekly sales report\" template users start explicitly, for example from a slash command. Which mapping to MCP primitives best fits?"
     select: 1
     options:

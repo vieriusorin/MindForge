@@ -1,7 +1,8 @@
 skill: D5.S3
 questions:
   - id: ccdv-f.D5.S3.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A team needs to classify and route millions of short incoming messages per day. Latency must be very low and cost per message is a major concern; the task is straightforward. Which model choice best fits as a starting point?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Choosing the right model"
       url: "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model"
   - id: ccdv-f.D5.S3.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A team plans to move a production integration to a newer Claude model release. The integration forces tool use with tool_choice and has carefully tuned prompts. What should the developer do before switching?"
     select: 1
     options:

@@ -1,9 +1,11 @@
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
+import { isPlayable, reviewStateOf } from "@/engine/content";
 import { pickSessionQuestions } from "@/engine/memory";
 import { toPlayableQuestion } from "@/engine/questions";
 import { DuelSession } from "@/features/duel/components/duel-session";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
 import { listPacks } from "@/server/packs/list-packs";
@@ -20,14 +22,18 @@ async function DuelSlot({
     redirect(`/sign-in?next=${encodeURIComponent(`/play/${packSlug}/duel`)}`);
   if (!(await listPacks()).some((p) => p.slug === packSlug)) notFound();
 
-  const [pack, questions, attempts] = await Promise.all([
+  const [pack, questions, attempts, review] = await Promise.all([
     getPack(packSlug),
     getPackQuestions(packSlug),
     listMyAttempts(user.id, packSlug),
+    getReviewContext(user.id, packSlug),
   ]);
+  // Only candidates are filtered: memory still replays every attempt, so no forest figure moves.
   const session = pickSessionQuestions({
     pack,
-    questions,
+    questions: questions.filter((q) =>
+      isPlayable(reviewStateOf(review, q), "practice"),
+    ),
     attempts,
     now: new Date(),
   });

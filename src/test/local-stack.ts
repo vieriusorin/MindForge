@@ -3,10 +3,9 @@
  * The secret key here is the stack's well-known local default, used only to create and delete test users.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import postgres from "postgres";
+import { supabaseBin } from "../../scripts/lib/supabase-bin.mjs";
 
 interface StackEnv {
   API_URL: string;
@@ -17,11 +16,11 @@ interface StackEnv {
 
 let cached: StackEnv | null = null;
 
-/** MF-0018: the project-pinned CLI (devDependency), so no global install is needed. */
-const SUPABASE = ((): string => {
-  const local = join(process.cwd(), "node_modules", ".bin", "supabase");
-  return existsSync(local) ? local : "supabase";
-})();
+/**
+ * MF-0018: the project-pinned CLI (devDependency), so no global install is needed. Same resolver
+ * as the scripts: on Windows the native supabase.exe, since `.bin/supabase` is a shell script.
+ */
+const SUPABASE = supabaseBin(process.cwd());
 
 export function stackEnv(): StackEnv {
   if (cached) return cached;

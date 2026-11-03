@@ -24,7 +24,8 @@ const question = (over: string): string => `
 skill: S1
 questions:
   - id: tiny.S1.q1
-    status: unreviewed
+    origin: ai
+    author: author@example.com
     stem: "Which?"
     select: 1
     options:
@@ -83,7 +84,7 @@ describe("MF-0003 question format", () => {
       join(ROOT, "packs/ccdv-f/questions"),
     );
 
-    const official = questions.filter((q) => q.status === "official");
+    const official = questions.filter((q) => q.origin === "official");
     const keyOf = (id: string): string[] =>
       (official.find((q) => q.id === id)?.options ?? [])
         .filter((o) => o.correct)
@@ -107,8 +108,8 @@ describe("MF-0003 question format", () => {
     }
     expect(
       questions
-        .filter((q) => q.status !== "official")
-        .every((q) => q.status === "unreviewed"),
+        .filter((q) => q.origin !== "official")
+        .every((q) => q.origin === "ai"),
     ).toBe(true);
   });
 
@@ -124,10 +125,10 @@ describe("MF-0003 question format", () => {
       expect(Object.keys(p).sort()).toEqual([
         "id",
         "options",
+        "origin",
         "select",
         "skillCode",
         "source",
-        "status",
         "stem",
       ]);
       for (const o of p.options)

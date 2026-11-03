@@ -131,10 +131,10 @@ export function DuelSession({
           <span aria-hidden>·</span>
           <span>{skillNames[q.skillCode] ?? q.skillCode}</span>
           <Badge
-            data-status={q.status}
-            variant={q.status === "official" ? "default" : "secondary"}
+            data-origin={q.origin}
+            variant={q.origin === "official" ? "default" : "secondary"}
           >
-            {q.status === "official" ? "Official sample" : "Unreviewed"}
+            {q.origin === "official" ? "Official sample" : "Unreviewed"}
           </Badge>
         </div>
         <CardTitle

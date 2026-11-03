@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AuthorSchema, OriginSchema, refineAuthor } from "../content/origin";
 
 const OptionSchema = z.strictObject({
   id: z.string().regex(/^[A-Z]$/, "single capital letter"),
@@ -15,7 +16,16 @@ const QuestionSchema = z
         /^[a-z0-9-]+\.[A-Za-z0-9.]+\.[a-z0-9-]+$/,
         "pattern <pack>.<skill>.<name>",
       ),
-    status: z.enum(["official", "unreviewed"]),
+    // MF-0006: `status` mixed provenance with trust; it is now `origin` (+ `author`).
+    status: z
+      .unknown()
+      .optional()
+      .refine((v) => v === undefined, {
+        message:
+          "`status` was renamed to `origin` (official | human | ai), with `author` for human/ai",
+      }),
+    origin: OriginSchema,
+    author: AuthorSchema.optional(),
     stem: z.string().min(1),
     select: z.number().int().min(1),
     options: z.array(OptionSchema).min(2).max(6),
@@ -26,6 +36,7 @@ const QuestionSchema = z
     }),
   })
   .superRefine((q, ctx) => {
+    refineAuthor(q, ctx);
     const correct = q.options.filter((o) => o.correct).length;
     if (correct !== q.select) {
       ctx.addIssue({

@@ -1,0 +1,25 @@
+{
+  "ticket": "MF-0006",
+  "frozen_at": "2026-11-03T14:11:59Z",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0006-content.acceptance.test.ts",
+      "sha256": "b41e4f294c90621656fca73a3a344209e35facab8563588f3eba89b654eed347",
+      "first_failure": "SC-1..6, SC-8 (8/8): Error: not implemented (load-content.ts / hash.ts / review.ts stubs); same on 2nd run"
+    },
+    {
+      "path": "src/engine/content/__tests__/mf-0006-mermaid.acceptance.test.ts",
+      "sha256": "f4fe4fe812028e5f3861e5b1757ac4461fc0cdb7506eb4c9d22b7cf158005277",
+      "first_failure": "SC-2 (2/2): promise rejected \"Error: not implemented\" (src/test/mermaid-check.ts stub); same on 2nd run"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-03T14:28:44Z",
+      "reason": "Author literal changed at the user's request (2026-11-03): every item is authored by vlad.parvana@ddroidd.com, not sorinvieriu@gmail.com. Constant SORIN -> AUTHOR, test title \"50 ai by Sorin\" -> \"50 ai by the author\". No assertion added, removed or weakened.",
+      "previous": {
+        "src/engine/content/__tests__/mf-0006-content.acceptance.test.ts": "a5133d1656155f482d9e5f277414d597b1e83a2b31090ddd2097cf1071ee59e9"
+      }
+    }
+  ]
+}

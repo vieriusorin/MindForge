@@ -1,7 +1,8 @@
 skill: D1.S2
 questions:
   - id: ccdv-f.D1.S2.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A team wants to embed an agent inside their own Python service that runs on their infrastructure. The agent needs Claude Code's built-in file and shell tools, permissions, sessions it can resume, and hooks. They do not want to write and maintain the tool-use loop themselves. Which option best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Agent SDK overview"
       url: "https://code.claude.com/docs/en/agent-sdk/overview"
   - id: ccdv-f.D1.S2.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A team's coding agent is instructed in CLAUDE.md to run the project formatter after every file edit, but in long sessions it sometimes forgets. The team wants the formatter to run after every Edit or Write, every time, regardless of what the model decides. What should they do?"
     select: 1
     options:

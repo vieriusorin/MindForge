@@ -1,7 +1,8 @@
 skill: D1.S3
 questions:
   - id: ccdv-f.D1.S3.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A developer adopted a multi-agent framework for a simple retrieval-plus-answer feature. When outputs go wrong, the team struggles to see which prompts and responses the framework actually sent to the model. What should the developer do?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Building effective agents"
       url: "https://www.anthropic.com/engineering/building-effective-agents"
   - id: ccdv-f.D1.S3.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "An agent works on a multi-day migration with clear milestones. Each working session starts with a fresh context window, and the agent keeps losing track of which milestones are already done. Which memory technique best fits?"
     select: 1
     options:

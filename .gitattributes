@@ -1,0 +1,20 @@
+# LF everywhere, on every OS (MF-0006 retro). Biome, the frozen-test hashes in
+# .planning/tasks/*/FROZEN.json and the YAML pack files all assume LF; without this, Windows
+# checkouts with core.autocrlf=true get CRLF and `pnpm lint` fails on every file.
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary: never touch.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary

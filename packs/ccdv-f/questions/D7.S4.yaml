@@ -1,7 +1,8 @@
 skill: D7.S4
 questions:
   - id: ccdv-f.D7.S4.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A production service running on a cloud platform, plus its CI/CD pipeline, call the Claude API. The security team wants to eliminate long-lived static API secrets from these environments. Which approach best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Authentication"
       url: "https://platform.claude.com/docs/en/manage-claude/authentication"
   - id: ccdv-f.D7.S4.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A company issues short-lived Claude API credentials from a secrets vault and rotates them frequently. Developers using Claude Code keep pasting new keys into their shell profiles. How should Claude Code obtain credentials?"
     select: 1
     options:

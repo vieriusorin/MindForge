@@ -1,7 +1,8 @@
 skill: D6.S2
 questions:
   - id: ccdv-f.D6.S2.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A prompt asks Claude to turn support transcripts into a structured case summary. The instructions describe the format in prose, but the output's structure and tone vary between runs. Which change best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Prompting best practices"
       url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
   - id: ccdv-f.D6.S2.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A voice assistant's system prompt says \"NEVER use ellipses. Do not use markdown.\" Claude still occasionally produces both, which breaks the text-to-speech output. Which two revisions best fit? (Select TWO.)"
     select: 2
     options:

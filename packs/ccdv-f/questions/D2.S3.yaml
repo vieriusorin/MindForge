@@ -1,7 +1,7 @@
 skill: D2.S3
 questions:
   - id: ccdv-f.D2.S3.official-1
-    status: official
+    origin: official
     stem: "A developer must process 10,000 documents overnight to produce a non-urgent analytics report. Cost is the primary concern, and results are not needed until the following morning. Which approach best fits the requirement?"
     select: 1
     options:
@@ -25,7 +25,8 @@ questions:
       title: "Claude Certified Developer – Foundations Exam Guide v1.0, Sample 1"
       url: "https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf"
   - id: ccdv-f.D2.S3.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A nightly Message Batch has ended. Most results are succeeded, but some are errored with invalid_request_error and some are expired because the batch hit its 24-hour limit before they were processed. What should the developer do?"
     select: 1
     options:
@@ -49,7 +50,8 @@ questions:
       title: "Batch processing"
       url: "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
   - id: ccdv-f.D2.S3.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A service generates long reports with a large max_tokens value using non-streaming Messages API calls. Some requests fail because the connection is dropped or times out before any response arrives. The service does not need to show partial output to users. What should the developer do?"
     select: 1
     options:

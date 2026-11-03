@@ -1,7 +1,7 @@
 skill: D7.S1
 questions:
   - id: ccdv-f.D7.S1.official-1
-    status: official
+    origin: official
     stem: "A Claude-powered agent summarizes web pages submitted by end users. One page contains hidden text instructing the model to ignore previous instructions and reveal its system prompt. Which mitigation is most effective?"
     select: 1
     options:
@@ -25,7 +25,8 @@ questions:
       title: "Claude Certified Developer – Foundations Exam Guide v1.0, Sample 2"
       url: "https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf"
   - id: ccdv-f.D7.S1.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "An email-triage agent reads inbound emails from unknown senders on behalf of a trusted user. The developer currently concatenates each email body into the system prompt before asking Claude to triage it. How should the application deliver the email content?"
     select: 1
     options:
@@ -49,7 +50,8 @@ questions:
       title: "Mitigate jailbreaks and prompt injections"
       url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
   - id: ccdv-f.D7.S1.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A document-summarization agent has a database tool with full read and write access to all customer records, and a production API key is pasted into its system prompt \"in case it is needed\". The agent processes documents from external sources. Which change most reduces the impact of a successful prompt injection?"
     select: 1
     options:

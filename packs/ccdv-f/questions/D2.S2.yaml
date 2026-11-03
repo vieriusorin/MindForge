@@ -1,7 +1,8 @@
 skill: D2.S2
 questions:
   - id: ccdv-f.D2.S2.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A production application depends on a Claude model that Anthropic has just marked as deprecated, with a recommended replacement and a retirement date. The application works fine today. What should the team do?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Model deprecations"
       url: "https://platform.claude.com/docs/en/about-claude/model-deprecations"
   - id: ccdv-f.D2.S2.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "Several teams in one organization call the Claude API with different API keys. A platform engineer must find every remaining caller of a deprecated model before its retirement date. Which approach best fits?"
     select: 1
     options:

@@ -5,7 +5,7 @@ export function toPlayableQuestion(question: Question): PlayableQuestion {
   return {
     id: question.id,
     skillCode: question.skillCode,
-    status: question.status,
+    origin: question.origin,
     stem: question.stem,
     select: question.select,
     options: question.options.map((o) => ({ id: o.id, text: o.text })),
