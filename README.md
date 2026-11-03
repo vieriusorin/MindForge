@@ -22,14 +22,14 @@ Everything else comes from the repo. The **Supabase CLI** is a pinned dev depend
 corepack enable        # once: provides the pnpm version pinned in package.json
 pnpm install           # app deps + the pinned Supabase CLI
 pnpm dev:setup         # starts the local stack, applies migrations, syncs answer keys, writes .env.local
-pnpm dev               # http://localhost:3000
+pnpm dev               # http://localhost:3001
 ```
 
 The first `pnpm dev:setup` downloads the Supabase images, which takes a few minutes. It's safe to re-run at any time: it applies only **pending** migrations and never deletes your local data. (It's `dev:setup`, not `setup`, because `pnpm setup` is a pnpm built-in.)
 
 | Local service | URL |
 |---|---|
-| App | http://localhost:3000 |
+| App | http://localhost:3001 |
 | Mailpit: sign-in links land here | http://127.0.0.1:54324 |
 | Supabase Studio: browse the local DB | http://127.0.0.1:54323 |
 

@@ -1,0 +1,42 @@
+{
+  "ticket": "MF-0004",
+  "frozen_at": "2026-11-03T12:48:13.148768Z",
+  "files": [
+    {
+      "path": "src/server/http/__tests__/mf-0004-site-origin.acceptance.test.ts",
+      "sha256": "4edc88c1f65f7a060ca975042a2e5a6e73c607f20ff283d9449d062747fe661e",
+      "first_failure": "SC-4 redirect: expected 'https://evil.example' to be 'https://mindforge.vercel.app'; SC-4 siteOrigin: Error not implemented (stub); SC-4 header scan: page.tsx, auth/actions.ts, request-origin.ts; SC-4 allowlist: contains http://localhost:3000; SC-9 site_url not localhost:3001"
+    },
+    {
+      "path": "src/server/supabase/__tests__/mf-0004-proxy-session.acceptance.test.ts",
+      "sha256": "4b1cddf90b9c9cb2aac5cae7ed8a5c16d38eb1b2c2742edfbd747444c032a633",
+      "first_failure": "SC-5: expected null to be 'private, no-cache, no-store, must-revalidate, max-age=0' (status 307 + location already pass)"
+    },
+    {
+      "path": "src/features/groups/__tests__/mf-0004-rotate-invite.acceptance.test.ts",
+      "sha256": "f3640b3f271214d8ffa92ab3741cf529134c8e88e9045009495b94b89deeae2b",
+      "first_failure": "SC-9 x3: TypeError Cannot read properties of undefined (reading 'ok') - rotateInviteCode returns void"
+    },
+    {
+      "path": "src/features/groups/components/invite-link/__tests__/mf-0004-invite-link.acceptance.test.tsx",
+      "sha256": "271ba809c3d42bf0c791404ee394b7c10cdc3cda54f69b84b84b8e9cfefa2173",
+      "first_failure": "SC-9: Unable to find role=\"alert\" (rotateAction was called once)"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0004-create-group.db.acceptance.test.ts",
+      "sha256": "6eaded3b9d599fba9e692d20063907d93cae751f2cd0fe5fdc1a20c8fea1501b",
+      "first_failure": "SC-6 x2: expected null not to be null (unknown slug accepted; 11th group accepted). Same on a 2nd run."
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-03T13:35:45.868345Z",
+      "files": [
+        "src/server/http/__tests__/mf-0004-site-origin.acceptance.test.ts",
+        "src/server/supabase/__tests__/mf-0004-proxy-session.acceptance.test.ts",
+        "src/features/groups/components/invite-link/__tests__/mf-0004-invite-link.acceptance.test.tsx"
+      ],
+      "reason": "formatter only (biome format --write): line wrapping, no assertion change; user approved 2026-11-03; still red for the same reasons"
+    }
+  ]
+}

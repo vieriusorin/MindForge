@@ -133,7 +133,7 @@ console.log(
 console.log(`
 ✓ Local stack ready.
 
-  App        pnpm dev  →  http://localhost:3000
+  App        pnpm dev  →  http://localhost:3001
   Mailpit    ${env.MAILPIT_URL ?? env.INBUCKET_URL}   (sign-in links land here)
   Studio     ${env.STUDIO_URL}   (browse the local database)
 

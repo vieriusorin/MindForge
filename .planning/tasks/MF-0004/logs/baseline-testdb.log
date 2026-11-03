@@ -1,0 +1,73 @@
+$ vitest run --project db
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.5 /Users/sorinvieriu/Projects/mind-forge
+
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+ ❯ |db| src/server/db/__tests__/mf-0004-create-group.db.acceptance.test.ts (2 tests | 2 failed) 2622ms
+   ❯ MF-0004 create_group hardening (2)
+     × SC-6: refuses a well-formed but unregistered pack slug 39ms
+     × SC-6: allows 10 groups per creator and refuses the 11th 41ms
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |db| src/server/db/__tests__/mf-0004-create-group.db.acceptance.test.ts > MF-0004 create_group hardening > SC-6: refuses a well-formed but unregistered pack slug
+AssertionError: expected null not to be null
+ ❯ src/server/db/__tests__/mf-0004-create-group.db.acceptance.test.ts:58:30
+     56|       p_pack_slug: UNKNOWN,
+     57|     });
+     58|     expect(result.error).not.toBeNull();
+       |                              ^
+     59|     expect((await myGroups()).filter((g) => g.pack_slug === UNKNOWN)).…
+     60|       [],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |db| src/server/db/__tests__/mf-0004-create-group.db.acceptance.test.ts > MF-0004 create_group hardening > SC-6: allows 10 groups per creator and refuses the 11th
+AssertionError: expected null not to be null
+ ❯ src/server/db/__tests__/mf-0004-create-group.db.acceptance.test.ts:76:32
+     74|       p_pack_slug: KNOWN,
+     75|     });
+     76|     expect(eleventh.error).not.toBeNull();
+       |                                ^
+     77|     expect(await myGroups()).toHaveLength(CAP);
+     78|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  2 failed | 12 passed (14)
+   Start at  15:34:32
+   Duration  7.52s (tests 98%, import 2%)
+
+[ELIFECYCLE] Command failed with exit code 1.

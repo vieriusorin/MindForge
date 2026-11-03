@@ -38,6 +38,7 @@ export async function createGroup(input: unknown): Promise<CreateGroupResult> {
     p_name: parsed.data.name,
     p_pack_slug: parsed.data.packSlug,
   });
+  // MF-0004: the DB refuses unknown packs and the 11th group; say which.
   if (error || !data)
     return {
       ok: false,
@@ -60,11 +61,26 @@ export async function joinGroup(code: string): Promise<void> {
   redirect(`/groups/${data}`);
 }
 
-export async function rotateInviteCode(groupId: string): Promise<void> {
+const GroupId = z.uuid();
+
+/**
+ * MF-0004: reports failure instead of refreshing as if it worked. The DB refuses non-admins
+ * (private.rotate_invite_code); the button is only a convenience.
+ */
+export async function rotateInviteCode(
+  groupId: unknown,
+): Promise<RotateInviteResult> {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in?next=/groups");
+  const parsed = GroupId.safeParse(groupId);
+  if (!parsed.success)
+    return { ok: false, error: "This group link is not valid." };
+
   const supabase = await createServerSupabase();
-  // The DB refuses non-admins (private.rotate_invite_code); the button is only a convenience.
-  await supabase.rpc("rotate_invite_code", { p_group_id: groupId });
+  const { error } = await supabase.rpc("rotate_invite_code", {
+    p_group_id: parsed.data,
+  });
+  if (error) return { ok: false, error: rotateInviteRpcError(error) };
   refresh();
+  return { ok: true } satisfies ActionResult;
 }

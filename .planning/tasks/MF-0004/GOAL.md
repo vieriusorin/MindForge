@@ -1,11 +1,11 @@
 ---
 ticket_id: MF-0004
 tier: high-risk                   # infra + auth wiring + a migration on create_group
-stage: design
+stage: handoff
 branch: feat/MF-0004
 builds_on: []
-last_iteration: 0
-goal_status: in-progress
+last_iteration: 1
+goal_status: complete-pending-manual-commit   # closed by user 2026-11-03: local slice done; hosted SCs carried as manual steps (docs/runbook/deploy.md)
 track: P                          # seat Coder A (docs/plan/ROADMAP.md §6)
 week: W1
 depends_on: [Phase 0]
@@ -34,7 +34,7 @@ a written post-merge checklist (migrations, answer keys, promote).
 - No Claude API key on Vercel (ROADMAP D-2) → SC-8.
 - Migrations reach the hosted project only after merge to `main`, run by the platform owner → SC-7.
 - Every new or changed table/function follows `project-supabase-migration-rules` (revoke all first, `connection()` before auth reads).
-- Email provider is installed through the Vercel Marketplace (keys provisioned, not pasted).
+- Resend is connected through Supabase's Resend integration, so the key lives only in Supabase Auth SMTP; nothing mail-related goes in Vercel env or the repo (user, 2026-11-03, replaces "install via Vercel Marketplace": see C-4) → SC-3, SC-8.
 
 ## Decided without a question
 
@@ -50,23 +50,27 @@ a written post-merge checklist (migrations, answer keys, promote).
 
 - [ ] SC-1: Hosted project exists in an EU region; `supabase db push` applied every migration; `supabase db advisors` (security) on hosted reports nothing for MindForge objects. Proof: command output in evidence.
 - [ ] SC-2: Production deploys from `main` on `*.vercel.app`; a preview URL returns the Vercel login to an anonymous visitor. Proof: browser.
-- [ ] SC-3: A magic link sent from production reaches two real inboxes via Resend and signs the user in. Proof: browser.
-- [ ] SC-4: The `emailRedirectTo` origin comes from a configured site origin, never from `Host` / `X-Forwarded-Host` / `Origin`; the Auth redirect allowlist holds exact origins only. Proof: unit test with hostile headers → configured origin.
-- [ ] SC-5: When the proxy redirects a dead session to `/sign-in`, the response keeps the no-store `Cache-Control` headers set by `@supabase/ssr`. Proof: unit test on `proxy-session`.
-- [ ] SC-6: `create_group` refuses a well-formed but unregistered pack slug and refuses the 11th group created by one user. Proof: DB test (local stack).
+- [ ] SC-3: A magic link sent from production, from the verified company sending subdomain, reaches two real inboxes via Resend (Supabase integration) and signs the user in. Proof: browser + the Resend log line.
+- [ ] SC-4: The `emailRedirectTo` origin and the invite URL origin come from the configured `SITE_URL`, never from `Host` / `X-Forwarded-Host` / `Origin`; an unset or non-origin `SITE_URL` fails closed in production; the Auth redirect allowlist (local `config.toml` + hosted) holds exact origins only, no host wildcards. Proof: unit test with hostile headers → configured origin; config read-back.
+- [x] SC-5: When the proxy redirects a dead session to `/sign-in`, the response keeps the no-store `Cache-Control` headers set by `@supabase/ssr`. Proof: unit test on `proxy-session`.
+- [x] SC-6: `create_group` refuses a well-formed but unregistered pack slug and refuses the 11th group created by one user. Proof: DB test (local stack).
 - [ ] SC-7: `docs/runbook/deploy.md` lists the post-merge steps (`supabase db push`, `pnpm db:sync-keys` against hosted, promote) and one dry run is recorded. Proof: evidence.
-- [ ] SC-8: `grep -rn "SERVICE_ROLE\|sb_secret\|ANTHROPIC" src` is empty outside `src/test/`; Vercel env lists only `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and the site origin. Proof: grep + env list pasted.
-- [ ] SC-9: `rotateInviteCode` returns an error result that the group page shows; `site_url` and local redirect URLs use port 3001. Proof: unit test + browser.
+- [ ] SC-8: `grep -rn "SERVICE_ROLE\|sb_secret\|ANTHROPIC\|RESEND" src` is empty outside `src/test/`; Vercel env lists only `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `SITE_URL`. Proof: grep + env list pasted.
+- [x] SC-9: `rotateInviteCode` validates `groupId` and returns an `ActionResult` error when the RPC fails, and the invite card shows it; `site_url`, the local redirect URLs and `pnpm dev` use port 3001. Proof: UI test (RTL, the staged ADR-0002 toolchain) + config read-back + browser.
 
 ## Concerns
 
 | # | Collision | Owner | Status |
 |---|-----------|-------|--------|
 | C-1 | `create_group` needs a list of known pack slugs in the DB. This ticket owns it (`private.packs`, written by the sync script); MF-0007 does not depend on it. | Coder A | resolved 2026-11-03 |
-| C-2 | `db:sync-keys` against hosted needs the DB password locally; keep it out of the repo and out of Vercel. | Coder A | open |
-| C-3 | Resend won't send to other people's inboxes until a sending domain is verified by DNS. With only `*.vercel.app` (which has no DNS we control), SC-3's "two real inboxes" can't pass. | user / DNS owner | open |
-| C-4 | Installing Resend through the Vercel Marketplace puts `RESEND_API_KEY` in Vercel env, which breaks SC-8 (only three vars). The app sends no mail: Supabase Auth sends it over SMTP, so the key belongs in Supabase, not in Vercel. | user | open |
-| C-5 | Preview sign-in: a wildcard allowlist entry `mindforge-*-<team>.vercel.app` can be matched by another Vercel team whose slug ends in `-<team>`, so it isn't an exact origin (SC-4). Exact origins only means previews can't receive magic links. | user | open |
+| C-2 | `db:sync-keys` against hosted needs the DB password locally; keep it out of the repo and out of Vercel. | Coder A | resolved 2026-11-03 (user): the runbook passes `SUPABASE_DB_URL` inline from the password manager on each run; nothing written to disk. |
+| C-3 | Resend won't send to other people's inboxes until a sending domain is verified by DNS. With only `*.vercel.app` (which has no DNS we control), SC-3's "two real inboxes" can't pass. | user / DNS owner | decided 2026-11-03 (user): send from a company subdomain (e.g. `mail.<company domain>`). **Open on the DNS owner** for the records; blocks only SC-3's proof, not Build. |
+| C-4 | Installing Resend through the Vercel Marketplace puts `RESEND_API_KEY` in Vercel env, which breaks SC-8 (only three vars). The app sends no mail: Supabase Auth sends it over SMTP, so the key belongs in Supabase, not in Vercel. | user | resolved 2026-11-03 (user): use Supabase's Resend integration. |
+| C-5 | Preview sign-in: a wildcard allowlist entry `mindforge-*-<team>.vercel.app` can be matched by another Vercel team whose slug ends in `-<team>`, so it isn't an exact origin (SC-4). Exact origins only means previews can't receive magic links. | user | resolved 2026-11-03 (user): no sign-in on previews. The allowlist holds the production origin + `localhost:3001` only; a link requested from a preview lands on production. |
+
+## Coordination
+
+- Another session has a **staged** conventions change (ActionResult, `useMutation` forms, RTL `ui` test project, new `CLAUDE.md`) that also edits `src/features/groups/actions.ts` and `types.ts`. This ticket builds on the staged version and changes only `rotateInviteCode` and createGroup's RPC-error mapping there. Both are flagged at hand-off.
 
 ## Out of Scope
 
@@ -79,3 +83,7 @@ a written post-merge checklist (migrations, answer keys, promote).
 ## Iteration Log
 
 <!-- append-only -->
+
+- 2026-11-03 iter 1: DESIGN closed (C-2..C-5 decided by user), 5 acceptance files frozen red, LOOP-PLAN approved by user ("continue locally"): BUILD T1-T7 on the local stack only; T8 hosted deferred.
+- 2026-11-03 iter 1: BUILD T1–T7 done on local; TEST: full ladder green (85 unit/ui, 14 db, typecheck, lint, build); review changes-requested → fixed → approve at 359c930e…; SC-5/6/9 closed, SC-4 code side closed, hosted SCs open (T8). Status blocked-on-user.
+- 2026-11-03 close: user closed the ticket ("close the task"). Done and verified locally: SC-4 code + local config (live), SC-5, SC-6, SC-9. **Not verified, carried to the platform owner via docs/runbook/deploy.md:** SC-1, SC-2, SC-3 (needs the DNS owner), SC-8 Vercel env list, SC-4 hosted allowlist, SC-7 hosted dry run. These SCs stay unticked.
