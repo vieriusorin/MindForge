@@ -1,0 +1,21 @@
+skill: D5.S1
+diagrams:
+  # MINDFORGE.md §2.4, the Temperature card's diagram (MF-0006 SC-6, C-3).
+  - id: ccdv-f.D5.S1.diagram-temperature
+    title: "Temperature as wind: where the seeds land"
+    origin: human
+    author: vlad.parvana@ddroidd.com
+    mermaid: |
+      flowchart LR
+        L[Model logits<br/>parent tree] --> T{Temperature<br/>wind strength}
+        T -- low --> C[Seeds land under the tree<br/>top token, consistent]
+        T -- medium --> M[Natural spread<br/>model's own distribution]
+        T -- high --> H[Seeds scatter far<br/>rare tokens: fresh ideas or nonsense]
+    nodes:
+      - { id: L, label: "Model logits (the parent tree)" }
+      - { id: T, label: "Temperature (wind strength)" }
+      - { id: C, label: "Low: seeds land under the tree; the top token, consistent" }
+      - { id: M, label: "Medium: a natural spread; the model's own distribution" }
+      - { id: H, label: "High: seeds scatter far; rare tokens, fresh ideas or nonsense" }
+    sources:
+      - https://platform.claude.com/docs/en/api/messages

@@ -1,7 +1,8 @@
 skill: D5.S4
 questions:
   - id: ccdv-f.D5.S4.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A chatbot sends a large, unchanging reference document on every request and enables prompt caching. However, usage shows cache_read_input_tokens is always 0. The system prompt starts with a line containing the current timestamp, followed by the reference document. What should the developer do?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Prompt caching"
       url: "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
   - id: ccdv-f.D5.S4.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A developer is building a cost and throughput model for an app that relies heavily on prompt caching. Which two statements are accurate? (Select TWO.)"
     select: 2
     options:

@@ -1,7 +1,8 @@
 skill: D6.S1
 questions:
   - id: ccdv-f.D6.S1.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A long-running agent calls search and file-reading tools dozens of times. The raw outputs of early tool calls stay in the conversation long after they are useful, and answer quality degrades as the context grows. Which first step best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Effective context engineering for AI agents"
       url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
   - id: ccdv-f.D6.S1.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "During a Claude Code session, the main task needs the answer to \"which modules import the legacy auth client?\" Finding it requires a wide search that produces a lot of output, but the main conversation only needs the final list. Which approach best fits?"
     select: 1
     options:

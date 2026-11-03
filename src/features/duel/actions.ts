@@ -2,7 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { isPlayable, reviewStateOf } from "@/engine/content";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getReviewContext } from "@/server/content/get-review-context";
 import { getPackQuestions } from "@/server/questions/get-pack-questions";
 import { createServerSupabase } from "@/server/supabase/server";
 import type { AnswerResult } from "./types";
@@ -34,6 +36,13 @@ export async function answerQuestion(
   );
   if (!question)
     return { ok: false, message: "This question doesn't belong to this pack." };
+  // MF-0006 SC-8: a flagged or rejected item is never graded, even if a stale page still shows it.
+  const review = await getReviewContext(user.id, parsed.data.packSlug);
+  if (!isPlayable(reviewStateOf(review, question), "practice"))
+    return {
+      ok: false,
+      message: "This question was withdrawn for review. Start a new duel.",
+    };
 
   const supabase = await createServerSupabase();
   const { data, error } = await supabase.rpc("record_attempt", {

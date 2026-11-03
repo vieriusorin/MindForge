@@ -50,7 +50,7 @@ export function parseQuestionFiles(
       );
       continue;
     }
-    parsed.data.questions.forEach((q, i) => {
+    parsed.data.questions.forEach(({ status: _legacy, ...q }, i) => {
       const first = seenIds.get(q.id);
       if (first) {
         issues.push(

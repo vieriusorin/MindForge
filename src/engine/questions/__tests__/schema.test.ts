@@ -20,7 +20,8 @@ const file = (url: string) => ({
 skill: S
 questions:
   - id: t.S.q1
-    status: unreviewed
+    origin: ai
+    author: author@example.com
     stem: "?"
     select: 1
     options:

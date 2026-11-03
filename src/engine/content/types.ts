@@ -1,0 +1,68 @@
+import type { Question } from "../questions/types";
+
+/** CONTEXT.md Origin: who wrote an item. Fixed in the file; a review never changes it. */
+export type Origin = "official" | "human" | "ai";
+
+/** CONTEXT.md Review state. Computed from reviews (MF-0007), never stored in a file (ADR 0001). */
+export type ReviewState = "unreviewed" | "approved" | "flagged" | "rejected";
+
+/** Practice modes serve approved + unreviewed; storms prefer approved (CONTEXT.md Playable). */
+export type PlayMode = "practice" | "storm";
+
+export interface NatureCard {
+  id: string;
+  skill: string;
+  concept: string;
+  origin: Origin;
+  author?: string;
+  simply: string;
+  inNature: string;
+  whereItBreaks: string[];
+  contrast?: string;
+  whyTheName?: string;
+  /** id of a Diagram in the same pack */
+  diagram?: string;
+  /** https URLs */
+  sources: string[];
+}
+
+export interface DiagramNode {
+  id: string;
+  label: string;
+}
+
+export interface Diagram {
+  id: string;
+  skill: string;
+  title: string;
+  origin: Origin;
+  author?: string;
+  mermaid: string;
+  nodes?: DiagramNode[];
+  sources: string[];
+}
+
+/** One content file as read from disk; `name` appears in every error about it. */
+export interface ContentFile {
+  name: string;
+  text: string;
+}
+
+export interface ContentFiles {
+  questions: ContentFile[];
+  cards: ContentFile[];
+  diagrams: ContentFile[];
+}
+
+export interface PackContent {
+  questions: Question[];
+  cards: NatureCard[];
+  diagrams: Diagram[];
+}
+
+/** The review seam (SC-8). MF-0007 fills it from `item_reviews`; until then it is empty. */
+export interface ReviewContext {
+  states: Map<string, ReviewState>;
+  rejected: Set<string>;
+  spoiledBy: Set<string>;
+}

@@ -124,7 +124,9 @@ green. For a module the plan will create, add a typed stub that throws `new Erro
 implemented")`; read a data file the plan will create at runtime, never `import` it (a missing
 import is a compile error, not the SC's red).
 
-Run FREEZE on the files. It **refuses a file that is already green** — a test that passes before
+Run FREEZE on the files. Without a FREEZE script, hash each file over its **LF-normalised**
+content (what git stores), never the working copy: a Windows checkout may be CRLF and the hash
+would not match anyone else's (MF-0006 retro). It **refuses a file that is already green** — a test that passes before
 the change proves nothing about it — and records a hash per file plus the first failure in
 `.planning/tasks/<ID>/FROZEN.json`. Paste each RED line into LOOP-VERIFY.md under "RED at
 freeze": proof each test fails *for the expected reason*. A red from a typo or missing fixture is
@@ -186,6 +188,9 @@ Order: schema/types → pure logic + its oracle tests → service → action →
 - Diverged from the plan? Update `LOOP-PLAN.md` before continuing, not after.
 - Stay inside the ticket. Pre-existing breakage you trip over is noted, not fixed.
 - Format/fix only your own paths. Never commit.
+- One-off content migrations: match indentation with `[ \t]+`, never `\s` — with the `m` flag JS
+  treats `\r` as a line end, so `^\s+` swallows the newline in CRLF files. Check the diff's line
+  count against the expected count before running tests (MF-0006 retro).
 
 ## Stage 4 — TEST (the feedback loop)
 

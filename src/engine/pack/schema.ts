@@ -12,6 +12,11 @@ const SkillSchema = z.strictObject({
   name: z.string().min(1),
   weight: z.number().positive(),
   description: z.string().optional(),
+  /** MF-0006: official doc URLs for this skill, the corpus the AI writers draw from (MF-0008). */
+  sources: z
+    .array(z.url({ protocol: /^https$/ }))
+    .min(1)
+    .optional(),
 });
 
 const DomainSchema = z.strictObject({
@@ -28,6 +33,8 @@ const ExamMetaSchema = z.strictObject({
   passScaled: z.number(),
   scaleMin: z.number(),
   scaleMax: z.number(),
+  /** MF-0006: ISO date of the exam, for readiness (MF-0015). */
+  date: z.iso.date().optional(),
 });
 
 export const PackSchema = z

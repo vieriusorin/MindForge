@@ -1,7 +1,8 @@
 skill: D7.S2
 questions:
   - id: ccdv-f.D7.S2.q1
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A public-facing chatbot built on a large model is being targeted by users who craft jailbreak attempts. The team wants an additional guardrail layer that inspects user input before it reaches the main conversation, without adding much cost. Which approach best fits?"
     select: 1
     options:
@@ -25,7 +26,8 @@ questions:
       title: "Mitigate jailbreaks and prompt injections"
       url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
   - id: ccdv-f.D7.S2.q2
-    status: unreviewed
+    origin: ai
+    author: vlad.parvana@ddroidd.com
     stem: "A security team must ensure Claude Code cannot read .env files on any developer machine in the organization, and that individual developers cannot loosen this rule. Which two controls best fit? (Select TWO.)"
     select: 2
     options:
