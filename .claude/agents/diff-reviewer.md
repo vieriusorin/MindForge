@@ -20,12 +20,11 @@ Load `ticket-traceability`, and the per-path skill for each file type in the dif
 ## Look for
 
 - An SC whose test passes but whose intent is not met (the test asserts the wrong thing, or too little).
-- Calculation parity: a figure computed outside `cost-engine/`, or screen and export diverging.
-- Authorization: a read not scoped to the caller, a DTO leaking `tarif_orar` / PII, an unscoped `db`.
-- Dates bucketed with `toISOString()`, money as floats, a zone literal outside `app-time-zone.ts`.
+- Calculation parity: a figure computed outside `src/engine/`, or two screens showing the same figure diverging.
+- Authorization: a read not scoped to the caller, a DTO leaking PII or another user's data, an unscoped `db`.
+- Dates bucketed with `toISOString()`, money as floats, a hardcoded time-zone literal.
 - Files changed outside the plan's `owns`, or work beyond the ticket.
-- Hardcoded Romanian in an English string, or an English value with diacritics.
-- User-visible legal or compliance wording: read every heading, title, label and button as a claim of its own, and together with the sentences under it. A sourced sentence under a title can become a forbidden claim by juxtaposition (PT-0389: a "where it is kept" title over verified sentences). Per-sentence claim tracing does not see titles. Check each title against the ticket's NEVER list.
+- User-visible legal or compliance wording: read every heading, title, label and button as a claim of its own, and together with the sentences under it. A sourced sentence under a title can become a forbidden claim by juxtaposition. Per-sentence claim tracing does not see titles. Check each title against the ticket's NEVER list.
 
 Only report what you can point at: `file:line`, what is wrong, what it breaks. No style opinions.
 

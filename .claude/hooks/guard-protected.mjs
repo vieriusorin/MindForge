@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * PT-0315 — PreToolUse (Edit|Write|NotebookEdit): editing a file that can turn a red into a green
+ * PreToolUse (Edit|Write|NotebookEdit): editing a file that can turn a red into a green
  * without fixing anything needs the USER's say-so, not the model's.
  *
  * Returns `permissionDecision: "ask"`, never "deny": all of these files are edited legitimately
@@ -27,7 +27,7 @@ function main() {
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
         permissionDecision: "ask",
-        permissionDecisionReason: `PT-0315 guard: ${rel} is ${reason}. Approve only if you asked for this change.`,
+        permissionDecisionReason: `Protected-file guard: ${rel} is ${reason}. Approve only if you asked for this change.`,
       },
     }),
   );

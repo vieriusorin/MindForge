@@ -1,5 +1,5 @@
 /**
- * PT-0383 — the facts a retrospective starts from, read back from a ticket's artifacts and the
+ * the facts a retrospective starts from, read back from a ticket's artifacts and the
  * session metrics. Pure: the CLI (`scripts/ticket-retro.mjs`) does the file reads.
  *
  * The retro agent interprets; this decides nothing. It counts what the toolchain already

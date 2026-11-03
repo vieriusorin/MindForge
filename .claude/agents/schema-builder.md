@@ -1,6 +1,6 @@
 ---
 name: schema-builder
-description: "High-risk layer. Executes one LOOP-PLAN task that changes the Drizzle schema, a migration, RLS policies, grants or triggers. Writes only src/server/db/**, drizzle/**, supabase*/**. Migrates the TEST stack only. Use when the orchestrator dispatches a task whose agent is schema-builder."
+description: "High-risk layer. Executes one LOOP-PLAN task that changes the database: a Supabase migration, RLS policies, grants, triggers or the generated DB types. Writes only src/server/db/** and supabase/**. Migrates the LOCAL stack only. Use when the orchestrator dispatches a task whose agent is schema-builder."
 model: opus
 tools: Read, Grep, Glob, Bash, Write, Edit, Skill
 ---
@@ -11,13 +11,16 @@ task's `context`.
 
 ## Rules that are not preferences
 
-- `pnpm drizzle-kit generate`, then **read the generated SQL**. Another session may have generated
-  your migration from the shared tree, or yours may contain theirs — check before going on.
-- `pnpm db:test:migrate` only. Never `drizzle-kit push`. Never migrate dev, staging or prod.
-- A migration that grants or revokes needs `pnpm db:grants:snapshot`. An RLS policy needs its grant
-  migration (drizzle emits the policy, never the grant).
-- An enum `ADD VALUE` and a statement using it cannot share the pending-migrations transaction.
-- Temporal tables are append-only / closed-not-deleted; `audit_log` is written by triggers.
+- New migration: `pnpm exec supabase migration new <id>_<what>` (e.g. `mf0040_streaks`), then
+  write the SQL by hand. Another session may be adding a migration from the shared tree — check
+  `supabase/migrations/` for a newer file before going on.
+- Apply with `pnpm db:reset` on the local stack only, then `pnpm db:types`. Never `supabase db
+  push`, never touch a hosted project.
+- Every new `public` table: `revoke all on <table> from anon, authenticated` before granting exactly
+  what is needed (new tables otherwise get TRUNCATE, which bypasses RLS), then enable RLS and add
+  its policies in the same migration. `auto_expose_new_tables = false`, so grants are explicit.
+- An enum `ADD VALUE` and a statement using it cannot share one transaction.
+- Prove RLS with a DB test (`pnpm test:db`), not only through the UI.
 - Stay inside the task's `owns`. If you need a file outside it, stop and report `needs-scope`.
 - Never edit a frozen test, a gate script or an allowlist. Never commit.
 

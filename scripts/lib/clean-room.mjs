@@ -1,5 +1,5 @@
 /**
- * PT-0352 — the clean-room judge's rules.
+ * the clean-room judge's rules.
  *
  * Four reviews of the overnight runner kept finding the same root cause: a night session runs as
  * the user with a shell, so anything the judge READS from the lane — `vitest.setup.ts`, its

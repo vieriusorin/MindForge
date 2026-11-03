@@ -1,5 +1,5 @@
 /**
- * PT-0352 — the pure half of `pnpm ticket:eval` and of the runner's readiness check.
+ * the pure half of `pnpm ticket:eval` and of the runner's readiness check.
  *
  * The evaluator answers "was this ticket built the way the lifecycle says?" from artifacts alone:
  * GOAL.md, FROZEN.json, the receipts, LOOP-PLAN.md's task graph, REVIEW.md and the changed-file

@@ -21,7 +21,7 @@ future ticket more expensive.
 3. Only for the signals that fired: the failing receipt logs it points at
    (`.planning/evidence/<ID>/logs/`), `REVIEW.md`'s blocking findings, the refreeze reasons,
    `research/Q-*.md` interpretations.
-4. The memory index `~/.claude/projects/-Users-sorinvieriu-Projects-P4T/memory/MEMORY.md` and the
+4. The memory index `~/.claude/projects/-Users-sorinvieriu-Projects-mind-forge/memory/MEMORY.md` and the
    entries whose titles touch what went wrong. Grep them; read only the matches.
 
 Do not read the source diff line by line — `diff-reviewer` did that. Do not re-run the suite.

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * PT-0315 — Stop: Claude may not end a turn on a red toolchain it did not report.
+ * Stop: Claude may not end a turn on a red toolchain it did not report.
  *
  * Runs only when THIS session changed a source file since the last green run (see
  * `track-changes.mjs`); a pure conversation turn costs nothing. Then, in parallel:
@@ -21,7 +21,7 @@
  *   - a frozen acceptance test of a ticket before its TEST stage (red is the TDD contract there)
  *   - a test that could not reach the database (the stack is down: NOT VERIFIED, never a pass)
  *
- * Off switch for one session: P4T_STOP_GATE=off.
+ * Off switch for one session: MF_STOP_GATE=off.
  */
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -100,7 +100,7 @@ const listDir = (dir) => {
 };
 
 async function main() {
-  if (process.env.MF_STOP_GATE === "off" || process.env.P4T_STOP_GATE === "off") return;
+  if (process.env.MF_STOP_GATE === "off") return;
   const input = readStdinJson();
   if (!input) return;
   const sessionId = input.session_id;

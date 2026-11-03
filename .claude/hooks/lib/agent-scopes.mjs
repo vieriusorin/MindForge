@@ -1,12 +1,12 @@
 /**
- * PT-0352 — what each role agent may write. Pure; `agent-scope.mjs` is the PreToolUse hook that
+ * what each role agent may write. Pure; `agent-scope.mjs` is the PreToolUse hook that
  * applies it, keyed on the `agent_type` field Claude Code adds to hook input inside a subagent.
  *
  * The split that matters: the agent that writes the acceptance tests is never the one that makes
  * them pass, reviewers and researchers write only their own report, and no role agent can touch
  * receipts, gates, hooks or settings — the things that decide whether work counts as done.
  *
- * The main session and agents not listed here are unrestricted by this hook (PT-0315's guard
+ * The main session and agents not listed here are unrestricted by this hook (the protected-file guard
  * still applies to everyone). Bash writes are not seen by an Edit/Write hook; `ticket:eval`'s
  * scope check catches those after the fact against the plan's `owns`.
  */
@@ -20,30 +20,22 @@ export const SCOPES = {
   "acceptance-writer": ["**/__tests__/**", "e2e/**", `${TASK}/LOOP-VERIFY.md`],
   "schema-builder": [
     "src/server/db/**",
-    "drizzle/**",
     "supabase/**",
-    "supabase-test/**",
     `${TASK}/LOOP-PLAN.md`,
   ],
   "service-builder": [
     "src/engine/**",
     "src/server/**",
     "packs/**",
-    "src/server/services/**",
-    "src/server/authz/**",
     "src/lib/**",
-    "src/types/**",
-    "src/i18n/**",
-    "src/modules/*/actions.ts",
-    "src/modules/*/actions/**",
+    "src/features/*/actions.ts",
+    "src/features/*/actions/**",
     `${TASK}/LOOP-PLAN.md`,
   ],
   "ui-builder": [
     "src/features/**",
-    "src/modules/**",
     "src/app/**",
     "src/components/**",
-    "src/i18n/**",
     "src/lib/**",
     `${TASK}/LOOP-PLAN.md`,
   ],

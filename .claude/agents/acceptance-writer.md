@@ -15,14 +15,13 @@ them for fixtures and conventions.
 
 - **Expected values come from the requirement, never from running code.** `expect(total).toBe(1234_00)`
   computed by hand from the SC, never `expect(total).toBe(compute(x))`.
-- One file per SC area, named `<area>/__tests__/pt####-<what>.acceptance.test.ts` (or
-  `e2e/flows/pt####-<what>.spec.ts` for something only a browser can show).
+- One file per SC area, named `<area>/__tests__/<id>-<what>.acceptance.test.ts` (or
+  `e2e/flows/<id>-<what>.spec.ts` for something only a browser can show).
 - Import the module the plan will create by its intended path. A "Cannot find module" red is a
   legitimate red at freeze time; an assertion red is better when the module already exists.
 - Cover the boundary the SC implies: month end, DST day, 0, null, the role that must be refused.
-- **Word bans and wording gates on Romanian text use a letter-aware boundary.** Never an ASCII `\b`: JS treats ă â î ș ț as non-word characters, so `\bcomplet\b` matches inside "completării". Write `(?<![\p{L}\p{N}])word(?![\p{L}\p{N}])` with the `u` flag. Add every verbatim quote the SC says must stay usable as a passing fixture, i.e. a law sentence with a diacritic right after the banned stem. A ban test with no must-pass fixtures is not ready to freeze (PT-0389).
-- DB-backed tests seed their own rows and clean up in reverse FK order (see `memory/` on fixtures:
-  pontaj inserts need `app.audit_reason`, identity reads pin employees rows).
+- **Word bans and wording gates on text with non-ASCII letters use a letter-aware boundary.** Never an ASCII `\b`: JS treats accented letters (é, ü, ș …) as non-word characters, so `\bcaf\b` matches inside "café". Write `(?<![\p{L}\p{N}])word(?![\p{L}\p{N}])` with the `u` flag. Add every verbatim quote the SC says must stay usable as a passing fixture, e.g. a sentence with an accented letter right after the banned stem. A ban test with no must-pass fixtures is not ready to freeze.
+- DB-backed tests seed their own rows and clean up in reverse FK order (see `memory/` on fixtures).
 - Run each file with `pnpm test <file>` and confirm it is red **for the expected reason**. Paste
   the first failure line per file into LOOP-VERIFY.md.
 

@@ -1,6 +1,5 @@
 /**
- * MF-0001: helpers the P4T hooks imported from `scripts/lib/ticket-eval.mjs`, which this repo
- * does not have. Pure, dependency-free.
+ * Small pure helpers shared by the hooks (glob matching, front-matter parsing). Dependency-free.
  */
 
 /**

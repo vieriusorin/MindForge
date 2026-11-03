@@ -1,5 +1,5 @@
 /**
- * PT-0383 — when a ticket owes a retrospective. Pure; `retro-trigger.mjs` is the Stop hook.
+ * when a ticket owes a retrospective. Pure; `retro-trigger.mjs` is the Stop hook.
  *
  * A ticket owes one when THIS session touched it and it is finished with evidence (complete, and
  * a PASS receipt or an evidence bundle) or parked (blocked-on-*), and its RETRO.md is missing,
@@ -15,8 +15,8 @@ export function ticketsTouched(paths) {
   const ids = new Set();
   for (const p of paths) {
     const m =
-      /^\.planning\/tasks\/((?:PT|LS)-\d{4})\//.exec(p) ??
-      /^\.planning\/evidence\/((?:PT|LS)-\d{4})[./]/.exec(p);
+      /^\.planning\/tasks\/([A-Z]{2,5}-\d{4})\//.exec(p) ??
+      /^\.planning\/evidence\/([A-Z]{2,5}-\d{4})[./]/.exec(p);
     if (m) ids.add(m[1]);
   }
   return [...ids].sort();
@@ -24,7 +24,7 @@ export function ticketsTouched(paths) {
 
 /**
  * A night lane cannot write memory (sandbox) and nobody is there to see a skill edit, so under
- * `P4T_AUTONOMOUS` the retro is written and marked `applied: deferred`; the next interactive
+ * `MF_AUTONOMOUS` the retro is written and marked `applied: deferred`; the next interactive
  * session that does any work applies it (`deferredRetro`).
  * @param {{ goal: Record<string, string>, retro: Record<string, string> | null,
  *   latestVerdict: string | null, hasEvidence: boolean, autonomous?: boolean,
@@ -71,7 +71,7 @@ export function retroInstruction(due, autonomous = false) {
     : `  3. Apply its actions by the automatic policy: memory-* applied; additive skill-edits applied,
      a removal or loosening held; gate -> a new reserved ticket GOAL.md, never built.
   4. Append "## Applied" to RETRO.md and set \`applied: <YYYY-MM-DD>\` in its front matter.`;
-  return `PT-0383 retro — a ticket this session finished or parked has no applied retrospective:
+  return `Retro due — a ticket this session finished or parked has no applied retrospective:
 ${list}
 
 Do it now, without asking the user (gsd-goal-loop references/retro.md, "Automatic"):
