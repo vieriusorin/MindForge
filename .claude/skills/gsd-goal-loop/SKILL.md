@@ -108,6 +108,13 @@ Decide what follows from existing decisions and record it under "Decided without
 with its source. Ask only what does not — see `references/escalation.md`. Two defensible business
 answers → a configurable setting chosen by an admin, not a guess.
 
+An SC whose proof needs infrastructure or an account that does not exist yet (a hosted project, a
+deploy target, DNS, a third-party sender) is not a code SC. At DESIGN, check read-only that its target
+exists (e.g. `supabase projects list`, `vercel ls`, `vercel project ls`) and record the result. If it
+does not, move those SCs to their own `reserved` ticket owned by the user, with the runbook as its
+deliverable, and keep this ticket to what the local stack can prove. Do not carry them as a `T8 human`
+task inside the code ticket.
+
 Then run `grill-with-docs` against the draft and fold the answers back. With `--research`, triage
 each question (`references/research.md`) before putting it to the user: facts go to the researcher
 → interpreter pipeline and come back as answers to confirm; decisions come to the user with the
@@ -123,6 +130,10 @@ literals from the SC, never the output of code. The red must be a RUNTIME failur
 green. For a module the plan will create, add a typed stub that throws `new Error("not
 implemented")`; read a data file the plan will create at runtime, never `import` it (a missing
 import is a compile error, not the SC's red).
+
+Before FREEZE, format and lint the acceptance files you wrote (`pnpm exec biome check --write <those
+files, listed explicitly>`, then `pnpm lint`). A hash taken before formatting turns the first lint run
+into a re-freeze that needs the user.
 
 Run FREEZE on the files. It **refuses a file that is already green** — a test that passes before
 the change proves nothing about it — and records a hash per file plus the first failure in

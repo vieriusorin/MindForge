@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { safeNextPath } from "@/server/auth/safe-next";
-import { requestOrigin } from "@/server/http/request-origin";
+import { siteOrigin } from "@/server/http/site-origin";
 import { createServerSupabase } from "@/server/supabase/server";
 import type { SendLinkState } from "./types";
 
@@ -24,7 +24,7 @@ export async function sendMagicLink(
     return { status: "error", message: "Enter a valid email address." };
 
   const next = safeNextPath(parsed.data.next) ?? "/today";
-  const callback = new URL("/auth/callback", await requestOrigin());
+  const callback = new URL("/auth/callback", siteOrigin());
   callback.searchParams.set("next", next);
 
   const supabase = await createServerSupabase();

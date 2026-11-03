@@ -14,6 +14,9 @@ export async function updateSession(
 ): Promise<NextResponse> {
   const { url, publishableKey } = supabasePublicEnv();
   let response = NextResponse.next({ request });
+  // Headers @supabase/ssr asks us to send with refreshed/cleared cookies (no-store caching).
+  // Kept separately so a redirect can carry them too (MF-0004 SC-5).
+  const sessionHeaders: Record<string, string> = {};
 
   const supabase = createServerClient<Database>(url, publishableKey, {
     cookies: {
@@ -26,8 +29,10 @@ export async function updateSession(
         response = NextResponse.next({ request });
         for (const { name, value, options } of cookiesToSet)
           response.cookies.set(name, value, options);
-        for (const [key, value] of Object.entries(headers))
+        for (const [key, value] of Object.entries(headers)) {
+          sessionHeaders[key] = value;
           response.headers.set(key, value);
+        }
       },
     },
   });
@@ -49,6 +54,8 @@ export async function updateSession(
     const redirect = NextResponse.redirect(target);
     for (const cookie of response.cookies.getAll())
       redirect.cookies.set(cookie);
+    for (const [key, value] of Object.entries(sessionHeaders))
+      redirect.headers.set(key, value);
     return redirect;
   }
   return response;

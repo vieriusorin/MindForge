@@ -1,0 +1,89 @@
+{"project_id_filter":"mind-forge","backup":true,"message":"Stopped supabase local development setup."}
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+v1.77.8: Pulling from supabase/edge-runtime
+v16.5: Pulling from supabase/postgrest
+1.50.15: Pulling from supabase/logflare
+ba82bb605409: Pulling fs layer
+41b2195c3553: Pulling fs layer
+bd5537044fc9: Pulling fs layer
+5dfefa1bb00b: Pulling fs layer
+9ab4c3d2b851: Pulling fs layer
+f78f2ff59b88: Pulling fs layer
+876a28bcf89d: Pulling fs layer
+2026.10.19-sha-b375769: Pulling from supabase/studio
+7efc1b527bf1: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+8654e119a166: Pulling fs layer
+4534ba24522c: Pulling fs layer
+939e20d81a1d: Pulling fs layer
+0d2e3704c355: Pulling fs layer
+8ce112c0245b: Pulling fs layer
+284080adc3a5: Pulling fs layer
+178d6d2a7999: Pulling fs layer
+4f4fb700ef54: Already exists
+ba82bb605409: Download complete
+ba82bb605409: Pull complete
+Digest: sha256:1347d7552b88f17832912c06afbf7c43209af6eeeb60834b04aae12c9bd9d5cc
+Status: Downloaded newer image for public.ecr.aws/supabase/postgrest:v16.5
+public.ecr.aws/supabase/postgrest:v16.5
+41b2195c3553: Download complete
+f78f2ff59b88: Download complete
+9ab4c3d2b851: Download complete
+bd5537044fc9: Download complete
+44136fa355b3: Already exists
+8654e119a166: Download complete
+41b2195c3553: Pull complete
+939e20d81a1d: Download complete
+5dfefa1bb00b: Download complete
+0d2e3704c355: Download complete
+9ab4c3d2b851: Pull complete
+5dfefa1bb00b: Pull complete
+f78f2ff59b88: Pull complete
+4534ba24522c: Download complete
+7efc1b527bf1: Download complete
+284080adc3a5: Download complete
+8ce112c0245b: Download complete
+44136fa355b3: Already exists
+284080adc3a5: Pull complete
+8ce112c0245b: Pull complete
+9be3bd40e01d: Pulling fs layer
+79e1e4670f02: Pulling fs layer
+f40998f9bbcc: Pulling fs layer
+742fc378b8ab: Pulling fs layer
+5fc65fac80ed: Download complete
+3bb7bb0d23a6: Download complete
+178d6d2a7999: Download complete
+f40998f9bbcc: Download complete
+742fc378b8ab: Download complete
+8654e119a166: Pull complete
+178d6d2a7999: Pull complete
+0d2e3704c355: Pull complete
+4534ba24522c: Pull complete
+4f4fb700ef54: Pull complete
+939e20d81a1d: Pull complete
+7efc1b527bf1: Pull complete
+Digest: sha256:a82f96c8845c1bcab128cfe17b4e325943ab949b657e9629a0bcc66f1d363179
+Status: Downloaded newer image for public.ecr.aws/supabase/logflare:1.50.15
+public.ecr.aws/supabase/logflare:1.50.15
+9be3bd40e01d: Download complete
+44136fa355b3: Already exists
+d387e546a496: Download complete
+876a28bcf89d: Download complete
+876a28bcf89d: Pull complete
+bd5537044fc9: Pull complete
+Digest: sha256:178c041398a33ded8219344382d0672a90051d1babbf0af03425cafe20039a75
+Status: Downloaded newer image for public.ecr.aws/supabase/edge-runtime:v1.77.8
+public.ecr.aws/supabase/edge-runtime:v1.77.8
+79e1e4670f02: Download complete
+79e1e4670f02: Pull complete
+f40998f9bbcc: Pull complete
+742fc378b8ab: Pull complete
+9be3bd40e01d: Pull complete
+Digest: sha256:7ffd263c9e13b254f2c97b716ff9bccf404b29cbe7886e6652a776b066a9840f
+Status: Downloaded newer image for public.ecr.aws/supabase/studio:2026.10.19-sha-b375769
+public.ecr.aws/supabase/studio:2026.10.19-sha-b375769
+Starting database from backup...
+{"DB_URL":"postgresql://postgres:postgres@127.0.0.1:54322/postgres","API_URL":"http://127.0.0.1:54321","REST_URL":"http://127.0.0.1:54321/rest/v1","GRAPHQL_URL":"http://127.0.0.1:54321/graphql/v1","FUNCTIONS_URL":"http://127.0.0.1:54321/functions/v1","MCP_URL":"http://127.0.0.1:54321/mcp","STUDIO_URL":"http://127.0.0.1:54323","PUBLISHABLE_KEY":"<redacted>","SECRET_KEY":"<redacted>","JWT_SECRET":"<redacted>","ANON_KEY":"<redacted>","SERVICE_ROLE_KEY":"<redacted>","MAILPIT_URL":"http://127.0.0.1:54324","INBUCKET_URL":"http://127.0.0.1:54324","STORAGE_S3_URL":"http://127.0.0.1:54321/storage/v1/s3","S3_PROTOCOL_ACCESS_KEY_ID":"<redacted>","S3_PROTOCOL_ACCESS_KEY_SECRET":"<redacted>","S3_PROTOCOL_REGION":"local","message":""}
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli

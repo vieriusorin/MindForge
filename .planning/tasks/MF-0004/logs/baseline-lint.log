@@ -1,0 +1,55 @@
+$ biome check
+src/features/groups/components/invite-link/__tests__/mf-0004-invite-link.acceptance.test.tsx format ━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+    12 12 │   describe("MF-0004 InviteLink", () => {
+    13 13 │     it("SC-9: shows the error when the reset fails", async () => {
+    14    │ - ····const·rotateAction·=·vi.fn().mockResolvedValue({·ok:·false,·error:·MESSAGE·});
+       14 │ + ····const·rotateAction·=·vi
+       15 │ + ······.fn()
+       16 │ + ······.mockResolvedValue({·ok:·false,·error:·MESSAGE·});
+    15 17 │       const { user } = renderWithProviders(
+    16 18 │         <InviteLink
+  
+
+src/server/http/__tests__/mf-0004-site-origin.acceptance.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     98  98 │   
+     99  99 │     it("SC-4: the local Auth redirect allowlist holds exact origins on port 3001, no host wildcards", () => {
+    100     │ - ····const·line·=·configToml().match(/^additional_redirect_urls\s*=\s*(\[.*\])/m);
+        100 │ + ····const·line·=·configToml().match(
+        101 │ + ······/^additional_redirect_urls\s*=\s*(\[.*\])/m,
+        102 │ + ····);
+    101 103 │       expect(line).not.toBeNull();
+    102 104 │       const urls = JSON.parse(line?.[1] ?? "[]") as string[];
+  
+
+src/server/supabase/__tests__/mf-0004-proxy-session.acceptance.test.ts format ━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+    30 30 │         getClaims: async () => {
+    31 31 │           options.cookies.setAll(
+    32    │ - ··········[{·name:·"sb-test-auth-token",·value:·"",·options:·{·maxAge:·0,·path:·"/"·}·}],
+       32 │ + ··········[
+       33 │ + ············{
+       34 │ + ··············name:·"sb-test-auth-token",
+       35 │ + ··············value:·"",
+       36 │ + ··············options:·{·maxAge:·0,·path:·"/"·},
+       37 │ + ············},
+       38 │ + ··········],
+    33 39 │             NO_STORE,
+    34 40 │           );
+  
+
+Checked 192 files in 53ms. No fixes applied.
+Found 3 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+[ELIFECYCLE] Command failed with exit code 1.

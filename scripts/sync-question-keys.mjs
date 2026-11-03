@@ -3,9 +3,13 @@
  * MF-0003: copy answer keys from packs/<slug>/questions/*.yaml into private.question_keys.
  * The database grades answers against this table; run after `supabase db reset` and after
  * editing questions. Idempotent: upserts every key and deletes keys no longer in the files.
+ * MF-0004: also registers every packs/<slug>/ folder in private.packs (create_group refuses
+ * any other slug) and removes slugs whose folder is gone.
  *
  * DB: $SUPABASE_DB_URL, else the LOCAL stack from `supabase status`.
  * Usage: node scripts/sync-question-keys.mjs
+ * Hosted (docs/runbook/deploy.md): pass the URL inline from the password manager, never a file:
+ *   SUPABASE_DB_URL="$(op read 'op://…/mindforge-prod/db-url')" pnpm db:sync-keys
  */
 import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
@@ -52,6 +56,21 @@ function readKeys(packSlug) {
   });
 }
 
+// MF-0004: against a remote DB this unregisters packs whose folder is missing, so only sync
+// from an up-to-date `main` with no local changes under packs/ (docs/runbook/deploy.md B3).
+if (process.env.SUPABASE_DB_URL) {
+  const git = (...args) =>
+    execFileSync("git", args, { cwd: ROOT, encoding: "utf8" }).trim();
+  const branch = git("rev-parse", "--abbrev-ref", "HEAD");
+  const dirty = git("status", "--porcelain", "--", "packs");
+  if (branch !== "main" || dirty) {
+    console.error(
+      `Refusing to sync a remote DB from branch "${branch}"${dirty ? " with local changes under packs/" : ""}. Check out an up-to-date main first.`,
+    );
+    process.exit(1);
+  }
+}
+
 const packs = readdirSync(join(ROOT, "packs"), { withFileTypes: true })
   .filter((e) => e.isDirectory())
   .map((e) => e.name)
@@ -59,6 +78,15 @@ const packs = readdirSync(join(ROOT, "packs"), { withFileTypes: true })
 
 const sql = postgres(dbUrl(), { max: 1, onnotice: () => {} });
 try {
+  await sql.begin(async (tx) => {
+    for (const pack of packs) {
+      await tx`
+        insert into private.packs (slug) values (${pack})
+        on conflict (slug) do update set updated_at = now()`;
+    }
+    await tx`delete from private.packs where not (slug = any(${packs}))`;
+  });
+  console.log(`pack registry: ${packs.join(", ")}`);
   for (const pack of packs) {
     const keys = readKeys(pack);
     await sql.begin(async (tx) => {
