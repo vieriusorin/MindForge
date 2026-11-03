@@ -1,0 +1,32 @@
+=== scratch 1: grant truncate on public.groups to authenticated
+GRANT
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+     × SC-3: relation privileges of anon/authenticated/PUBLIC equal the allow-list 546ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 2 passed (3)
+REVOKE
+=== scratch 2: table created without revoke all
+CREATE TABLE
+ALTER TABLE
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+     × SC-3: relation privileges of anon/authenticated/PUBLIC equal the allow-list 390ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 2 passed (3)
+DROP TABLE
+=== after revert
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+      Tests  3 passed (3)
+=== scratch 2 (diff detail)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
++ Received
++   "public.mf0005_scratch anon MAINTAIN",
++   "public.mf0005_scratch anon REFERENCES",
++   "public.mf0005_scratch anon TRIGGER",
++   "public.mf0005_scratch anon TRUNCATE",
++   "public.mf0005_scratch authenticated MAINTAIN",
++   "public.mf0005_scratch authenticated REFERENCES",
++   "public.mf0005_scratch authenticated TRIGGER",
++   "public.mf0005_scratch authenticated TRUNCATE",
+      Tests  1 failed | 2 passed (3)
+DROP TABLE
+      Tests  3 passed (3)

@@ -31,7 +31,9 @@ a wrong figure gets exported, paid, billed or audited before anyone notices.
   "Decided without a question" with its source.
 - Naming, file placement, test shape, a refactor confined to the ticket's files.
 - Which of two equivalent implementations to use — pick, put the other under Rejected options.
-- A pre-existing failure outside the diff — note it in LOOP-VERIFY, carry on.
+- A pre-existing failure outside the diff — note it in LOOP-VERIFY, carry on. Exception: if an SC's
+  proof is that command exiting 0 (a CI or "clean checkout" SC), the failure blocks the SC. That is an
+  escalation, resolved at DESIGN (SKILL.md Stage 2 preflight), not a fix made quietly in BUILD.
 - A conventional default the project's skills already state.
 
 ## How to escalate

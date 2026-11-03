@@ -1,0 +1,77 @@
+# MF-0005: every PR to main runs the fast gate + build (`checks`) and the DB tests on a LOCAL
+# Supabase stack on the runner (`db`). No hosted project and no repository secret is used.
+# Runbook: docs/runbook/ci.md.
+# Actions are pinned by commit SHA (tag in the comment); bump them deliberately.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # `pnpm build` prerenders; supabasePublicEnv() throws without these. Local, non-secret values.
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-placeholder-publishable-key
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0, reads packageManager
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Lint
+        run: pnpm lint
+      - name: Unit + UI tests
+        run: pnpm test
+      - name: Hooks check
+        run: node scripts/check-hooks.mjs
+      - name: Build
+        run: pnpm build
+      - name: Answer-key sync reminder
+        # MF-0005 SC-4: question files changed → the merger must run the key sync (docs/runbook/deploy.md).
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BASE_SHA"
+          changed=$(git diff --name-only "$BASE_SHA" HEAD | grep -E '^packs/.+/questions/' || true)
+          if [ -n "$changed" ]; then
+            echo "::warning title=Answer keys::This PR changes pack questions. After merge, run 'pnpm db:sync-keys' against each environment (docs/runbook/deploy.md). Files: $(echo "$changed" | tr '\n' ' ')"
+          fi
+
+  db:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0, reads packageManager
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Start local Supabase (pinned CLI)
+        # Tests use db, auth (gotrue), rest (postgrest) and kong only (src/test/local-stack.ts).
+        run: pnpm exec supabase start -x studio,imgproxy,realtime,storage-api,edge-runtime,logflare,vector,postgres-meta,supavisor,mailpit
+      - name: Migrate + sync answer keys
+        run: pnpm db:reset
+      - name: DB tests (RLS + grants gate)
+        run: pnpm test:db

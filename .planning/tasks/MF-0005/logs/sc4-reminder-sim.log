@@ -1,0 +1,9 @@
+--- case 1: only src/ changed
+From /private/tmp/claude-501/-Users-sorinvieriu-Projects-mind-forge/a5df101d-ebee-4a00-8ce7-826147caecee/scratchpad/sim-origin
+ * branch            dada6cf08028eb6a02792c6062ee8864b66ed278 -> FETCH_HEAD
+exit 0 (no output expected)
+--- case 2: packs/ccdv-f/questions changed
+From /private/tmp/claude-501/-Users-sorinvieriu-Projects-mind-forge/a5df101d-ebee-4a00-8ce7-826147caecee/scratchpad/sim-origin
+ * branch            dada6cf08028eb6a02792c6062ee8864b66ed278 -> FETCH_HEAD
+::warning title=Answer keys::This PR changes pack questions. After merge, run 'pnpm db:sync-keys' against each environment (docs/runbook/deploy.md). Files: packs/ccdv-f/questions/q1.yaml 
+exit 0
