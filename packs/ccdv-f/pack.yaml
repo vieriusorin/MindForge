@@ -25,14 +25,22 @@ domains:
         name: Agent Architecture
         weight: 4.5
         description: Workflow vs agent decision criteria, manager/supervisor hierarchies, and the role of subagents.
+        sources:
+          - https://www.anthropic.com/engineering/building-effective-agents
       - code: D1.S2
         name: Agent Construction with Claude
         weight: 5.3
         description: Claude Agent SDK, custom agent loops and harnesses, self-hosted vs Anthropic-hosted agents, hooks for deterministic actions.
+        sources:
+          - https://code.claude.com/docs/en/agent-sdk/overview
+          - https://code.claude.com/docs/en/best-practices
       - code: D1.S3
         name: Agent Patterns and Frameworks
         weight: 4.9
         description: Tool-use loops, sub-agents, memory, context-window management, and frameworks such as Strands, LangGraph, PydanticAI.
+        sources:
+          - https://www.anthropic.com/engineering/building-effective-agents
+          - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
 
   - code: D2
     name: Applications and Integration
@@ -42,26 +50,43 @@ domains:
         name: Understanding Requirements
         weight: 3.4
         description: Functional and infrastructure requirements derived from business requirements and solution architecture.
+        sources:
+          - https://platform.claude.com/docs/en/test-and-evaluate/define-success
       - code: D2.S2
         name: Systems Life Cycle
         weight: 2.8
         description: Life cycle management concepts for developing, implementing, operating and maintaining IT systems.
+        sources:
+          - https://platform.claude.com/docs/en/about-claude/model-deprecations
       - code: D2.S3
         name: Claude API Mechanics
         weight: 6.8
         description: Messages, tools, streaming, vision, thinking, caching, third-party vendors, data access patterns, batch API, realtime vs batch tradeoffs.
+        sources:
+          - https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+          - https://platform.claude.com/docs/en/api/errors
+          - https://platform.claude.com/docs/en/build-with-claude/batch-processing
       - code: D2.S4
         name: Software Engineering Foundations
         weight: 7.4
         description: REST APIs, JSON, async programming, version control, SDLC integration, code review, refactoring.
+        sources:
+          - https://developer.mozilla.org/en-US/docs/Glossary/Idempotent
+          - https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/429
       - code: D2.S5
         name: Claude Application Design
         weight: 8.6
         description: How Claude interprets instructions across interfaces, content boundaries, schema design, session hygiene, plugin management.
+        sources:
+          - https://code.claude.com/docs/en/best-practices
+          - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
       - code: D2.S6
         name: Configuration Management
         weight: 4.1
         description: CLAUDE.md files, settings.json, model version pinning, prompt versioning, plugin dependencies.
+        sources:
+          - https://code.claude.com/docs/en/settings
+          - https://platform.claude.com/docs/en/about-claude/models/overview
 
   - code: D3
     name: Claude Code
@@ -71,6 +96,9 @@ domains:
         name: Claude Code Operation
         weight: 3.1
         description: Rules, Skills, Commands, Agents, Agent Memory; sessions, slash commands, headless/streaming/auto modes; CLAUDE.md hierarchy; settings.json.
+        sources:
+          - https://code.claude.com/docs/en/headless
+          - https://code.claude.com/docs/en/memory
 
   - code: D4
     name: Eval, Testing, and Debugging
@@ -80,6 +108,9 @@ domains:
         name: Debugging and Error Handling
         weight: 2.6
         description: Error types, recovery strategies, trace analysis of failure modes, isolating integration-layer vs model-output problems.
+        sources:
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls
+          - https://platform.claude.com/docs/en/api/errors
 
   - code: D5
     name: Model Selection and Optimization
@@ -89,18 +120,29 @@ domains:
         name: LLM Fundamentals
         weight: 5.2
         description: Tokens, context windows, sampling, non-determinism; fast mode, extended/adaptive thinking, effort levels; zero/single/multi-shot prompting.
+        sources:
+          - https://platform.claude.com/docs/en/build-with-claude/context-windows
+          - https://platform.claude.com/docs/en/build-with-claude/effort
       - code: D5.S2
         name: Technical Fundamentals
         weight: 6.1
         description: Engineering practices for AI apps, including SDKs that wrap REST APIs and websockets.
+        sources:
+          - https://platform.claude.com/docs/en/api/errors
+          - https://platform.claude.com/docs/en/build-with-claude/streaming
       - code: D5.S3
         name: Model Selection and Tradeoffs
         weight: 2.7
         description: Opus vs Sonnet vs Haiku use cases, quality/latency/cost tradeoffs, breaking behavior changes across releases.
+        sources:
+          - https://platform.claude.com/docs/en/about-claude/models/choosing-a-model
       - code: D5.S4
         name: Cost and Token Management
         weight: 2.8
         description: Token budgeting, usage tracking, cost modeling, prompt caching and cache check-pointing.
+        sources:
+          - https://platform.claude.com/docs/en/api/rate-limits
+          - https://platform.claude.com/docs/en/build-with-claude/prompt-caching
 
   - code: D6
     name: Prompt and Context Engineering
@@ -110,14 +152,22 @@ domains:
         name: Context Engineering
         weight: 3.8
         description: Context window management, preventing drift and bloat (tool output pruning, compaction), context isolation via subagents.
+        sources:
+          - https://code.claude.com/docs/en/sub-agents
+          - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
       - code: D6.S2
         name: Prompt Engineering
         weight: 4.6
         description: Instruction clarity, few-shot examples, system vs user placement, output constraints, iterative refinement, input sanitization.
+        sources:
+          - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
       - code: D6.S3
         name: Output Handling
         weight: 2.6
         description: Structured output patterns, response validation, defensive parsing, skepticism toward confident output.
+        sources:
+          - https://code.claude.com/docs/en/best-practices
+          - https://platform.claude.com/docs/en/build-with-claude/structured-outputs
 
   - code: D7
     name: Security and Safety
@@ -127,18 +177,30 @@ domains:
         name: AI Application Security
         weight: 3.2
         description: Prompt injection and jailbreak defense, untrusted input, data leakage, PII handling, authn/authz, confidentiality and integrity.
+        sources:
+          - https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+          - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks
       - code: D7.S2
         name: Guardrails and Safe Deployment
         weight: 2.3
         description: Content policy, guardrail layering, secure-by-design, privacy, IAM, least privilege.
+        sources:
+          - https://code.claude.com/docs/en/permissions
+          - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks
       - code: D7.S3
         name: Claude Hooks
         weight: 1.0
         description: Hooks as guardrails and safety controls that prevent destructive actions.
+        sources:
+          - https://code.claude.com/docs/en/hooks
+          - https://code.claude.com/docs/en/permissions
       - code: D7.S4
         name: Identity, Secrets, and Key Management
         weight: 1.6
         description: Secrets, credentials and API keys across environments; identity validation, access approval, authorized access monitoring.
+        sources:
+          - https://code.claude.com/docs/en/authentication
+          - https://platform.claude.com/docs/en/manage-claude/authentication
 
   - code: D8
     name: Tools and MCPs
@@ -148,11 +210,21 @@ domains:
         name: Tool Implementation
         weight: 4.4
         description: Function calling, tool descriptions, error handling, harness dispatch, client vs server-side tools, approval patterns, tool set design.
+        sources:
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls
       - code: D8.S2
         name: MCP Server Development
         weight: 2.1
         description: Authoring and deploying MCP servers; resources, tools and prompts; stdio, sockets, client vs server.
+        sources:
+          - https://modelcontextprotocol.io/docs/learn/architecture
+          - https://modelcontextprotocol.io/docs/learn/server-concepts
       - code: D8.S3
         name: Agentic Customization
         weight: 4.1
         description: Tradeoffs among built-in tools, custom tools, Skills and MCPs for a given use case.
+        sources:
+          - https://code.claude.com/docs/en/skills
+          - https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview

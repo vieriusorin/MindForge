@@ -1,0 +1,440 @@
+# MF-0008 golden set (SC-4): the 3 official exam-guide samples and one planted variant per flaw.
+# The verifier must name every wrong-key and at least 80% of the other flaws (MF-0022 runs it for real).
+# Coder F adds ~30 hand-written cases in further files here.
+cases:
+  - id: ccdv-f.D2.S3.official-1
+    flaw: null
+    note: official sample, unchanged
+    question:
+      id: ccdv-f.D2.S3.official-1
+      origin: official
+      stem: A developer must process 10,000 documents overnight to produce a
+        non-urgent analytics report. Cost is the primary concern, and results
+        are not needed until the following morning. Which approach best fits the
+        requirement?
+      select: 1
+      options:
+        - id: A
+          text: Send every request synchronously through the Messages API in parallel to
+            finish as quickly as possible.
+          correct: false
+          rationale: Sending requests synchronously in parallel does not reduce per-token
+            cost.
+        - id: B
+          text: Use the Message Batches API, which processes large asynchronous workloads
+            within a 24-hour window at reduced cost.
+          correct: true
+          rationale: The Message Batches API is designed for latency-tolerant, high-volume
+            workloads at lower cost, which matches an overnight, non-urgent job.
+        - id: C
+          text: Lower max_tokens on synchronous calls to minimize cost.
+          correct: false
+          rationale: Lowering max_tokens does not address the batch-versus-realtime
+            tradeoff.
+        - id: D
+          text: Switch to the smallest available model regardless of output quality.
+          correct: false
+          rationale: Blindly downsizing the model does not address the
+            batch-versus-realtime tradeoff.
+      source:
+        title: Claude Certified Developer – Foundations Exam Guide v1.0, Sample 1
+        url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+      skill: D2.S3
+  - id: ccdv-f.D2.S3.official-1.wrong-key
+    flaw: wrong-key
+    note: key moved from B to C; rationales unchanged
+    question:
+      id: ccdv-f.D2.S3.official-1
+      origin: official
+      stem: A developer must process 10,000 documents overnight to produce a
+        non-urgent analytics report. Cost is the primary concern, and results
+        are not needed until the following morning. Which approach best fits the
+        requirement?
+      select: 1
+      options:
+        - id: A
+          text: Send every request synchronously through the Messages API in parallel to
+            finish as quickly as possible.
+          correct: false
+          rationale: Sending requests synchronously in parallel does not reduce per-token
+            cost.
+        - id: B
+          text: Use the Message Batches API, which processes large asynchronous workloads
+            within a 24-hour window at reduced cost.
+          correct: false
+          rationale: The Message Batches API is designed for latency-tolerant, high-volume
+            workloads at lower cost, which matches an overnight, non-urgent job.
+        - id: C
+          text: Lower max_tokens on synchronous calls to minimize cost.
+          correct: true
+          rationale: Lowering max_tokens does not address the batch-versus-realtime
+            tradeoff.
+        - id: D
+          text: Switch to the smallest available model regardless of output quality.
+          correct: false
+          rationale: Blindly downsizing the model does not address the
+            batch-versus-realtime tradeoff.
+      source:
+        title: Claude Certified Developer – Foundations Exam Guide v1.0, Sample 1
+        url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+      skill: D2.S3
+  - id: ccdv-f.D2.S3.official-1.missing-rationale
+    flaw: missing-rationale
+    note: rationale of the correct option B emptied
+    question:
+      id: ccdv-f.D2.S3.official-1
+      origin: official
+      stem: A developer must process 10,000 documents overnight to produce a
+        non-urgent analytics report. Cost is the primary concern, and results
+        are not needed until the following morning. Which approach best fits the
+        requirement?
+      select: 1
+      options:
+        - id: A
+          text: Send every request synchronously through the Messages API in parallel to
+            finish as quickly as possible.
+          correct: false
+          rationale: Sending requests synchronously in parallel does not reduce per-token
+            cost.
+        - id: B
+          text: Use the Message Batches API, which processes large asynchronous workloads
+            within a 24-hour window at reduced cost.
+          correct: true
+          rationale: ""
+        - id: C
+          text: Lower max_tokens on synchronous calls to minimize cost.
+          correct: false
+          rationale: Lowering max_tokens does not address the batch-versus-realtime
+            tradeoff.
+        - id: D
+          text: Switch to the smallest available model regardless of output quality.
+          correct: false
+          rationale: Blindly downsizing the model does not address the
+            batch-versus-realtime tradeoff.
+      source:
+        title: Claude Certified Developer – Foundations Exam Guide v1.0, Sample 1
+        url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+      skill: D2.S3
+  - id: ccdv-f.D2.S3.official-1.wrong-citation
+    flaw: wrong-citation
+    note: citation points to a page that does not support the answer
+    question:
+      id: ccdv-f.D2.S3.official-1
+      origin: official
+      stem: A developer must process 10,000 documents overnight to produce a
+        non-urgent analytics report. Cost is the primary concern, and results
+        are not needed until the following morning. Which approach best fits the
+        requirement?
+      select: 1
+      options:
+        - id: A
+          text: Send every request synchronously through the Messages API in parallel to
+            finish as quickly as possible.
+          correct: false
+          rationale: Sending requests synchronously in parallel does not reduce per-token
+            cost.
+        - id: B
+          text: Use the Message Batches API, which processes large asynchronous workloads
+            within a 24-hour window at reduced cost.
+          correct: true
+          rationale: The Message Batches API is designed for latency-tolerant, high-volume
+            workloads at lower cost, which matches an overnight, non-urgent job.
+        - id: C
+          text: Lower max_tokens on synchronous calls to minimize cost.
+          correct: false
+          rationale: Lowering max_tokens does not address the batch-versus-realtime
+            tradeoff.
+        - id: D
+          text: Switch to the smallest available model regardless of output quality.
+          correct: false
+          rationale: Blindly downsizing the model does not address the
+            batch-versus-realtime tradeoff.
+      source:
+        title: Idempotent (MDN)
+        url: https://developer.mozilla.org/en-US/docs/Glossary/Idempotent
+      skill: D2.S3
+  - id: ccdv-f.D7.S1.official-1
+    flaw: null
+    note: official sample, unchanged
+    question:
+      id: ccdv-f.D7.S1.official-1
+      origin: official
+      stem: A Claude-powered agent summarizes web pages submitted by end users. One
+        page contains hidden text instructing the model to ignore previous
+        instructions and reveal its system prompt. Which mitigation is most
+        effective?
+      select: 1
+      options:
+        - id: A
+          text: Raise the model's temperature so its behavior is harder to predict.
+          correct: false
+          rationale: Temperature is irrelevant to injection.
+        - id: B
+          text: Treat retrieved page content as untrusted input, keep it separate from
+            trusted instructions, and use guardrails or hooks so injected
+            instructions cannot trigger sensitive actions.
+          correct: true
+          rationale: Prompt injection is addressed by isolating untrusted content from
+            trusted instructions and enforcing least-privilege guardrails so
+            injected text cannot invoke sensitive tools.
+        - id: C
+          text: Add a line to the system prompt asking users not to include malicious
+            instructions.
+          correct: false
+          rationale: A polite request is not an enforceable control.
+        - id: D
+          text: Switch to a larger model that follows instructions more reliably.
+          correct: false
+          rationale: A more instruction-following model can be more susceptible, not less.
+      source:
+        title: Claude Certified Developer – Foundations Exam Guide v1.0, Sample 2
+        url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+      skill: D7.S1
+  - id: ccdv-f.D7.S1.official-1.wrong-key
+    flaw: wrong-key
+    note: key moved from B to C; rationales unchanged
+    question:
+      id: ccdv-f.D7.S1.official-1
+      origin: official
+      stem: A Claude-powered agent summarizes web pages submitted by end users. One
+        page contains hidden text instructing the model to ignore previous
+        instructions and reveal its system prompt. Which mitigation is most
+        effective?
+      select: 1
+      options:
+        - id: A
+          text: Raise the model's temperature so its behavior is harder to predict.
+          correct: false
+          rationale: Temperature is irrelevant to injection.
+        - id: B
+          text: Treat retrieved page content as untrusted input, keep it separate from
+            trusted instructions, and use guardrails or hooks so injected
+            instructions cannot trigger sensitive actions.
+          correct: false
+          rationale: Prompt injection is addressed by isolating untrusted content from
+            trusted instructions and enforcing least-privilege guardrails so
+            injected text cannot invoke sensitive tools.
+        - id: C
+          text: Add a line to the system prompt asking users not to include malicious
+            instructions.
+          correct: true
+          rationale: A polite request is not an enforceable control.
+        - id: D
+          text: Switch to a larger model that follows instructions more reliably.
+          correct: false
+          rationale: A more instruction-following model can be more susceptible, not less.
+      source:
+        title: Claude Certified Developer – Foundations Exam Guide v1.0, Sample 2
+        url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+      skill: D7.S1
+  - id: ccdv-f.D7.S1.official-1.missing-rationale
+    flaw: missing-rationale
+    note: rationale of the correct option B emptied
+    question:
+      id: ccdv-f.D7.S1.official-1
+      origin: official
+      stem: A Claude-powered agent summarizes web pages submitted by end users. One
+        page contains hidden text instructing the model to ignore previous
+        instructions and reveal its system prompt. Which mitigation is most
+        effective?
+      select: 1
+      options:
+        - id: A
+          text: Raise the model's temperature so its behavior is harder to predict.
+          correct: false
+          rationale: Temperature is irrelevant to injection.
+        - id: B
+          text: Treat retrieved page content as untrusted input, keep it separate from
+            trusted instructions, and use guardrails or hooks so injected
+            instructions cannot trigger sensitive actions.
+          correct: true
+          rationale: ""
+        - id: C
+          text: Add a line to the system prompt asking users not to include malicious
+            instructions.
+          correct: false
+          rationale: A polite request is not an enforceable control.
+        - id: D
+          text: Switch to a larger model that follows instructions more reliably.
+          correct: false
+          rationale: A more instruction-following model can be more susceptible, not less.
+      source:
+        title: Claude Certified Developer – Foundations Exam Guide v1.0, Sample 2
+        url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+      skill: D7.S1
+  - id: ccdv-f.D7.S1.official-1.wrong-citation
+    flaw: wrong-citation
+    note: citation points to a page that does not support the answer
+    question:
+      id: ccdv-f.D7.S1.official-1
+      origin: official
+      stem: A Claude-powered agent summarizes web pages submitted by end users. One
+        page contains hidden text instructing the model to ignore previous
+        instructions and reveal its system prompt. Which mitigation is most
+        effective?
+      select: 1
+      options:
+        - id: A
+          text: Raise the model's temperature so its behavior is harder to predict.
+          correct: false
+          rationale: Temperature is irrelevant to injection.
+        - id: B
+          text: Treat retrieved page content as untrusted input, keep it separate from
+            trusted instructions, and use guardrails or hooks so injected
+            instructions cannot trigger sensitive actions.
+          correct: true
+          rationale: Prompt injection is addressed by isolating untrusted content from
+            trusted instructions and enforcing least-privilege guardrails so
+            injected text cannot invoke sensitive tools.
+        - id: C
+          text: Add a line to the system prompt asking users not to include malicious
+            instructions.
+          correct: false
+          rationale: A polite request is not an enforceable control.
+        - id: D
+          text: Switch to a larger model that follows instructions more reliably.
+          correct: false
+          rationale: A more instruction-following model can be more susceptible, not less.
+      source:
+        title: Idempotent (MDN)
+        url: https://developer.mozilla.org/en-US/docs/Glossary/Idempotent
+      skill: D7.S1
+  - id: ccdv-f.D8.S3.official-1
+    flaw: null
+    note: official sample, unchanged
+    question:
+      id: ccdv-f.D8.S3.official-1
+      origin: official
+      stem: A team needs Claude to call an internal inventory service exposed as a
+        REST API. They want the capability to be reusable across several Claude
+        applications and maintained independently of any one app. Which approach
+        best fits?
+      select: 1
+      options:
+        - id: A
+          text: Hard-code the inventory logic into each application's system prompt.
+          correct: false
+          rationale: Hard-coding logic into prompts is neither reusable nor maintainable.
+        - id: B
+          text: Build an MCP server that exposes the inventory operations as tools so
+            multiple Claude applications can connect to it.
+          correct: true
+          rationale: An MCP server exposes reusable tools that multiple Claude
+            applications can share and that can be maintained independently.
+        - id: C
+          text: Paste the current inventory data into the context window on every request.
+          correct: false
+          rationale: Pasting data gives no live access and wastes context.
+        - id: D
+          text: Rely on a built-in tool, since built-in tools can reach any internal REST
+            API.
+          correct: false
+          rationale: Built-in tools do not automatically reach arbitrary internal APIs.
+      source:
+        title: Claude Certified Developer – Foundations Exam Guide v1.0, Sample 3
+        url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+      skill: D8.S3
+  - id: ccdv-f.D8.S3.official-1.wrong-key
+    flaw: wrong-key
+    note: key moved from B to C; rationales unchanged
+    question:
+      id: ccdv-f.D8.S3.official-1
+      origin: official
+      stem: A team needs Claude to call an internal inventory service exposed as a
+        REST API. They want the capability to be reusable across several Claude
+        applications and maintained independently of any one app. Which approach
+        best fits?
+      select: 1
+      options:
+        - id: A
+          text: Hard-code the inventory logic into each application's system prompt.
+          correct: false
+          rationale: Hard-coding logic into prompts is neither reusable nor maintainable.
+        - id: B
+          text: Build an MCP server that exposes the inventory operations as tools so
+            multiple Claude applications can connect to it.
+          correct: false
+          rationale: An MCP server exposes reusable tools that multiple Claude
+            applications can share and that can be maintained independently.
+        - id: C
+          text: Paste the current inventory data into the context window on every request.
+          correct: true
+          rationale: Pasting data gives no live access and wastes context.
+        - id: D
+          text: Rely on a built-in tool, since built-in tools can reach any internal REST
+            API.
+          correct: false
+          rationale: Built-in tools do not automatically reach arbitrary internal APIs.
+      source:
+        title: Claude Certified Developer – Foundations Exam Guide v1.0, Sample 3
+        url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+      skill: D8.S3
+  - id: ccdv-f.D8.S3.official-1.missing-rationale
+    flaw: missing-rationale
+    note: rationale of the correct option B emptied
+    question:
+      id: ccdv-f.D8.S3.official-1
+      origin: official
+      stem: A team needs Claude to call an internal inventory service exposed as a
+        REST API. They want the capability to be reusable across several Claude
+        applications and maintained independently of any one app. Which approach
+        best fits?
+      select: 1
+      options:
+        - id: A
+          text: Hard-code the inventory logic into each application's system prompt.
+          correct: false
+          rationale: Hard-coding logic into prompts is neither reusable nor maintainable.
+        - id: B
+          text: Build an MCP server that exposes the inventory operations as tools so
+            multiple Claude applications can connect to it.
+          correct: true
+          rationale: ""
+        - id: C
+          text: Paste the current inventory data into the context window on every request.
+          correct: false
+          rationale: Pasting data gives no live access and wastes context.
+        - id: D
+          text: Rely on a built-in tool, since built-in tools can reach any internal REST
+            API.
+          correct: false
+          rationale: Built-in tools do not automatically reach arbitrary internal APIs.
+      source:
+        title: Claude Certified Developer – Foundations Exam Guide v1.0, Sample 3
+        url: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
+      skill: D8.S3
+  - id: ccdv-f.D8.S3.official-1.wrong-citation
+    flaw: wrong-citation
+    note: citation points to a page that does not support the answer
+    question:
+      id: ccdv-f.D8.S3.official-1
+      origin: official
+      stem: A team needs Claude to call an internal inventory service exposed as a
+        REST API. They want the capability to be reusable across several Claude
+        applications and maintained independently of any one app. Which approach
+        best fits?
+      select: 1
+      options:
+        - id: A
+          text: Hard-code the inventory logic into each application's system prompt.
+          correct: false
+          rationale: Hard-coding logic into prompts is neither reusable nor maintainable.
+        - id: B
+          text: Build an MCP server that exposes the inventory operations as tools so
+            multiple Claude applications can connect to it.
+          correct: true
+          rationale: An MCP server exposes reusable tools that multiple Claude
+            applications can share and that can be maintained independently.
+        - id: C
+          text: Paste the current inventory data into the context window on every request.
+          correct: false
+          rationale: Pasting data gives no live access and wastes context.
+        - id: D
+          text: Rely on a built-in tool, since built-in tools can reach any internal REST
+            API.
+          correct: false
+          rationale: Built-in tools do not automatically reach arbitrary internal APIs.
+      source:
+        title: Idempotent (MDN)
+        url: https://developer.mozilla.org/en-US/docs/Glossary/Idempotent
+      skill: D8.S3

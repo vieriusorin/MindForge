@@ -1,0 +1,22 @@
+{
+  "ticket": "MF-0008",
+  "frozen_at": "2026-11-04T12:00:00Z",
+  "files": [
+    {
+      "path": "src/content-pipeline/__tests__/mf-0008-pipeline.acceptance.test.ts",
+      "sha256": "ac33fd50319a304d775093be7e52669e223bb574e24495c06ace3815e8f48cd9",
+      "first_failure": "SC-1..SC-7, SC-10: Error: not implemented (typed stubs in src/content-pipeline/pipeline.ts)"
+    },
+    {
+      "path": "src/engine/questions/__tests__/mf-0008-schema.acceptance.test.ts",
+      "sha256": "27770c0c8282559a27f383003bb99cd2b030699232952bc34d4b9fee0ef12e7e",
+      "first_failure": "SC-8: QuestionValidationError: Unrecognized key: \"generatedBy\"; SC-9: AssertionError: D1.S1 has no sources: expected 0 to be greater than or equal to 1"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-04",
+      "reason": "SC-2 custom_id changed from <skill>.<i> to D2_S1-3 before the first freeze (Batches pattern ^[a-zA-Z0-9_-]{1,64}$), user-approved"
+    }
+  ]
+}

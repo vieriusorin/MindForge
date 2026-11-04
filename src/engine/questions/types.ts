@@ -13,6 +13,8 @@ export interface Question {
   origin: Origin;
   /** sign-in email; absent for official items. Never sent to the browser (PII). */
   author?: string;
+  /** MF-0008: model + prompt version of an `ai` item, written by the pipeline. Never sent to the browser. */
+  generatedBy?: { model: string; prompt: string };
   stem: string;
   select: number;
   options: QuestionOption[];

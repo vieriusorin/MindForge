@@ -44,3 +44,6 @@ next-env.d.ts
 
 # graphify (local code graph; rebuild with `graphify update .`)
 graphify-out/
+
+# MF-0008: content pipeline cache (fetched docs, run reports); never committed
+.cache/

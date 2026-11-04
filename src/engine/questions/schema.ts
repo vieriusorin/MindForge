@@ -26,6 +26,13 @@ const QuestionSchema = z
       }),
     origin: OriginSchema,
     author: AuthorSchema.optional(),
+    // MF-0008: which model and prompt version wrote an `ai` item. Never sent to the browser.
+    generatedBy: z
+      .strictObject({
+        model: z.string().trim().min(1),
+        prompt: z.string().trim().min(1),
+      })
+      .optional(),
     stem: z.string().min(1),
     select: z.number().int().min(1),
     options: z.array(OptionSchema).min(2).max(6),
@@ -37,6 +44,12 @@ const QuestionSchema = z
   })
   .superRefine((q, ctx) => {
     refineAuthor(q, ctx);
+    if (q.generatedBy !== undefined && q.origin !== "ai")
+      ctx.addIssue({
+        code: "custom",
+        path: ["generatedBy"],
+        message: `generatedBy is only for ai items, not ${q.origin}`,
+      });
     const correct = q.options.filter((o) => o.correct).length;
     if (correct !== q.select) {
       ctx.addIssue({
