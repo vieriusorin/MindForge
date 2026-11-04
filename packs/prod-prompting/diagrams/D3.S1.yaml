@@ -1,0 +1,29 @@
+skill: D3.S1
+diagrams:
+  - id: prod-prompting.D3.S1.diagram-which-pattern
+    title: "Which pattern? From one call to an autonomous agent"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: Start, label: "Start with one optimized LLM call (retrieval, examples); add complexity only if evals demand it" }
+      - { id: Path, label: "Can your code fix the control flow ahead of time?", shape: decision }
+      - { id: Shape, label: "Workflow: what shape is the task?", shape: decision }
+      - { id: Chain, label: "Prompt chaining: fixed sequential steps" }
+      - { id: Route, label: "Routing: distinct input categories" }
+      - { id: Parallel, label: "Parallelization: independent parts or votes" }
+      - { id: Orch, label: "Orchestrator-workers: a central LLM splits the task into subtasks it picks per input" }
+      - { id: Eval, label: "Evaluator-optimizer: generate, critique, refine in a loop" }
+      - { id: Agent, label: "Agent: the model picks its own steps in a loop, with stopping conditions" }
+    edges:
+      - { from: Start, to: Path, label: "evals say one call is not enough" }
+      - { from: Path, to: Shape, label: "yes: workflow" }
+      - { from: Path, to: Agent, label: "no: open-ended, steps unpredictable" }
+      - { from: Shape, to: Chain, label: "sequence" }
+      - { from: Shape, to: Route, label: "categories" }
+      - { from: Shape, to: Parallel, label: "independent" }
+      - { from: Shape, to: Orch, label: "subtasks vary per input" }
+      - { from: Shape, to: Eval, label: "clear evaluation criteria" }
+    sources:
+      - https://www.anthropic.com/engineering/building-effective-agents

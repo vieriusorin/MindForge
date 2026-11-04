@@ -1,0 +1,26 @@
+skill: D1.S1
+diagrams:
+  - id: prod-prompting.D1.S1.diagram-prompt-anatomy
+    title: "Anatomy of a production prompt"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: R, label: "Role in the system prompt (one sentence focuses tone and behavior)" }
+      - { id: D, label: "Long documents first, each in <document> with <source>" }
+      - { id: I, label: "Instructions, with the reason behind each rule" }
+      - { id: E, label: "3 to 5 diverse examples in <example> tags" }
+      - { id: Q, label: "The query, last" }
+      - { id: T, label: "Would a colleague with no context follow it?", shape: decision }
+      - { id: S, label: "Send it, then measure with evals" }
+    edges:
+      - { from: R, to: D }
+      - { from: D, to: I }
+      - { from: I, to: E }
+      - { from: E, to: Q }
+      - { from: Q, to: T }
+      - { from: T, to: S, label: "yes" }
+      - { from: T, to: I, label: "no: be more explicit" }
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices

@@ -1,0 +1,49 @@
+# MF-0016 Spot the Cuckoo: one planted flaw per snippet. Drafted by Claude (origin: ai) in a
+# hand session; unreviewed until two non-authors approve (CONTEXT.md Reviewer).
+skill: D7.S2
+cuckoos:
+  - id: ccdv-f.D7.S2.cuckoo-bypass-permissions
+    title: A project's shared .claude/settings.json
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: config
+    lines:
+      - "{"
+      - '  "permissions": {'
+      - '    "allow": ["Bash(pnpm test:*)", "Read(./src/**)"],'
+      - '    "deny": ["Read(./.env)", "Read(./secrets/**)"],'
+      - '    "defaultMode": "bypassPermissions"'
+      - "  }"
+      - "}"
+    flawLine: 5
+    flawKind: unsafe-setting
+    explanation: bypassPermissions skips permission prompts for every tool call, so the carefully scoped
+      allow list stops mattering. Checked into a shared project file, it puts every teammate in that
+      mode. Keep the default mode, and reserve bypass for isolated sandboxes such as a throwaway
+      container.
+    sources:
+      - https://code.claude.com/docs/en/permissions
+  - id: ccdv-f.D7.S2.cuckoo-allow-beats-deny
+    title: A CLAUDE.md section explaining the team's permission rules
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: prompt
+    lines:
+      - "## Permissions"
+      - "- Project rules live in .claude/settings.json and are shared with the team."
+      - "- We deny Read(./.env) so Claude's file tools can't open it."
+      - "- If you need .env, add an allow rule for it: an allow rule overrides a matching deny rule."
+      - "- Ask before adding any new Bash allow rule."
+    flawLine: 4
+    flawKind: false-claim
+    explanation: Claude Code checks deny rules first, then ask, then allow. A matching deny always wins,
+      so an allow rule can't open what a deny rule closes. That precedence is what makes a deny list
+      a reliable guardrail.
+    sources:
+      - https://code.claude.com/docs/en/permissions

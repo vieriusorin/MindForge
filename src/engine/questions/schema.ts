@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LevelSchema } from "../content/level";
 import {
   AuthorSchema,
   GeneratedBySchema,
@@ -34,6 +35,7 @@ const QuestionSchema = z
     author: AuthorSchema.optional(),
     // MF-0008: which model and prompt version wrote an `ai` item. Never sent to the browser.
     generatedBy: GeneratedBySchema.optional(),
+    level: LevelSchema.optional(),
     stem: z.string().min(1),
     select: z.number().int().min(1),
     options: z.array(OptionSchema).min(2).max(6),

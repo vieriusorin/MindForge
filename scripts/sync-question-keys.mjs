@@ -9,6 +9,8 @@
  * hash, which the review state binds to.
  * MF-0012: first loads every pack with the app's own validator and exits 1, writing nothing, on any
  * problem.
+ * MF-0016: cuckoos (packs/<slug>/cuckoos/*.yaml) are keyed like questions, with the flawed line's
+ * number as the only correct option, and registered with item_type 'cuckoo'.
  *
  * DB: $SUPABASE_DB_URL, else the LOCAL stack from `supabase status`.
  * Usage: node scripts/sync-question-keys.mjs
@@ -61,25 +63,38 @@ function readFiles(packSlug, kind) {
 }
 
 function readKeys(packSlug) {
-  return readFiles(packSlug, "questions").flatMap(({ name, file }) => {
-    return file.questions.map((q) => {
-      const correct = q.options.filter((o) => o.correct).map((o) => o.id);
-      if (correct.length === 0)
-        throw new Error(`${packSlug}/${name}: ${q.id} has no correct option`);
-      return {
-        question_id: q.id,
-        pack_slug: packSlug,
-        skill_code: file.skill,
-        correct_options: correct,
-      };
-    });
-  });
+  const questions = readFiles(packSlug, "questions").flatMap(
+    ({ name, file }) => {
+      return file.questions.map((q) => {
+        const correct = q.options.filter((o) => o.correct).map((o) => o.id);
+        if (correct.length === 0)
+          throw new Error(`${packSlug}/${name}: ${q.id} has no correct option`);
+        return {
+          question_id: q.id,
+          pack_slug: packSlug,
+          skill_code: file.skill,
+          correct_options: correct,
+        };
+      });
+    },
+  );
+  // MF-0016: record_attempt grades a cuckoo answer (a line number) by the same set equality.
+  const cuckoos = readFiles(packSlug, "cuckoos").flatMap(({ file }) =>
+    file.cuckoos.map((c) => ({
+      question_id: c.id,
+      pack_slug: packSlug,
+      skill_code: file.skill,
+      correct_options: [String(c.flawLine)],
+    })),
+  );
+  return [...questions, ...cuckoos];
 }
 
 const ITEM_KINDS = [
   { kind: "questions", type: "question" },
   { kind: "cards", type: "card" },
   { kind: "diagrams", type: "diagram" },
+  { kind: "cuckoos", type: "cuckoo" },
 ];
 const ORIGINS = ["official", "human", "ai"];
 

@@ -1,0 +1,31 @@
+skill: D2.S3
+diagrams:
+  - id: prod-prompting.D2.S3.diagram-mcp-participants
+    title: "MCP: one host, one client per server, three primitives"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: LR
+    nodes:
+      - { id: HOST, label: "MCP host (AI application, e.g. VS Code)" }
+      - { id: C1, label: "MCP client 1" }
+      - { id: C2, label: "MCP client 2" }
+      - { id: LOCAL, label: "Local server (stdio)" }
+      - { id: REMOTE, label: "Remote server (Streamable HTTP, OAuth)" }
+      - { id: TOOLS, label: "Tools: model-controlled actions" }
+      - { id: RES, label: "Resources: application-controlled context" }
+      - { id: PROMPTS, label: "Prompts: user-invoked templates" }
+    edges:
+      - { from: HOST, to: C1, label: creates }
+      - { from: HOST, to: C2, label: creates }
+      - { from: C1, to: LOCAL, label: "dedicated connection" }
+      - { from: C2, to: REMOTE, label: "dedicated connection" }
+      - { from: REMOTE, to: TOOLS, label: exposes }
+      - { from: REMOTE, to: RES, label: exposes }
+      - { from: REMOTE, to: PROMPTS, label: exposes }
+      - { from: LOCAL, to: TOOLS, label: exposes }
+      - { from: LOCAL, to: RES, label: exposes }
+      - { from: LOCAL, to: PROMPTS, label: exposes }
+    sources:
+      - https://modelcontextprotocol.io/docs/learn/architecture
+      - https://modelcontextprotocol.io/docs/learn/server-concepts

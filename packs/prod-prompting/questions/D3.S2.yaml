@@ -1,0 +1,158 @@
+skill: D3.S2
+questions:
+  - id: prod-prompting.D3.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Anthropic describes \"context rot\". What is it?"
+    select: 1
+    options:
+      - id: A
+        text: "Cached prompt prefixes expiring after five minutes and being processed again."
+        correct: false
+        rationale: "Context rot is about recall degrading as tokens grow, not about anything expiring."
+      - id: B
+        text: "Older messages being silently dropped by the API when a conversation gets long."
+        correct: false
+        rationale: "Context rot is about the model's recall degrading as context grows, not about content being removed from the request."
+      - id: C
+        text: "As the number of tokens in context grows, the model recalls information from it less accurately."
+        correct: true
+        rationale: "Context rot is the observation that recall and accuracy degrade as the token count in the context window increases, so context is a finite resource."
+      - id: D
+        text: "Facts in the model's training data going out of date after its knowledge cutoff."
+        correct: false
+        rationale: "Context is the tokens in the request, the model's working memory, which is different from its training corpus."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  - id: prod-prompting.D3.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Which parts of a Messages API request count toward the context window?"
+    select: 1
+    options:
+      - id: A
+        text: "All of it: system prompt, every message including tool results, tool definitions, and the output generated."
+        correct: true
+        rationale: "Everything in the request counts, including the system prompt, messages with tool results, images and documents, tool definitions, and the output for the turn including thinking."
+      - id: B
+        text: "Only the user and assistant text messages; system prompts and tool definitions are free."
+        correct: false
+        rationale: "The system prompt and tool definitions are part of the request and count toward the window."
+      - id: C
+        text: "Everything except cached tokens, because caching removes them from the window."
+        correct: false
+        rationale: "Cached prefixes still occupy the context window; caching changes what you pay, not whether they count."
+      - id: D
+        text: "Only the input; the response Claude generates has its own separate budget."
+        correct: false
+        rationale: "The window holds the conversation history plus the new output Claude generates for the turn."
+    source:
+      title: "Context windows"
+      url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"
+  - id: prod-prompting.D3.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "An analytics agent must explore a database far larger than its context window. Which strategy follows the \"just in time\" approach?"
+    select: 1
+    options:
+      - id: A
+        text: "Embed and pre-load every table into the system prompt so all data is visible at once."
+        correct: false
+        rationale: "Loading everything up front wastes the attention budget and does not fit a data set larger than the window."
+      - id: B
+        text: "Wait for a model with a larger context window before building the agent."
+        correct: false
+        rationale: "The article expects context windows of all sizes to suffer from context pollution and relevance concerns."
+      - id: C
+        text: "Summarize the whole database once and give the agent only that fixed summary."
+        correct: false
+        rationale: "A fixed summary cannot answer new questions about details it dropped; just-in-time retrieval loads what each step needs."
+      - id: D
+        text: "Keep lightweight references such as queries and paths, and load slices with tools when needed."
+        correct: true
+        rationale: "Just-in-time agents keep lightweight identifiers and use tools to load data at runtime, as Claude Code does with targeted queries and head/tail."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  - id: prod-prompting.D3.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A classification service sends the same long system prompt and tool list on every request, followed by a different incoming message each time. Where should the explicit cache breakpoint go so later requests read from the cache?"
+    select: 1
+    options:
+      - id: A
+        text: "On the incoming message, because that block is always last in the request."
+        correct: false
+        rationale: "The incoming message differs on every request, so the prefix hash at that breakpoint never matches; you pay for a fresh write each time and never get a read."
+      - id: B
+        text: "On the last block that stays identical across requests, at the end of the static prefix."
+        correct: true
+        rationale: "The docs' key takeaway is to place cache_control on the last block whose prefix is identical across the requests that should share a cache."
+      - id: C
+        text: "On the first block only, so the smallest possible prefix is cached and cheap to write."
+        correct: false
+        rationale: "Caching only a tiny prefix leaves the rest of the stable content to be processed at full price on every call."
+      - id: D
+        text: "Anywhere: the cache finds stable content behind the breakpoint and stores it automatically."
+        correct: false
+        rationale: "Writes occur only at breakpoints; the lookback only finds entries prior requests already wrote, not stable content."
+    source:
+      title: "Prompt caching"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+  - id: prod-prompting.D3.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You are writing the compaction prompt for a long-running coding agent. How does the guidance say to tune it?"
+    select: 1
+    options:
+      - id: A
+        text: "Start as aggressive as possible, then add details back only when users report problems."
+        correct: false
+        rationale: "Overly aggressive compaction can lose subtle context whose importance only shows up later, which users may never trace back."
+      - id: B
+        text: "First maximize recall on complex traces so nothing relevant is lost, then cut superfluous content for precision."
+        correct: true
+        rationale: "The article recommends tuning on complex agent traces: maximize recall first, then iterate to improve precision by removing superfluous content."
+      - id: C
+        text: "Keep every raw tool result verbatim, because those are the ground truth the agent relied on."
+        correct: false
+        rationale: "Old raw tool results are named as low-hanging superfluous content; tool result clearing is one of the safest forms of compaction."
+      - id: D
+        text: "Summarize only the system prompt and leave the message history untouched."
+        correct: false
+        rationale: "Compaction summarizes the conversation nearing the limit, keeping decisions and open bugs while discarding redundant outputs."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  - id: prod-prompting.D3.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A research agent must explore many sources in parallel without its main context filling up with search noise. Which technique fits, and what is its trade-off?"
+    select: 1
+    options:
+      - id: A
+        text: "Structured note-taking: one agent writes everything to NOTES.md and rereads it every turn."
+        correct: false
+        rationale: "Note-taking excels for iterative work with clear milestones; it does not isolate parallel exploration."
+      - id: B
+        text: "Compaction: let one agent search everything and summarize when the window is nearly full."
+        correct: false
+        rationale: "Compaction suits extensive back-and-forth conversation; a single agent still fills its window with every search first."
+      - id: C
+        text: "Sub-agents with clean windows that each return a condensed summary to a lead agent."
+        correct: true
+        rationale: "Sub-agents explore with tens of thousands of tokens but return a distilled summary, keeping search context isolated; multi-agent setups suit research where parallel exploration pays off."
+      - id: D
+        text: "Raise max_tokens on one agent so it has more room to keep every search result."
+        correct: false
+        rationale: "A bigger single context still fills with every search result; the article isolates search context in sub-agents instead."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"

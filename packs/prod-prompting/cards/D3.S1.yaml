@@ -1,0 +1,27 @@
+skill: D3.S1
+cards:
+  - id: prod-prompting.D3.S1.card-workflows-vs-agents
+    concept: Workflows vs agents
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      A workflow is an LLM following a path your code wrote: step one, then step two, maybe a branch.
+      An agent is an LLM that decides its own next step, calling tools in a loop and reading the results
+      until the job is done. Agents handle open-ended work, but they cost more, take longer and can pile
+      up errors, so start with the simplest thing that passes your evals.
+    inNature: >-
+      A canal and a fox. Water in a canal goes exactly where the engineer dug it: predictable, cheap,
+      repeatable. A fox hunting decides each move from what it smells and sees right now, so it can catch
+      prey nobody planned for, but it burns more energy and sometimes runs the wrong way.
+    whereItBreaks:
+      - "A fox has instincts built over millions of years; an agent only has its prompt, its tools and what the environment tells it, so poorly documented tools make it lose its way."
+      - "Canal water makes no choices, while every step of a workflow is still an LLM call that reads, judges and writes; only the order of the steps is fixed by code."
+      - "Nobody gives a fox a stopping rule; production agents need stopping conditions such as a maximum number of iterations."
+    contrast: >-
+      Both are agentic systems built on the same augmented LLM (retrieval, tools, memory). Workflows give
+      predictability for well-defined tasks; agents give flexibility when the number of steps cannot be
+      predicted. For many applications, neither is needed: one optimized call is enough.
+    diagram: prod-prompting.D3.S1.diagram-which-pattern
+    sources:
+      - https://www.anthropic.com/engineering/building-effective-agents

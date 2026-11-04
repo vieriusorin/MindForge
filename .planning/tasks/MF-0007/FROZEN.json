@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "src/server/db/__tests__/mf-0007-review.db.acceptance.test.ts",
-      "sha256": "5cda81f762843d7c4298579b889de1896b6aa8cb7f3dec5c15df918b3b7fbfca",
+      "sha256": "381db32d458fb7b8776224684943155a280077dd68f37089adcfc1ef4dab543c",
       "first_failure": "SC-1: PostgresError relation \"private.items\" does not exist; SC-2..SC-6: rpc PGRST202 (function not found); SC-7: review_states not in schema cache; identical on 2nd run (fixture + teardown survive)"
     },
     {
@@ -13,5 +13,13 @@
       "first_failure": "SC-8: Error: not implemented (reviewContextFromRows stub)"
     }
   ],
-  "history": []
+  "history": [
+    {
+      "at": "2026-11-04T14:14:04Z",
+      "reason": "User decision 2026-11-04 (MF-0016 TEST): the sync registers a fourth item kind, cuckoos (item_type cuckoo). SC-1 expected-registry kind list gains [\"cuckoos\",\"cuckoos\"]; intent (every item of every pack, a second run changes nothing) unchanged. No assertion removed or weakened.",
+      "files": {
+        "src/server/db/__tests__/mf-0007-review.db.acceptance.test.ts": "381db32d458fb7b8776224684943155a280077dd68f37089adcfc1ef4dab543c"
+      }
+    }
+  ]
 }

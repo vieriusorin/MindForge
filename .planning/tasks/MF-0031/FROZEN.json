@@ -1,0 +1,12 @@
+{
+  "ticket": "MF-0031",
+  "frozen_at": "2026-11-04T16:05:00Z",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0031-prod-prompting.acceptance.test.ts",
+      "sha256": "525b3cd4d73592c51dbe5a1f46d5a9a04b24811bc389b6614aec76fa84bec4cc",
+      "first_failure": "SC-1, SC-3: ENOENT packs/prod-prompting/pack.yaml; SC-4, SC-5: ENOENT packs/prod-prompting/questions; SC-6: ENOENT packs/prod-prompting/diagrams; SC-2: ContentValidationError questions/S1.yaml: questions.0: Unrecognized key: \"level\""
+    }
+  ],
+  "history": []
+}

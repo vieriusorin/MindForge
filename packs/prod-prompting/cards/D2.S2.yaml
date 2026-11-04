@@ -1,0 +1,30 @@
+skill: D2.S2
+cards:
+  - id: prod-prompting.D2.S2.card-tool-use-loop
+    concept: The tool-use loop
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Claude cannot run your code. When it wants a client tool, it stops with
+      `stop_reason: "tool_use"` and hands you a `tool_use` block (id, name, input). Your app runs
+      the tool and replies with a `tool_result` that carries the same id, placed first in the next
+      user message. Claude reads the result and either calls another tool or answers. You repeat
+      until it answers.
+    inNature: >-
+      A cleaner wrasse and its client fish. The client swims to the cleaning station and holds still
+      with its mouth open, a signal that says "work needed here". The wrasse does the work and the
+      client swims off. Neither one can do the other's job: the signal and the work stay separate.
+    whereItBreaks:
+      - "The client fish waits as long as it takes. A `tool_use` block demands its `tool_result` immediately after; nothing may come in between, or the API rejects the request."
+      - "Fish don't report failures. You should: return the error with `is_error: true` and an instructive message, so Claude can adapt."
+      - "The wrasse trusts whatever it finds. A tool result can carry an attacker's text, so treat it as untrusted input (indirect prompt injection)."
+      - "Server tools such as web search break the analogy: Anthropic runs them, and no result is needed from you."
+    contrast: >-
+      Client tools run in your app and need this loop. Server tools run on Anthropic's
+      infrastructure, and their results appear directly. An SDK tool runner can run the loop for
+      you; the manual loop is for when you need custom control.
+    diagram: prod-prompting.D2.S2.diagram-loop
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview

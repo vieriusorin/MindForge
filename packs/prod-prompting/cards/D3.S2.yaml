@@ -1,0 +1,27 @@
+skill: D3.S2
+cards:
+  - id: prod-prompting.D3.S2.card-attention-budget
+    concept: Context as an attention budget
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Everything you send (system prompt, tool definitions, messages, tool results) and everything Claude
+      writes back lands in one context window. More tokens is not automatically better: as context grows,
+      the model recalls details from it less accurately. Context engineering means keeping the smallest set
+      of high-signal tokens in that window at each step.
+    inNature: >-
+      A tree's canopy and sunlight. A tree can only feed so many leaves; each new branch shades the ones
+      below. Gardeners prune dead and crowded branches so the light reaches the leaves that matter.
+      Compaction, note-taking and sub-agents are pruning for an agent's context.
+    whereItBreaks:
+      - "A tree grows new light every day; a context window is a hard limit, and an input that exceeds it is rejected with a 400 error rather than shaded."
+      - "Pruned branches are gone for good, while an agent can write notes outside the window and read them back later."
+      - "Shade is easy to see; context rot is a gradient rather than a hard cliff, so the model stays capable but quietly loses precision as context grows."
+    contrast: >-
+      Prompt engineering is writing good instructions once. Context engineering is curating, at every turn,
+      everything that lands in the window: instructions, tools, examples, history and retrieved data.
+    diagram: prod-prompting.D3.S2.diagram-long-horizon
+    sources:
+      - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+      - https://platform.claude.com/docs/en/build-with-claude/context-windows

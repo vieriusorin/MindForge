@@ -1,4 +1,11 @@
 export {
+  type CheckCuckooAnswerInput,
+  type CheckCuckooAnswerResult,
+  CUCKOO_GRADE_ERRORS,
+  type CuckooGradeError,
+  checkCuckooAnswer,
+} from "./check-cuckoo-answer";
+export {
   findPackItem,
   itemSkillCode,
   itemTitle,
@@ -19,6 +26,7 @@ export {
   SEED_CHECK_COUNT,
 } from "./plan-seed-planting";
 export { plantableSkills } from "./plantable-skills";
+export { toPlayableCuckoo } from "./playable-cuckoo";
 export { playableQuestions } from "./playable-questions";
 export {
   emptyReviewContext,
@@ -31,9 +39,18 @@ export {
   nextReviewItem,
   orderReviewQueue,
 } from "./review-queue";
+export {
+  CUCKOO_FLAW_KINDS,
+  CUCKOO_MAX_LINES,
+  CUCKOO_SNIPPET_KINDS,
+} from "./schema";
 export type {
   ContentFile,
   ContentFiles,
+  Cuckoo,
+  CuckooFeedback,
+  CuckooFlawKind,
+  CuckooSnippetKind,
   Diagram,
   DiagramDirection,
   DiagramEdge,
@@ -41,9 +58,11 @@ export type {
   DiagramNodeShape,
   GeneratedBy,
   ItemType,
+  LoadedPackContent,
   NatureCard,
   Origin,
   PackContent,
+  PlayableCuckoo,
   PlayMode,
   ReviewCandidate,
   ReviewContext,

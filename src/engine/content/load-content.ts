@@ -5,13 +5,14 @@ import type { z } from "zod";
 import type { Pack } from "../pack/types";
 import { QuestionFileSchema } from "../questions/schema";
 import type { Question } from "../questions/types";
-import { CardFileSchema, DiagramFileSchema } from "./schema";
+import { CardFileSchema, CuckooFileSchema, DiagramFileSchema } from "./schema";
 import type {
   ContentFile,
   ContentFiles,
+  Cuckoo,
   Diagram,
+  LoadedPackContent,
   NatureCard,
-  PackContent,
 } from "./types";
 
 export class ContentValidationError extends Error {
@@ -58,13 +59,16 @@ function readFileData<S extends z.ZodType<{ skill: string }>>(
 }
 
 /** Validate every item file of a pack together: schemas, skills, pack-wide ids, card → diagram links. */
-export function parseContent(files: ContentFiles, pack: Pack): PackContent {
+export function parseContent(
+  files: ContentFiles,
+  pack: Pack,
+): LoadedPackContent {
   const skills = new Set(
     pack.domains.flatMap((d) => d.skills.map((s) => s.code)),
   );
   const issues: string[] = [];
   const firstFileOf = new Map<string, string>();
-  /** Pack-wide uniqueness across item types; questions first, then diagrams, then cards. */
+  /** Pack-wide uniqueness across item types; questions first, then diagrams, cards, cuckoos. */
   const claim = (id: string, file: string, path: string): boolean => {
     const first = firstFileOf.get(id);
     if (first) {
@@ -123,8 +127,23 @@ export function parseContent(files: ContentFiles, pack: Pack): PackContent {
     });
   }
 
+  const cuckoos: Cuckoo[] = [];
+  for (const file of files.cuckoos ?? []) {
+    const data = readFileData(
+      file,
+      CuckooFileSchema,
+      skills,
+      pack.slug,
+      issues,
+    );
+    data?.cuckoos.forEach((c, i) => {
+      if (claim(c.id, file.name, `cuckoos.${i}.id`))
+        cuckoos.push({ ...c, skill: data.skill });
+    });
+  }
+
   if (issues.length) throw new ContentValidationError(issues);
-  return { questions, cards, diagrams };
+  return { questions, cards, diagrams, cuckoos };
 }
 
 async function readKind(
@@ -147,20 +166,21 @@ async function readKind(
   );
 }
 
-/** Read `<packDir>/{questions,cards,diagrams}/*.yaml` as text. A missing dir means none. */
+/** Read `<packDir>/{questions,cards,diagrams,cuckoos}/*.yaml` as text. A missing dir means none. */
 export async function readPackFiles(packDir: string): Promise<ContentFiles> {
-  const [questions, cards, diagrams] = await Promise.all([
+  const [questions, cards, diagrams, cuckoos] = await Promise.all([
     readKind(packDir, "questions"),
     readKind(packDir, "cards"),
     readKind(packDir, "diagrams"),
+    readKind(packDir, "cuckoos"),
   ]);
-  return { questions, cards, diagrams };
+  return { questions, cards, diagrams, cuckoos };
 }
 
-/** Read `<packDir>/{questions,cards,diagrams}/*.yaml` and validate them. A missing dir means none. */
+/** Read `<packDir>/{questions,cards,diagrams,cuckoos}/*.yaml` and validate them. A missing dir means none. */
 export async function loadPackContent(
   pack: Pack,
   packDir: string,
-): Promise<PackContent> {
+): Promise<LoadedPackContent> {
   return parseContent(await readPackFiles(packDir), pack);
 }

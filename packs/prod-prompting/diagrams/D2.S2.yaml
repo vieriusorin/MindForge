@@ -1,0 +1,28 @@
+skill: D2.S2
+diagrams:
+  - id: prod-prompting.D2.S2.diagram-loop
+    title: "The client tool-use loop"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: REQ, label: "Request: messages + tools" }
+      - { id: STOP, label: "stop_reason is tool_use?", shape: decision }
+      - { id: RUN, label: "Your app runs each tool_use (id, name, input)" }
+      - { id: OK, label: "Tool succeeded?", shape: decision }
+      - { id: RES, label: "tool_result with tool_use_id, first in the user message" }
+      - { id: ERR, label: "tool_result with is_error true and an instructive message" }
+      - { id: DONE, label: "Claude answers in text (check stop_reason before treating it as final)" }
+    edges:
+      - { from: REQ, to: STOP }
+      - { from: STOP, to: RUN, label: "yes" }
+      - { from: STOP, to: DONE, label: "no" }
+      - { from: RUN, to: OK }
+      - { from: OK, to: RES, label: "yes" }
+      - { from: OK, to: ERR, label: "no" }
+      - { from: RES, to: REQ, label: "send back, loop" }
+      - { from: ERR, to: REQ, label: "send back, loop" }
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview

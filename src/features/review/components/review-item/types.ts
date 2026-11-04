@@ -1,4 +1,10 @@
-import type { Diagram, NatureCard, Origin, PackItem } from "@/engine/content";
+import type {
+  Cuckoo,
+  Diagram,
+  NatureCard,
+  Origin,
+  PackItem,
+} from "@/engine/content";
 import type { Question } from "@/engine/questions";
 
 export interface ReviewItemProps {
@@ -21,6 +27,10 @@ export interface CardBodyProps {
 
 export interface DiagramBodyProps {
   diagram: Diagram;
+}
+
+export interface CuckooBodyProps {
+  cuckoo: Cuckoo;
 }
 
 export interface SourcesProps {

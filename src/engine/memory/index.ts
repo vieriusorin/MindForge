@@ -11,7 +11,10 @@ export {
 export { replayMemory } from "./replay";
 export {
   DEFAULT_SESSION_SIZE,
+  pickSessionItems,
   pickSessionQuestions,
   type SessionInput,
+  type SessionItem,
+  type SessionItemsInput,
 } from "./select";
 export type { Attempt } from "./types";

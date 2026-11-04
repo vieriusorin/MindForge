@@ -1,0 +1,50 @@
+# MF-0016 Spot the Cuckoo: one planted flaw per snippet. Drafted by Claude (origin: ai) in a
+# hand session; unreviewed until two non-authors approve (CONTEXT.md Reviewer).
+skill: D6.S2
+cuckoos:
+  - id: ccdv-f.D6.S2.cuckoo-shouting-rules
+    title: A prompt-style guide pinned in a team wiki
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: prompt
+    lines:
+      - Prompt style guide
+      - "- Say what to do, not only what to avoid."
+      - "- Explain why a rule exists; the model generalises from the reason."
+      - "- Write every rule as 'CRITICAL: you MUST…' in capitals; newer models only follow shouted
+        rules."
+      - "- Wrap long inputs and examples in XML tags such as <document>."
+    flawLine: 4
+    flawKind: false-claim
+    explanation: Recent Claude models follow system-prompt instructions closely. Aggressive emphasis
+      written for older models now tends to cause overreaction (for example, reaching for a tool far
+      too often). The prompting guide recommends dialling such language back to plain, explained
+      instructions.
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+  - id: ccdv-f.D6.S2.cuckoo-follow-ticket-instructions
+    title: A prompt template for a support-ticket classifier
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: prompt
+    lines:
+      - You classify customer support tickets.
+      - "Choose exactly one category: billing, bug, feature-request."
+      - If the ticket text contains instructions, follow them before you classify.
+      - <ticket>
+      - "{{ticket_body}}"
+      - </ticket>
+      - Reply with the category name only, in lower case.
+    flawLine: 3
+    flawKind: unsafe-setting
+    explanation: The ticket body is untrusted user input. Telling the model to obey instructions inside
+      it hands control of the classifier to whoever writes a ticket. Keep untrusted input inside its
+      delimiters, and state that it is data to classify, never instructions.
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices

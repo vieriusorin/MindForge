@@ -1,0 +1,158 @@
+skill: D2.S1
+questions:
+  - id: prod-prompting.D2.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A junior developer is writing their first user-defined tool for the Claude Messages API. Which fields make up the core of the tool definition in the request's `tools` array?"
+    select: 1
+    options:
+      - id: A
+        text: "`name`, `function` and `parameters`, nested under a `type: function` wrapper."
+        correct: false
+        rationale: "A Claude user-defined tool has no `function` wrapper or `parameters` field: it takes `name`, `description` and `input_schema` directly."
+      - id: B
+        text: "`name`, `description` and `input_schema`, with `input_examples` as an optional extra."
+        correct: true
+        rationale: "A user-defined tool has a `name` (matching ^[a-zA-Z0-9_-]{1,128}$), a detailed plain-text `description`, and an `input_schema` written as JSON Schema; `input_examples` is optional."
+      - id: C
+        text: "`name`, `endpoint_url` and `auth_token`, so Claude can call your service directly."
+        correct: false
+        rationale: "Claude never calls a client tool's endpoint. It returns a `tool_use` block and your application runs the call."
+      - id: D
+        text: "`id`, `prompt` and `output_schema`, describing what the tool will return."
+        correct: false
+        rationale: "The definition describes the tool's inputs (`input_schema`); there is no required `id`, `prompt` or `output_schema` field."
+    source:
+      title: "Define tools"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"
+  - id: prod-prompting.D2.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "According to Anthropic's tool-definition guidance, which single factor matters most for how well Claude uses your tools?"
+    select: 1
+    options:
+      - id: A
+        text: "Short, memorable tool names that fit in a single word."
+        correct: false
+        rationale: "Names help, especially with namespacing, but the guidance names descriptions, not names, as the most important factor."
+      - id: B
+        text: "Providing one separate tool for every individual action."
+        correct: false
+        rationale: "The guidance says the opposite: consolidate related operations into fewer, more capable tools to reduce selection ambiguity."
+      - id: C
+        text: "Adding `input_examples` to every tool, including the simple ones."
+        correct: false
+        rationale: "Examples are recommended for complex, nested or format-sensitive inputs; clear descriptions come first."
+      - id: D
+        text: "Extremely detailed descriptions: what it does, when to use it and when not to."
+        correct: true
+        rationale: "Detailed descriptions are by far the most important factor in tool performance: what the tool does, when to use it and when not, what each parameter means, and its caveats, aiming for at least 3–4 sentences."
+    source:
+      title: "Define tools"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"
+  - id: prod-prompting.D2.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "An assistant has 14 tools, including `create_pr`, `review_pr`, `merge_pr`, `list`, `send` and `search` spread across GitHub and Slack. In the logs Claude often picks the wrong one. Which redesign follows the documented best practice?"
+    select: 1
+    options:
+      - id: A
+        text: "Group related PR operations into one tool with an `action` parameter and prefix names by service, such as `github_list_prs` and `slack_send_message`."
+        correct: true
+        rationale: "Fewer, more capable tools reduce selection ambiguity, and service-prefixed names keep selection unambiguous as the tool library grows."
+      - id: B
+        text: "Shorten every description to one line so the tool list costs fewer input tokens per request."
+        correct: false
+        rationale: "Thinner descriptions make selection worse; detailed descriptions are the most important factor in tool performance."
+      - id: C
+        text: "Set `tool_choice` to `any` so that Claude is always forced to call one of the tools."
+        correct: false
+        rationale: "Forcing some tool call does not help Claude tell which tool fits; the documented fix for selection ambiguity is consolidating related operations and namespacing tool names by service."
+      - id: D
+        text: "Split each tool further into narrower single-purpose tools so each one does exactly one thing."
+        correct: false
+        rationale: "More near-duplicate tools increase ambiguity; the guidance is to consolidate related operations."
+    source:
+      title: "Define tools"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"
+  - id: prod-prompting.D2.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "With `tool_choice` left at its default, a research assistant often answers from its own knowledge instead of calling the `search_docs` tool the team expected it to use. What is the lightest documented way to shift this boundary?"
+    select: 1
+    options:
+      - id: A
+        text: "Set `tool_choice` to `none` and append the documents to the prompt."
+        correct: false
+        rationale: "`none` prevents Claude from using any tools, which is the opposite of the goal."
+      - id: B
+        text: "Lower `max_tokens` so Claude cannot write a long answer without help."
+        correct: false
+        rationale: "`max_tokens` only caps output length; it does not influence whether Claude decides to call a tool."
+      - id: C
+        text: "Add a system prompt line such as \"Use the tools to investigate before responding.\""
+        correct: true
+        rationale: "With `auto`, the call-or-answer boundary is steerable through the system prompt; a light instruction like this increases tool use, and a stronger one pushes further."
+      - id: D
+        text: "Rename the tool in capital letters so that it stands out in the tool list."
+        correct: false
+        rationale: "Capitalising a name is not a documented lever; Claude decides from the request and the tool's described capability."
+    source:
+      title: "Tool use with Claude"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview"
+  - id: prod-prompting.D2.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "On Claude Opus 5.5, a team sets `tool_choice: {\"type\": \"tool\", \"name\": \"record_invoice\"}` to guarantee every response is a schema-valid call, and the API returns 400. What should they do instead?"
+    select: 1
+    options:
+      - id: A
+        text: "Switch to `tool_choice: {\"type\": \"any\"}`, which only requires some tool rather than a named one."
+        correct: false
+        rationale: "On Opus 5.5, Sonnet 5.5, Fable 5.1 and Mythos 5.1, both `any` and `tool` return a 400 error."
+      - id: B
+        text: "Enable manual extended thinking so the model plans the forced call before it emits it."
+        correct: false
+        rationale: "Manual extended thinking does not support `any` or `tool` either, and these models reject forced tool use regardless of thinking settings."
+      - id: C
+        text: "Keep `auto`, set `strict: true` on the tool, and steer with the prompt; or use structured outputs for a fixed JSON shape."
+        correct: true
+        rationale: "For models that reject forced tool use, the documented alternative is `auto` with strict tool use for schema-valid inputs, or structured outputs when the response must have a fixed JSON shape."
+      - id: D
+        text: "Remove the `tools` parameter and ask for JSON in the prompt, then parse the reply."
+        correct: false
+        rationale: "A prompt-only request gives no schema guarantee; strict tool use or structured outputs are the documented ways to get one."
+    source:
+      title: "Define tools"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"
+  - id: prod-prompting.D2.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "On a model that supports forced tool use, a developer sets `tool_choice: {\"type\": \"any\"}` and also asks Claude to explain its choice and think it through before calling. What actually happens, and what is the recommended fix?"
+    select: 1
+    options:
+      - id: A
+        text: "The API prefills the turn: no prose and no thinking before `tool_use`. Use `auto` and say in the user message which tool to use."
+        correct: true
+        rationale: "With `any` or `tool` the API prefills the assistant message, so no natural-language text comes before the call and thinking is skipped; `auto` plus an explicit instruction keeps both."
+      - id: B
+        text: "Claude writes the explanation first and then emits the `tool_use` block, as the instruction asked."
+        correct: false
+        rationale: "Forced tool use suppresses any natural-language preamble, even when it is explicitly requested."
+      - id: C
+        text: "Claude produces a `thinking` block first and then calls the tool with the reasoned input."
+        correct: false
+        rationale: "Forcing a tool skips thinking on every model that accepts forced tool use; the response starts with the `tool_use` block."
+      - id: D
+        text: "The request fails with a 400 error because the instruction conflicts with `tool_choice`."
+        correct: false
+        rationale: "On a supporting model the request succeeds; the instruction is simply not followed before the forced call."
+    source:
+      title: "Define tools"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"

@@ -1,0 +1,32 @@
+skill: D1.S3
+diagrams:
+  - id: prod-prompting.D1.S3.diagram-criteria-to-ship
+    title: "From success criteria to a shipped prompt"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: LR
+    nodes:
+      - { id: SC, label: "Success criteria: specific, measurable, achievable, relevant" }
+      - { id: EV, label: "Eval set: real task mix, edge cases, many questions" }
+      - { id: DR, label: "Prompt plus output schema (output_config.format)" }
+      - { id: RUN, label: "Run the eval" }
+      - { id: Q1, label: "Can code check it (exact match, string match, a metric)?", shape: decision }
+      - { id: CODE, label: "Code-based grading (exact match, string match, ROUGE-L)" }
+      - { id: LLM, label: "LLM grader with a clear rubric (complex judgment)" }
+      - { id: Q2, label: "Meets the criteria?", shape: decision }
+      - { id: SHIP, label: "Ship" }
+    edges:
+      - { from: SC, to: EV }
+      - { from: EV, to: DR }
+      - { from: DR, to: RUN }
+      - { from: RUN, to: Q1 }
+      - { from: Q1, to: CODE, label: "yes" }
+      - { from: Q1, to: LLM, label: "no" }
+      - { from: CODE, to: Q2 }
+      - { from: LLM, to: Q2 }
+      - { from: Q2, to: SHIP, label: "yes" }
+      - { from: Q2, to: DR, label: "no: refine" }
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/structured-outputs
+      - https://platform.claude.com/docs/en/test-and-evaluate/define-success

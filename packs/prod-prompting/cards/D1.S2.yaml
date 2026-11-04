@@ -1,0 +1,27 @@
+skill: D1.S2
+cards:
+  - id: prod-prompting.D1.S2.card-foraging-range
+    concept: Effort (how hard Claude works on one response)
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Effort is a dial on the request (output_config.effort): low, medium, high, xhigh, max. Lower
+      effort means fewer tokens, fewer and terser tool calls, faster and cheaper answers; higher
+      effort means more thinking and more thorough work (not every model supports every level). Pick
+      it per workload and check the choice on your evals.
+    inNature: >-
+      A bee colony deciding how far to forage. For a quick nectar run, bees work the flowers next
+      to the hive; for a big harvest they fly further and visit every flower on the way. Effort
+      is how far you send the forager for one answer.
+    whereItBreaks:
+      - "A forager's range is a hard limit; effort is a behavioral signal, not a budget. At low effort Claude still thinks on a hard problem, just less."
+      - "Effort changes every output token (text, tool calls, thinking), not only how far Claude looks."
+      - "On some models (for example Claude Opus 5) effort controls thinking volume, not visible length: lowering it does not reliably shorten answers, so ask for the length you want in the prompt."
+      - "Changing the top-level effort mid-conversation invalidates the prompt cache; bees pay nothing to change their route."
+    contrast: >-
+      Effort sets how much work goes into the whole response. The thinking setting decides whether
+      Claude thinks in thinking blocks. max_tokens is the hard ceiling on output.
+    diagram: prod-prompting.D1.S2.diagram-choose-effort
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/effort

@@ -281,7 +281,12 @@ describe("MF-0006 content contract", () => {
       sample,
       join(ROOT, "packs/team-onboarding-sample"),
     );
-    expect(sampleContent).toEqual({ questions: [], cards: [], diagrams: [] });
+    expect(sampleContent).toEqual({
+      questions: [],
+      cards: [],
+      diagrams: [],
+      cuckoos: [],
+    });
   });
 
   it("SC-8: review seam — isPlayable never serves flagged/rejected; an empty context serves all 53", async () => {

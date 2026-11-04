@@ -120,7 +120,7 @@ the test for each: (a) ids or manifests it keeps on disk, and whether they stay 
 restart, auth uuids change): bind a stored id to the owner that wrote it; (b) decisions another actor makes between
 runs (reject, dismiss, approve, hand-played answers), and whether the re-run respects them. Each gets a regression
 test shown RED before done (MF-0029 retro: manifest id reuse after a reset could delete hand-played answers, and
-re-planned reviews landed on rejected items; both found only in review).
+re-planned reviews landed on rejected items; both found only in review). (c) failure order: every check that can fail on its inputs (pack registered, content hash fresh, item accepted, config valid) runs for ALL inputs before the first delete or other destructive write, and again inside the transaction; a transaction does not protect deletes made before it opens. Name a committed test that makes the second input bad and asserts the first run's data is still there (MF-0034 retro: the multi-pack seed deleted the demo world, then one stale pack failed inside the transaction).
 
 Before writing any SC that names an external API's wire format, id pattern, limit or model id, load
 the matching skill (for example `claude-api`) and read the live reference. Paste the constraint into
@@ -236,6 +236,16 @@ with `agent`, `owns`, `depends_on`, `closes`, `done_when`, `context` (`reference
 EVAL validates it: acyclic, known agents, every SC closed. Done when an engineer who never saw
 this conversation could implement from the plan alone.
 
+**Contract-widening tickets: grep the shape, not the table.** When the ticket adds a member to a closed set
+or a field to a shared shape (an item kind, `ITEM_TYPES`, a `CHECK` list, `PackContent`, a loader's return
+type), list the frozen tests it will break before the plan is approved. Run, over every
+`**/*.acceptance.test.*` and every path in the `builds_on` tickets' `FROZEN.json`: `grep -ln` for the set's
+name, its sibling members as literals (e.g. `'question'` next to `'card'`), the shape's type name, and any
+literal of the loader's output. Put each hit in LOOP-PLAN under "Frozen files this will re-freeze", each
+with the new expected value and the reason, and take all of them to the plan-approval checkpoint as one
+batch. A collision found later is a re-freeze that stops BUILD or TEST for a separate approval (MF-0016:
+MF-0003 SC-5, MF-0006 SC-6, MF-0007 SC-1 and the ticket's own SC-5 fixture, one per stage).
+
 High-risk: present the plan and wait for approval. Normal: proceed.
 
 ## Stage 3b — BUILD
@@ -276,7 +286,7 @@ Write `LOOP-VERIFY.md` (one row per SC: verdict + literal evidence) and `.planni
 Evidence is pasted toolchain output and observed screens, never "should work"; anything unverified
 is listed as unverified. A bug the reviewer finds gets its regression test shown RED first: add the
 test, run it against the unfixed code (revert the fix by copying the file aside, or `git stash -u`; plain `git stash` leaves untracked files in place, so the run is not against the unfixed code, MF-0029), paste the failing line, then restore the
-fix. A test written after the fix and never seen red does not count.
+fix. A test written after the fix and never seen red does not count. A fix made after a high-risk review that touches a delete, auth or privileged-client path is not covered by the review hash. Before DONE, re-run the reviewer on the delta only (the changed hunks plus the RED regression) and update `reviewed_hash`; if it is not re-reviewed, write "post-review change to <path> not re-read" in LOOP-VERIFY and in the evidence's Not verified list (MF-0034). CLI-only or message-only fixes that refuse before any DB call may stay on the original review.
 
 **Decision:**
 - VERIFY DONE and EVAL healthy → Stage 5.

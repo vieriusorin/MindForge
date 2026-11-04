@@ -1,7 +1,6 @@
-import type { Question } from "../questions/types";
 import type { Attempt } from "./types";
 
-/** When each question was last answered, by question id. Questions never answered are absent. */
+/** When each item was last answered, by item id. Items never answered are absent. */
 export function lastSeenByQuestion(
   attempts: readonly Attempt[],
 ): Map<string, number> {
@@ -15,11 +14,13 @@ export function lastSeenByQuestion(
 }
 
 /** The candidate this learner saw least recently, never-seen first; ties keep file order. */
-export function leastRecentlySeen(
-  candidates: readonly [Question, ...Question[]],
+export function leastRecentlySeen<T extends { id: string }>(
+  candidates: readonly [T, ...T[]],
   lastSeen: ReadonlyMap<string, number>,
-): Question {
-  const seenAt = (q: Question): number =>
-    lastSeen.get(q.id) ?? Number.NEGATIVE_INFINITY;
-  return candidates.reduce((best, q) => (seenAt(q) < seenAt(best) ? q : best));
+): T {
+  const seenAt = (item: T): number =>
+    lastSeen.get(item.id) ?? Number.NEGATIVE_INFINITY;
+  return candidates.reduce((best, item) =>
+    seenAt(item) < seenAt(best) ? item : best,
+  );
 }
