@@ -43,7 +43,6 @@ const content: PackContent = {
         { id: "B", label: "b" },
       ],
       edges: [{ from: "A", to: "B" }],
-      mermaid: "flowchart LR\n A --> B",
       sources: ["https://example.com"],
     },
   ],
