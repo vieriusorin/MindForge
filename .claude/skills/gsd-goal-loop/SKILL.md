@@ -127,6 +127,16 @@ the matching skill (for example `claude-api`) and read the live reference. Paste
 the SC. Before hand-off, run the real command once against real input, because mocks do not prove
 input shape (MF-0008 retro: a Batches `custom_id` with dots, and a PDF stored as text).
 
+Any SC that shows a computed figure (a percent, a rank, a flag, a weather) gets an **edge-input table** in
+the GOAL before the checkpoint. It has one row per input state: nothing at all, partially present (a skill
+never attempted, a domain with no data), a config value absent (a pack without `exam.date`), and the
+boundary of every threshold. Each row names the shown result and who decided it. A row the draft did not
+state is a Concern for the user, not a default for the builder. When the GOAL was drafted in an earlier
+session, also re-read each draft decision against the user's later answers and `CONTEXT.md` for
+contradictions. Before writing an oracle over a library's numbers (ts-fsrs, date maths, rounding), run a
+one-line probe of the library and record the result in the oracle test's comment. A formula taken from the
+docs can differ from what the code does (MF-0015 retro: ts-fsrs floors elapsed days).
+
 Any SC that shows a figure, rank or flag computed over other people's data (a group aggregate, heatmap,
 leaderboard, "N of M" line) states under "Constraints → how met" what the viewer can deduce from the output:
 (a) the threshold counts contributors OTHER than the viewer, who knows their own row and can subtract it;
