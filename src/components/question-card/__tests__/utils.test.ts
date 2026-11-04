@@ -1,0 +1,42 @@
+import { describe, expect, it } from "vitest";
+import { optionState, originBadge } from "../utils";
+
+const feedback = {
+  correct: false,
+  correctOptionIds: ["B"],
+  rationales: { A: "a", B: "b", C: "c" },
+};
+
+describe("optionState", () => {
+  it("is plain for every option before grading", () => {
+    expect(optionState("A", ["A"], null)).toBe("plain");
+    expect(optionState("B", ["A"], null)).toBe("plain");
+  });
+
+  it("after grading marks the key, the wrong pick, and leaves the rest plain", () => {
+    expect(optionState("B", ["A"], feedback)).toBe("key");
+    expect(optionState("A", ["A"], feedback)).toBe("missed");
+    expect(optionState("C", ["A"], feedback)).toBe("plain");
+  });
+
+  it("a chosen key is the key, not a miss", () => {
+    expect(optionState("B", ["B"], { ...feedback, correct: true })).toBe("key");
+  });
+});
+
+describe("originBadge", () => {
+  it("vouches only for official items", () => {
+    expect(originBadge("official")).toEqual({
+      label: "Official sample",
+      isOfficial: true,
+    });
+    expect(originBadge("ai")).toEqual({
+      label: "Unreviewed",
+      isOfficial: false,
+    });
+    expect(originBadge("human")).toEqual({
+      label: "Unreviewed",
+      isOfficial: false,
+    });
+  });
+});

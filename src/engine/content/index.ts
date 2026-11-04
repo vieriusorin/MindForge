@@ -4,6 +4,7 @@ export {
   loadPackContent,
   parseContent,
 } from "./load-content";
+export { playableQuestions } from "./playable-questions";
 export { emptyReviewContext, isPlayable, reviewStateOf } from "./review";
 export type {
   ContentFile,

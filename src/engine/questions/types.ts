@@ -30,6 +30,13 @@ export interface PlayableQuestion {
   source: { title: string; url: string };
 }
 
+/** Revealed only after the database graded the answer: the key and every option's rationale. */
+export interface AnswerFeedback {
+  correct: boolean;
+  correctOptionIds: string[];
+  rationales: Record<string, string>;
+}
+
 export interface QuestionFile {
   name: string;
   text: string;

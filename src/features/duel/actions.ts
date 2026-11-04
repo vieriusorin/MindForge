@@ -2,11 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { isPlayable, reviewStateOf } from "@/engine/content";
+import { type GradeError, gradeAnswer } from "@/server/attempts/grade-answer";
 import { getCurrentUser } from "@/server/auth/current-user";
-import { getReviewContext } from "@/server/content/get-review-context";
-import { getPackQuestions } from "@/server/questions/get-pack-questions";
-import { createServerSupabase } from "@/server/supabase/server";
 import type { AnswerResult } from "./types";
 
 const AnswerInput = z.strictObject({
@@ -18,7 +15,14 @@ const AnswerInput = z.strictObject({
     .max(10),
 });
 
-/** Grade in the DATABASE, then (and only then) reveal the key and every rationale. */
+const MESSAGE = {
+  "not-in-pack": "This question doesn't belong to this pack.",
+  withdrawn: "This question was withdrawn for review. Start a new duel.",
+  "not-gradable":
+    "This question isn't available for grading yet. Ask an admin to sync the answer keys.",
+} as const satisfies Record<GradeError, string>;
+
+/** Grade in the DATABASE, then (and only then) reveal the key and every rationale (MF-0009: shared `gradeAnswer`). */
 export async function answerQuestion(
   packSlug: string,
   questionId: string,
@@ -31,42 +35,8 @@ export async function answerQuestion(
   const parsed = AnswerInput.safeParse({ packSlug, questionId, chosen });
   if (!parsed.success) return { ok: false, message: "Pick an answer first." };
 
-  const question = (await getPackQuestions(parsed.data.packSlug)).find(
-    (q) => q.id === parsed.data.questionId,
-  );
-  if (!question)
-    return { ok: false, message: "This question doesn't belong to this pack." };
-  // MF-0006 SC-8: a flagged or rejected item is never graded, even if a stale page still shows it.
-  const review = await getReviewContext(user.id, parsed.data.packSlug);
-  if (!isPlayable(reviewStateOf(review, question), "practice"))
-    return {
-      ok: false,
-      message: "This question was withdrawn for review. Start a new duel.",
-    };
-
-  const supabase = await createServerSupabase();
-  const { data, error } = await supabase.rpc("record_attempt", {
-    p_question_id: question.id,
-    p_chosen: parsed.data.chosen,
-  });
-  if (error || typeof data !== "boolean") {
-    return {
-      ok: false,
-      message:
-        "This question isn't available for grading yet. Ask an admin to sync the answer keys.",
-    };
-  }
-
-  return {
-    ok: true,
-    feedback: {
-      correct: data,
-      correctOptionIds: question.options
-        .filter((o) => o.correct)
-        .map((o) => o.id),
-      rationales: Object.fromEntries(
-        question.options.map((o) => [o.id, o.rationale]),
-      ),
-    },
-  };
+  const result = await gradeAnswer({ userId: user.id, ...parsed.data });
+  return result.ok
+    ? { ok: true, feedback: result.feedback }
+    : { ok: false, message: MESSAGE[result.error] };
 }

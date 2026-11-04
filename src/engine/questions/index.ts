@@ -5,6 +5,7 @@ export {
 } from "./load-questions";
 export { toPlayableQuestion } from "./playable";
 export type {
+  AnswerFeedback,
   PlayableQuestion,
   Question,
   QuestionFile,
