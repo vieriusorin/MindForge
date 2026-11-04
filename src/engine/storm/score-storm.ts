@@ -1,8 +1,8 @@
 import type { Pack } from "../pack/types";
 import { isProven, tallyBySkill } from "./tally-by-skill";
 import type {
+  SerializedStormDomainScore,
   StormDomainReport,
-  StormDomainScore,
   StormReport,
   StormResult,
   StormSkillReport,
@@ -56,7 +56,7 @@ export function scoreStorm(pack: Pack, storm: StormResult): StormReport {
 /** MF-0013 SC-5: MF-0015's readiness input, one entry per reported domain. */
 export function stormDomainScores(
   report: StormReport,
-): readonly StormDomainScore[] {
+): readonly SerializedStormDomainScore[] {
   const finishedAt = report.finishedAt.toISOString();
   return report.domains.map((d) => ({
     domainCode: d.domainCode,

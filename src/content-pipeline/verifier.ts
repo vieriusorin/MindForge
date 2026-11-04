@@ -41,6 +41,26 @@ export function buildVerifierBatch({
   corpus: CorpusEntry[];
   prompt: Prompt;
 }): BatchRequest[] {
+  return buildVerifierRequests({
+    items,
+    corpus,
+    prompt,
+    schema: VERDICT_JSON_SCHEMA,
+  });
+}
+
+/** One Opus request per item with the given verdict schema (questions: SC-4; cards and diagrams: MF-0014). */
+export function buildVerifierRequests({
+  items,
+  corpus,
+  prompt,
+  schema,
+}: {
+  items: { id: string; yaml: string }[];
+  corpus: CorpusEntry[];
+  prompt: Prompt;
+  schema: Record<string, unknown>;
+}): BatchRequest[] {
   const system: BatchRequest["params"]["system"] = [
     { type: "text", text: prompt.body },
     {
@@ -62,7 +82,7 @@ export function buildVerifierBatch({
         },
       ],
       output_config: {
-        format: { type: "json_schema" as const, schema: VERDICT_JSON_SCHEMA },
+        format: { type: "json_schema" as const, schema },
       },
     },
   }));

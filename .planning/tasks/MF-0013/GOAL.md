@@ -189,3 +189,10 @@ skill **proven in a storm** can reach Tree; Full-Storm-proven can reach Ancient.
   stored hash; N1–N5); each fix RED first. Review 2: approve (hash `b0023f12…`). User accepted N4 (a
   hand-built Full Storm can reach Ancient; own forest only). Receipt DONE (LOOP-VERIFY.md). A builder's
   stray `git stash pop` conflicted MF-0008/GOAL.md; restored to HEAD with the user's approval, stashes kept.
+- 2026-11-04 · merge · `origin/main` (MF-0012, MF-0014, MF-0015, MF-0016) merged into `feat/MF-0013`.
+  Conflicts: sync-script header (both kept), Today and group page imports (both kept), MF-0024 number
+  (main's kept; this ticket's retro gate renumbered to MF-0031). MF-0015 merged first, so this ticket
+  wired it (ROADMAP §4.3): `readinessStorms(pack, results)` in `src/engine/storm/readiness-storms.ts`
+  (test RED first, then green) feeds `readiness({ storms })` on Today; the export type
+  `SerializedStormDomainScore` now derives from MF-0015's `StormDomainScore`. Merged tree: typecheck ✓,
+  lint 488 files, test 392, test:db 54, build ✓, all frozen files match.

@@ -6,5 +6,21 @@
   "writer": {
     "version": 1,
     "bodyHash": "141e856c7f9cdc676fd32706682b9ee6a87adbc6e62248c2b1e60429259be6a4"
+  },
+  "card-verifier": {
+    "version": 1,
+    "bodyHash": "367332807e01428f4b1ffa79c928ca028841e2124e9b49c372f4aebdb6a83db3"
+  },
+  "diagram-verifier": {
+    "version": 1,
+    "bodyHash": "f68e49774f42335614f684a10b983070d3e5764389de76c1f242652e8797f11e"
+  },
+  "diagram": {
+    "version": 1,
+    "bodyHash": "26154bbb01334c88816bc647efc756d44dda08c5f23d2ad82ae2330f8be587c1"
+  },
+  "nature-card": {
+    "version": 1,
+    "bodyHash": "ba1d65bf06282a53c5f331c8d67da9c70b280f5ec47de256bd2e6d6250ed597b"
   }
 }

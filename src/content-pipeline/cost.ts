@@ -1,5 +1,5 @@
 import { VERIFIER_MODEL, WRITER_MODEL } from "./models";
-import type { BatchClient, BatchRequest, Usage } from "./types";
+import type { BatchClient, BatchRequest, ItemKind, Usage } from "./types";
 
 /** List prices per million tokens (claude-api skill, 2026-11-04). Cache writes are the 5-minute TTL (1.25× input). */
 export const LIST_PRICES_PER_MTOK = {
@@ -116,4 +116,30 @@ export function runLogLine({
     `cache_read=${usage.cache_read_input_tokens}`,
     `usd=${costFromUsage(model, usage).toFixed(2)}`,
   ].join(" ");
+}
+
+/** MF-0014 SC-7: the writer and verifier lines of one card or diagram run. */
+export function itemRunLogLines({
+  runTag,
+  kind,
+  writer,
+  verifier,
+}: {
+  runTag: string;
+  kind: ItemKind;
+  writer: Usage;
+  verifier: Usage;
+}): string[] {
+  return [
+    runLogLine({
+      runId: `${runTag}/${kind}-writer`,
+      model: WRITER_MODEL,
+      usage: writer,
+    }),
+    runLogLine({
+      runId: `${runTag}/${kind}-verifier`,
+      model: VERIFIER_MODEL,
+      usage: verifier,
+    }),
+  ];
 }

@@ -20,12 +20,19 @@ export type ItemType = (typeof ITEM_TYPES)[number];
 /** Practice modes serve approved + unreviewed; storms prefer approved (CONTEXT.md Playable). */
 export type PlayMode = "practice" | "storm";
 
+/** MF-0008 / MF-0014: model + prompt version of an `ai` item, written by the pipeline. Never sent to the browser. */
+export interface GeneratedBy {
+  model: string;
+  prompt: string;
+}
+
 export interface NatureCard {
   id: string;
   skill: string;
   concept: string;
   origin: Origin;
   author?: string;
+  generatedBy?: GeneratedBy;
   simply: string;
   inNature: string;
   whereItBreaks: string[];
@@ -60,6 +67,7 @@ export interface Diagram {
   title: string;
   origin: Origin;
   author?: string;
+  generatedBy?: GeneratedBy;
   direction: DiagramDirection;
   nodes: DiagramNode[];
   edges: DiagramEdge[];

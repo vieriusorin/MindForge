@@ -6,13 +6,7 @@
  * Usage: pnpm generate:questions [--pack ccdv-f] [--skill D2.S1] [--count N] [--dry-run]
  * Env (real run): ANTHROPIC_API_KEY or an `ant auth login` profile, MF_AUTHOR_EMAIL, MF_MAX_BATCH_USD (default 25).
  */
-import {
-  appendFileSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from "node:fs";
+import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import Anthropic from "@anthropic-ai/sdk";
 import YAML from "yaml";
@@ -28,38 +22,33 @@ import {
   estimateBatchCost,
   maxBatchUsd,
   parseDraft,
-  parsePrompt,
-  promptLockViolations,
   promptRef,
   questionsNeeded,
   renderQuestionFile,
   runLogLine,
   skillFromCustomId,
-  submitBatch,
   verifierIdFor,
 } from "@/content-pipeline/pipeline";
 import type {
-  BatchClient,
   BatchRequest,
   CorpusEntry,
   Draft,
   Dropped,
-  Prompt,
-  Usage,
 } from "@/content-pipeline/types";
 import { FLAWS } from "@/content-pipeline/types";
 import { loadPackFile } from "@/engine/pack";
 import { loadPackQuestions } from "@/engine/questions";
+import {
+  loadPrompts,
+  RUNS_DIR,
+  runBatch,
+  runTagFor,
+  ZERO_USAGE,
+} from "./batch";
 import { CORPUS_DIR, fileCorpusStore } from "./corpus";
 
 const ROOT = process.cwd();
-const RUNS_DIR = join(ROOT, ".cache", "runs");
-const POLL_MS = 60_000;
 
-const PromptLockFile = z.record(
-  z.string(),
-  z.strictObject({ version: z.number().int(), bodyHash: z.string() }),
-);
 /** The verifier's structured output (VERDICT_JSON_SCHEMA), checked again at the boundary. */
 const VerdictOutput = z.object({
   flaws: z.array(z.enum(FLAWS)),
@@ -96,26 +85,6 @@ function parseArgs(argv: string[]): Args {
   };
 }
 
-function loadPrompts(): { writer: Prompt; verifier: Prompt } {
-  const dir = join(ROOT, "prompts");
-  const prompts = readdirSync(dir)
-    .filter((n) => n.endsWith(".md"))
-    .map((n) => parsePrompt(readFileSync(join(dir, n), "utf8")));
-  const lock = PromptLockFile.parse(
-    JSON.parse(readFileSync(join(dir, "prompt-lock.json"), "utf8")),
-  );
-  const violations = promptLockViolations(prompts, lock);
-  if (violations.length > 0)
-    throw new Error(
-      `prompt(s) changed without a version bump: ${violations.join(", ")} (pnpm prompts:lock)`,
-    );
-  const writer = prompts.find((p) => p.name === "writer");
-  const verifier = prompts.find((p) => p.name === "verifier");
-  if (!writer || !verifier)
-    throw new Error("prompts/writer.md and prompts/verifier.md are required");
-  return { writer, verifier };
-}
-
 interface SkillPlan {
   code: string;
   name: string;
@@ -127,86 +96,9 @@ interface SkillPlan {
   requests: BatchRequest[];
 }
 
-const usageOf = (u: Anthropic.Messages.Usage): Usage => ({
-  input_tokens: u.input_tokens,
-  output_tokens: u.output_tokens,
-  cache_creation_input_tokens: u.cache_creation_input_tokens ?? 0,
-  cache_read_input_tokens: u.cache_read_input_tokens ?? 0,
-});
-
-const addUsage = (a: Usage, b: Usage): Usage => ({
-  input_tokens: a.input_tokens + b.input_tokens,
-  output_tokens: a.output_tokens + b.output_tokens,
-  cache_creation_input_tokens:
-    a.cache_creation_input_tokens + b.cache_creation_input_tokens,
-  cache_read_input_tokens:
-    a.cache_read_input_tokens + b.cache_read_input_tokens,
-});
-
-const ZERO: Usage = {
-  input_tokens: 0,
-  output_tokens: 0,
-  cache_creation_input_tokens: 0,
-  cache_read_input_tokens: 0,
-};
-
-/** Submit through the cost guard, wait for the batch to end, and return text output per custom_id. */
-async function runBatch(
-  client: Anthropic,
-  requests: BatchRequest[],
-  capUsd: number,
-): Promise<{ outputs: Map<string, string>; failed: string[]; usage: Usage }> {
-  const batchClient: BatchClient = {
-    create: (reqs) =>
-      client.messages.batches.create({
-        requests: reqs satisfies Anthropic.Messages.BatchCreateParams.Request[],
-      }),
-  };
-  const submitted = await submitBatch({
-    requests,
-    estimatedUsd: estimateBatchCost(requests),
-    capUsd,
-    client: batchClient,
-  });
-  if (!submitted.submitted) throw new Error(submitted.reason);
-  console.log(`batch ${submitted.id}: ${requests.length} request(s) submitted`);
-  for (;;) {
-    const batch = await client.messages.batches.retrieve(submitted.id);
-    if (batch.processing_status === "ended") break;
-    console.log(
-      `batch ${submitted.id}: ${batch.processing_status}, ${batch.request_counts.processing} processing`,
-    );
-    await new Promise((resolve) => setTimeout(resolve, POLL_MS));
-  }
-  const outputs = new Map<string, string>();
-  const failed: string[] = [];
-  let usage = ZERO;
-  for await (const item of await client.messages.batches.results(
-    submitted.id,
-  )) {
-    if (
-      item.result.type !== "succeeded" ||
-      item.result.message.stop_reason === "refusal"
-    ) {
-      failed.push(
-        `${item.custom_id}: ${item.result.type === "succeeded" ? "refusal" : item.result.type}`,
-      );
-      if (item.result.type === "succeeded")
-        usage = addUsage(usage, usageOf(item.result.message.usage));
-      continue;
-    }
-    usage = addUsage(usage, usageOf(item.result.message.usage));
-    const text = item.result.message.content
-      .flatMap((b) => (b.type === "text" ? [b.text] : []))
-      .join("");
-    outputs.set(item.custom_id, text);
-  }
-  return { outputs, failed, usage };
-}
-
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
-  const prompts = loadPrompts();
+  const prompts = loadPrompts(["writer", "verifier"] as const);
   const pack = await loadPackFile(join(ROOT, "packs", args.pack, "pack.yaml"));
   const questions = await loadPackQuestions(
     pack,
@@ -272,7 +164,7 @@ async function main(): Promise<void> {
   const author = authorEmail(process.env);
   const capUsd = maxBatchUsd(process.env);
   const client = new Anthropic();
-  const runTag = `ai-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "").toLowerCase()}`;
+  const runTag = runTagFor(new Date());
 
   const writer = await runBatch(client, writerRequests, capUsd);
   const draftsBySkill = new Map<string, Draft[]>();
@@ -325,7 +217,7 @@ async function main(): Promise<void> {
   }
   const verifier =
     verifierRequests.length === 0
-      ? { outputs: new Map<string, string>(), failed: [], usage: ZERO }
+      ? { outputs: new Map<string, string>(), failed: [], usage: ZERO_USAGE }
       : await runBatch(client, verifierRequests, capUsd);
   const sound = new Set<string>();
   for (const [id, text] of verifier.outputs) {

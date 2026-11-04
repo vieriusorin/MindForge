@@ -3,12 +3,14 @@ import { Suspense } from "react";
 import { playableQuestions } from "@/engine/content";
 import { buildForest, summarizeForest } from "@/engine/forest";
 import { countableAttempts, memoryBySkill, planWalk } from "@/engine/memory";
-import { stormProof } from "@/engine/storm";
+import { readiness } from "@/engine/readiness";
+import { readinessStorms, stormProof } from "@/engine/storm";
 import { BlueprintChart } from "@/features/dashboard/components/blueprint-chart";
 import { DashboardSkeleton } from "@/features/dashboard/components/dashboard-skeleton";
 import { FocusList } from "@/features/dashboard/components/focus-list";
 import { GroupsCard } from "@/features/dashboard/components/groups-card";
 import { GrowthDonut } from "@/features/dashboard/components/growth-donut";
+import { ReadinessCard } from "@/features/dashboard/components/readiness-card";
 import { TodayBriefing } from "@/features/dashboard/components/today-briefing";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getReviewContext } from "@/server/content/get-review-context";
@@ -56,6 +58,14 @@ async function TodaySlot() {
     attempts: countable,
     now,
   });
+  // MF-0015: same countable attempts as the forest; MF-0013 (merged second) wires the finished
+  // storms' per-domain scores (ROADMAP §4.3).
+  const forecast = readiness({
+    pack,
+    attempts: countable,
+    storms: readinessStorms(pack, stormResults),
+    now,
+  });
   const packNames = Object.fromEntries(packs.map((p) => [p.slug, p.name]));
   const firstName = (name ?? user.email?.split("@")[0] ?? "there").split(
     " ",
@@ -97,6 +107,7 @@ async function TodaySlot() {
           grownPercent={summary.grownPercent}
           totalSkills={summary.totalSkills}
         />
+        {forecast && <ReadinessCard readiness={forecast} />}
         <FocusList skills={summary.focus} />
         <GroupsCard groups={groups} packNames={packNames} />
       </div>

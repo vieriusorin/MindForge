@@ -1,0 +1,17 @@
+{
+  "ticket": "MF-0029",
+  "frozen_at": "2026-11-04T13:03:58Z",
+  "files": [
+    {
+      "path": "src/dev-seed/__tests__/mf-0029-plan.acceptance.test.ts",
+      "sha256": "4c1b96dd99e76445684713faf6e5ee4f58149f9c87176e92ca53f0a7922e7298",
+      "first_failure": "SC-1, SC-2, SC-3: Error: not implemented (typed stubs src/dev-seed/{guard,plan-demo-world}.ts)"
+    },
+    {
+      "path": "src/dev-seed/__tests__/mf-0029-seed.db.acceptance.test.ts",
+      "sha256": "9e3b7c2218cb84e69e32c710ca6f28a855dbdc5b06e75548653bc70ec47290a0",
+      "first_failure": "SC-4, SC-5, SC-6: beforeAll Error: not implemented (planDemoWorld) → 4 skipped; 0 leftover users after both runs"
+    }
+  ],
+  "history": []
+}

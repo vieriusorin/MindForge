@@ -33,6 +33,6 @@ Hand-off, receipt DONE, tier high-risk. Review 1 had 2 blocking findings (B1 cli
 ## Applied
 
 2026-11-04, automatic policy:
-- Action 1 (gate): reserved as **MF-0024** (`.planning/tasks/MF-0024/GOAL.md`, goal_status: reserved). Not built: gates and hooks are guarded config.
+- Action 1 (gate): reserved as **MF-0031** (`.planning/tasks/MF-0031/GOAL.md`, goal_status: reserved) (renumbered from MF-0024 at the 2026-11-04 merge: main had claimed it). Not built: gates and hooks are guarded config.
 - Action 2 (skill-edit, additive): applied in `.claude/skills/gsd-goal-loop/references/templates.md`, LOOP-PLAN template, under "Riskiest step" (server-owned clock and read hash, parsed counts, owns vs NEVER globs, no git stash in builders).
 - Held: nothing.

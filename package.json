@@ -16,9 +16,12 @@
     "db:types": "supabase gen types --lang typescript --local --schema public > src/server/db/database.types.ts && biome format --write src/server/db/database.types.ts",
     "db:sync-keys": "node scripts/sync-question-keys.mjs",
     "dev:setup": "node scripts/dev-setup.mjs",
+    "dev:seed": "tsx scripts/dev-seed.ts",
     "prepare": "husky",
     "generate:corpus": "tsx scripts/generate/corpus.ts",
     "generate:questions": "tsx scripts/generate/questions.ts",
+    "generate:cards": "tsx scripts/generate/cards.ts",
+    "generate:diagrams": "tsx scripts/generate/diagrams.ts",
     "prompts:lock": "tsx scripts/generate/lock-prompts.ts"
   },
   "dependencies": {

@@ -1,5 +1,6 @@
 import type { ReviewState } from "../content/types";
 import type { MemorySnapshot } from "../forest/tree-stage";
+import type { StormDomainScore } from "../readiness/types";
 
 export const STORM_KINDS = ["full", "boss"] as const;
 export type StormKind = (typeof STORM_KINDS)[number];
@@ -74,13 +75,10 @@ export interface StormReport {
   readonly voided: readonly string[];
 }
 
-/** MF-0015's input shape (ROADMAP §4.3: the receiver defines it; the second to merge wires it). */
-export interface StormDomainScore {
-  readonly domainCode: string;
-  readonly percent: number;
-  /** ISO 8601. */
-  readonly finishedAt: string;
-}
+/** MF-0015's `StormDomainScore` (the receiver owns the shape), with `finishedAt` as ISO 8601 for export. */
+export type SerializedStormDomainScore = Readonly<
+  Omit<StormDomainScore, "finishedAt"> & { finishedAt: string }
+>;
 
 /** A skill's storm proof, derived from finished storms (GOAL.md: derived, never stored). */
 export type SkillStormProof = Readonly<

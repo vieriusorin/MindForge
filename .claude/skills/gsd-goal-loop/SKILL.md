@@ -69,6 +69,11 @@ lifecycle and may call them as reviewers. `ticket-traceability` owns the tier ru
 **With an ID and brief** (`/gsd-goal-loop <PREFIX>-0042 add …`):
 - Check the number is free first — sessions may share one worktree and tickets get reserved inside
   other GOALs: `grep -rn "<PREFIX>-0042" .planning src`. Taken → pick the next and say so.
+  Check every branch and worktree too, not only this tree:
+  `git grep -n "<PREFIX>-0042" $(git for-each-ref --format='%(refname)' refs/heads refs/remotes); git worktree list`.
+  A number free here can already be reserved on another branch, and a merge then concatenates two
+  tickets into one GOAL.md (MF-0022/MF-0023, 2026-11-04). After a merge, run
+  `grep -c '^ticket_id:' .planning/tasks/*/GOAL.md` and fix any count above 1 before starting work.
 - `mkdir -p .planning/tasks/<ID>` **immediately**, so a parallel session sees the claim.
 
 **With a brief and no ID:** take the next free number the same way.
@@ -109,10 +114,28 @@ flag resolution, attempt) must name the version the actor read and refuse when i
 stored version. State this in the PLAN's riskiest-step section; a plan without it is not ready for
 approval (MF-0007 retro: a sync that ran ahead of a deploy let verdicts land on unread content).
 
+A plan for anything that writes or deletes and can be run twice (a seed, a sync, an importer, a backfill) lists,
+in its riskiest-step section, every piece of state it does NOT own that survives a re-run or `pnpm db:reset`, with
+the test for each: (a) ids or manifests it keeps on disk, and whether they stay valid after a reset (serial ids
+restart, auth uuids change): bind a stored id to the owner that wrote it; (b) decisions another actor makes between
+runs (reject, dismiss, approve, hand-played answers), and whether the re-run respects them. Each gets a regression
+test shown RED before done (MF-0029 retro: manifest id reuse after a reset could delete hand-played answers, and
+re-planned reviews landed on rejected items; both found only in review).
+
 Before writing any SC that names an external API's wire format, id pattern, limit or model id, load
 the matching skill (for example `claude-api`) and read the live reference. Paste the constraint into
 the SC. Before hand-off, run the real command once against real input, because mocks do not prove
 input shape (MF-0008 retro: a Batches `custom_id` with dots, and a PDF stored as text).
+
+Any SC that shows a computed figure (a percent, a rank, a flag, a weather) gets an **edge-input table** in
+the GOAL before the checkpoint. It has one row per input state: nothing at all, partially present (a skill
+never attempted, a domain with no data), a config value absent (a pack without `exam.date`), and the
+boundary of every threshold. Each row names the shown result and who decided it. A row the draft did not
+state is a Concern for the user, not a default for the builder. When the GOAL was drafted in an earlier
+session, also re-read each draft decision against the user's later answers and `CONTEXT.md` for
+contradictions. Before writing an oracle over a library's numbers (ts-fsrs, date maths, rounding), run a
+one-line probe of the library and record the result in the oracle test's comment. A formula taken from the
+docs can differ from what the code does (MF-0015 retro: ts-fsrs floors elapsed days).
 
 Any SC that shows a figure, rank or flag computed over other people's data (a group aggregate, heatmap,
 leaderboard, "N of M" line) states under "Constraints → how met" what the viewer can deduce from the output:
@@ -142,6 +165,10 @@ this ticket's scope question: put it in the checkpoint with the file named, as e
 `supabase start`, `supabase db reset`). For each, either get the user's approval at the checkpoint, or write
 the SC's proof so it does not need it (an in-place revert, a scratch schema, a separate worktree). Record
 both outcomes under "Decided by the user". Nothing here is asked mid-BUILD.
+(3) For each SC that names a file, a rule, a gate or a script, grep `.claude/rules/` and `package.json` for
+that name before the checkpoint. If a rule lists the file as an exception, or the gate does not exist, fix or
+drop the SC text now and record it under "Decided without a question"; do not leave it to BUILD or to
+acceptance-test writing (MF-0012: SC-6 `server-only` vs `server-side.md` §2; SC-7 "component-split gate").
 
 Then run `grill-with-docs` against the draft and fold the answers back. With `--research`, triage
 each question (`references/research.md`) before putting it to the user: facts go to the researcher
@@ -248,7 +275,7 @@ GOAL + LOOP-PLAN — the agent that wrote the code does not sign it off.
 Write `LOOP-VERIFY.md` (one row per SC: verdict + literal evidence) and `.planning/evidence/<ID>.md`.
 Evidence is pasted toolchain output and observed screens, never "should work"; anything unverified
 is listed as unverified. A bug the reviewer finds gets its regression test shown RED first: add the
-test, run it against the unfixed code (stash the fix), paste the failing line, then restore the
+test, run it against the unfixed code (revert the fix by copying the file aside, or `git stash -u`; plain `git stash` leaves untracked files in place, so the run is not against the unfixed code, MF-0029), paste the failing line, then restore the
 fix. A test written after the fix and never seen red does not count.
 
 **Decision:**

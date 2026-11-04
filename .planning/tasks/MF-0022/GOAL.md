@@ -3,7 +3,7 @@ ticket_id: MF-0022
 tier: normal                      # paid model runs + content PRs; no app code
 stage: intake
 branch: main
-builds_on: [MF-0008]
+builds_on: [MF-0008, MF-0014]
 last_iteration: 0
 goal_status: reserved             # owner: user (needs an Anthropic API key and the Owner's review)
 track: C
@@ -27,6 +27,9 @@ verifier on the golden set, and lands the drafts as reviewable PRs.
 - [ ] SC-2: The verifier eval over the golden set with the real model catches 100% of planted wrong keys and ≥ 80% of the other planted flaws. Proof: run report.
 - [ ] SC-3: The injection fixture run against the real writer produces no draft whose schema, `origin`, `author` or `generatedBy` came from page text. Proof: run report.
 - [ ] SC-4: One real Batch run per domain stays under `MF_MAX_BATCH_USD`, logs its real cost from usage, and its survivors land as one PR per domain (MF-0008 C-2), reviewed in-app through MF-0007. Proof: run logs + PR links.
+- [ ] SC-5 (from MF-0014, user decision 2026-11-04): `pnpm generate:diagrams` then `pnpm generate:cards` run for real cover every skill without a diagram / card in the files (today 23 / 24), each batch under `MF_MAX_BATCH_USD`, real cost in `.cache/runs/runs.log`; every written file passes the pack loader. Proof: run report + logs.
+- [ ] SC-6 (from MF-0014): the card and diagram golden sets with the real verifier catch 100% of empty "where it breaks" and ≥ 80% of every other planted flaw type. Proof: eval output.
+- [ ] SC-7 (MF-0014 C-1): AI cards land as one PR per domain, staggered so the analogy owner (Coder F) is not handed ~25 cards at once. Proof: PR links.
 
 ## Constraints
 

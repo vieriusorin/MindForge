@@ -10,6 +10,8 @@
  * MF-0013: also writes each pack's exam timing (private.packs.exam_questions / exam_minutes, null
  * without an `exam:` block) and its skill -> domain map (private.pack_skills): start_storm sets the
  * deadline and checks a Boss Storm's domain from these, never from the client.
+ * MF-0012: first loads every pack with the app's own validator and exits 1, writing nothing, on any
+ * problem.
  *
  * DB: $SUPABASE_DB_URL, else the LOCAL stack from `supabase status`.
  * Usage: node scripts/sync-question-keys.mjs
@@ -23,8 +25,16 @@ import postgres from "postgres";
 import YAML from "yaml";
 import { contentHash } from "./lib/content-hash.mjs";
 import { supabaseBin } from "./lib/supabase-bin.mjs";
+import { validatePacks } from "./lib/validate-packs.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
+// MF-0012: tests point the script at a fixture folder. Never against a remote DB: a partial
+// folder would unregister the hosted packs that are missing from it.
+const PACKS_DIR = process.env.MINDFORGE_PACKS_DIR || join(ROOT, "packs");
+if (process.env.MINDFORGE_PACKS_DIR && process.env.SUPABASE_DB_URL) {
+  console.error("Refusing MINDFORGE_PACKS_DIR together with SUPABASE_DB_URL.");
+  process.exit(1);
+}
 
 function dbUrl() {
   if (process.env.SUPABASE_DB_URL) return process.env.SUPABASE_DB_URL;
@@ -38,7 +48,7 @@ function dbUrl() {
 
 /** Parsed YAML files of packs/<slug>/<kind>/*.yaml, with their names. */
 function readFiles(packSlug, kind) {
-  const dir = join(ROOT, "packs", packSlug, kind);
+  const dir = join(PACKS_DIR, packSlug, kind);
   let names;
   try {
     names = readdirSync(dir).filter((n) => n.endsWith(".yaml"));
@@ -134,10 +144,17 @@ if (process.env.SUPABASE_DB_URL) {
   }
 }
 
-const packs = readdirSync(join(ROOT, "packs"), { withFileTypes: true })
+const packs = readdirSync(PACKS_DIR, { withFileTypes: true })
   .filter((e) => e.isDirectory())
   .map((e) => e.name)
   .sort();
+
+// MF-0012: validate every pack before connecting, so a bad file changes no row in any pack.
+const problems = await validatePacks(ROOT, PACKS_DIR, packs);
+if (problems.length) {
+  console.error(`Not syncing: invalid pack content.\n${problems.join("\n")}`);
+  process.exit(1);
+}
 
 const sql = postgres(dbUrl(), { max: 1, onnotice: () => {} });
 try {
