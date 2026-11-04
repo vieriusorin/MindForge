@@ -4,12 +4,13 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { buildForest } from "@/engine/forest";
-import { memoryBySkill } from "@/engine/memory";
+import { countableAttempts, memoryBySkill } from "@/engine/memory";
 import { Forest } from "@/features/forest/components/forest";
 import { rotateInviteCode } from "@/features/groups/actions";
 import { InviteLink } from "@/features/groups/components/invite-link";
 import { MemberList } from "@/features/groups/components/member-list";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getReviewContext } from "@/server/content/get-review-context";
 import { getGroup } from "@/server/groups/get-group";
 import { listMembers } from "@/server/groups/list-members";
 import { siteOrigin } from "@/server/http/site-origin";
@@ -28,13 +29,18 @@ async function GroupSlot({
   const group = await getGroup(groupId);
   if (!group) notFound();
 
-  const [members, pack, attempts] = await Promise.all([
+  const [members, pack, attempts, review] = await Promise.all([
     listMembers(group.id),
     getPack(group.packSlug),
     listMyAttempts(user.id, group.packSlug),
+    getReviewContext(user.id, group.packSlug),
   ]);
   // MF-0003: the signed-in learner's own forest, replayed from DB-graded attempts.
-  const forest = buildForest(pack, memoryBySkill(attempts, new Date()));
+  // MF-0007: only countable ones (not rejected, not spoiled by reviewing), same as every surface.
+  const forest = buildForest(
+    pack,
+    memoryBySkill(countableAttempts(attempts, review), new Date()),
+  );
   const isAdmin = members.some(
     (m) => m.userId === user.id && m.role === "admin",
   );

@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { playableQuestions } from "@/engine/content";
-import { planWalk } from "@/engine/memory";
+import { countableAttempts, planWalk } from "@/engine/memory";
 import { toPlayableQuestion } from "@/engine/questions";
 import { WalkSession } from "@/features/walk/components/walk-session";
 import { getCurrentUser } from "@/server/auth/current-user";
@@ -28,11 +28,12 @@ async function WalkSlot({
     listMyAttempts(user.id, packSlug),
     getReviewContext(user.id, packSlug),
   ]);
-  // MF-0009: only candidates are filtered; memory still replays every attempt.
+  // MF-0007: memory replays the same countable attempts as the forest and the Today plan,
+  // so the walk matches the count on the Today button.
   const plan = planWalk({
     pack,
     questions: playableQuestions(questions, review, "practice"),
-    attempts,
+    attempts: countableAttempts(attempts, review),
     now: new Date(),
   });
   const skillNames = Object.fromEntries(

@@ -125,14 +125,72 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      approve_analogy: {
+        Args: { p_content_hash?: string; p_item_id: string };
+        Returns: undefined;
+      };
       create_group: {
         Args: { p_name: string; p_pack_slug: string };
         Returns: string;
       };
       join_group: { Args: { p_code: string }; Returns: string };
+      list_open_flags: {
+        Args: { p_pack_slug: string };
+        Returns: {
+          comment: string;
+          created_at: string;
+          flag_id: number;
+          item_id: string;
+          reviewer_name: string;
+        }[];
+      };
+      list_pending_analogies: {
+        Args: { p_pack_slug: string };
+        Returns: {
+          approvals: number;
+          can_approve: boolean;
+          hash_synced_at: string;
+          item_id: string;
+        }[];
+      };
+      list_reviewable: {
+        Args: { p_pack_slug: string };
+        Returns: {
+          content_hash: string;
+          item_id: string;
+          item_type: string;
+          skill_code: string;
+        }[];
+      };
       record_attempt: {
         Args: { p_chosen: string[]; p_question_id: string };
         Returns: boolean;
+      };
+      resolve_flags: {
+        Args: {
+          p_action: string;
+          p_comment: string;
+          p_content_hash?: string;
+          p_item_id: string;
+        };
+        Returns: undefined;
+      };
+      review_item: {
+        Args: {
+          p_comment: string;
+          p_content_hash?: string;
+          p_item_id: string;
+          p_verdict: string;
+        };
+        Returns: undefined;
+      };
+      review_states: {
+        Args: { p_pack_slug: string };
+        Returns: {
+          item_id: string;
+          reviewed_at: string;
+          state: string;
+        }[];
       };
       rotate_invite_code: { Args: { p_group_id: string }; Returns: string };
     };
