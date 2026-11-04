@@ -99,7 +99,8 @@ export function QuestionCard({
   });
 
   return (
-    <Card aria-labelledby={headingId}>
+    // MF-0012: a generic div cannot be named; as a group it takes the stem as its name.
+    <Card role="group" aria-labelledby={headingId}>
       <CardHeader>
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           {meta}

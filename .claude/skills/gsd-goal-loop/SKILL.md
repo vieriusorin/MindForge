@@ -142,6 +142,10 @@ this ticket's scope question: put it in the checkpoint with the file named, as e
 `supabase start`, `supabase db reset`). For each, either get the user's approval at the checkpoint, or write
 the SC's proof so it does not need it (an in-place revert, a scratch schema, a separate worktree). Record
 both outcomes under "Decided by the user". Nothing here is asked mid-BUILD.
+(3) For each SC that names a file, a rule, a gate or a script, grep `.claude/rules/` and `package.json` for
+that name before the checkpoint. If a rule lists the file as an exception, or the gate does not exist, fix or
+drop the SC text now and record it under "Decided without a question"; do not leave it to BUILD or to
+acceptance-test writing (MF-0012: SC-6 `server-only` vs `server-side.md` §2; SC-7 "component-split gate").
 
 Then run `grill-with-docs` against the draft and fold the answers back. With `--research`, triage
 each question (`references/research.md`) before putting it to the user: facts go to the researcher
