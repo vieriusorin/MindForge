@@ -33,6 +33,7 @@ async function Sidebar() {
       packName={pack.name}
       groups={groups.map((g) => ({ id: g.id, name: g.name }))}
       duelHref={`/play/${packSlug}/duel`}
+      reviewHref={`/review/${packSlug}`}
       signOutAction={signOut}
     />
   );

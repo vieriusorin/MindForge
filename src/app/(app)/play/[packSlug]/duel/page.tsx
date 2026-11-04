@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { isPlayable, reviewStateOf } from "@/engine/content";
-import { pickSessionQuestions } from "@/engine/memory";
+import { countableAttempts, pickSessionQuestions } from "@/engine/memory";
 import { toPlayableQuestion } from "@/engine/questions";
 import { DuelSession } from "@/features/duel/components/duel-session";
 import { getCurrentUser } from "@/server/auth/current-user";
@@ -28,13 +28,13 @@ async function DuelSlot({
     listMyAttempts(user.id, packSlug),
     getReviewContext(user.id, packSlug),
   ]);
-  // Only candidates are filtered: memory still replays every attempt, so no forest figure moves.
+  // MF-0007: memory replays the same countable attempts as the forest on /today and the group.
   const session = pickSessionQuestions({
     pack,
     questions: questions.filter((q) =>
       isPlayable(reviewStateOf(review, q), "practice"),
     ),
-    attempts,
+    attempts: countableAttempts(attempts, review),
     now: new Date(),
   });
   const skillNames = Object.fromEntries(
