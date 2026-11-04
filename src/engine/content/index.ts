@@ -39,6 +39,7 @@ export type {
   DiagramEdge,
   DiagramNode,
   DiagramNodeShape,
+  GeneratedBy,
   ItemType,
   NatureCard,
   Origin,

@@ -69,3 +69,47 @@ export function buildWriterBatch({
     },
   }));
 }
+
+/**
+ * MF-0014: one writer request per card or diagram draft, on the same cached prefix as questions
+ * (prompt body, then the delimited corpus at a cache breakpoint); only the user message varies.
+ */
+export function buildItemWriterBatch({
+  skill,
+  corpus,
+  request,
+  prompt,
+  noun,
+  schema,
+}: {
+  skill: { code: string; name: string };
+  corpus: CorpusEntry[];
+  request: number;
+  prompt: Prompt;
+  noun: string;
+  schema: Record<string, unknown>;
+}): BatchRequest[] {
+  const system: BatchRequest["params"]["system"] = [
+    { type: "text", text: prompt.body },
+    {
+      type: "text",
+      text: `${CORPUS_PREAMBLE}\n\n${wrapCorpus(corpus)}`,
+      cache_control: { type: "ephemeral" },
+    },
+  ];
+  return Array.from({ length: request }, (_, index) => ({
+    custom_id: customIdFor(skill.code, index),
+    params: {
+      model: WRITER_MODEL,
+      max_tokens: MAX_TOKENS,
+      system,
+      messages: [
+        {
+          role: "user" as const,
+          content: `Skill ${skill.code} — ${skill.name}.\nWrite ${noun} draft ${index + 1} of ${request}; when there are several drafts, take a different angle in each.`,
+        },
+      ],
+      output_config: { format: { type: "json_schema" as const, schema } },
+    },
+  }));
+}

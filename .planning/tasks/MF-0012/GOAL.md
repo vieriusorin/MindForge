@@ -136,4 +136,4 @@ depends_on: [Phase 0]
 <!-- append-only -->
 - 2026-11-04 iteration 1: DESIGN re-scoped onto MF-0009's shared card; C-1..C-3 + SC-6 settled by the user;
   3 files frozen red; BUILD per LOOP-PLAN (no divergence); TEST receipt DONE (tree db086d6a…). Follow-ups
-  MF-0022..MF-0025 reserved.
+  MF-0022..MF-0025 reserved (renumbered by MF-0014, 2026-11-04: Walk/Seed double-click is MF-0026, learn-the-key is MF-0027).

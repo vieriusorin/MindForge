@@ -1,4 +1,4 @@
-import type { Origin } from "../content/types";
+import type { GeneratedBy, Origin } from "../content/types";
 
 export interface QuestionOption {
   id: string;
@@ -14,7 +14,7 @@ export interface Question {
   /** sign-in email; absent for official items. Never sent to the browser (PII). */
   author?: string;
   /** MF-0008: model + prompt version of an `ai` item, written by the pipeline. Never sent to the browser. */
-  generatedBy?: { model: string; prompt: string };
+  generatedBy?: GeneratedBy;
   stem: string;
   select: number;
   options: QuestionOption[];

@@ -69,6 +69,11 @@ lifecycle and may call them as reviewers. `ticket-traceability` owns the tier ru
 **With an ID and brief** (`/gsd-goal-loop <PREFIX>-0042 add …`):
 - Check the number is free first — sessions may share one worktree and tickets get reserved inside
   other GOALs: `grep -rn "<PREFIX>-0042" .planning src`. Taken → pick the next and say so.
+  Check every branch and worktree too, not only this tree:
+  `git grep -n "<PREFIX>-0042" $(git for-each-ref --format='%(refname)' refs/heads refs/remotes); git worktree list`.
+  A number free here can already be reserved on another branch, and a merge then concatenates two
+  tickets into one GOAL.md (MF-0022/MF-0023, 2026-11-04). After a merge, run
+  `grep -c '^ticket_id:' .planning/tasks/*/GOAL.md` and fix any count above 1 before starting work.
 - `mkdir -p .planning/tasks/<ID>` **immediately**, so a parallel session sees the claim.
 
 **With a brief and no ID:** take the next free number the same way.
@@ -108,6 +113,14 @@ Any write that records a judgement about versioned or synced content (review ver
 flag resolution, attempt) must name the version the actor read and refuse when it differs from the
 stored version. State this in the PLAN's riskiest-step section; a plan without it is not ready for
 approval (MF-0007 retro: a sync that ran ahead of a deploy let verdicts land on unread content).
+
+A plan for anything that writes or deletes and can be run twice (a seed, a sync, an importer, a backfill) lists,
+in its riskiest-step section, every piece of state it does NOT own that survives a re-run or `pnpm db:reset`, with
+the test for each: (a) ids or manifests it keeps on disk, and whether they stay valid after a reset (serial ids
+restart, auth uuids change): bind a stored id to the owner that wrote it; (b) decisions another actor makes between
+runs (reject, dismiss, approve, hand-played answers), and whether the re-run respects them. Each gets a regression
+test shown RED before done (MF-0029 retro: manifest id reuse after a reset could delete hand-played answers, and
+re-planned reviews landed on rejected items; both found only in review).
 
 Before writing any SC that names an external API's wire format, id pattern, limit or model id, load
 the matching skill (for example `claude-api`) and read the live reference. Paste the constraint into
@@ -252,7 +265,7 @@ GOAL + LOOP-PLAN — the agent that wrote the code does not sign it off.
 Write `LOOP-VERIFY.md` (one row per SC: verdict + literal evidence) and `.planning/evidence/<ID>.md`.
 Evidence is pasted toolchain output and observed screens, never "should work"; anything unverified
 is listed as unverified. A bug the reviewer finds gets its regression test shown RED first: add the
-test, run it against the unfixed code (stash the fix), paste the failing line, then restore the
+test, run it against the unfixed code (revert the fix by copying the file aside, or `git stash -u`; plain `git stash` leaves untracked files in place, so the run is not against the unfixed code, MF-0029), paste the failing line, then restore the
 fix. A test written after the fix and never seen red does not count.
 
 **Decision:**

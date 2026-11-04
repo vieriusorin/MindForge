@@ -1,0 +1,17 @@
+{
+  "ticket": "MF-0014",
+  "frozen_at": "2026-11-04T12:23:42Z",
+  "files": [
+    {
+      "path": "src/content-pipeline/__tests__/mf-0014-cards-diagrams.acceptance.test.ts",
+      "sha256": "6a4346b4f5bbb49521c9362dd482358b610777c36b041f00cb9ccce6cbca61ab",
+      "first_failure": "SC-1, SC-3+SC-4, SC-5, SC-7, SC-8: Error: not implemented (typed stubs in src/content-pipeline/items.ts); SC-6: AssertionError: expected [ verifier, writer ] to include nature-card"
+    },
+    {
+      "path": "src/engine/content/__tests__/mf-0014-schema.acceptance.test.ts",
+      "sha256": "4991407c5f1f6c57775544f742d642fc89b0fb5ed4467e182d2da8f95f11dbd2",
+      "first_failure": "SC-2: ContentValidationError: cards.0 / diagrams.0: Unrecognized key: \"generatedBy\""
+    }
+  ],
+  "history": []
+}
