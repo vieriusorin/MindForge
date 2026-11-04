@@ -22,6 +22,7 @@ Canonical terms. When code, docs or tickets disagree with this file, this file w
 
 - **Storm**: a timed exam-style test. A **Boss Storm** covers one domain; a **Full Storm** is a blueprint-weighted mock of the whole exam (CCDV-F: 53 questions, 120 minutes).
 - **Storm-proven skill**: a skill whose questions in one storm were all answered correctly, with at least 2 of them. Needed for the Tree stage (or a passed Feynman, later); Full-Storm-proven is needed for Ancient.
+- **Voided question**: a storm question whose content changed while the storm ran. It is not scored and makes no attempt; the report lists it.
 - **Survived domain**: a domain scored at least 72% in a storm (mirrors the 720/1000 pass mark). Used in the readiness report, not for tree stages.
 
 - **Memory forecast**: per domain, the skill-weighted average retrievability projected to the exam date. "If nothing changes, how much you will still remember on exam day."

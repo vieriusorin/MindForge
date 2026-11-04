@@ -9,7 +9,7 @@
     },
     {
       "path": "src/engine/forest/__tests__/mf-0001-stage.acceptance.test.ts",
-      "sha256": "7e8c2b2e313ff0aa492a64ea818745b7f7c1482b9dc19cf625ed59a2f42c832c",
+      "sha256": "fa0018f86de20b8bb6d69cf03ba3ecb0ed05992a1cde67abb69e700f098d3854",
       "first_failure": "SC-5a/b: Error: not implemented (tree-stage.ts stub)"
     }
   ],
@@ -24,11 +24,21 @@
     },
     {
       "at": "2026-11-02T15:18:36.107372Z",
-      "reason": "SC-1 literal corrected 27 -> 25 skills: Exam Guide v1.0 \u00a76 lists 25 (3+6+1+1+4+3+4+3); 27 was a counting error in the spec. Approved by user 2026-11-02",
+      "reason": "SC-1 literal corrected 27 -> 25 skills: Exam Guide v1.0 §6 lists 25 (3+6+1+1+4+3+4+3); 27 was a counting error in the spec. Approved by user 2026-11-02",
       "previous": {
         "src/engine/pack/__tests__/mf-0001-pack.acceptance.test.ts": "6fd68e874feaf81a2b3864710226676401e1a201aa5c7ac14e0593f820408011",
         "src/engine/forest/__tests__/mf-0001-stage.acceptance.test.ts": "7e8c2b2e313ff0aa492a64ea818745b7f7c1482b9dc19cf625ed59a2f42c832c"
       }
+    },
+    {
+      "at": "2026-11-04T12:18:02Z",
+      "reason": "MF-0013 SC-6, approved by the user 2026-11-03 (planning grill) and confirmed at the MF-0013 freeze 2026-11-04: Tree = stability >= 14 d and (Feynman passed or storm-proven); Ancient = stability >= 45 d and Full-Storm-proven. MemorySnapshot.stormSurvived is renamed stormProven + fullStormProven. SC-5a keeps every earlier case except the old Ancient one; SC-6 is new and red until MF-0013 BUILD.",
+      "previous": [
+        {
+          "path": "src/engine/forest/__tests__/mf-0001-stage.acceptance.test.ts",
+          "sha256": "7e8c2b2e313ff0aa492a64ea818745b7f7c1482b9dc19cf625ed59a2f42c832c"
+        }
+      ]
     }
   ]
 }

@@ -8,6 +8,7 @@ import { plantableSkills } from "@/engine/content";
 import { buildForest } from "@/engine/forest";
 import { countableAttempts, memoryBySkill } from "@/engine/memory";
 import type { Pack } from "@/engine/pack";
+import { stormProof } from "@/engine/storm";
 import { Forest } from "@/features/forest/components/forest";
 import { rotateInviteCode } from "@/features/groups/actions";
 import { GroupHeatmap } from "@/features/groups/components/group-heatmap";
@@ -22,6 +23,8 @@ import { listMembers } from "@/server/groups/list-members";
 import { siteOrigin } from "@/server/http/site-origin";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
+import { finalizeExpiredStorms } from "@/server/storm/finalize-expired-storms";
+import { listMyStormResults } from "@/server/storm/list-my-storm-results";
 
 /** MF-0011: streamed apart from the rest of the page. The viewer comes from the verified session. */
 async function GroupHeatmapSlot(props: {
@@ -46,18 +49,27 @@ async function GroupSlot({
   if (!group) notFound();
 
   const now = new Date();
-  const [members, pack, attempts, content, review] = await Promise.all([
-    listMembers(group.id),
-    getPack(group.packSlug),
-    listMyAttempts(user.id, group.packSlug),
-    getPackContent(group.packSlug),
-    getReviewContext(user.id, group.packSlug),
-  ]);
+  // MF-0013: storms are graded lazily, so a storm past its deadline counts before we read results.
+  await finalizeExpiredStorms();
+  const [members, pack, attempts, content, review, stormResults] =
+    await Promise.all([
+      listMembers(group.id),
+      getPack(group.packSlug),
+      listMyAttempts(user.id, group.packSlug),
+      getPackContent(group.packSlug),
+      getReviewContext(user.id, group.packSlug),
+      listMyStormResults(user.id, group.packSlug),
+    ]);
   // MF-0003: the signed-in learner's own forest, replayed from DB-graded attempts.
   // MF-0007: only countable ones (not rejected, not spoiled by reviewing), same as every surface.
+  // MF-0013 SC-6: the viewer's own storm proof only; the group heatmap stays as it was.
   const forest = buildForest(
     pack,
-    memoryBySkill(countableAttempts(attempts, review), now),
+    memoryBySkill(
+      countableAttempts(attempts, review),
+      now,
+      stormProof(stormResults, review.rejected),
+    ),
   );
   // MF-0010: seed tiles link to Seed Planting when the skill has something to plant.
   const plantable = plantableSkills({

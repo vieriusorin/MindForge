@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
-      "sha256": "110dd7805652cd8dce735d0b20799571ed5af91c6be6010d4cd0fb95a083f6b2",
+      "sha256": "f2d746e9bbf59e4e109a1700755c5b532a4aeb1d8a1208b298dac17244ec4e5e",
       "first_failure": "SC-2 x2, SC-4 x3: Error: not implemented (summarizeGroupHeatmap / groupHeatmapFromAttempts stubs, new {viewer, others} API)"
     },
     {
@@ -25,6 +25,16 @@
         {
           "path": "src/server/db/__tests__/mf-0011-group-heatmap.db.acceptance.test.ts",
           "sha256": "369f07227149771d7ad6b4cd3f100af48da19b92be7a4eefaf810a337f3f0c91"
+        }
+      ]
+    },
+    {
+      "at": "2026-11-04T12:18:02Z",
+      "reason": "MF-0013 fixture-only change: the MemorySnapshot fixture's stormSurvived: false becomes stormProven: false, fullStormProven: false (the type was renamed by MF-0013). No assertion changed; still green.",
+      "previous": [
+        {
+          "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
+          "sha256": "110dd7805652cd8dce735d0b20799571ed5af91c6be6010d4cd0fb95a083f6b2"
         }
       ]
     }
