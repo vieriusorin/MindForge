@@ -1,11 +1,11 @@
 ---
 ticket_id: MF-0008
 tier: normal                      # offline script; no app runtime, no schema. Handles untrusted input.
-stage: plan
+stage: handoff
 branch: feat/MF-0008
 builds_on: []
 last_iteration: 0
-goal_status: in-progress
+goal_status: complete-pending-manual-commit
 track: C                          # seat Coder B (golden set: Coder F)
 week: W1–W2
 depends_on: [MF-0006]            # the API key (ROADMAP D-2) now gates only MF-0020 (real runs)
@@ -68,16 +68,16 @@ model. This ticket builds and proves everything else offline, with the Claude cl
 
 ## Success Criteria (offline; draft 2026-11-03)
 
-- [ ] SC-1: `pnpm generate:corpus` fetches each skill's `sources` into `.cache/corpus/` with URL, fetched-at and hash; a second run with unchanged pages refetches nothing (conditional request / hash compare); a non-https URL or any `skilljar` host is refused before any request. Proof: run log on the real docs (no key needed) + unit test with a mocked fetch.
-- [ ] SC-2: `buildWriterBatch(skill, corpus, n)` produces one Batch request set per skill: model `claude-sonnet-5-5`, the skill's corpus as a `cache_control` prefix identical across requests, `output_config.format` = the draft JSON schema, `custom_id` = `<skill with "." → "_">-<i>` (e.g. `D2_S1-3`; must match the Batches pattern `^[a-zA-Z0-9_-]{1,64}$`) and maps back to its skill; the request count is computed by code: `need = max(0, 20 − existing questions of the skill)` (override `--count`), asking `ceil(need × 1.25)` drafts so that `need` survive verification, and 0 requests when `need` is 0; `pnpm generate:questions --pack ccdv-f [--skill D2.S1] --dry-run` prints the plan and estimated cost without calling the API. Proof: unit test + dry-run log.
-- [ ] SC-3: `writeDrafts(verified)` writes YAML that passes the MF-0006 pack loader; every question cites a corpus URL of its skill, has a rationale per option, `select` = number of correct options, `origin: ai`, `author` = `MF_AUTHOR_EMAIL` (the runner's sign-in email; the script refuses to run without it), and records `generatedBy: { model, prompt }`; at most `need` items per skill are written. Proof: loader test over fixture output.
-- [ ] SC-4: The verifier harness: `buildVerifierBatch` (model `claude-opus-5-5`) and `scoreEval(cases, verdicts)` report catch rates per flaw type; the golden fixtures include the 3 official samples and a planted variant of each (wrong key, missing rationale, citation to the wrong page). With mocked verdicts, the scorer reports 100% / the right rates and fails the eval below 100% wrong-key or 80% other. Proof: unit test.
-- [ ] SC-5: Prompts live in `prompts/` with a version header; changing a prompt's body without bumping its version fails a check. Proof: unit test.
-- [ ] SC-6: The cost guard refuses a batch whose estimated cost exceeds `MF_MAX_BATCH_USD` (default 25) **before** submitting; cost is computed from usage (input, cache write, cache read, output) at Batch prices; each run appends tokens and cost to the run log. Proof: test with a tiny cap and a spy client that must not be called.
-- [ ] SC-8: The question schema accepts an optional `generatedBy: { model, prompt }` (both non-empty strings, nothing else) and still rejects unknown keys; `generatedBy` on an `official` or `human` question is a validation error; the 53 existing questions still load; `toPlayableQuestion` never returns `generatedBy` (nor `author`). Proof: unit test.
-- [ ] SC-9: Every skill in `packs/ccdv-f/pack.yaml` has at least one `sources` URL, and every question's `source.url` is listed in its skill's `sources` (seeded from the existing citations). Proof: unit test over the real pack files.
-- [ ] SC-10: The writer prompt receives the skill's existing stems as "do not repeat"; code drops a draft whose normalized stem (lower-case, punctuation and whitespace removed) equals an existing question's or an earlier draft's, and lists it in the run report. Proof: unit test.
-- [ ] SC-7: Structural injection defences: corpus text is wrapped in delimiters with any delimiter inside it escaped; `origin`, `author`, `generatedBy` and `skill` are set by code, never read from model output; a parsed draft with extra fields or a non-schema shape is dropped; a batch whose correct answers fall ≥ 80% on one letter is flagged in the report. Proof: unit test with the injection fixture page.
+- [x] SC-1: `pnpm generate:corpus` fetches each skill's `sources` into `.cache/corpus/` with URL, fetched-at and hash; a second run with unchanged pages refetches nothing (conditional request / hash compare); a non-https URL or any `skilljar` host is refused before any request. Proof: run log on the real docs (no key needed) + unit test with a mocked fetch.
+- [x] SC-2: `buildWriterBatch(skill, corpus, n)` produces one Batch request set per skill: model `claude-sonnet-5-5`, the skill's corpus as a `cache_control` prefix identical across requests, `output_config.format` = the draft JSON schema, `custom_id` = `<skill with "." → "_">-<i>` (e.g. `D2_S1-3`; must match the Batches pattern `^[a-zA-Z0-9_-]{1,64}$`) and maps back to its skill; the request count is computed by code: `need = max(0, 20 − existing questions of the skill)` (override `--count`), asking `ceil(need × 1.25)` drafts so that `need` survive verification, and 0 requests when `need` is 0; `pnpm generate:questions --pack ccdv-f [--skill D2.S1] --dry-run` prints the plan and estimated cost without calling the API. Proof: unit test + dry-run log.
+- [x] SC-3: `writeDrafts(verified)` writes YAML that passes the MF-0006 pack loader; every question cites a corpus URL of its skill, has a rationale per option, `select` = number of correct options, `origin: ai`, `author` = `MF_AUTHOR_EMAIL` (the runner's sign-in email; the script refuses to run without it), and records `generatedBy: { model, prompt }`; at most `need` items per skill are written. Proof: loader test over fixture output.
+- [x] SC-4: The verifier harness: `buildVerifierBatch` (model `claude-opus-5-5`) and `scoreEval(cases, verdicts)` report catch rates per flaw type; the golden fixtures include the 3 official samples and a planted variant of each (wrong key, missing rationale, citation to the wrong page). With mocked verdicts, the scorer reports 100% / the right rates and fails the eval below 100% wrong-key or 80% other. Proof: unit test.
+- [x] SC-5: Prompts live in `prompts/` with a version header; changing a prompt's body without bumping its version fails a check. Proof: unit test.
+- [x] SC-6: The cost guard refuses a batch whose estimated cost exceeds `MF_MAX_BATCH_USD` (default 25) **before** submitting; cost is computed from usage (input, cache write, cache read, output) at Batch prices; each run appends tokens and cost to the run log. Proof: test with a tiny cap and a spy client that must not be called.
+- [x] SC-8: The question schema accepts an optional `generatedBy: { model, prompt }` (both non-empty strings, nothing else) and still rejects unknown keys; `generatedBy` on an `official` or `human` question is a validation error; the 53 existing questions still load; `toPlayableQuestion` never returns `generatedBy` (nor `author`). Proof: unit test.
+- [x] SC-9: Every skill in `packs/ccdv-f/pack.yaml` has at least one `sources` URL, and every question's `source.url` is listed in its skill's `sources` (seeded from the existing citations). Proof: unit test over the real pack files.
+- [x] SC-10: The writer prompt receives the skill's existing stems as "do not repeat"; code drops a draft whose normalized stem (lower-case, punctuation and whitespace removed) equals an existing question's or an earlier draft's, and lists it in the run report. Proof: unit test.
+- [x] SC-7: Structural injection defences: corpus text is wrapped in delimiters with any delimiter inside it escaped; `origin`, `author`, `generatedBy` and `skill` are set by code, never read from model output; a parsed draft with extra fields or a non-schema shape is dropped; a batch whose correct answers fall ≥ 80% on one letter is flagged in the report. Proof: unit test with the injection fixture page.
 
 ## Concerns
 
@@ -130,3 +130,8 @@ model. This ticket builds and proves everything else offline, with the Claude cl
 - 2026-11-04 · design · SC change (user-approved, before freeze): SC-2 `custom_id` was `<skill>.<i>`; the live Batches API reference requires `^[a-zA-Z0-9_-]{1,64}$`, so it is now `D2_S1-3` (dot → underscore, index after a hyphen).
 - 2026-11-04 · design → plan · User confirmed the SCs. Froze 2 files, 10 tests red at runtime (FROZEN.json,
   LOOP-VERIFY.md); typecheck + lint green with typed stubs. Tier normal: PLAN proceeds without approval.
+- 2026-11-04 · plan → build · LOOP-PLAN.md written (6 tasks). @anthropic-ai/sdk 1.4.0 + tsx added (user: "add anthropic sdk").
+- 2026-11-04 · build → test → handoff · T1–T5 built. The first real corpus run exposed PDF and inline-MDX
+  pages: content-type handling + Markdown copies added (LOOP-PLAN divergence, recorded before continuing;
+  test shown RED first). Receipt PASS (LOOP-VERIFY.md). Full-pack writer estimate $70.41 > $25 cap:
+  MF-0020 runs per domain.

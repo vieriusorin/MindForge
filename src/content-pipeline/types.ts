@@ -21,7 +21,13 @@ export interface CorpusStore {
 }
 
 export type FetchResult =
-  | { status: 200; body: string; etag: string | null }
+  | {
+      status: 200;
+      body: string;
+      etag: string | null;
+      /** The response Content-Type; absent means HTML. */
+      contentType?: string | null;
+    }
   | { status: 304 };
 
 /** The network edge: a conditional GET. Injected so tests never touch the network. */
@@ -35,6 +41,8 @@ export interface CorpusReport {
   unchanged: string[];
   /** URLs refused before any request (non-https, skilljar). */
   refused: string[];
+  /** Fetched, but not a type the corpus can hold as text (e.g. PDF); not stored. */
+  unsupported: string[];
 }
 
 export interface SkillSources {

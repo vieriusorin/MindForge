@@ -109,6 +109,11 @@ flag resolution, attempt) must name the version the actor read and refuse when i
 stored version. State this in the PLAN's riskiest-step section; a plan without it is not ready for
 approval (MF-0007 retro: a sync that ran ahead of a deploy let verdicts land on unread content).
 
+Before writing any SC that names an external API's wire format, id pattern, limit or model id, load
+the matching skill (for example `claude-api`) and read the live reference. Paste the constraint into
+the SC. Before hand-off, run the real command once against real input, because mocks do not prove
+input shape (MF-0008 retro: a Batches `custom_id` with dots, and a PDF stored as text).
+
 Decide what follows from existing decisions and record it under "Decided without a question",
 with its source. Ask only what does not — see `references/escalation.md`. Two defensible business
 answers → a configurable setting chosen by an admin, not a guess.
