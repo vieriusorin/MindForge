@@ -104,6 +104,11 @@ will close it (an oracle test, a DB test, a gate, a browser observation). An SC 
 its proof is not finished. Add a **Constraints → how met** line per constraint, and a
 **Concerns** list: every point where two rules or two readings collide, each with an owner.
 
+Any write that records a judgement about versioned or synced content (review verdict, approval,
+flag resolution, attempt) must name the version the actor read and refuse when it differs from the
+stored version. State this in the PLAN's riskiest-step section; a plan without it is not ready for
+approval (MF-0007 retro: a sync that ran ahead of a deploy let verdicts land on unread content).
+
 Decide what follows from existing decisions and record it under "Decided without a question",
 with its source. Ask only what does not — see `references/escalation.md`. Two defensible business
 answers → a configurable setting chosen by an admin, not a guess.
