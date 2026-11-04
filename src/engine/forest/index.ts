@@ -5,6 +5,16 @@ export {
   type ForestView,
 } from "./build-forest";
 export {
+  type GroupAttempts,
+  type GroupHeatmap,
+  type GroupMemberAttempts,
+  groupHeatmapFromAttempts,
+  type HeatmapRegion,
+  type HeatmapStatus,
+  MIN_OTHER_CONTRIBUTORS,
+  summarizeGroupHeatmap,
+} from "./group-heatmap";
+export {
   type DomainProgress,
   type FocusSkill,
   type ForestSummary,

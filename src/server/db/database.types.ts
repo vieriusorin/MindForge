@@ -133,6 +133,14 @@ export type Database = {
         Args: { p_name: string; p_pack_slug: string };
         Returns: string;
       };
+      group_attempts: {
+        Args: { p_group_id: string; p_viewer_id: string };
+        Returns: {
+          attempts: Json;
+          is_viewer: boolean;
+          member_key: number;
+        }[];
+      };
       join_group: { Args: { p_code: string }; Returns: string };
       list_open_flags: {
         Args: { p_pack_slug: string };

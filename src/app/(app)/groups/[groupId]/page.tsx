@@ -3,21 +3,35 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { plantableSkills } from "@/engine/content";
 import { buildForest } from "@/engine/forest";
 import { countableAttempts, memoryBySkill } from "@/engine/memory";
+import type { Pack } from "@/engine/pack";
 import { Forest } from "@/features/forest/components/forest";
 import { rotateInviteCode } from "@/features/groups/actions";
+import { GroupHeatmap } from "@/features/groups/components/group-heatmap";
 import { InviteLink } from "@/features/groups/components/invite-link";
 import { MemberList } from "@/features/groups/components/member-list";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getPackContent } from "@/server/content/get-pack-content";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { getGroup } from "@/server/groups/get-group";
+import { getGroupHeatmap } from "@/server/groups/get-group-heatmap";
 import { listMembers } from "@/server/groups/list-members";
 import { siteOrigin } from "@/server/http/site-origin";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
+
+/** MF-0011: streamed apart from the rest of the page. The viewer comes from the verified session. */
+async function GroupHeatmapSlot(props: {
+  groupId: string;
+  viewerId: string;
+  pack: Pack;
+  now: Date;
+}) {
+  return <GroupHeatmap heatmap={await getGroupHeatmap(props)} />;
+}
 
 async function GroupSlot({
   params,
@@ -31,6 +45,7 @@ async function GroupSlot({
   const group = await getGroup(groupId);
   if (!group) notFound();
 
+  const now = new Date();
   const [members, pack, attempts, content, review] = await Promise.all([
     listMembers(group.id),
     getPack(group.packSlug),
@@ -42,7 +57,7 @@ async function GroupSlot({
   // MF-0007: only countable ones (not rejected, not spoiled by reviewing), same as every surface.
   const forest = buildForest(
     pack,
-    memoryBySkill(countableAttempts(attempts, review), new Date()),
+    memoryBySkill(countableAttempts(attempts, review), now),
   );
   // MF-0010: seed tiles link to Seed Planting when the skill has something to plant.
   const plantable = plantableSkills({
@@ -75,6 +90,16 @@ async function GroupSlot({
           canRotate={isAdmin}
           rotateAction={rotateInviteCode.bind(null, group.id)}
         />
+      </div>
+      <div className="mb-8">
+        <Suspense fallback={<Skeleton className="h-48 w-full rounded-xl" />}>
+          <GroupHeatmapSlot
+            groupId={group.id}
+            viewerId={user.id}
+            pack={pack}
+            now={now}
+          />
+        </Suspense>
       </div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-xl">Your forest</h2>
