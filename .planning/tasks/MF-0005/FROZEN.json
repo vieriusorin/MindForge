@@ -9,11 +9,22 @@
     },
     {
       "path": "src/server/db/__tests__/mf-0005-grants.db.acceptance.test.ts",
-      "sha256": "7f549f8111695a55769f95c12aaec40b3938c4878ff67686a6f155d8a3cbdf92",
+      "sha256": "b4e794c2c30f1547bc3006c57eb698a8adcf65dd01d69d6c0c82416a09acf5aa",
       "frozen_green": true,
       "reason": "SC-3 is a regression lock: the current migrations are already correct, so the gate is green today. Its red is proven at TEST on scratch migrations (grant truncate; table without revoke all), logged in evidence and reverted.",
       "first_failure": null
     }
   ],
-  "history": []
+  "history": [
+    {
+      "at": "2026-11-04T12:18:02Z",
+      "reason": "MF-0013 C-5, approved by the user 2026-11-04: two allow-list lines for the new storm tables (public.storms, public.storm_questions: authenticated SELECT, rows scoped by RLS). Red until the MF-0013 migration is applied; still a regression lock afterwards.",
+      "previous": [
+        {
+          "path": "src/server/db/__tests__/mf-0005-grants.db.acceptance.test.ts",
+          "sha256": "7f549f8111695a55769f95c12aaec40b3938c4878ff67686a6f155d8a3cbdf92"
+        }
+      ]
+    }
+  ]
 }

@@ -50,7 +50,8 @@ const snap = (
   stabilityDays,
   retrievability,
   feynmanPassed: false,
-  stormSurvived: false,
+  stormProven: false,
+  fullStormProven: false,
 });
 
 // m1: A.1 sapling (stab 4) holding → healthy; A.2 seed (0 recalls) with memory R 0.6 → not healthy.

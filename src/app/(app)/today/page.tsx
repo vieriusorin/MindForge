@@ -4,6 +4,7 @@ import { playableQuestions } from "@/engine/content";
 import { buildForest, summarizeForest } from "@/engine/forest";
 import { countableAttempts, memoryBySkill, planWalk } from "@/engine/memory";
 import { readiness } from "@/engine/readiness";
+import { readinessStorms, stormProof } from "@/engine/storm";
 import { BlueprintChart } from "@/features/dashboard/components/blueprint-chart";
 import { DashboardSkeleton } from "@/features/dashboard/components/dashboard-skeleton";
 import { FocusList } from "@/features/dashboard/components/focus-list";
@@ -20,6 +21,8 @@ import { listPacks } from "@/server/packs/list-packs";
 import { primaryPackSlug } from "@/server/packs/primary-pack";
 import { getDisplayName } from "@/server/profiles/get-display-name";
 import { getPackQuestions } from "@/server/questions/get-pack-questions";
+import { finalizeExpiredStorms } from "@/server/storm/finalize-expired-storms";
+import { listMyStormResults } from "@/server/storm/list-my-storm-results";
 
 async function TodaySlot() {
   const user = await getCurrentUser();
@@ -30,18 +33,23 @@ async function TodaySlot() {
     listPacks(),
   ]);
   const packSlug = primaryPackSlug(groups);
-  const [pack, attempts, questions, review] = await Promise.all([
+  // MF-0013: storms are graded lazily, so a storm past its deadline counts before we read results.
+  await finalizeExpiredStorms();
+  const [pack, attempts, questions, review, stormResults] = await Promise.all([
     getPack(packSlug),
     listMyAttempts(user.id, packSlug),
     getPackQuestions(packSlug),
     getReviewContext(user.id, packSlug),
+    listMyStormResults(user.id, packSlug),
   ]);
   const now = new Date();
   // MF-0003: the forest is replayed (FSRS) from the learner's DB-graded attempts.
   // MF-0007: only countable ones (not rejected, not spoiled by reviewing), same as every surface.
   const countable = countableAttempts(attempts, review);
+  // MF-0013 SC-6: a proving storm lets a skill reach Tree / Ancient Tree.
+  const proof = stormProof(stormResults, review.rejected);
   const summary = summarizeForest(
-    buildForest(pack, memoryBySkill(countable, now)),
+    buildForest(pack, memoryBySkill(countable, now, proof)),
   );
   // MF-0009: the same plan the walk page builds, so the button's count matches the walk.
   const walkPlan = planWalk({
@@ -50,9 +58,14 @@ async function TodaySlot() {
     attempts: countable,
     now,
   });
-  // MF-0015: same countable attempts as the forest. Storms stay [] until MF-0013 merges; the
-  // second of the two to merge passes the real StormDomainScore[] here.
-  const forecast = readiness({ pack, attempts: countable, storms: [], now });
+  // MF-0015: same countable attempts as the forest; MF-0013 (merged second) wires the finished
+  // storms' per-domain scores (ROADMAP §4.3).
+  const forecast = readiness({
+    pack,
+    attempts: countable,
+    storms: readinessStorms(pack, stormResults),
+    now,
+  });
   const packNames = Object.fromEntries(packs.map((p) => [p.slug, p.name]));
   const firstName = (name ?? user.email?.split("@")[0] ?? "there").split(
     " ",

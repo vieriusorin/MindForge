@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CloudLightning,
   Flower,
   Footprints,
   LayoutGrid,
@@ -27,7 +28,7 @@ import {
 } from "@/components/ui/sidebar";
 import { initials } from "@/lib/initials";
 import type { AppSidebarProps } from "./types";
-import { isActivePath, pinnedGroups } from "./utils";
+import { isActivePath, isStormActive, pinnedGroups } from "./utils";
 
 export function AppSidebar({
   displayName,
@@ -35,6 +36,7 @@ export function AppSidebar({
   groups,
   duelHref,
   walkHref,
+  stormHref,
   reviewHref,
   signOutAction,
 }: AppSidebarProps) {
@@ -130,6 +132,18 @@ export function AppSidebar({
                 <Link href={walkHref}>
                   <Footprints />
                   <span>Daily Walk</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={isStormActive(pathname, stormHref)}
+                tooltip="Storm"
+              >
+                <Link href={stormHref}>
+                  <CloudLightning />
+                  <span>Storm</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
