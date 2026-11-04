@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type GroupRole = "admin" | "member";
 
 const ROLES = ["admin", "member"] as const satisfies readonly GroupRole[];
@@ -29,3 +31,24 @@ export interface GroupMember {
   displayName: string;
   role: GroupRole;
 }
+
+/**
+ * MF-0011: `public.group_attempts` rows: one per member (opaque key, never a user id; `is_viewer`
+ * marks the viewer), the member's attempts on the group's pack as jsonb. Server-internal; parsed here at the boundary.
+ */
+export const GroupAttemptRows = z.array(
+  z.object({
+    member_key: z.number(),
+    is_viewer: z.boolean(),
+    attempts: z.array(
+      z.object({
+        question_id: z.string(),
+        skill_code: z.string(),
+        correct: z.boolean(),
+        answered_at: z.iso.datetime({ offset: true }),
+        rejected: z.boolean(),
+        spoiled_at: z.iso.datetime({ offset: true }).nullable(),
+      }),
+    ),
+  }),
+);

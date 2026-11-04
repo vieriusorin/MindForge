@@ -9,7 +9,8 @@
  *    the CLI's output is shown with every key and secret redacted
  * 3. applies PENDING migrations only (never resets: your local data is kept)
  * 4. syncs answer keys from packs/<slug>/questions into the local DB
- * 5. writes/updates the two public Supabase values in .env.local, keeping every other line
+ * 5. writes/updates the two public Supabase values and the server-only secret key (ADR 0004) in
+ *    .env.local, keeping every other line
  * Safe to re-run. Never touches a hosted project.
  */
 import { spawn, spawnSync } from "node:child_process";
@@ -94,7 +95,7 @@ if (SUPABASE === "supabase") {
 step(
   "Starting the local Supabase stack (first run downloads images; this can take a few minutes)",
 );
-await runRedacted(SUPABASE, ["start"]); // keys are printed redacted; .env.local gets the public ones
+await runRedacted(SUPABASE, ["start"]); // keys are printed redacted; .env.local gets the public ones + the server-only secret (ADR 0004)
 
 // 3. migrations (pending only) ────────────────────────────────────────────────
 step("Applying pending migrations (your local data is kept)");
@@ -123,7 +124,9 @@ const envPath = join(ROOT, ".env.local");
 const before = existsSync(envPath) ? readFileSync(envPath, "utf8") : "";
 const after = mergeEnv(before, {
   NEXT_PUBLIC_SUPABASE_URL: env.API_URL,
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: env.PUBLISHABLE_KEY, // public by design; never the secret key
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: env.PUBLISHABLE_KEY, // public by design
+  // ADR 0004 / MF-0011: server-only, read by src/server/supabase/secret.ts alone. Never NEXT_PUBLIC_.
+  SUPABASE_SECRET_KEY: env.SECRET_KEY,
 });
 if (after !== before) writeFileSync(envPath, after);
 console.log(

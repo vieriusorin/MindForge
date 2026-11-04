@@ -45,14 +45,15 @@ Previews do **not** get an entry. A link requested from a preview lands on produ
 
 ### A4. Vercel project
 1. Import the GitHub repo. Framework: Next.js. Production branch: `main`.
-2. Environment variables, for **Production and Preview**, and only these three (SC-8):
+2. Environment variables, for **Production and Preview**, and only these four (SC-8, amended by ADR 0004):
    | Name | Value |
    |---|---|
    | `NEXT_PUBLIC_SUPABASE_URL` | `https://<ref>.supabase.co` |
    | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | the project's publishable key (`sb_publishable_…`) |
    | `SITE_URL` | `https://<prod-origin>`, a bare origin with no path. If it's missing or malformed, sending a magic link and opening a group page throw (fail closed). |
+   | `SUPABASE_SECRET_KEY` | the project's **secret** key (`sb_secret_…`), Sensitive, server-only (ADR 0004). Without it every group page throws. Never a `NEXT_PUBLIC_` name. |
 3. Settings → Deployment Protection → **Vercel Authentication: Standard Protection** (previews).
-4. Never add a service-role or secret key, `ANTHROPIC_*` or `RESEND_*`. Check with
+4. Never add any other secret key (service-role JWT, a second `sb_secret_…`), `ANTHROPIC_*` or `RESEND_*`. Check with
    `vercel env ls`.
 
 ---

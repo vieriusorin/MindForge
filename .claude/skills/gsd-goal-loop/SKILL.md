@@ -109,6 +109,15 @@ flag resolution, attempt) must name the version the actor read and refuse when i
 stored version. State this in the PLAN's riskiest-step section; a plan without it is not ready for
 approval (MF-0007 retro: a sync that ran ahead of a deploy let verdicts land on unread content).
 
+Any SC that shows a figure, rank or flag computed over other people's data (a group aggregate, heatmap,
+leaderboard, "N of M" line) states under "Constraints → how met" what the viewer can deduce from the output:
+(a) the threshold counts contributors OTHER than the viewer, who knows their own row and can subtract it;
+(b) no contributor count is shown or encoded in a figure's granularity: check the smallest region or bucket
+(a single-skill region gives k / N steps) and the smallest group that passes the gate; (c) a "ready" state
+that implies who contributed is itself a disclosure. Give one worked example at the minimum group size in
+the SC's proof. A high-risk plan over other people's data without this is not ready for approval (MF-0011
+retro: a threshold of 3 including the viewer passed every gate; only the fresh-context reviewer caught it).
+
 Decide what follows from existing decisions and record it under "Decided without a question",
 with its source. Ask only what does not — see `references/escalation.md`. Two defensible business
 answers → a configurable setting chosen by an admin, not a guess.

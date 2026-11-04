@@ -1,0 +1,32 @@
+{
+  "ticket": "MF-0011",
+  "frozen_at": "2026-11-04T10:07:56Z",
+  "files": [
+    {
+      "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
+      "sha256": "110dd7805652cd8dce735d0b20799571ed5af91c6be6010d4cd0fb95a083f6b2",
+      "first_failure": "SC-2 x2, SC-4 x3: Error: not implemented (summarizeGroupHeatmap / groupHeatmapFromAttempts stubs, new {viewer, others} API)"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0011-group-heatmap.db.acceptance.test.ts",
+      "sha256": "b7d50abe0ff58c57cd683f9948fde6c0b78d8f9f9aa45fbd07e34192ca0c9b94",
+      "first_failure": "SC-2: Error: not implemented (fetchGroupAttempts stub returning {viewer, others}); SC-1/SC-3 green: the iteration-1 migration is already applied, so the file is red as a whole; identical on 2nd run"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-04T10:07:56Z",
+      "reason": "C-3 (review): gate on >= 3 contributors OTHER than the viewer and carry no member count. SC-2 contract changed by the user on 2026-11-04, who approved the re-freeze. DB test also asserts that an attempt on another pack is excluded, and its own-rows check is scoped to the pack.",
+      "previous": [
+        {
+          "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
+          "sha256": "7203dac98205b48f48c7a63a81dd47c7b63e194814d243cbdf1d95e2544b96c9"
+        },
+        {
+          "path": "src/server/db/__tests__/mf-0011-group-heatmap.db.acceptance.test.ts",
+          "sha256": "369f07227149771d7ad6b4cd3f100af48da19b92be7a4eefaf810a337f3f0c91"
+        }
+      ]
+    }
+  ]
+}
