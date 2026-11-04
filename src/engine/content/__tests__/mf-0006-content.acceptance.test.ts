@@ -62,12 +62,12 @@ diagrams:
     title: "Wind and seeds"
     origin: human
     author: ${AUTHOR}
-    mermaid: |
-      flowchart LR
-        L[Logits] --> T{Temperature}
+    direction: LR
     nodes:
       - { id: L, label: "Logits" }
-      - { id: T, label: "Temperature" }
+      - { id: T, label: "Temperature", shape: decision }
+    edges:
+      - { from: L, to: T }
     sources:
       - https://example.com/temperature
 `;
@@ -128,7 +128,8 @@ describe("MF-0006 content contract", () => {
     );
   });
 
-  it("SC-2: diagram schema; a mermaid that is not an allowed diagram type names its path", () => {
+  // Re-frozen 2026-11-04 (MF-0010, user decision, ADR 0003): diagrams are graphs, not Mermaid text.
+  it("SC-2: diagram schema; an edge to an unknown node, or an unknown direction, names its path", () => {
     const content = parseContent(files({}), PACK);
     expect(content.diagrams).toHaveLength(1);
     expect(content.diagrams[0]).toMatchObject({
@@ -136,16 +137,33 @@ describe("MF-0006 content contract", () => {
       skill: "S1",
       title: "Wind and seeds",
       origin: "human",
+      direction: "LR",
       nodes: [
         { id: "L", label: "Logits" },
-        { id: "T", label: "Temperature" },
+        { id: "T", label: "Temperature", shape: "decision" },
       ],
+      edges: [{ from: "L", to: "T" }],
     });
-    expect(content.diagrams[0]?.mermaid.startsWith("flowchart LR")).toBe(true);
 
-    const pie = DIAGRAMS.replace("flowchart LR", 'pie title "Share"');
-    expect(() => parseContent(files({ diagrams: pie }), PACK)).toThrow(
-      /diagrams\/S1\.yaml: diagrams\.0\.mermaid/,
+    const dangling = DIAGRAMS.replace(
+      "{ from: L, to: T }",
+      "{ from: L, to: X }",
+    );
+    expect(() => parseContent(files({ diagrams: dangling }), PACK)).toThrow(
+      /diagrams\/S1\.yaml: diagrams\.0\.edges\.0\.to: unknown node "X"/,
+    );
+
+    const sideways = DIAGRAMS.replace("direction: LR", "direction: RL");
+    expect(() => parseContent(files({ diagrams: sideways }), PACK)).toThrow(
+      /diagrams\/S1\.yaml: diagrams\.0\.direction/,
+    );
+
+    const twice = DIAGRAMS.replace(
+      'id: T, label: "Temperature"',
+      'id: L, label: "Temperature"',
+    );
+    expect(() => parseContent(files({ diagrams: twice }), PACK)).toThrow(
+      /diagrams\/S1\.yaml: diagrams\.0\.nodes\.1\.id: duplicate node id "L"/,
     );
   });
 
@@ -252,7 +270,7 @@ describe("MF-0006 content contract", () => {
     expect(linked?.skill).toBe("D5.S1");
 
     const bee = diagrams.find(
-      (d) => d.skill === "D1.S3" && /bee/i.test(`${d.title}\n${d.mermaid}`),
+      (d) => d.skill === "D1.S3" && /bee/i.test(d.title),
     );
     expect(bee).toBeDefined();
 

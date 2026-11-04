@@ -10,7 +10,8 @@ study. First pack: the Claude Certified Developer – Foundations exam. Product 
 
 Next.js 16 (App Router, **`cacheComponents: true`**) · React 19 · TypeScript strict · Tailwind 4
 · shadcn/ui (`radix-nova`) · Supabase (Postgres + Auth + RLS) · zod 4 · **TanStack Query 5** ·
-**nuqs 2** · **react-hook-form 7 + @hookform/resolvers** · Vitest · Biome · pnpm.
+**nuqs 2** · **react-hook-form 7 + @hookform/resolvers** · **React Flow 12 + dagre** (diagrams,
+ADR 0003) · Vitest · Biome · pnpm.
 
 Next 16 differs from what you remember: read `node_modules/next/dist/docs/` before using an API.
 

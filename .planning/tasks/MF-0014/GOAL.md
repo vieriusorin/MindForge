@@ -19,7 +19,7 @@ G3 needs an approved nature card and diagram for all 25 skills; hand-writing (H-
 few by W3.
 
 End state: the MF-0008 pipeline also writes **nature cards** (with a real "where it breaks") and
-**Mermaid diagrams** for every skill that lacks an approved one, verified and written as `origin: ai`
+**diagrams** (graph YAML: direction, nodes, edges — ADR 0003, decided 2026-11-04 in MF-0010) for every skill that lacks an approved one, verified and written as `origin: ai`
 files for a PR, so reviewers and the analogy owner can approve them in the app.
 
 ## Affected
@@ -36,7 +36,7 @@ files for a PR, so reviewers and the analogy owner can approve them in the app.
 ## Decided without a question
 
 - One card per skill minimum (skills with a human card are skipped); one diagram per skill; cards may reference their diagram by id.
-- The verifier checks: facts against the corpus, "where it breaks" names a real limit (not empty or generic), Mermaid parses.
+- The verifier checks: facts against the corpus, "where it breaks" names a real limit (not empty or generic), the diagram passes the graph schema (no edge to an unknown node).
 
 ## Success Criteria
 

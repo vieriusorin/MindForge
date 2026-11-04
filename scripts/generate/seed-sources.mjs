@@ -2,7 +2,7 @@
 /**
  * MF-0008 SC-9 (one-off): seed `sources:` per skill in packs/<pack>/pack.yaml from the distinct
  * `source.url`s its questions already cite (C-4, user decision 2026-11-04). The Owner reviews and
- * extends the list before MF-0020's first real run. Skills that already have `sources:` are skipped.
+ * extends the list before MF-0022's first real run. Skills that already have `sources:` are skipped.
  *
  * Usage: node scripts/generate/seed-sources.mjs ccdv-f
  */

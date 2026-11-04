@@ -1,7 +1,7 @@
 /**
  * MF-0008: draft exam questions per skill with the Batch API, verify them with a second model, and
  * write the survivors as `origin: ai` YAML for a PR. `--dry-run` prints the plan and an upper-bound
- * cost without calling the API (no key needed). A real run is MF-0020's.
+ * cost without calling the API (no key needed). A real run is MF-0022's.
  *
  * Usage: pnpm generate:questions [--pack ccdv-f] [--skill D2.S1] [--count N] [--dry-run]
  * Env (real run): ANTHROPIC_API_KEY or an `ant auth login` profile, MF_AUTHOR_EMAIL, MF_MAX_BATCH_USD (default 25).

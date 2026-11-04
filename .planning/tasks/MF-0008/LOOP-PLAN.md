@@ -57,7 +57,7 @@
    `scripts/generate/questions.ts` (`pnpm generate:questions --pack --skill --count --dry-run`): dry-run
    prints the plan and estimate. A real run submits through the guard, polls, verifies with the Opus
    batch, writes `packs/<pack>/questions/<skill>.<runTag>.yaml` + `.cache/runs/<runTag>.json`, and
-   appends `.cache/runs/runs.log`. `.cache/` is git-ignored. The real run is MF-0020's proof.
+   appends `.cache/runs/runs.log`. `.cache/` is git-ignored. The real run is MF-0022's proof.
 8. **Verify:** typecheck, lint, test, test:db (no DB change expected), build, fresh-context review.
 
 ## Riskiest step
@@ -113,4 +113,4 @@ The first real `pnpm generate:corpus` run (35 pages) showed two defects that the
   `platform.claude.com`, `code.claude.com` and `docs.claude.com`, which both sites publish (hooks.md:
   286 KB, text/markdown), and falls back to the HTML page when that is missing. A skill's corpus can
   still be large. The dry run prints its pages and an upper-bound cost, the guard refuses anything over
-  the cap, and sizing it is MF-0020's call (no silent truncation).
+  the cap, and sizing it is MF-0022's call (no silent truncation).

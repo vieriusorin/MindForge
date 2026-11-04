@@ -31,6 +31,7 @@ a written post-merge checklist (migrations, answer keys, promote).
 ## Constraints
 
 - No service-role or secret key in the app or in Vercel env; only URL + publishable key → SC-8.
+  _Amended 2026-11-04 by ADR 0004 (MF-0011): one server-only `SUPABASE_SECRET_KEY` is now allowed; Vercel env holds four variables._
 - No Claude API key on Vercel (ROADMAP D-2) → SC-8.
 - Migrations reach the hosted project only after merge to `main`, run by the platform owner → SC-7.
 - Every new or changed table/function follows `project-supabase-migration-rules` (revoke all first, `connection()` before auth reads).

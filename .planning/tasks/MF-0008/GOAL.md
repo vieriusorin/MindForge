@@ -8,7 +8,7 @@ last_iteration: 0
 goal_status: complete-pending-manual-commit
 track: C                          # seat Coder B (golden set: Coder F)
 week: W1–W2
-depends_on: [MF-0006]            # the API key (ROADMAP D-2) now gates only MF-0020 (real runs)
+depends_on: [MF-0006]            # the API key (ROADMAP D-2) now gates only MF-0022 (real runs)
 ---
 
 > Drafted 2026-11-03 from the planning grill (Q3). Load the `claude-api` skill before choosing model
@@ -49,14 +49,14 @@ proves the verifier catches wrong answer keys.
 ## Scope split (2026-11-03)
 
 No Claude API key exists yet (checked: no `ANTHROPIC_API_KEY` in `.env.local` or the environment). Per the
-loop's infra rule, every proof that needs a paid model call moves to **MF-0020** (reserved, owned by the
+loop's infra rule, every proof that needs a paid model call moves to **MF-0022** (reserved, owned by the
 user): the real Batch run, the verifier eval over the golden set, and the injection eval against the
 model. This ticket builds and proves everything else offline, with the Claude client injected and mocked.
 
 ### Resumed 2026-11-04
 
-- **Ticket for the paid runs = MF-0020**, not MF-0019: MF-0019 was claimed in the meantime by MF-0005's
-  CI live proofs (`grep -rn MF-0019 .planning`). MF-0020..MF-0024 are free.
+- **Ticket for the paid runs = MF-0022**, not MF-0019: MF-0019 was claimed in the meantime by MF-0005's
+  CI live proofs (`grep -rn MF-0019 .planning`). MF-0020..MF-0024 looked free; MF-0020 and MF-0021 were then claimed on main (MF-0010, MF-0011), so this ticket's reservations were renumbered to MF-0022 (paid runs) and MF-0023 (Stop hook) at the 2026-11-04 merge.
 - Still no key: `ANTHROPIC_API_KEY` is not set in the environment (`.env.local` not read: guarded secret file).
 - `packs/ccdv-f/pack.yaml` has no `sources` yet (0 entries). Questions cite 1-3 distinct URLs per skill.
 - MF-0007 (merged): reviews bind to the item's content hash, so drafts written by this pipeline enter the
@@ -83,17 +83,17 @@ model. This ticket builds and proves everything else offline, with the Claude cl
 
 | # | Collision | Owner | Status |
 |---|-----------|-------|--------|
-| C-1 | Which official doc pages map to which skill: start from the exam guide's skill descriptions; the owner reviews the `sources` list before the first full run. | Coder B + Owner | moved 2026-11-04: the review is a prerequisite of MF-0020's first real run; this ticket only seeds the list (C-4) |
-| C-2 | A PR with ~500 questions is unreadable; split by domain (8 PRs), reviewed in-app via MF-0007 rather than line by line. | Coder B | moved 2026-11-04 to MF-0020 (output of real runs); MF-0007's queue now exists for the in-app review |
+| C-1 | Which official doc pages map to which skill: start from the exam guide's skill descriptions; the owner reviews the `sources` list before the first full run. | Coder B + Owner | moved 2026-11-04: the review is a prerequisite of MF-0022's first real run; this ticket only seeds the list (C-4) |
+| C-2 | A PR with ~500 questions is unreadable; split by domain (8 PRs), reviewed in-app via MF-0007 rather than line by line. | Coder B | moved 2026-11-04 to MF-0022 (output of real runs); MF-0007's queue now exists for the in-app review |
 | C-3 | "Records model + prompt version" (SC-3) has no field: the MF-0006 question schema is strict. Needs an optional `generatedBy: { model, prompt }` on questions (never sent to the browser). | user | resolved 2026-11-04 (user): optional `generatedBy: { model, prompt }`, written on every pipeline item, never sent to the browser → SC-8 |
-| C-4 | `sources` per skill don't exist yet (C-1). Seed them from the official URLs the 53 existing questions already cite, per skill, for the owner to review? | user | resolved 2026-11-04 (user): seed from the existing citations; the Owner reviews and extends before MF-0020's first run → SC-9 |
+| C-4 | `sources` per skill don't exist yet (C-1). Seed them from the official URLs the 53 existing questions already cite, per skill, for the owner to review? | user | resolved 2026-11-04 (user): seed from the existing citations; the Owner reviews and extends before MF-0022's first run → SC-9 |
 
 ## Decided by the user (2026-11-04)
 
 - C-3: optional `generatedBy` on questions (SC-8). C-4: `sources` seeded from current citations (SC-9).
-- The paid runs move to **MF-0020** (reserved, owner: user): the real Batch run, the verifier eval on the
+- The paid runs move to **MF-0022** (reserved, owner: user): the real Batch run, the verifier eval on the
   golden set with the real model, the injection eval against the model, the Owner's `sources` review (C-1)
-  and the per-domain PR split (C-2). Created `.planning/tasks/MF-0020/GOAL.md`.
+  and the per-domain PR split (C-2). Created `.planning/tasks/MF-0022/GOAL.md`.
 - No proof command wipes or restarts the local stack (all offline), so no approval was needed for one.
 - Grill (2026-11-04): **Source** / **Citation** added to CONTEXT.md (a question's citation must be one of its
   skill's sources). Author = required `MF_AUTHOR_EMAIL`, the runner's sign-in email (SC-3). Target is 20
@@ -120,13 +120,13 @@ model. This ticket builds and proves everything else offline, with the Claude cl
 <!-- append-only -->
 
 
-- 2026-11-03 · design · On hold by the user (switched to MF-0007). Draft: offline scope split, SCs rewritten for mocked-client proofs, paid runs proposed for MF-0020. Open: C-3 (generatedBy field), C-4 (seed sources from question citations), creating MF-0020. Nothing frozen, no code.
+- 2026-11-03 · design · On hold by the user (switched to MF-0007). Draft: offline scope split, SCs rewritten for mocked-client proofs, paid runs proposed for MF-0022. Open: C-3 (generatedBy field), C-4 (seed sources from question citations), creating MF-0022. Nothing frozen, no code.
 - 2026-11-04 · design (resumed) · Stash applied on `feat/MF-0008` (from `main` 8b4ecd5). MF-0019 taken (CI), so the
-  paid runs go to MF-0020 (created, reserved). User: C-3 optional `generatedBy` (SC-8), C-4 seed `sources`
-  from citations (SC-9). C-1/C-2 moved to MF-0020. Baseline clean (166/166). Next: grill, then freeze.
+  paid runs go to MF-0022 (created, reserved). User: C-3 optional `generatedBy` (SC-8), C-4 seed `sources`
+  from citations (SC-9). C-1/C-2 moved to MF-0022. Baseline clean (166/166). Next: grill, then freeze.
 - 2026-11-04 · design · Grill against CONTEXT.md / MINDFORGE / ADRs: Source + Citation terms added to
   CONTEXT.md; user chose required MF_AUTHOR_EMAIL, a 20-in-total target, prompt + code dedupe (SC-10).
-  All concerns resolved or moved to MF-0020. Waiting for the user to confirm the SCs before freezing.
+  All concerns resolved or moved to MF-0022. Waiting for the user to confirm the SCs before freezing.
 - 2026-11-04 · design · SC change (user-approved, before freeze): SC-2 `custom_id` was `<skill>.<i>`; the live Batches API reference requires `^[a-zA-Z0-9_-]{1,64}$`, so it is now `D2_S1-3` (dot → underscore, index after a hyphen).
 - 2026-11-04 · design → plan · User confirmed the SCs. Froze 2 files, 10 tests red at runtime (FROZEN.json,
   LOOP-VERIFY.md); typecheck + lint green with typed stubs. Tier normal: PLAN proceeds without approval.
@@ -134,4 +134,4 @@ model. This ticket builds and proves everything else offline, with the Claude cl
 - 2026-11-04 · build → test → handoff · T1–T5 built. The first real corpus run exposed PDF and inline-MDX
   pages: content-type handling + Markdown copies added (LOOP-PLAN divergence, recorded before continuing;
   test shown RED first). Receipt PASS (LOOP-VERIFY.md). Full-pack writer estimate $70.41 > $25 cap:
-  MF-0020 runs per domain.
+  MF-0022 runs per domain.

@@ -1,5 +1,5 @@
 # MF-0008 golden set (SC-4): the 3 official exam-guide samples and one planted variant per flaw.
-# The verifier must name every wrong-key and at least 80% of the other flaws (MF-0020 runs it for real).
+# The verifier must name every wrong-key and at least 80% of the other flaws (MF-0022 runs it for real).
 # Coder F adds ~30 hand-written cases in further files here.
 cases:
   - id: ccdv-f.D2.S3.official-1

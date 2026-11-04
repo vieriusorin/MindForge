@@ -1,24 +1,24 @@
 skill: D1.S3
 diagrams:
-  # MINDFORGE.md §2.5 "agent loop as bee foraging", copied verbatim (MF-0006 SC-6).
+  # MINDFORGE.md §2.5 "agent loop as bee foraging" (MF-0006 SC-6). Graph format: ADR 0003.
   - id: ccdv-f.D1.S3.diagram-bee-agent-loop
     title: "The agent tool-use loop as bee foraging"
     origin: human
     author: vlad.parvana@ddroidd.com
-    mermaid: |
-      flowchart LR
-        A[Hive: user goal] --> B[Bee decides: think]
-        B --> C{Need a flower?<br/>tool call}
-        C -- yes --> D[Fly + collect<br/>execute tool]
-        D --> E[Return nectar<br/>tool_result]
-        E --> B
-        C -- no --> F[Bring honey home<br/>final answer]
+    direction: LR
     nodes:
       - { id: A, label: "Hive: the user's goal" }
       - { id: B, label: "Bee decides: the model thinks" }
-      - { id: C, label: "Need a flower? A tool call" }
+      - { id: C, label: "Need a flower? A tool call", shape: decision }
       - { id: D, label: "Fly and collect: execute the tool" }
       - { id: E, label: "Return nectar: the tool_result" }
       - { id: F, label: "Bring honey home: the final answer" }
+    edges:
+      - { from: A, to: B }
+      - { from: B, to: C }
+      - { from: C, to: D, label: "yes" }
+      - { from: D, to: E }
+      - { from: E, to: B }
+      - { from: C, to: F, label: "no" }
     sources:
       - https://www.anthropic.com/engineering/building-effective-agents

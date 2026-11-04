@@ -114,6 +114,15 @@ the matching skill (for example `claude-api`) and read the live reference. Paste
 the SC. Before hand-off, run the real command once against real input, because mocks do not prove
 input shape (MF-0008 retro: a Batches `custom_id` with dots, and a PDF stored as text).
 
+Any SC that shows a figure, rank or flag computed over other people's data (a group aggregate, heatmap,
+leaderboard, "N of M" line) states under "Constraints → how met" what the viewer can deduce from the output:
+(a) the threshold counts contributors OTHER than the viewer, who knows their own row and can subtract it;
+(b) no contributor count is shown or encoded in a figure's granularity: check the smallest region or bucket
+(a single-skill region gives k / N steps) and the smallest group that passes the gate; (c) a "ready" state
+that implies who contributed is itself a disclosure. Give one worked example at the minimum group size in
+the SC's proof. A high-risk plan over other people's data without this is not ready for approval (MF-0011
+retro: a threshold of 3 including the viewer passed every gate; only the fresh-context reviewer caught it).
+
 Decide what follows from existing decisions and record it under "Decided without a question",
 with its source. Ask only what does not — see `references/escalation.md`. Two defensible business
 answers → a configurable setting chosen by an admin, not a guess.
@@ -153,6 +162,10 @@ import is a compile error, not the SC's red).
 Before FREEZE, format and lint the acceptance files you wrote (`pnpm exec biome check --write <those
 files, listed explicitly>`, then `pnpm lint`). A hash taken before formatting turns the first lint run
 into a re-freeze that needs the user.
+
+When `ticket:freeze` / `ticket:verify` / `ticket:eval` are missing from `package.json`, run the
+defaults by hand and hash frozen files over LF-normalised content (`content.replace(/\r\n/g, "\n")`,
+as `scripts/lib/ticket-*.mjs` do), so a CRLF checkout never yields a second hash (MF-0006 retro).
 
 Run FREEZE on the files. It **refuses a file that is already green** — a test that passes before
 the change proves nothing about it — and records a hash per file plus the first failure in

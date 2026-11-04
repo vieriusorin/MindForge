@@ -11,11 +11,11 @@ No `pnpm ticket:retro` script exists; facts come from GOAL.md, LOOP-PLAN.md, LOO
 - Tier normal, 10 frozen tests, 6 plan tasks, receipt PASS. No fresh-context review ran.
 - 1 SC change after the user confirmed the SCs (SC-2 custom_id), 2 plan divergences recorded.
 - Stop hook red (spawn ENOENT) on every turn.
-- Full-pack writer estimate $70.41 against a $25 cap, so paid runs moved to MF-0020.
+- Full-pack writer estimate $70.41 against a $25 cap, so paid runs moved to MF-0022.
 
 ## Went right
 - Real `pnpm generate:corpus` run before hand-off exposed PDF-as-text and inline-MDX pages (1.29M chars) that mocked tests could not. The fix was written test-first and recorded as a divergence before continuing. Keep: already is, in the LOOP-PLAN divergence rule. Add the "run the real command once" line to the skill edit below.
-- Cost estimate caught the $25 cap breach before any paid run, and the paid runs were moved to MF-0020. Keep: already is, in GOAL.md.
+- Cost estimate caught the $25 cap breach before any paid run, and the paid runs were moved to MF-0022. Keep: already is, in GOAL.md.
 - The grill against CONTEXT.md added the Source and Citation terms before freeze.
 
 ## Went wrong
@@ -35,7 +35,7 @@ No `pnpm ticket:retro` script exists; facts come from GOAL.md, LOOP-PLAN.md, LOO
 ## Applied
 
 2026-11-04, automatic policy:
-- Action 1 (gate): reserved as **MF-0021** (`.planning/tasks/MF-0021/GOAL.md`, goal_status: reserved). Not built: hooks are guarded config, and the policy never builds gates.
+- Action 1 (gate): reserved as **MF-0023** (`.planning/tasks/MF-0023/GOAL.md`, goal_status: reserved). Not built: hooks are guarded config, and the policy never builds gates.
 - Action 2 (skill-edit, additive): applied in `.claude/skills/gsd-goal-loop/SKILL.md` under "Stage 2 — DESIGN". The retro named `references/design.md`, which does not exist; the DESIGN stage lives in SKILL.md.
 - Also applied (memory, from "Not worth changing", cheap): the `String.replace` `$`` line in memory `windows-dev-environment`.
 - Held: nothing.

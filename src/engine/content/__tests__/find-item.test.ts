@@ -37,7 +37,12 @@ const content: PackContent = {
       skill: "S1",
       title: "Bees",
       origin: "human",
-      mermaid: "flowchart LR\n A --> B",
+      direction: "LR",
+      nodes: [
+        { id: "A", label: "a" },
+        { id: "B", label: "b" },
+      ],
+      edges: [{ from: "A", to: "B" }],
       sources: ["https://example.com"],
     },
   ],

@@ -9,7 +9,7 @@ Canonical terms. When code, docs or tickets disagree with this file, this file w
 - **Skill**: a weighted part of a domain, the unit of memory. Shown as a tree.
 - **Item**: one piece of learnable content attached to a skill: a question, nature card or diagram. Items live in pack files.
 - **Nature card**: an item that explains one concept of a skill through a nature analogy, with a required "where it breaks". A skill can have several; each names its concept in free text. There is no separate Concept entity in v1.
-- **Diagram**: a Mermaid item attached to a skill, reviewed on its own; a card may point to one.
+- **Diagram**: a graph item (direction, nodes, edges; ADR 0003) attached to a skill, reviewed on its own; a card may point to one. Drawn with React Flow, read aloud as its steps and connections.
 - **Source**: an official documentation page listed for a skill. A skill's sources are the material its items are written from. Course content behind a login is never a source.
 - **Citation**: the source an item points to for its answer. It must be one of its skill's sources.
 - **Covered skill**: a skill with at least 1 approved nature card, 1 approved diagram and 15 approved questions (goal G3).

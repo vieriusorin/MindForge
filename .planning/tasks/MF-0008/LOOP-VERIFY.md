@@ -48,7 +48,7 @@ Hash = `{ git diff HEAD -- . ':!.planning'; sorted untracked files ("== path" + 
 | `pnpm test:db` | Test Files 8 passed · Tests 27 passed |
 | `pnpm build` | ✓ Compiled |
 | `pnpm generate:corpus` (real docs, no key) | run 1: fetched=34 unchanged=0 refused=0 unsupported=1 (exam-guide PDF); run 2: fetched=0 unchanged=34 |
-| `pnpm generate:questions --dry-run` (no key) | 25 skills, need 17–18, drafts 22–23 each, 572 requests, upper bound $70.41 (over the $25 cap → run per domain in MF-0020); `--skill D2.S1`: 23 requests, $3.33 |
+| `pnpm generate:questions --dry-run` (no key) | 25 skills, need 17–18, drafts 22–23 each, 572 requests, upper bound $70.41 (over the $25 cap → run per domain in MF-0022); `--skill D2.S1`: 23 requests, $3.33 |
 
 ## SC verdicts
 
@@ -65,5 +65,5 @@ Hash = `{ git diff HEAD -- . ':!.planning'; sorted untracked files ("== path" + 
 | SC-9 | PASS | frozen SC-9 ✓ (25 skills seeded, 72 lines added, 0 removed) |
 | SC-10 | PASS | frozen SC-10 ✓ |
 
-Not verified here (MF-0020): any real Batch call, the verifier's real catch rate, real cost. Not done: a
+Not verified here (MF-0022): any real Batch call, the verifier's real catch rate, real cost. Not done: a
 fresh-context review (tier normal; the loop requires one only for high-risk).

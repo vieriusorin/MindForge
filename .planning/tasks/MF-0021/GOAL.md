@@ -1,38 +1,34 @@
 ---
 ticket_id: MF-0021
-tier: normal                      # dev tooling: a Claude Code hook; no app code
+tier: high-risk                   # learner privacy (group heatmap)
 stage: intake
 branch: main
-builds_on: []
+builds_on: [MF-0011]
 last_iteration: 0
-goal_status: reserved             # created by the MF-0008 retro (gate action); never built automatically
-track: P
-week: W2
-depends_on: []
+goal_status: reserved
+track: S
+week: W3
+depends_on: [MF-0011]
 ---
 
-> Reserved by the MF-0008 retro (2026-11-04, lesson `stop-hook-windows-spawn`). The MF-0007 retro said
-> to open this gate if the Stop hook failed again on the next Windows ticket. It did, on every turn of MF-0008.
+> Reserved 2026-11-04 from the MF-0011 review (residual of concern C-3, accepted by the user for v1).
 
 ## Objective
 
-Today `.claude/hooks/stop-gate.mjs` fails on Windows before checking anything (`spawn pnpm ENOENT`,
-`spawn biome ENOENT`, `spawn vitest ENOENT`). Node won't spawn `.cmd` shims, so every turn shows a red
-gate that hides real failures.
+Today the group heatmap shows no member count, but in groups of 5 or more the count can be worked out
+from the figures. In a single-skill region (ccdv-f D3, D4), healthy share = healthy members ÷ members who
+have played, so 25/50/75 % in a 5-person group means 4 have played, and therefore that one named member
+hasn't. Only 0 % and 100 % hide the count. This leaks who has played, never anyone's memory.
 
-End state: on Windows the hook resolves its commands the way `scripts/lib/supabase-bin.mjs` does (or
-spawns through the shell), and it reports the real typecheck, lint and test result.
-
-## Success Criteria (draft)
-
-- [ ] SC-1: On a clean tree on Windows, the Stop gate exits 0 and runs typecheck, lint and tests. Proof: hook run log.
-- [ ] SC-2: With a deliberate type error in a changed file, the gate reports that error, not a spawn failure. Proof: hook run log.
-- [ ] SC-3: Behaviour on macOS/Linux is unchanged. Proof: unit test of the command resolver per platform.
-
-## Constraints
-
-- Hooks are guarded config: the user approves the change.
+End state: the figures shown for a region don't reveal how many members have played, for example by
+showing single-skill regions (or every region) as a shade bucket only.
 
 ## Open questions
 
-- Shell spawn vs explicit `.cmd` resolution (the repo already uses explicit resolution in `supabase-bin.mjs`).
+- Which coarsening: bucket only for regions with fewer than N skills, or for every region? Does the
+  average recall need the same treatment?
+- Is the residual "100 % in a single-skill region means every member's tree there is healthy" in scope?
+
+## Evidence
+
+- `.planning/tasks/MF-0011/REVIEW.md` (iteration 2, note 1); `src/engine/forest/group-heatmap.ts`.
