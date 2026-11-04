@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { formatWeight } from "@/lib/forest-display";
+import { WalkAction } from "./components/walk-action";
 import type { TodayBriefingProps } from "./types";
 
 const TILE = "gap-1 bg-white/10 text-white shadow-none ring-white/15";
@@ -19,6 +20,7 @@ export function TodayBriefing({
   topFocus,
   exam,
   groupCount,
+  walk,
 }: TodayBriefingProps) {
   return (
     <Card className="bg-hero gap-5 py-6 ring-0">
@@ -36,6 +38,7 @@ export function TodayBriefing({
               : `${grownPercent}% of the exam weight is taking root.`}
           </span>
         </CardTitle>
+        <WalkAction walk={walk} />
       </CardHeader>
       <CardContent className="grid gap-3 px-6 sm:grid-cols-3">
         {topFocus && (
