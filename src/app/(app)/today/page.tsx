@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { playableQuestions } from "@/engine/content";
 import { buildForest, summarizeForest } from "@/engine/forest";
-import { memoryBySkill, planWalk } from "@/engine/memory";
+import { countableAttempts, memoryBySkill, planWalk } from "@/engine/memory";
 import { BlueprintChart } from "@/features/dashboard/components/blueprint-chart";
 import { DashboardSkeleton } from "@/features/dashboard/components/dashboard-skeleton";
 import { FocusList } from "@/features/dashboard/components/focus-list";
@@ -36,14 +36,16 @@ async function TodaySlot() {
   ]);
   const now = new Date();
   // MF-0003: the forest is replayed (FSRS) from the learner's DB-graded attempts.
+  // MF-0007: only countable ones (not rejected, not spoiled by reviewing), same as every surface.
+  const countable = countableAttempts(attempts, review);
   const summary = summarizeForest(
-    buildForest(pack, memoryBySkill(attempts, now)),
+    buildForest(pack, memoryBySkill(countable, now)),
   );
   // MF-0009: the same plan the walk page builds, so the button's count matches the walk.
   const walkPlan = planWalk({
     pack,
     questions: playableQuestions(questions, review, "practice"),
-    attempts,
+    attempts: countable,
     now,
   });
   const packNames = Object.fromEntries(packs.map((p) => [p.slug, p.name]));

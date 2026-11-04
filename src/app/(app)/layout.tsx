@@ -34,6 +34,7 @@ async function Sidebar() {
       groups={groups.map((g) => ({ id: g.id, name: g.name }))}
       duelHref={`/play/${packSlug}/duel`}
       walkHref={`/play/${packSlug}/walk`}
+      reviewHref={`/review/${packSlug}`}
       signOutAction={signOut}
     />
   );

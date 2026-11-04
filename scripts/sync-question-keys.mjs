@@ -5,6 +5,8 @@
  * editing questions. Idempotent: upserts every key and deletes keys no longer in the files.
  * MF-0004: also registers every packs/<slug>/ folder in private.packs (create_group refuses
  * any other slug) and removes slugs whose folder is gone.
+ * MF-0007: also registers every question, card and diagram in private.items with its content
+ * hash, which the review state binds to.
  *
  * DB: $SUPABASE_DB_URL, else the LOCAL stack from `supabase status`.
  * Usage: node scripts/sync-question-keys.mjs
@@ -16,6 +18,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import postgres from "postgres";
 import YAML from "yaml";
+import { contentHash } from "./lib/content-hash.mjs";
 import { supabaseBin } from "./lib/supabase-bin.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
@@ -30,18 +33,25 @@ function dbUrl() {
     .DB_URL;
 }
 
-function readKeys(packSlug) {
-  const dir = join(ROOT, "packs", packSlug, "questions");
+/** Parsed YAML files of packs/<slug>/<kind>/*.yaml, with their names. */
+function readFiles(packSlug, kind) {
+  const dir = join(ROOT, "packs", packSlug, kind);
   let names;
   try {
     names = readdirSync(dir).filter((n) => n.endsWith(".yaml"));
   } catch (error) {
-    // Only "no questions folder" means no questions. Any other error must not delete the pack's keys.
+    // Only "no such folder" means no items. Any other error must not delete the pack's rows.
     if (error.code === "ENOENT") return [];
     throw error;
   }
-  return names.flatMap((name) => {
-    const file = YAML.parse(readFileSync(join(dir, name), "utf8"));
+  return names.map((name) => ({
+    name,
+    file: YAML.parse(readFileSync(join(dir, name), "utf8")),
+  }));
+}
+
+function readKeys(packSlug) {
+  return readFiles(packSlug, "questions").flatMap(({ name, file }) => {
     return file.questions.map((q) => {
       const correct = q.options.filter((o) => o.correct).map((o) => o.id);
       if (correct.length === 0)
@@ -54,6 +64,41 @@ function readKeys(packSlug) {
       };
     });
   });
+}
+
+const ITEM_KINDS = [
+  { kind: "questions", type: "question" },
+  { kind: "cards", type: "card" },
+  { kind: "diagrams", type: "diagram" },
+];
+const ORIGINS = ["official", "human", "ai"];
+
+/** MF-0007: one registry row per item; reviews bind to (item_id, content_hash). */
+function readItems(packSlug) {
+  return ITEM_KINDS.flatMap(({ kind, type }) =>
+    readFiles(packSlug, kind).flatMap(({ name, file }) =>
+      file[kind].map((item) => {
+        if (!ORIGINS.includes(item.origin))
+          throw new Error(
+            `${packSlug}/${kind}/${name}: ${item.id} has no valid origin`,
+          );
+        // A human/ai item without an author would let its real author approve it (MF-0007 review).
+        if (item.origin !== "official" && !item.author)
+          throw new Error(
+            `${packSlug}/${kind}/${name}: ${item.id} is ${item.origin} but has no author`,
+          );
+        return {
+          item_id: item.id,
+          pack_slug: packSlug,
+          skill_code: file.skill,
+          item_type: type,
+          content_hash: contentHash(item),
+          origin: item.origin,
+          author_email: item.author ?? null,
+        };
+      }),
+    ),
+  );
 }
 
 // MF-0004: against a remote DB this unregisters packs whose folder is missing, so only sync
@@ -104,6 +149,32 @@ try {
       await tx`delete from private.question_keys where pack_slug = ${pack} and not (question_id = any(${ids}))`;
     });
     console.log(`${pack}: ${keys.length} key(s) synced`);
+
+    // MF-0007: hash_synced_at moves only when the hash changes (C-3: the 48 h analogy clock).
+    // Only this pack's rows are deleted, so packs without a folder here are never touched.
+    const items = readItems(pack);
+    await sql.begin(async (tx) => {
+      for (const i of items) {
+        await tx`
+          insert into private.items as cur
+            (item_id, pack_slug, skill_code, item_type, content_hash, origin, author_email)
+          values (${i.item_id}, ${i.pack_slug}, ${i.skill_code}, ${i.item_type},
+                  ${i.content_hash}, ${i.origin}, ${i.author_email})
+          on conflict (item_id) do update
+            set pack_slug = excluded.pack_slug,
+                skill_code = excluded.skill_code,
+                item_type = excluded.item_type,
+                origin = excluded.origin,
+                author_email = excluded.author_email,
+                hash_synced_at = case when cur.content_hash = excluded.content_hash
+                                      then cur.hash_synced_at else now() end,
+                content_hash = excluded.content_hash,
+                updated_at = now()`;
+      }
+      const ids = items.map((i) => i.item_id);
+      await tx`delete from private.items where pack_slug = ${pack} and not (item_id = any(${ids}))`;
+    });
+    console.log(`${pack}: ${items.length} item(s) registered`);
   }
 } finally {
   await sql.end();

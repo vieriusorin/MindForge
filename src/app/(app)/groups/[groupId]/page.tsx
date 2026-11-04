@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { plantableSkills } from "@/engine/content";
 import { buildForest } from "@/engine/forest";
-import { memoryBySkill } from "@/engine/memory";
+import { countableAttempts, memoryBySkill } from "@/engine/memory";
 import { Forest } from "@/features/forest/components/forest";
 import { rotateInviteCode } from "@/features/groups/actions";
 import { InviteLink } from "@/features/groups/components/invite-link";
@@ -37,9 +37,14 @@ async function GroupSlot({
     listMyAttempts(user.id, group.packSlug),
     getPackContent(group.packSlug),
     getReviewContext(user.id, group.packSlug),
+    getReviewContext(user.id, group.packSlug),
   ]);
   // MF-0003: the signed-in learner's own forest, replayed from DB-graded attempts.
-  const forest = buildForest(pack, memoryBySkill(attempts, new Date()));
+  // MF-0007: only countable ones (not rejected, not spoiled by reviewing), same as every surface.
+  const forest = buildForest(
+    pack,
+    memoryBySkill(countableAttempts(attempts, review), new Date()),
+  );
   // MF-0010: seed tiles link to Seed Planting when the skill has something to plant.
   const plantable = plantableSkills({
     content,

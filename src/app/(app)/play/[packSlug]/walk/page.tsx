@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { planSeedPlanting, playableQuestions } from "@/engine/content";
-import { planWalk } from "@/engine/memory";
+import { countableAttempts, planWalk } from "@/engine/memory";
 import { toPlayableQuestion } from "@/engine/questions";
 import { SeedPrimer } from "@/features/seed-planting/components/seed-primer";
 import { WalkSession } from "@/features/walk/components/walk-session";
@@ -31,11 +31,12 @@ async function WalkSlot({
     getReviewContext(user.id, packSlug),
     getPackContent(packSlug),
   ]);
-  // MF-0009: only candidates are filtered; memory still replays every attempt.
+  // MF-0007: memory replays the same countable attempts as the forest and the Today plan,
+  // so the walk matches the count on the Today button.
   const plan = planWalk({
     pack,
     questions: playableQuestions(questions, review, "practice"),
-    attempts,
+    attempts: countableAttempts(attempts, review),
     now: new Date(),
   });
   // MF-0010 (C-4): the new skill's slot shows its card + diagram above the walk's one question.

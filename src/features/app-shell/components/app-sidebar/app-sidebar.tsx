@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Flower,
   Footprints,
   LayoutGrid,
   LogOut,
@@ -34,6 +35,7 @@ export function AppSidebar({
   groups,
   duelHref,
   walkHref,
+  reviewHref,
   signOutAction,
 }: AppSidebarProps) {
   const pathname = usePathname();
@@ -88,6 +90,18 @@ export function AppSidebar({
                 </Link>
               </SidebarMenuButton>
               <SidebarMenuBadge>{groups.length}</SidebarMenuBadge>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={isActivePath(pathname, "/review")}
+                tooltip="Review"
+              >
+                <Link href={reviewHref}>
+                  <Flower />
+                  <span>Review</span>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
