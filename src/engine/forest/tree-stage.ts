@@ -6,7 +6,10 @@ export interface MemorySnapshot {
   stabilityDays: number;
   retrievability: number;
   feynmanPassed: boolean;
-  stormSurvived: boolean;
+  /** Proven in any storm (CONTEXT.md "Storm-proven skill"): with stability ≥ 14 d, a Tree. */
+  stormProven: boolean;
+  /** Proven in a Full Storm: with stability ≥ 45 d, an Ancient tree. */
+  fullStormProven: boolean;
 }
 
 export interface TreeState {
@@ -25,15 +28,19 @@ export const FOREST_THRESHOLDS = {
 function stageOf(memory: MemorySnapshot): TreeStage {
   const t = FOREST_THRESHOLDS;
   if (memory.successfulRecalls < 1) return "seed";
+  // MF-0013 (CONTEXT.md): Feynman cut, so a storm proof is the other road to Tree; only a Full Storm reaches Ancient.
   if (
     memory.stabilityDays >= t.ancientStabilityDays &&
-    memory.feynmanPassed &&
-    memory.stormSurvived
+    memory.fullStormProven
   ) {
     return "ancient";
   }
-  if (memory.stabilityDays >= t.treeStabilityDays && memory.feynmanPassed)
+  if (
+    memory.stabilityDays >= t.treeStabilityDays &&
+    (memory.feynmanPassed || memory.stormProven)
+  ) {
     return "tree";
+  }
   if (memory.stabilityDays >= t.saplingStabilityDays) return "sapling";
   return "sprout";
 }

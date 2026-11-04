@@ -7,6 +7,9 @@
  * any other slug) and removes slugs whose folder is gone.
  * MF-0007: also registers every question, card and diagram in private.items with its content
  * hash, which the review state binds to.
+ * MF-0013: also writes each pack's exam timing (private.packs.exam_questions / exam_minutes, null
+ * without an `exam:` block) and its skill -> domain map (private.pack_skills): start_storm sets the
+ * deadline and checks a Boss Storm's domain from these, never from the client.
  *
  * DB: $SUPABASE_DB_URL, else the LOCAL stack from `supabase status`.
  * Usage: node scripts/sync-question-keys.mjs
@@ -64,6 +67,21 @@ function readKeys(packSlug) {
       };
     });
   });
+}
+
+/** MF-0013: exam timing and skill -> domain map from packs/<slug>/pack.yaml. */
+function readPackMeta(packSlug) {
+  const pack = YAML.parse(
+    readFileSync(join(ROOT, "packs", packSlug, "pack.yaml"), "utf8"),
+  );
+  const skills = (pack.domains ?? []).flatMap((d) =>
+    (d.skills ?? []).map((s) => ({ skill_code: s.code, domain_code: d.code })),
+  );
+  return {
+    exam_questions: pack.exam?.questions ?? null,
+    exam_minutes: pack.exam?.minutes ?? null,
+    skills,
+  };
 }
 
 const ITEM_KINDS = [
@@ -125,14 +143,34 @@ const sql = postgres(dbUrl(), { max: 1, onnotice: () => {} });
 try {
   await sql.begin(async (tx) => {
     for (const pack of packs) {
+      const meta = readPackMeta(pack);
       await tx`
-        insert into private.packs (slug) values (${pack})
-        on conflict (slug) do update set updated_at = now()`;
+        insert into private.packs (slug, exam_questions, exam_minutes)
+        values (${pack}, ${meta.exam_questions}, ${meta.exam_minutes})
+        on conflict (slug) do update
+          set exam_questions = excluded.exam_questions,
+              exam_minutes = excluded.exam_minutes,
+              updated_at = now()`;
     }
     await tx`delete from private.packs where not (slug = any(${packs}))`;
   });
   console.log(`pack registry: ${packs.join(", ")}`);
   for (const pack of packs) {
+    // MF-0013: the skill -> domain map; only this pack's rows are replaced.
+    const { skills } = readPackMeta(pack);
+    await sql.begin(async (tx) => {
+      for (const s of skills) {
+        await tx`
+          insert into private.pack_skills (pack_slug, skill_code, domain_code)
+          values (${pack}, ${s.skill_code}, ${s.domain_code})
+          on conflict (pack_slug, skill_code) do update
+            set domain_code = excluded.domain_code`;
+      }
+      const codes = skills.map((s) => s.skill_code);
+      await tx`delete from private.pack_skills where pack_slug = ${pack} and not (skill_code = any(${codes}))`;
+    });
+    console.log(`${pack}: ${skills.length} skill(s) mapped`);
+
     const keys = readKeys(pack);
     await sql.begin(async (tx) => {
       for (const k of keys) {

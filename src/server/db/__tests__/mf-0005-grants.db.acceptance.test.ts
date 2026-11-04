@@ -18,6 +18,8 @@ const RELATION_ALLOW_LIST = [
   "public.group_members authenticated SELECT",
   "public.groups authenticated SELECT",
   "public.profiles authenticated SELECT",
+  "public.storm_questions authenticated SELECT", // MF-0013 C-5, approved 2026-11-04
+  "public.storms authenticated SELECT", // MF-0013 C-5, approved 2026-11-04
 ];
 
 const COLUMN_ALLOW_LIST = [
