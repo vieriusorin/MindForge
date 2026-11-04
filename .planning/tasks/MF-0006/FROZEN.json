@@ -4,13 +4,8 @@
   "files": [
     {
       "path": "src/engine/content/__tests__/mf-0006-content.acceptance.test.ts",
-      "sha256": "b41e4f294c90621656fca73a3a344209e35facab8563588f3eba89b654eed347",
+      "sha256": "a0aad0e757cb53d97080dc9f57093449b56194274200fe97b7b7e7cc30703563",
       "first_failure": "SC-1..6, SC-8 (8/8): Error: not implemented (load-content.ts / hash.ts / review.ts stubs); same on 2nd run"
-    },
-    {
-      "path": "src/engine/content/__tests__/mf-0006-mermaid.acceptance.test.ts",
-      "sha256": "f4fe4fe812028e5f3861e5b1757ac4461fc0cdb7506eb4c9d22b7cf158005277",
-      "first_failure": "SC-2 (2/2): promise rejected \"Error: not implemented\" (src/test/mermaid-check.ts stub); same on 2nd run"
     }
   ],
   "history": [
@@ -19,6 +14,14 @@
       "reason": "Author literal changed at the user's request (2026-11-03): every item is authored by vlad.parvana@ddroidd.com, not sorinvieriu@gmail.com. Constant SORIN -> AUTHOR, test title \"50 ai by Sorin\" -> \"50 ai by the author\". No assertion added, removed or weakened.",
       "previous": {
         "src/engine/content/__tests__/mf-0006-content.acceptance.test.ts": "a5133d1656155f482d9e5f277414d597b1e83a2b31090ddd2097cf1071ee59e9"
+      }
+    },
+    {
+      "at": "2026-11-04T09:04:46Z",
+      "reason": "User decision 2026-11-04 (MF-0010 DESIGN, ADR 0003): diagrams are stored as graphs (direction, nodes, edges) and drawn with React Flow; Mermaid is removed. mf-0006-content: DIAGRAMS fixture is a graph; SC-2 now asserts direction/nodes/edges and that an edge to an unknown node, an unknown direction and a duplicate node id each fail with a path-named error (replaces the 'allowed Mermaid type' check); SC-6 bee lookup reads the title only. Seen red with the graph checks disabled. mf-0006-mermaid.acceptance.test.ts RETIRED with src/test/mermaid-check.ts: there is no Mermaid text left to parse; the schema's graph checks cover every diagram of every pack through the SC-6 loader.",
+      "previous": {
+        "src/engine/content/__tests__/mf-0006-content.acceptance.test.ts": "b41e4f294c90621656fca73a3a344209e35facab8563588f3eba89b654eed347",
+        "src/engine/content/__tests__/mf-0006-mermaid.acceptance.test.ts": "f4fe4fe812028e5f3861e5b1757ac4461fc0cdb7506eb4c9d22b7cf158005277"
       }
     }
   ]

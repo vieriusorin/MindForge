@@ -1,0 +1,26 @@
+{
+  "ticket": "MF-0010",
+  "frozen_at": "2026-11-04T08:53:35Z",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0010-seed-planting.acceptance.test.ts",
+      "sha256": "d9889bdc0885305e3acebed8f03cf193a0d2a9e09954156e26d18e02d3f9f3a2",
+      "first_failure": "Error: not implemented (stub); every test red, same on 2nd run"
+    },
+    {
+      "path": "src/components/diagram-figure/__tests__/mf-0010-diagram-figure.acceptance.test.tsx",
+      "sha256": "338096d3ab4cbd9baa6a2220650a5dd884e77f8856eb69489482dd3194ed2382",
+      "first_failure": "Error: not implemented (stub); every test red, same on 2nd run"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-04T09:04:46Z",
+      "reason": "User decision 2026-11-04 (MF-0010 DESIGN, ADR 0003): diagrams are stored as graphs (direction, nodes, edges) and drawn with React Flow; Mermaid is removed. SC-6 fixture: diagram() builds a 2-node graph instead of Mermaid text (no assertion changed). SC-3: props are the graph; the mock moves to flow-diagram-lazy; the 'no nodes' case is gone (nodes are now required, >= 2); NEW assertion: every connection is read in words. Re-checked red by removing the Connections list and the aria-hidden wrapper (2/4 failed), then restored.",
+      "previous": {
+        "src/engine/content/__tests__/mf-0010-seed-planting.acceptance.test.ts": "88cb18ccb43688a1936a2abdeb9a85aa8028139cb79db96e053d9a5eb6dcc2e6",
+        "src/components/diagram-figure/__tests__/mf-0010-diagram-figure.acceptance.test.tsx": "752ea92aa8576e42a5018204e854524c5954fd8cd9b8c23cd833cffd97b7a18b"
+      }
+    }
+  ]
+}

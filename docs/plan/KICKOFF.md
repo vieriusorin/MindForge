@@ -54,7 +54,7 @@ Supabase CLI) is already done by another session; CI calls `pnpm exec supabase �
 ## Coder D: Gameplay (learning + storms)
 
 **Day 1:** read `MINDFORGE.md` §2.4–2.5 (nature cards, diagrams), the MF-0006 GOAL (the formats you
-render), `.claude/rules/ui-design.md`. Spike in a scratch branch: render a Mermaid diagram client-side,
+render), `.claude/rules/ui-design.md`. Spike in a scratch branch: render a diagram client-side (since 2026-11-04: a graph drawn with React Flow, ADR 0003),
 lazy-loaded, readable in light and dark theme. Report what works.
 
 **Then:** MF-0010 (Seed Planting + diagram rendering; needed for the Nov 15 release gate), then MF-0013 (Storms, W3).

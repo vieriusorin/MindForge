@@ -2,10 +2,14 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { type RefObject, useEffect, useRef, useState } from "react";
+import {
+  canSubmit,
+  feedbackMessage,
+  toggleChoice,
+} from "@/components/question-card";
 import type { AnswerFeedback } from "@/engine/questions";
 import { answerWalkQuestion } from "../../../actions";
 import type { WalkStep } from "../../../types";
-import { canSubmit, feedbackMessage, toggleChoice } from "../utils";
 
 export interface UseWalkSessionReturn {
   step: WalkStep | null;

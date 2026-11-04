@@ -233,12 +233,12 @@ Later (Phase 2): a **personal analogy profile** (hobbies, profession, own projec
 
 ### 2.5 Diagrams
 
-- **Format:** Mermaid (flowchart, sequence, state, mindmap) stored as text. It's deterministic, reviewable in PRs, diffable, and renders client-side.
-- **Diagram types:** process flow (agent loop, batch lifecycle), sequence (client ↔ MCP server ↔ tool), decision tree (which model / which tool type), concept map (how skills in a region connect), nature-vs-tech side-by-side (e.g. cuckoo ↔ injection).
+- **Format (ADR 0003, 2026-11-04):** a graph in YAML: `direction` (LR / TB), `nodes` (id, label, shape step/decision) and `edges` (from, to, label). Deterministic, reviewable in PRs, diffable; laid out by dagre and drawn client-side with React Flow in the app's own components. The Mermaid blocks below are illustrations only. Sequence diagrams are out of v1.
+- **Diagram types:** process flow (agent loop, batch lifecycle), decision tree (which model / which tool type), concept map (how skills in a region connect), nature-vs-tech side-by-side (e.g. cuckoo ↔ injection).
 - **Interactive:** the same diagram source powers *Diagram Builder*. Nodes get shuffled and the learner rebuilds them, or one edge is corrupted for "spot the wrong arrow".
 - **Later:** illustrated nature scenes (AI images) once accuracy review covers images too.
 
-Example (agent loop as bee foraging):
+Example (agent loop as bee foraging; stored as `packs/ccdv-f/diagrams/D1.S3.yaml`):
 
 ```mermaid
 flowchart LR
@@ -287,7 +287,7 @@ Items are scoped **global** (pack-level, approved) or **group** (drafts and grou
 ### 2.8 Architecture (❓Q-1: Supabase vs Drizzle+Turso; proposal: Supabase for auth + RLS)
 
 ```
-Next.js 16 (App Router, RSC) + Tailwind + shadcn/ui + Mermaid + SVG forest
+Next.js 16 (App Router, RSC) + Tailwind + shadcn/ui + React Flow (diagrams, ADR 0003) + SVG forest
    │
    ├── Learning engine (pure TS, no UI, no pack hard-coding)
    │     ├─ scheduler (ts-fsrs) → memory_states
@@ -299,10 +299,10 @@ Next.js 16 (App Router, RSC) + Tailwind + shadcn/ui + Mermaid + SVG forest
    │
    ├── AI services (Claude API, small typed prompts, structured outputs)
    │     ├─ NatureCardWriter    Sonnet   grounded on cached docs; must fill "where it breaks"
-   │     ├─ DiagramWriter       Sonnet   outputs Mermaid + node list for Diagram Builder
+   │     ├─ DiagramWriter       Sonnet   outputs a diagram graph (nodes + edges, ADR 0003), also used by Diagram Builder
    │     ├─ QuestionWriter      Sonnet   via Batch API for bulk runs
    │     ├─ CuckooWriter        Sonnet   plants one realistic flaw + its explanation
-   │     ├─ Verifier            Opus     checks answer keys, citations, analogy limits, Mermaid validity
+   │     ├─ Verifier            Opus     checks answer keys, citations, analogy limits, diagram schema validity
    │     ├─ FeynmanGrader       Haiku/Sonnet
    │     └─ NotesMapper         Haiku    maps pasted notes to skills (untrusted input)
    │
@@ -374,7 +374,7 @@ All answered 2026-11-03. Details: `docs/plan/ROADMAP.md` §2, glossary `CONTEXT.
 |---|---|---|
 | Engine | FSRS → tree stage mapping, selector, readiness | Vitest, fixed fixtures and clock |
 | Pack loader | Schema validation; second pack loads without code changes | Vitest + pack fixtures |
-| AI output shape | Zod schemas; `select_n` matches the key; every option has a rationale; Mermaid parses; "where it breaks" is not empty | Validation + eval script |
+| AI output shape | Zod schemas; `select_n` matches the key; every option has a rationale; diagrams pass the graph schema; "where it breaks" is not empty | Validation + eval script |
 | AI correctness | Golden set: 3 official sample questions + ~30 hand-written; verifier must catch planted wrong keys and misleading analogies | Eval suite, run per prompt version |
 | Security | Injection in pasted notes can't change instructions or item status | Injection fixtures |
 | Authorization | Users only see their own groups' drafts and forests | RLS tests per role |
@@ -438,9 +438,9 @@ Produce:
    memory update, wireframe in ASCII
 5. docs/design/ai-services.md: each writer/verifier: purpose, model + why, input,
    structured output JSON Schema, grounding/citation rule, "where it breaks" rule,
-   Mermaid validation, untrusted-input handling, failure handling, batch/caching use
+   diagram graph validation, untrusted-input handling, failure handling, batch/caching use
 6. docs/design/adr/ADR-00n-*.md: one per significant decision
-Check current docs for Next.js 16, Supabase, ts-fsrs, Mermaid and the Claude API before
+Check current docs for Next.js 16, Supabase, ts-fsrs, React Flow and the Claude API before
 choosing APIs. No production code. Stop and list contradictions with the plan.
 ```
 

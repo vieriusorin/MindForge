@@ -3,6 +3,7 @@ ticket: MF-0006
 outcome: pass
 causes: tooling, missing-context
 actions: gate, skill-edit
+applied: 2026-11-04
 lesson_keys: windows-crlf-line-endings, design-spike-settles-concern, hand-run-ticket-scripts
 ---
 ## Numbers
@@ -29,3 +30,12 @@ lesson_keys: windows-crlf-line-endings, design-spike-settles-concern, hand-run-t
 - `test:db` not runnable on Windows (`local-stack.ts` shim): known from commit 185663c for scripts; a separate fix ticket, listed unverified here.
 - SC-8 "replay" met by the duel page and action rather than `replayMemory`: a planned divergence, recorded in LOOP-PLAN.
 - Assumed Sorin's sign-in email = his git email: a one-time data assumption, logged in the Iteration Log. (Moot: the user later took authorship of every item.)
+
+## Applied
+- 2026-11-04 (from the MF-0010 session, automatic policy).
+- Action 1 (gate): already in place — `.gitattributes` with `* text=auto eol=lf` exists on `main` (commented
+  "MF-0006 retro"); no new reserved ticket needed.
+- Action 2 (skill-edit, additive): applied. `gsd-goal-loop/SKILL.md` Stage 2b now says to hash frozen files over
+  LF-normalised content when the `ticket:*` scripts are missing; the `[ \t]+` migration-regex rule was already in
+  Stage 3b. The `references/retro.md` half is not added: the rule belongs where freezing happens, and one copy
+  keeps one owner. Nothing held.

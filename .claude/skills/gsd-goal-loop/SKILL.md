@@ -149,6 +149,10 @@ Before FREEZE, format and lint the acceptance files you wrote (`pnpm exec biome 
 files, listed explicitly>`, then `pnpm lint`). A hash taken before formatting turns the first lint run
 into a re-freeze that needs the user.
 
+When `ticket:freeze` / `ticket:verify` / `ticket:eval` are missing from `package.json`, run the
+defaults by hand and hash frozen files over LF-normalised content (`content.replace(/\r\n/g, "\n")`,
+as `scripts/lib/ticket-*.mjs` do), so a CRLF checkout never yields a second hash (MF-0006 retro).
+
 Run FREEZE on the files. It **refuses a file that is already green** — a test that passes before
 the change proves nothing about it — and records a hash per file plus the first failure in
 `.planning/tasks/<ID>/FROZEN.json`. Paste each RED line into LOOP-VERIFY.md under "RED at

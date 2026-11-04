@@ -1,4 +1,5 @@
 import type { Question } from "../questions/types";
+import type { DIAGRAM_DIRECTIONS, DIAGRAM_NODE_SHAPES } from "./schema";
 
 /** CONTEXT.md Origin: who wrote an item. Fixed in the file; a review never changes it. */
 export type Origin = "official" | "human" | "ai";
@@ -36,9 +37,21 @@ export interface NatureCard {
   sources: string[];
 }
 
+/** ADR 0003: diagrams are graphs, drawn with React Flow; the words are the source of truth. */
+export type DiagramDirection = (typeof DIAGRAM_DIRECTIONS)[number];
+export type DiagramNodeShape = (typeof DIAGRAM_NODE_SHAPES)[number];
+
 export interface DiagramNode {
   id: string;
   label: string;
+  /** Absent = "step". */
+  shape?: DiagramNodeShape;
+}
+
+export interface DiagramEdge {
+  from: string;
+  to: string;
+  label?: string;
 }
 
 export interface Diagram {
@@ -47,8 +60,9 @@ export interface Diagram {
   title: string;
   origin: Origin;
   author?: string;
-  mermaid: string;
-  nodes?: DiagramNode[];
+  direction: DiagramDirection;
+  nodes: DiagramNode[];
+  edges: DiagramEdge[];
   sources: string[];
 }
 
@@ -94,4 +108,11 @@ export interface ReviewCandidate {
   itemType: ItemType;
   /** The registry's current version of the item (its content hash). */
   contentHash: string;
+}
+
+/** MF-0010: what a learner meets when planting a skill: card → diagram → checks. */
+export interface SeedPlanting {
+  card: NatureCard | null;
+  diagram: Diagram | null;
+  checks: Question[];
 }

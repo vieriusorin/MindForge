@@ -22,7 +22,7 @@
 - **Hosting** (Vercel + hosted Supabase), production email, **CI**.
 - **AI content pipeline** (B3 docs corpus, B4 writers + verifier). No prompts, no Claude API code.
 - **Review workflow** (B5 Pollination). Nothing is approved yet, so G3/G4 are at 0.
-- **Nature cards + diagrams** (no schema, no content, no Mermaid rendering).
+- **Nature cards + diagrams** (no schema, no content, no diagram rendering).
 - **Daily Walk, Seed Planting** (B7 rest), **shared group forest + heatmap** (B8 rest).
 - Everything W3–W4: storms, readiness, Cuckoo, Diagram Builder, Feynman, Odd One Out, Expedition.
 
@@ -118,11 +118,11 @@ Size: **S** ≤ 1 day · **M** 2–3 days · **L** 4–5 days. Tier per `ticket-
 | **MF-0004** | P | Hosted env + auth hardening | high | M | Phase 0, D-2 | App on Vercel against hosted Supabase; magic link arrives via production SMTP; redirect origin comes from config (exact allowlist, no header trust); proxy keeps no-store headers; `create_group` rejects unknown slugs and caps groups per user; `rotateInviteCode` surfaces errors; `site_url` fixed |
 | **MF-0005** | P | CI + grants gate | normal | S | Phase 0, MF-0018 | GitHub Action runs typecheck, lint, unit, db tests (local Supabase in CI), build; a DB test fails if any `public` table grants TRUNCATE/INSERT/DELETE to `anon`/`authenticated` outside an allow-list |
 | **MF-0018** | P | Local contributor setup (**done, uncommitted**, other session) | normal | S | Phase 0 | Supabase CLI pinned as a devDependency; one setup command (Node ≥ 24 + Docker check, `supabase start`, migrations without wiping data, key sync, `.env.local`); README Quick start. MF-0005 uses its pinned CLI |
-| **MF-0006** | E | Content formats v1: nature card + diagram | normal | S | Phase 0 (**only blocker**, lands Nov 4) | Zod schemas for nature card (simply / in nature / **where it breaks required** / contrast / sources) and Mermaid diagram (+ node list for later Diagram Builder); loader + Mermaid parse check; the Temperature card from §2.4 validates as the fixture. **This is the contract for MF-0008 and MF-0010; freeze it first.** |
+| **MF-0006** | E | Content formats v1: nature card + diagram | normal | S | Phase 0 (**only blocker**, lands Nov 4) | Zod schemas for nature card (simply / in nature / **where it breaks required** / contrast / sources) and diagram (Mermaid at the time; since 2026-11-04 a graph of nodes + edges, ADR 0003); loader + schema check; the Temperature card from §2.4 validates as the fixture. **This is the contract for MF-0008 and MF-0010; freeze it first.** |
 | **MF-0007** | S | Pollination: review workflow (D-1) | high | M | MF-0006 | `item_reviews` table + RLS; approve / flag / reject on questions (cards once MF-0006 lands); 2 approvals → approved, any open flag → flagged; edit resets approvals via content hash; each reviewer counts once per item; flag queue page for admins |
 | **MF-0008** | C | Docs corpus + QuestionWriter + Verifier | normal | L | MF-0006, D-2 | Official doc pages per skill fetched + cached (`sources` in pack); Batch API writes ≥ 15 draft questions per skill; Verifier (Opus) checks key, rationale per option, citation; output passes the existing question schema and lands as a PR; golden set (3 official samples + ~30 hand-written) catches planted wrong keys; prompts in `prompts/` with version header |
 | **MF-0009** | G | Daily Walk | normal | M | Phase 0 | `/today` starts a 10–15 min session from the existing selector (`src/engine/memory/select.ts`): due/wilting trees first, weight × weakness × due; reuses Duel grading; forest updates after the session |
-| **MF-0010** | G | Seed Planting + card/diagram rendering | normal | M | MF-0006 | Unstudied skill → nature card → diagram (Mermaid, client-rendered, readable in dark mode) → 3 quick checks → sprout; works with the hand-written cards that exist (≥ 3 skills for the gate) |
+| **MF-0010** | G | Seed Planting + card/diagram rendering | normal | M | MF-0006 | Unstudied skill → nature card → diagram (graph drawn with React Flow, ADR 0003; lazy-loaded, readable in dark mode) → 3 quick checks → sprout; works with the hand-written cards that exist (≥ 3 skills for the gate) |
 | **MF-0011** | S | Shared group forest + heatmap (D-4) | high | M | MF-0006 | Group page shows an aggregated heatmap per region from members' attempts via a SECURITY DEFINER read; no individual forest visible; RLS test proves a non-member gets nothing |
 | **MF-0012** | G | Duel hardening (review debt) | normal | S | Phase 0 | Double-submit guard, a11y (live region, focus), shadcn `FieldSet`, back link to the source group, sync script runs the validator. **Good first ticket for a new colleague.** |
 | **H-1** | H | Review the 53 existing questions | — | ongoing | MF-0007 (or via PR before it) | All 53 have 2 approvals or a flag |
@@ -137,7 +137,7 @@ Needs MF-0004 + MF-0010 + (existing) Duel.
 | ID | Track | Title | Tier | Size | Depends on | Done when |
 |---|---|---|---|---|---|---|
 | **MF-0013** | E + G | Full Storm + Boss Storm | high | L | MF-0006 | 53 questions / 120 min, blueprint-weighted, per-domain report; Boss Storm = one domain; `storms` table + RLS. If the approved pool is too small for a domain, fill from `unreviewed` and label those questions on the report |
-| **MF-0014** | C | Card + Diagram writers | normal | M | MF-0008 | NatureCardWriter + DiagramWriter fill the skills without a human card; Verifier checks "where it breaks" and Mermaid parse; lands as PR |
+| **MF-0014** | C | Card + Diagram writers | normal | M | MF-0008 | NatureCardWriter + DiagramWriter fill the skills without a human card; Verifier checks "where it breaks" and the diagram graph schema (ADR 0003); lands as PR |
 | **MF-0015** | E + G | Readiness weather | normal | M | MF-0006 | Per-region memory forecast + last storm score as weather (no scaled score), shown on the dashboard; formula unit-tested with fixed clock; numbers come from the engine only |
 | **H-3** | H | Review sprint | — | W3 | MF-0008, MF-0007 | ≥ 15 approved questions per skill (G3) |
 

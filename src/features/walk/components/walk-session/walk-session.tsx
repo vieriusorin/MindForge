@@ -23,6 +23,7 @@ export function WalkSession({
   skillNames,
   todayHref,
   duelHref,
+  newSeedPrimer,
 }: WalkSessionProps) {
   const s = useWalkSession(packSlug, steps);
 
@@ -72,7 +73,7 @@ export function WalkSession({
 
   const { question, reason } = s.step;
 
-  return (
+  const card = (
     <QuestionCard
       // A fresh card per question resets Radix's roving tab stop to the first option.
       key={question.id}
@@ -126,5 +127,13 @@ export function WalkSession({
         </>
       }
     />
+  );
+
+  if (reason !== "new" || !newSeedPrimer) return card;
+  return (
+    <div className="flex flex-col gap-6">
+      {newSeedPrimer}
+      {card}
+    </div>
   );
 }
