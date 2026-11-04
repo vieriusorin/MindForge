@@ -12,7 +12,6 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   Sidebar,
   SidebarContent,
@@ -35,6 +34,7 @@ export function AppSidebar({
   packName,
   groups,
   duelHref,
+  walkHref,
   reviewHref,
   signOutAction,
 }: AppSidebarProps) {
@@ -112,7 +112,7 @@ export function AppSidebar({
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={isActivePath(pathname, "/play")}
+                isActive={isActivePath(pathname, duelHref)}
                 tooltip="Scenario Duel"
               >
                 <Link href={duelHref}>
@@ -122,15 +122,16 @@ export function AppSidebar({
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton disabled tooltip="Daily Walk · soon">
-                <Footprints />
-                <span>Daily Walk</span>
+              <SidebarMenuButton
+                asChild
+                isActive={isActivePath(pathname, walkHref)}
+                tooltip="Daily Walk"
+              >
+                <Link href={walkHref}>
+                  <Footprints />
+                  <span>Daily Walk</span>
+                </Link>
               </SidebarMenuButton>
-              <SidebarMenuBadge>
-                <Badge variant="outline" className="text-sidebar-foreground">
-                  Soon
-                </Badge>
-              </SidebarMenuBadge>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>

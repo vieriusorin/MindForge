@@ -13,6 +13,7 @@ export {
   parseContent,
   readPackFiles,
 } from "./load-content";
+export { playableQuestions } from "./playable-questions";
 export {
   emptyReviewContext,
   isPlayable,

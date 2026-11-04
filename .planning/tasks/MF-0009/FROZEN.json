@@ -1,0 +1,12 @@
+{
+  "ticket": "MF-0009",
+  "frozen_at": "2026-11-04T08:29:46Z",
+  "files": [
+    {
+      "path": "src/engine/memory/__tests__/mf-0009-plan-walk.acceptance.test.ts",
+      "sha256": "604f1765267876e601eb20350a669369897f908ef99f29e8f427b18c819de65c",
+      "first_failure": "SC-1 (9/9): Error: not implemented (src/engine/memory/plan-walk.ts stub); same on 2nd run"
+    }
+  ],
+  "history": []
+}

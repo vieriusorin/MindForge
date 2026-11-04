@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { playableQuestions } from "@/engine/content";
 import { buildForest, summarizeForest } from "@/engine/forest";
-import { countableAttempts, memoryBySkill } from "@/engine/memory";
+import { countableAttempts, memoryBySkill, planWalk } from "@/engine/memory";
 import { BlueprintChart } from "@/features/dashboard/components/blueprint-chart";
 import { DashboardSkeleton } from "@/features/dashboard/components/dashboard-skeleton";
 import { FocusList } from "@/features/dashboard/components/focus-list";
@@ -16,6 +17,7 @@ import { getPack } from "@/server/packs/get-pack";
 import { listPacks } from "@/server/packs/list-packs";
 import { primaryPackSlug } from "@/server/packs/primary-pack";
 import { getDisplayName } from "@/server/profiles/get-display-name";
+import { getPackQuestions } from "@/server/questions/get-pack-questions";
 
 async function TodaySlot() {
   const user = await getCurrentUser();
@@ -26,19 +28,26 @@ async function TodaySlot() {
     listPacks(),
   ]);
   const packSlug = primaryPackSlug(groups);
-  const [pack, attempts, review] = await Promise.all([
+  const [pack, attempts, questions, review] = await Promise.all([
     getPack(packSlug),
     listMyAttempts(user.id, packSlug),
+    getPackQuestions(packSlug),
     getReviewContext(user.id, packSlug),
   ]);
+  const now = new Date();
   // MF-0003: the forest is replayed (FSRS) from the learner's DB-graded attempts.
   // MF-0007: only countable ones (not rejected, not spoiled by reviewing), same as every surface.
+  const countable = countableAttempts(attempts, review);
   const summary = summarizeForest(
-    buildForest(
-      pack,
-      memoryBySkill(countableAttempts(attempts, review), new Date()),
-    ),
+    buildForest(pack, memoryBySkill(countable, now)),
   );
+  // MF-0009: the same plan the walk page builds, so the button's count matches the walk.
+  const walkPlan = planWalk({
+    pack,
+    questions: playableQuestions(questions, review, "practice"),
+    attempts: countable,
+    now,
+  });
   const packNames = Object.fromEntries(packs.map((p) => [p.slug, p.name]));
   const firstName = (name ?? user.email?.split("@")[0] ?? "there").split(
     " ",
@@ -61,6 +70,16 @@ async function TodaySlot() {
         topFocus={top ? { name: top.name, weight: top.weight } : null}
         exam={pack.exam}
         groupCount={groups.length}
+        walk={
+          walkPlan.items.length === 0
+            ? { isHealthy: true, duelHref: `/play/${packSlug}/duel` }
+            : {
+                isHealthy: false,
+                needWaterCount: walkPlan.needWaterCount,
+                stepCount: walkPlan.items.length,
+                href: `/play/${packSlug}/walk`,
+              }
+        }
       />
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">

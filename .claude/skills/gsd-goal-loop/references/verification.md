@@ -92,8 +92,14 @@ server holds a lock).
 - Reuse a saved auth state; repeated fresh logins trip rate limiters.
 - If the browser MCP is locked by another session, script Playwright from the scratchpad copy.
 - A new page that redirects away is often missing from the route-access config — fails closed.
-- Record what was seen in words in the evidence file; a screenshot goes under
-  `.planning/evidence/screenshots/` if one helps.
+- Record what was seen in words in the evidence file. If a screenshot helps, save it under
+  `.planning/evidence/screenshots/<ID>-<topic>.png` (create the directory). The chrome-devtools
+  MCP refuses any `filePath` outside the repo (it rejects the session scratchpad: "not within any
+  of the configured workspace roots"), so do not point it at the scratchpad; without a repo path,
+  take it inline and say so in the evidence file.
+- Keyboard proofs on Radix controls: under jsdom, `RadioGroup` arrow-key selection does nothing
+  (Space works). Test Space/Tab/Enter in the `ui` test and check arrow keys in the browser, and
+  say so in LOOP-VERIFY "Not verified" or the SC row (MF-0009).
 
 ## 8. Production-only traps
 
