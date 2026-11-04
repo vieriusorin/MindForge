@@ -37,6 +37,10 @@ async function GroupSlot({
     listMyAttempts(user.id, group.packSlug),
     getPackContent(group.packSlug),
     getReviewContext(user.id, group.packSlug),
+  const [members, pack, attempts, review] = await Promise.all([
+    listMembers(group.id),
+    getPack(group.packSlug),
+    listMyAttempts(user.id, group.packSlug),
     getReviewContext(user.id, group.packSlug),
   ]);
   // MF-0003: the signed-in learner's own forest, replayed from DB-graded attempts.

@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { planSeedPlanting, playableQuestions } from "@/engine/content";
+import { playableQuestions } from "@/engine/content";
 import { countableAttempts, planWalk } from "@/engine/memory";
 import { toPlayableQuestion } from "@/engine/questions";
 import { SeedPrimer } from "@/features/seed-planting/components/seed-primer";
