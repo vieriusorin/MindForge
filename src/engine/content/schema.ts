@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { AuthorSchema, OriginSchema, refineAuthor } from "./origin";
+import {
+  AuthorSchema,
+  GeneratedBySchema,
+  OriginSchema,
+  refineAuthor,
+  refineGeneratedBy,
+} from "./origin";
 
 /** Same id shape as questions: `<pack>.<skill>.<name>`, unique pack-wide across item types. */
 const ItemId = z
@@ -24,6 +30,7 @@ const NatureCardSchema = z
     concept: z.string().trim().min(1),
     origin: OriginSchema,
     author: AuthorSchema.optional(),
+    generatedBy: GeneratedBySchema.optional(),
     simply: z.string().trim().min(1),
     inNature: z.string().trim().min(1),
     whereItBreaks: z
@@ -34,7 +41,8 @@ const NatureCardSchema = z
     diagram: ItemId.optional(),
     sources: Sources,
   })
-  .superRefine(refineAuthor);
+  .superRefine(refineAuthor)
+  .superRefine(refineGeneratedBy);
 
 const NodeId = z
   .string()
@@ -49,6 +57,7 @@ const DiagramSchema = z
     title: z.string().trim().min(1),
     origin: OriginSchema,
     author: AuthorSchema.optional(),
+    generatedBy: GeneratedBySchema.optional(),
     direction: z.enum(DIAGRAM_DIRECTIONS),
     nodes: z
       .array(
@@ -71,6 +80,7 @@ const DiagramSchema = z
     sources: Sources,
   })
   .superRefine(refineAuthor)
+  .superRefine(refineGeneratedBy)
   .superRefine((diagram, ctx) => {
     // ADR 0003: the graph must be drawable — unique node ids, no edge to a missing node.
     const seen = new Set<string>();

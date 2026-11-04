@@ -1,0 +1,158 @@
+# MF-0014 golden set (SC-5): the human card unchanged and planted variants, one flaw each.
+# Code catches empty-break; the verifier must name 80% of every other flaw (MF-0022 runs it for real).
+# Coder F adds hand-written cases in further files here.
+cases:
+  - id: ccdv-f.D5.S1.card-temperature
+    flaw: null
+    note: human card, unchanged
+    card:
+      id: ccdv-f.D5.S1.card-temperature
+      concept: Temperature (sampling)
+      origin: human
+      author: vlad.parvana@ddroidd.com
+      simply: "Temperature controls how adventurous the model is when picking the next
+        token. Low: it almost always takes the top choice. High: less likely
+        choices get picked more often. The model's knowledge (its logits) is
+        unchanged; only the sampling is reshaped."
+      inNature: Seeds in the wind. Calm air drops them under the tree; strong wind
+        scatters them, sometimes onto fertile ground, often onto rock.
+        Temperature is the wind.
+      whereItBreaks:
+        - Wind has a direction; temperature only flattens or sharpens the
+          distribution and keeps the ranking.
+        - T=0 picks the top token every time, while calm air still spreads seeds
+          a little.
+        - T=0 is not a guarantee of identical outputs across calls.
+        - '"Less likely" is not "wrong": for extraction it usually is, for
+          brainstorming it is often the useful choice.'
+      contrast: Temperature reshapes the whole distribution; top-p / top-k cut off the
+        tail. Low temperature for classification and extraction, higher for
+        ideation.
+      whyTheName: "It is the same formula physics uses for molecules (Boltzmann
+        distribution): P(state) ∝ e^(−E/kT) vs P(token) ∝ e^(logit/T). Heat lets
+        particles reach higher-energy states; heat lets the model reach
+        lower-probability tokens."
+      diagram: ccdv-f.D5.S1.diagram-temperature
+      sources:
+        - https://platform.claude.com/docs/en/api/messages
+  - id: ccdv-f.D5.S1.card-temperature.empty-break
+    flaw: empty-break
+    note: where it breaks emptied; code must catch it with no verdict
+    card:
+      id: ccdv-f.D5.S1.card-temperature
+      concept: Temperature (sampling)
+      origin: human
+      author: vlad.parvana@ddroidd.com
+      simply: "Temperature controls how adventurous the model is when picking the next
+        token. Low: it almost always takes the top choice. High: less likely
+        choices get picked more often. The model's knowledge (its logits) is
+        unchanged; only the sampling is reshaped."
+      inNature: Seeds in the wind. Calm air drops them under the tree; strong wind
+        scatters them, sometimes onto fertile ground, often onto rock.
+        Temperature is the wind.
+      whereItBreaks: []
+      contrast: Temperature reshapes the whole distribution; top-p / top-k cut off the
+        tail. Low temperature for classification and extraction, higher for
+        ideation.
+      whyTheName: "It is the same formula physics uses for molecules (Boltzmann
+        distribution): P(state) ∝ e^(−E/kT) vs P(token) ∝ e^(logit/T). Heat lets
+        particles reach higher-energy states; heat lets the model reach
+        lower-probability tokens."
+      diagram: ccdv-f.D5.S1.diagram-temperature
+      sources:
+        - https://platform.claude.com/docs/en/api/messages
+  - id: ccdv-f.D5.S1.card-temperature.generic-break
+    flaw: generic-break
+    note: where it breaks replaced by disclaimers that fit any analogy
+    card:
+      id: ccdv-f.D5.S1.card-temperature
+      concept: Temperature (sampling)
+      origin: human
+      author: vlad.parvana@ddroidd.com
+      simply: "Temperature controls how adventurous the model is when picking the next
+        token. Low: it almost always takes the top choice. High: less likely
+        choices get picked more often. The model's knowledge (its logits) is
+        unchanged; only the sampling is reshaped."
+      inNature: Seeds in the wind. Calm air drops them under the tree; strong wind
+        scatters them, sometimes onto fertile ground, often onto rock.
+        Temperature is the wind.
+      whereItBreaks:
+        - Every analogy has its limits.
+        - This is a simplification of a complex topic.
+      contrast: Temperature reshapes the whole distribution; top-p / top-k cut off the
+        tail. Low temperature for classification and extraction, higher for
+        ideation.
+      whyTheName: "It is the same formula physics uses for molecules (Boltzmann
+        distribution): P(state) ∝ e^(−E/kT) vs P(token) ∝ e^(logit/T). Heat lets
+        particles reach higher-energy states; heat lets the model reach
+        lower-probability tokens."
+      diagram: ccdv-f.D5.S1.diagram-temperature
+      sources:
+        - https://platform.claude.com/docs/en/api/messages
+  - id: ccdv-f.D5.S1.card-temperature.factual-error
+    flaw: factual-error
+    note: simply now claims T=0 is deterministic, which the docs and the original
+      card deny
+    card:
+      id: ccdv-f.D5.S1.card-temperature
+      concept: Temperature (sampling)
+      origin: human
+      author: vlad.parvana@ddroidd.com
+      simply: Temperature controls how adventurous the model is when picking the next
+        token. At T=0 the model is fully deterministic and returns identical
+        output on every call.
+      inNature: Seeds in the wind. Calm air drops them under the tree; strong wind
+        scatters them, sometimes onto fertile ground, often onto rock.
+        Temperature is the wind.
+      whereItBreaks:
+        - Wind has a direction; temperature only flattens or sharpens the
+          distribution and keeps the ranking.
+        - T=0 picks the top token every time, while calm air still spreads seeds
+          a little.
+        - T=0 is not a guarantee of identical outputs across calls.
+        - '"Less likely" is not "wrong": for extraction it usually is, for
+          brainstorming it is often the useful choice.'
+      contrast: Temperature reshapes the whole distribution; top-p / top-k cut off the
+        tail. Low temperature for classification and extraction, higher for
+        ideation.
+      whyTheName: "It is the same formula physics uses for molecules (Boltzmann
+        distribution): P(state) ∝ e^(−E/kT) vs P(token) ∝ e^(logit/T). Heat lets
+        particles reach higher-energy states; heat lets the model reach
+        lower-probability tokens."
+      diagram: ccdv-f.D5.S1.diagram-temperature
+      sources:
+        - https://platform.claude.com/docs/en/api/messages
+  - id: ccdv-f.D5.S1.card-temperature.wrong-citation
+    flaw: wrong-citation
+    note: source swapped for a page about agents (D1.S3), which says nothing about
+      temperature
+    card:
+      id: ccdv-f.D5.S1.card-temperature
+      concept: Temperature (sampling)
+      origin: human
+      author: vlad.parvana@ddroidd.com
+      simply: "Temperature controls how adventurous the model is when picking the next
+        token. Low: it almost always takes the top choice. High: less likely
+        choices get picked more often. The model's knowledge (its logits) is
+        unchanged; only the sampling is reshaped."
+      inNature: Seeds in the wind. Calm air drops them under the tree; strong wind
+        scatters them, sometimes onto fertile ground, often onto rock.
+        Temperature is the wind.
+      whereItBreaks:
+        - Wind has a direction; temperature only flattens or sharpens the
+          distribution and keeps the ranking.
+        - T=0 picks the top token every time, while calm air still spreads seeds
+          a little.
+        - T=0 is not a guarantee of identical outputs across calls.
+        - '"Less likely" is not "wrong": for extraction it usually is, for
+          brainstorming it is often the useful choice.'
+      contrast: Temperature reshapes the whole distribution; top-p / top-k cut off the
+        tail. Low temperature for classification and extraction, higher for
+        ideation.
+      whyTheName: "It is the same formula physics uses for molecules (Boltzmann
+        distribution): P(state) ∝ e^(−E/kT) vs P(token) ∝ e^(logit/T). Heat lets
+        particles reach higher-energy states; heat lets the model reach
+        lower-probability tokens."
+      diagram: ccdv-f.D5.S1.diagram-temperature
+      sources:
+        - https://www.anthropic.com/engineering/building-effective-agents

@@ -12,7 +12,7 @@ No `ticket:retro` script exists; facts read by hand. No REVIEW.md, no token metr
 - Freeze: 3 files (`mf-0012-duel.acceptance.test.tsx`, `mf-0012-back-link.acceptance.test.ts`, `mf-0012-sync-keys.db.acceptance.test.ts`), `history: []` (0 re-freezes), every red recorded with `first_failure` and "same on 2nd run".
 - Preflight at DESIGN: 56 files / 213 tests green on a5da410. BUILD followed LOOP-PLAN with no divergence; no BUILD to TEST loop-backs; no frozen-file edits.
 - SCs: 7 listed, 7 ticked, SC-6 withdrawn by the user after the checkpoint (conflicted with `server-side.md` §2).
-- Diff: 10 tracked files, +296 / -250, plus new files (search-params, utils, 3 acceptance tests, 2 script libs). Follow-ups MF-0022..MF-0025 reserved.
+- Diff: 10 tracked files, +296 / -250, plus new files (search-params, utils, 3 acceptance tests, 2 script libs). Follow-ups MF-0022..MF-0025 reserved (renumbered by MF-0014, 2026-11-04: Walk/Seed double-click is MF-0026, learn-the-key is MF-0027).
 
 ## Went right
 - DESIGN re-scoped the stale 2026-11-03 draft onto MF-0009's shared `QuestionCard` and `gradeAnswer` instead of patching the Duel's own markup, and said so in the GOAL header. — keep: already is, GOAL.md header note and SKILL.md "builds_on" handling.

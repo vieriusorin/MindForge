@@ -76,10 +76,7 @@ export interface Draft {
 }
 
 /** Who and what produced an `ai` item: written into the YAML by code, never by the model. */
-export interface GeneratedBy {
-  model: string;
-  prompt: string;
-}
+export type { GeneratedBy } from "@/engine/content";
 
 export interface Dropped {
   index: number;
@@ -133,4 +130,71 @@ export interface Usage {
 /** The part of the Anthropic client the guard may call. */
 export interface BatchClient {
   create(requests: BatchRequest[]): Promise<{ id: string }>;
+}
+
+/** MF-0014: the item kinds the card and diagram writers produce. */
+export type ItemKind = "card" | "diagram";
+
+/** What the card writer model returns (parsed, before code adds provenance). Empty optional text = omitted. */
+export interface CardDraft {
+  concept: string;
+  simply: string;
+  inNature: string;
+  whereItBreaks: string[];
+  contrast: string;
+  whyTheName: string;
+  sources: string[];
+}
+
+/** What the diagram writer model returns (ADR 0003 graph). An empty edge label = no label. */
+export interface DiagramDraft {
+  title: string;
+  direction: "LR" | "TB";
+  nodes: { id: string; label: string; shape: "step" | "decision" }[];
+  edges: { from: string; to: string; label: string }[];
+  sources: string[];
+}
+
+/** MF-0014 SC-5: `empty-break` is caught by code, the rest by the verifier model. */
+export const CARD_FLAWS = [
+  "empty-break",
+  "generic-break",
+  "factual-error",
+  "wrong-citation",
+] as const;
+export type CardFlaw = (typeof CARD_FLAWS)[number];
+
+export const DIAGRAM_FLAWS = [
+  "wrong-edge",
+  "factual-error",
+  "wrong-citation",
+] as const;
+export type DiagramFlaw = (typeof DIAGRAM_FLAWS)[number];
+
+export type ItemFlaw = CardFlaw | DiagramFlaw;
+
+/** A card or diagram golden case: a pack item (unchanged or planted) and the flaw planted in it. */
+export interface ItemGoldenCase {
+  id: string;
+  kind: ItemKind;
+  flaw: ItemFlaw | null;
+  item: Record<string, unknown>;
+}
+
+export interface ItemVerdict {
+  id: string;
+  flaws: ItemFlaw[];
+}
+
+export interface ItemEvalScore {
+  /** Share of planted cases of each flaw type caught by code or by the verifier. */
+  catchRate: Record<string, number>;
+  falseAlarms: number;
+  passed: boolean;
+}
+
+/** MF-0014 SC-1: the skills a card or diagram run drafts for, and the ones it cannot. */
+export interface ItemRunPlan {
+  skills: { code: string; request: number }[];
+  skipped: { code: string; reason: string }[];
 }
