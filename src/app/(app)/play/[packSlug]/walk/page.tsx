@@ -1,10 +1,12 @@
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { playableQuestions } from "@/engine/content";
+import { planSeedPlanting, playableQuestions } from "@/engine/content";
 import { planWalk } from "@/engine/memory";
 import { toPlayableQuestion } from "@/engine/questions";
+import { SeedPrimer } from "@/features/seed-planting/components/seed-primer";
 import { WalkSession } from "@/features/walk/components/walk-session";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getPackContent } from "@/server/content/get-pack-content";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
@@ -22,11 +24,12 @@ async function WalkSlot({
     redirect(`/sign-in?next=${encodeURIComponent(`/play/${packSlug}/walk`)}`);
   if (!(await listPacks()).some((p) => p.slug === packSlug)) notFound();
 
-  const [pack, questions, attempts, review] = await Promise.all([
+  const [pack, questions, attempts, review, content] = await Promise.all([
     getPack(packSlug),
     getPackQuestions(packSlug),
     listMyAttempts(user.id, packSlug),
     getReviewContext(user.id, packSlug),
+    getPackContent(packSlug),
   ]);
   // MF-0009: only candidates are filtered; memory still replays every attempt.
   const plan = planWalk({
@@ -35,6 +38,12 @@ async function WalkSlot({
     attempts,
     now: new Date(),
   });
+  // MF-0010 (C-4): the new skill's slot shows its card + diagram above the walk's one question.
+  const newSkill = plan.items.find((item) => item.reason === "new")?.question
+    .skillCode;
+  const primer = newSkill
+    ? planSeedPlanting({ content, review, skill: newSkill })
+    : null;
   const skillNames = Object.fromEntries(
     pack.domains.flatMap((d) => d.skills.map((s) => [s.code, s.name])),
   );
@@ -56,6 +65,9 @@ async function WalkSlot({
         skillNames={skillNames}
         todayHref="/today"
         duelHref={`/play/${packSlug}/duel`}
+        newSeedPrimer={
+          primer && <SeedPrimer card={primer.card} diagram={primer.diagram} />
+        }
       />
     </>
   );

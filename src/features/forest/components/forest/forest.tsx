@@ -1,11 +1,13 @@
+import Link from "next/link";
 import { StageIcon } from "@/components/stage-icon";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatWeight } from "@/lib/forest-display";
 import type { ForestProps } from "./types";
 
-export function Forest({ forest }: ForestProps) {
+export function Forest({ forest, plantHrefs }: ForestProps) {
   return (
     <div className="flex flex-col gap-8">
       {forest.regions.map((region) => (
@@ -43,6 +45,21 @@ export function Forest({ forest }: ForestProps) {
                     <span className="text-xs tabular-nums text-muted-foreground">
                       {formatWeight(tree.weight)}
                     </span>
+                    {tree.stage === "seed" && plantHrefs?.[tree.skillCode] && (
+                      <Button
+                        asChild
+                        size="sm"
+                        variant="secondary"
+                        className="mt-2 self-start"
+                      >
+                        <Link
+                          href={plantHrefs[tree.skillCode]}
+                          aria-label={`Plant this seed: ${tree.name}`}
+                        >
+                          Plant this seed
+                        </Link>
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               </li>

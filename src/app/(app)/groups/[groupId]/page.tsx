@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
+import { plantableSkills } from "@/engine/content";
 import { buildForest } from "@/engine/forest";
 import { memoryBySkill } from "@/engine/memory";
 import { Forest } from "@/features/forest/components/forest";
@@ -10,6 +11,8 @@ import { rotateInviteCode } from "@/features/groups/actions";
 import { InviteLink } from "@/features/groups/components/invite-link";
 import { MemberList } from "@/features/groups/components/member-list";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getPackContent } from "@/server/content/get-pack-content";
+import { getReviewContext } from "@/server/content/get-review-context";
 import { getGroup } from "@/server/groups/get-group";
 import { listMembers } from "@/server/groups/list-members";
 import { siteOrigin } from "@/server/http/site-origin";
@@ -28,13 +31,27 @@ async function GroupSlot({
   const group = await getGroup(groupId);
   if (!group) notFound();
 
-  const [members, pack, attempts] = await Promise.all([
+  const [members, pack, attempts, content, review] = await Promise.all([
     listMembers(group.id),
     getPack(group.packSlug),
     listMyAttempts(user.id, group.packSlug),
+    getPackContent(group.packSlug),
+    getReviewContext(user.id, group.packSlug),
   ]);
   // MF-0003: the signed-in learner's own forest, replayed from DB-graded attempts.
   const forest = buildForest(pack, memoryBySkill(attempts, new Date()));
+  // MF-0010: seed tiles link to Seed Planting when the skill has something to plant.
+  const plantable = plantableSkills({
+    content,
+    review,
+    skills: pack.domains.flatMap((d) => d.skills.map((s) => s.code)),
+  });
+  const plantHrefs = Object.fromEntries(
+    [...plantable].map((code) => [
+      code,
+      `/play/${group.packSlug}/plant/${encodeURIComponent(code)}`,
+    ]),
+  );
   const isAdmin = members.some(
     (m) => m.userId === user.id && m.role === "admin",
   );
@@ -63,7 +80,7 @@ async function GroupSlot({
           </Link>
         </Button>
       </div>
-      <Forest forest={forest} />
+      <Forest forest={forest} plantHrefs={plantHrefs} />
     </>
   );
 }

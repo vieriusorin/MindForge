@@ -15,8 +15,9 @@ badges.
   (`pnpm dlx shadcn@latest add <name>`; config in `components.json`, style `radix-nova`).
   If a screen needs a primitive that isn't installed, **add it with the CLI**. Don't build a
   look-alike (a custom nav link, skeleton, avatar, tooltip, pill or chart).
-- Installed: `avatar badge button card chart dropdown-menu field input label select
-  separator sheet sidebar skeleton tooltip`. Check `src/components/ui/` before adding.
+- Installed: `avatar badge base-node button card chart checkbox dropdown-menu field input label
+  radio-group select separator sheet sidebar skeleton tooltip` (`base-node` from the React Flow UI
+  registry, `https://ui.reactflow.dev/base-node`). Check `src/components/ui/` before adding.
 - `src/components/ui/**` is shadcn-owned. It's formatted, not linted (`biome.json` override).
   Customise a screen through `className` and tokens. Edit the primitive only to change it
   project-wide.
@@ -24,6 +25,12 @@ badges.
 - Charts use shadcn `Chart` (`ChartContainer`, `ChartTooltip`, `ChartLegend`) over Recharts,
   and colours come from `ChartConfig` → `var(--chart-n)`. Set `isAnimationActive={false}`
   and keep legend order with `itemSorter={null}`.
+- **Diagrams** (ADR 0003): render `DiagramFigure` (`src/components/diagram-figure/`) and nothing
+  else. It draws the graph with React Flow (`src/components/flow-diagram/`, nodes on the
+  shadcn-registry `BaseNode` in `src/components/ui/base-node.tsx`), loads it lazily through
+  `flow-diagram-lazy.tsx`, hides the drawing from assistive tech and reads the steps and connections
+  as lists. No Mermaid, no hand-positioned nodes: dagre lays the graph out. The drawing is
+  read-only (no drag, pan, zoom or focus); interactive diagrams belong to the Diagram Builder.
 - Forms use the `Field` family (`Field`, `FieldLabel htmlFor`, `FieldError errors=[…]`) plus
   `Input` and `Select`. See the `ui-shadcn` skill.
 - Known trap: `SidebarMenuSkeleton` calls `Math.random()`, which fails the Cache
