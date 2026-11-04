@@ -147,15 +147,20 @@ async function readKind(
   );
 }
 
-/** Read `<packDir>/{questions,cards,diagrams}/*.yaml` and validate them. A missing dir means none. */
-export async function loadPackContent(
-  pack: Pack,
-  packDir: string,
-): Promise<PackContent> {
+/** Read `<packDir>/{questions,cards,diagrams}/*.yaml` as text. A missing dir means none. */
+export async function readPackFiles(packDir: string): Promise<ContentFiles> {
   const [questions, cards, diagrams] = await Promise.all([
     readKind(packDir, "questions"),
     readKind(packDir, "cards"),
     readKind(packDir, "diagrams"),
   ]);
-  return parseContent({ questions, cards, diagrams }, pack);
+  return { questions, cards, diagrams };
+}
+
+/** Read `<packDir>/{questions,cards,diagrams}/*.yaml` and validate them. A missing dir means none. */
+export async function loadPackContent(
+  pack: Pack,
+  packDir: string,
+): Promise<PackContent> {
+  return parseContent(await readPackFiles(packDir), pack);
 }

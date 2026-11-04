@@ -1,0 +1,17 @@
+{
+  "ticket": "MF-0007",
+  "frozen_at": "2026-11-03T14:58:19Z",
+  "files": [
+    {
+      "path": "src/server/db/__tests__/mf-0007-review.db.acceptance.test.ts",
+      "sha256": "5cda81f762843d7c4298579b889de1896b6aa8cb7f3dec5c15df918b3b7fbfca",
+      "first_failure": "SC-1: PostgresError relation \"private.items\" does not exist; SC-2..SC-6: rpc PGRST202 (function not found); SC-7: review_states not in schema cache; identical on 2nd run (fixture + teardown survive)"
+    },
+    {
+      "path": "src/engine/memory/__tests__/mf-0007-replay.acceptance.test.ts",
+      "sha256": "be25500ee3af39bbfbaa6a2bebf910092af4154255c29405f03c2b382c11547d",
+      "first_failure": "SC-8: Error: not implemented (reviewContextFromRows stub)"
+    }
+  ],
+  "history": []
+}

@@ -1,3 +1,4 @@
+export { countableAttempts } from "./countable";
 export { memoryBySkill } from "./memory-by-skill";
 export { replayMemory } from "./replay";
 export {
