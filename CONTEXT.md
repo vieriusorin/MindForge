@@ -10,6 +10,8 @@ Canonical terms. When code, docs or tickets disagree with this file, this file w
 - **Item**: one piece of learnable content attached to a skill: a question, nature card or diagram. Items live in pack files.
 - **Nature card**: an item that explains one concept of a skill through a nature analogy, with a required "where it breaks". A skill can have several; each names its concept in free text. There is no separate Concept entity in v1.
 - **Diagram**: a Mermaid item attached to a skill, reviewed on its own; a card may point to one.
+- **Source**: an official documentation page listed for a skill. A skill's sources are the material its items are written from. Course content behind a login is never a source.
+- **Citation**: the source an item points to for its answer. It must be one of its skill's sources.
 - **Covered skill**: a skill with at least 1 approved nature card, 1 approved diagram and 15 approved questions (goal G3).
 - **Origin**: who wrote an item: `official` (copied verbatim from the exam guide), `human`, or `ai`. Fixed in the file; a review never changes it.
 - **Review state**: how far the team trusts an item, computed from reviews: `unreviewed`, `approved` (2 approvals, no open flag), `flagged` (any open flag), `rejected`. Not stored in files. Official items start as approved but can still be flagged.
