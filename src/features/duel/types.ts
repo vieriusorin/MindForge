@@ -1,7 +1,10 @@
 import type { AnswerFeedback } from "@/engine/questions";
+import type { ActionResult } from "@/lib/action-result";
 
-export type { AnswerFeedback };
+export type AnswerQuestionResult = ActionResult<{ feedback: AnswerFeedback }>;
 
-export type AnswerResult =
-  | { ok: true; feedback: AnswerFeedback }
-  | { ok: false; message: string };
+/** MF-0012: the finish screen's way out of the duel. */
+export interface DuelBackLink {
+  href: string;
+  label: string;
+}

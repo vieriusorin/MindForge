@@ -4,6 +4,8 @@ import { isPlayable, reviewStateOf } from "@/engine/content";
 import { countableAttempts, pickSessionQuestions } from "@/engine/memory";
 import { toPlayableQuestion } from "@/engine/questions";
 import { DuelSession } from "@/features/duel/components/duel-session";
+import { loadDuelParams } from "@/features/duel/search-params";
+import { duelBackLink } from "@/features/duel/utils/back-link";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
@@ -13,10 +15,12 @@ import { getPackQuestions } from "@/server/questions/get-pack-questions";
 
 async function DuelSlot({
   params,
-}: {
-  params: PageProps<"/play/[packSlug]/duel">["params"];
-}) {
-  const { packSlug } = await params;
+  searchParams,
+}: PageProps<"/play/[packSlug]/duel">) {
+  const [{ packSlug }, { from }] = await Promise.all([
+    params,
+    loadDuelParams(searchParams),
+  ]);
   const user = await getCurrentUser();
   if (!user)
     redirect(`/sign-in?next=${encodeURIComponent(`/play/${packSlug}/duel`)}`);
@@ -53,15 +57,13 @@ async function DuelSlot({
         packSlug={packSlug}
         questions={session.map(toPlayableQuestion)}
         skillNames={skillNames}
-        backHref="/groups"
+        back={duelBackLink(from)}
       />
     </>
   );
 }
 
-export default function DuelPage({
-  params,
-}: PageProps<"/play/[packSlug]/duel">) {
+export default function DuelPage(props: PageProps<"/play/[packSlug]/duel">) {
   return (
     <div className="w-full px-4 pb-10 md:px-8">
       <Suspense
@@ -69,7 +71,7 @@ export default function DuelPage({
           <p className="text-muted-foreground">Picking your questions…</p>
         }
       >
-        <DuelSlot params={params} />
+        <DuelSlot {...props} />
       </Suspense>
     </div>
   );

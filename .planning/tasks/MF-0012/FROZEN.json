@@ -1,0 +1,22 @@
+{
+  "ticket": "MF-0012",
+  "frozen_at": "2026-11-04T11:56:38Z",
+  "files": [
+    {
+      "path": "src/features/duel/components/duel-session/__tests__/mf-0012-duel.acceptance.test.tsx",
+      "sha256": "b4557b6616ba77b7eb79e1b2c139de41eed59fe07aea951a7975446f6f42190f",
+      "first_failure": "SC-1: expected \"vi.fn()\" to be called 1 times, but got 2 times; SC-2: Unable to find an accessible element with the role \"status\"; SC-3: Unable to find role \"group\" and name \"Stem of p.S1.1\"; same on 2nd run"
+    },
+    {
+      "path": "src/features/duel/utils/__tests__/mf-0012-back-link.acceptance.test.ts",
+      "sha256": "d1003b0d22a8fecb31362edb65bb305a8c653f27fe1451a3a577685d6dcda495",
+      "first_failure": "SC-4 (3/3): Error: not implemented (src/features/duel/utils/back-link.ts stub)"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0012-sync-keys.db.acceptance.test.ts",
+      "sha256": "84b68c9a1a120dee7d407f7c8cabec895f82aaac06f2b6f312654fe6d107a9fe",
+      "first_failure": "SC-5: exit status 0 (script synced the broken pack: \"pack registry: ccdv-f, mf0012-broken, team-onboarding-sample\"); same on 2nd run; teardown leaves 0 fixture rows"
+    }
+  ],
+  "history": []
+}

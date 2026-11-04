@@ -8,6 +8,7 @@ import { plantableSkills } from "@/engine/content";
 import { buildForest } from "@/engine/forest";
 import { countableAttempts, memoryBySkill } from "@/engine/memory";
 import type { Pack } from "@/engine/pack";
+import { serializeDuel } from "@/features/duel/search-params";
 import { Forest } from "@/features/forest/components/forest";
 import { rotateInviteCode } from "@/features/groups/actions";
 import { GroupHeatmap } from "@/features/groups/components/group-heatmap";
@@ -104,7 +105,9 @@ async function GroupSlot({
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-xl">Your forest</h2>
         <Button asChild>
-          <Link href={`/play/${group.packSlug}/duel`}>
+          <Link
+            href={`/play/${group.packSlug}/duel${serializeDuel({ from: group.id })}`}
+          >
             <Swords aria-hidden /> Play Scenario Duel
           </Link>
         </Button>
