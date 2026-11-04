@@ -9,7 +9,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, relative, sep } from "node:path";
+import { isAbsolute, join, relative, sep } from "node:path";
 import { isActiveGoal, parseGoalFrontmatter } from "./gate-core.mjs";
 
 export const ROOT = process.env.CLAUDE_PROJECT_DIR || process.cwd();
@@ -26,7 +26,8 @@ export function readStdinJson() {
 /** Absolute or relative tool path -> repo-relative POSIX path, or null if outside the repo. */
 export function toRel(p) {
   if (typeof p !== "string" || p.length === 0) return null;
-  const rel = relative(ROOT, p.startsWith("/") ? p : join(ROOT, p))
+  // isAbsolute, not startsWith("/"): a Windows tool path is `C:\…` (MF-0013).
+  const rel = relative(ROOT, isAbsolute(p) ? p : join(ROOT, p))
     .split(sep)
     .join("/");
   return rel.startsWith("..") ? null : rel;
