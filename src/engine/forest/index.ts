@@ -9,6 +9,8 @@ export {
   type GroupHeatmap,
   type GroupMemberAttempts,
   groupHeatmapFromAttempts,
+  HEALTHY_BANDS,
+  type HealthyBand,
   type HeatmapRegion,
   type HeatmapStatus,
   MIN_OTHER_CONTRIBUTORS,

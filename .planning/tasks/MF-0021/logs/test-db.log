@@ -1,0 +1,166 @@
+$ vitest run --project db
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.5 /Users/sorinvieriu/Projects/mind-forge
+
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+ ❯ |db| src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts (8 tests | 7 failed) 2740ms
+   ❯ MF-0013 storms (DB) (8)
+     × SC-3: the storm RPCs exist; a learner starts a Boss Storm and the DB sets the clock 37ms
+     × SC-3: a second running storm is refused 0ms
+     × SC-3: another learner can neither read nor answer nor finish my storm 0ms
+     × SC-3: an answer naming another content hash is refused; the right one is accepted 0ms
+     × SC-4: before the end, nothing the learner can read holds a key or a grade 0ms
+     × SC-3: after ends_at an answer is refused 0ms
+     × SC-5: at finish each answered, unvoided question becomes one attempt graded by the DB key 0ms
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+Stopped services: [supabase_imgproxy_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |db| src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts > MF-0013 storms (DB) > SC-3: the storm RPCs exist; a learner starts a Boss Storm and the DB sets the clock
+AssertionError: expected { code: '22023', details: null, …(2) } to be null
+
+- Expected:
+null
+
++ Received:
+{
+  "code": "22023",
+  "details": null,
+  "hint": null,
+  "message": "not a playable question for this storm",
+}
+
+ ❯ src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts:137:27
+    135|
+    136|     const started = await start(L.client, "boss", "D2", D2.map(entry));
+    137|     expect(started.error).toBeNull();
+       |                           ^
+    138|     STORM_ID = String(started.data);
+    139|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  |db| src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts > MF-0013 storms (DB) > SC-3: a second running storm is refused
+AssertionError: expected '' not to be '' // Object.is equality
+ ❯ src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts:157:26
+    155|
+    156|   it("SC-3: a second running storm is refused", async () => {
+    157|     expect(STORM_ID).not.toBe("");
+       |                          ^
+    158|     const second = await start(L.client, "boss", "D2", D2.map(entry));
+    159|     expect(second.error).not.toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  |db| src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts > MF-0013 storms (DB) > SC-3: another learner can neither read nor answer nor finish my storm
+AssertionError: expected '' not to be '' // Object.is equality
+ ❯ src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts:163:26
+    161|
+    162|   it("SC-3: another learner can neither read nor answer nor finish my …
+    163|     expect(STORM_ID).not.toBe("");
+       |                          ^
+    164|     const [q1] = D2;
+    165|     if (!q1) throw new Error("fixture");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  |db| src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts > MF-0013 storms (DB) > SC-3: an answer naming another content hash is refused; the right one is accepted
+AssertionError: expected '' not to be '' // Object.is equality
+ ❯ src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts:183:26
+    181|
+    182|   it("SC-3: an answer naming another content hash is refused; the righ…
+    183|     expect(STORM_ID).not.toBe("");
+       |                          ^
+    184|     const [q1] = D2;
+    185|     if (!q1) throw new Error("fixture");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  |db| src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts > MF-0013 storms (DB) > SC-4: before the end, nothing the learner can read holds a key or a grade
+AssertionError: expected '' not to be '' // Object.is equality
+ ❯ src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts:227:26
+    225|
+    226|   it("SC-4: before the end, nothing the learner can read holds a key o…
+    227|     expect(STORM_ID).not.toBe("");
+       |                          ^
+    228|     const [q1, , q3] = D2;
+    229|     if (!q1 || !q3) throw new Error("fixture");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  |db| src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts > MF-0013 storms (DB) > SC-3: after ends_at an answer is refused
+AssertionError: expected '' not to be '' // Object.is equality
+ ❯ src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts:255:26
+    253|
+    254|   it("SC-3: after ends_at an answer is refused", async () => {
+    255|     expect(STORM_ID).not.toBe("");
+       |                          ^
+    256|     const [, q2, q3] = D2;
+    257|     if (!q2 || !q3) throw new Error("fixture");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  |db| src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts > MF-0013 storms (DB) > SC-5: at finish each answered, unvoided question becomes one attempt graded by the DB key
+AssertionError: expected '' not to be '' // Object.is equality
+ ❯ src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts:278:26
+    276|
+    277|   it("SC-5: at finish each answered, unvoided question becomes one att…
+    278|     expect(STORM_ID).not.toBe("");
+       |                          ^
+    279|     const [q1, q2, q3] = D2;
+    280|     if (!q1 || !q2 || !q3) throw new Error("fixture");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed | 17 passed (18)
+      Tests  7 failed | 64 passed (71)
+   Start at  11:31:57
+   Duration  25.68s (tests 91%, import 9%)
+
+[ELIFECYCLE] Command failed with exit code 1.

@@ -49,6 +49,8 @@ lesson_keys: aggregate-threshold-inference, windows-hook-spawn
 
 - 2026-11-05 skill-edit (additive) applied: `.claude/skills/gsd-goal-loop/SKILL.md` Stage 2, the
   other-people's-data paragraph gained (d) inference over time (join/leave deltas; tenure-scoped rows).
+  On merging main (MF-0021 added its own (d) on viewer-controlled inputs) it became (e), scoped to
+  OTHER members' joins and leaves.
 - 2026-11-05 memory-update applied: `windows-dev-environment.md` stop-hook bullet rewritten (MF-0023 hunk,
   check-hooks.mjs still broken), new preflight bullet (`--include-all`, `SUPABASE_SECRET_KEY` in process env),
   "Stop-hook fix is reserved as MF-0023" dropped.
