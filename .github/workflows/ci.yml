@@ -42,6 +42,10 @@ jobs:
         run: pnpm test
       - name: Hooks check
         run: node scripts/check-hooks.mjs
+      - name: Planning check
+        # MF-0028: one ticket per GOAL.md. Runs on the PR's merge result, where two branches that
+        # reserved the same ticket number collide (MF-0022/MF-0023 at 71ac090).
+        run: pnpm gate:planning
       - name: Build
         run: pnpm build
       - name: Answer-key sync reminder
