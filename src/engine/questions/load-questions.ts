@@ -1,6 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import YAML from "yaml";
+import { idPrefixIssue } from "../pack/id-prefix";
 import type { Pack } from "../pack/types";
 import { QuestionFileSchema } from "./schema";
 import type { Question, QuestionFile } from "./types";
@@ -51,6 +52,11 @@ export function parseQuestionFiles(
       continue;
     }
     parsed.data.questions.forEach(({ status: _legacy, ...q }, i) => {
+      const foreign = idPrefixIssue(q.id, pack.slug);
+      if (foreign) {
+        issues.push(`${file.name}: questions.${i}.id: ${foreign}`);
+        return;
+      }
       const first = seenIds.get(q.id);
       if (first) {
         issues.push(

@@ -2,6 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import YAML from "yaml";
 import type { z } from "zod";
+import { idPrefixIssue } from "../pack/id-prefix";
 import type { Pack } from "../pack/types";
 import { QuestionFileSchema } from "../questions/schema";
 import type { Question } from "../questions/types";
@@ -68,8 +69,13 @@ export function parseContent(
   );
   const issues: string[] = [];
   const firstFileOf = new Map<string, string>();
-  /** Pack-wide uniqueness across item types; questions first, then diagrams, cards, cuckoos. */
+  /** The id is this pack's (MF-0024) and unique pack-wide across item types; questions first, then diagrams, cards, cuckoos. */
   const claim = (id: string, file: string, path: string): boolean => {
+    const foreign = idPrefixIssue(id, pack.slug);
+    if (foreign) {
+      issues.push(`${file}: ${path}: ${foreign}`);
+      return false;
+    }
     const first = firstFileOf.get(id);
     if (first) {
       issues.push(
