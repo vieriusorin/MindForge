@@ -163,7 +163,9 @@ deliverable, and keep this ticket to what the local stack can prove. Do not carr
 task inside the code ticket.
 
 Before the checkpoint, preflight each SC's proof. (1) Run `pnpm typecheck && pnpm lint && pnpm test`
-read-only. If any of them is red and an SC's proof is "that command exits 0", the baseline red is part of
+read-only, plus every other command an SC names as its proof (`pnpm test:db`, `pnpm build`, `pnpm check:packs`;
+local stack up first; MF-0025: a `test:db` red found only in TEST forced an SC amendment). If any of them is red
+and an SC's proof is "that command exits 0" or "no new failure", the baseline red is part of
 this ticket's scope question: put it in the checkpoint with the file named, as either "fix it as task T0
 (listed in the hand-off as a separate hunk)" or "park until its owner fixes it". Do not leave it for BUILD.
 (2) List every proof command that wipes or restarts shared local state (`pnpm db:reset`, `supabase stop`,
@@ -262,15 +264,21 @@ with `agent`, `owns`, `depends_on`, `closes`, `done_when`, `context` (`reference
 EVAL validates it: acyclic, known agents, every SC closed. Done when an engineer who never saw
 this conversation could implement from the plan alone.
 
-**Contract-widening tickets: grep the shape, not the table.** When the ticket adds a member to a closed set
-or a field to a shared shape (an item kind, `ITEM_TYPES`, a `CHECK` list, `PackContent`, a loader's return
-type), list the frozen tests it will break before the plan is approved. Run, over every
+**Contract-widening or behaviour-changing tickets: grep the thing you change, not your own wording.** When
+the ticket adds a member to a closed set or a field to a shared shape (an item kind, `ITEM_TYPES`, a `CHECK`
+list, `PackContent`, a loader's return type), or changes what a shared writer does to rows it did not write
+before (a sync or seed script, a SQL function, a trigger, a delete rule), list the frozen tests it will break before the plan is approved. Run, over every
 `**/*.acceptance.test.*` and every path in the `builds_on` tickets' `FROZEN.json`: `grep -ln` for the set's
 name, its sibling members as literals (e.g. `'question'` next to `'card'`), the shape's type name, and any
 literal of the loader's output. Put each hit in LOOP-PLAN under "Frozen files this will re-freeze", each
 with the new expected value and the reason, and take all of them to the plan-approval checkpoint as one
 batch. A collision found later is a re-freeze that stops BUILD or TEST for a separate approval (MF-0016:
-MF-0003 SC-5, MF-0006 SC-6, MF-0007 SC-1 and the ticket's own SC-5 fixture, one per stage).
+MF-0003 SC-5, MF-0006 SC-6, MF-0007 SC-1 and the ticket's own SC-5 fixture, one per stage). For a behaviour change also grep for the changed file's name and path (`sync-question-keys`,
+`db:sync-keys`), the tables it writes (`private.items`, `question_keys`), and the column the new rule keys on
+(`pack_slug`). Each hit in "Frozen files this will re-freeze" must quote the assertion line that breaks and the
+new expected value; a hit is stated as "fixture only" only after that file's assertions were read (MF-0025:
+the MF-0007 SC-1 fixture inserted an unregistered slug and asserted it survived; found in TEST, and first
+told to the user as fixture-only).
 
 High-risk: present the plan and wait for approval. Normal: proceed.
 

@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0025",
+  "frozen_at": "2026-11-05T12:33:16.448Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/server/db/__tests__/mf-0025-orphan-keys.db.acceptance.test.ts",
+      "sha256": "f09fb06fcec1a9d7c12c10fffab1143d6e521f454b044a3aae3d8b0f3d669491",
+      "first_failure": "SC-1: expected { packs: 0, keys: 1, items: 1 } to deeply equal { packs: 0, keys: 0, items: 0 }; SC-2: expected undefined to be P0002; SC-5: expected 1 (review) to be 0; same on 2nd run; SC-3 regression lock frozen green (today the sync leaves other packs alone)"
+    }
+  ],
+  "history": []
+}
