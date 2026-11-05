@@ -11,12 +11,15 @@
  * 4. syncs answer keys from packs/<slug>/questions into the local DB
  * 5. writes/updates the two public Supabase values and the server-only secret key (ADR 0004) in
  *    .env.local, keeping every other line
+ * 6. with `--with-corpus` only (MF-0030): fetches every pack's public docs into .cache/corpus/
+ *    (free, no key, needs network). Never generates content and never spends money.
  * Safe to re-run. Never touches a hosted project.
  */
 import { spawn, spawnSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { createInterface } from "node:readline";
+import { corpusFetches } from "./lib/dev-setup-corpus.mjs";
 import { mergeEnv } from "./lib/env-file.mjs";
 import { redactSecrets } from "./lib/redact-secrets.mjs";
 import { supabaseBin } from "./lib/supabase-bin.mjs";
@@ -59,6 +62,20 @@ const runRedacted = (cmd, args) =>
       done();
     });
   });
+
+// 0. arguments: refused before anything runs ────────────────────────────────────
+const PACKS = join(ROOT, "packs");
+let fetches;
+try {
+  fetches = corpusFetches(
+    process.argv.slice(2),
+    readdirSync(PACKS).filter((slug) =>
+      existsSync(join(PACKS, slug, "pack.yaml")),
+    ),
+  );
+} catch (error) {
+  fail(error.message);
+}
 
 // 1. prerequisites ─────────────────────────────────────────────────────────────
 step("Checking prerequisites");
@@ -132,6 +149,21 @@ if (after !== before) writeFileSync(envPath, after);
 console.log(
   `  ${after === before ? "already up to date" : before ? "updated" : "created"} (${envPath})`,
 );
+
+// 6. corpus (--with-corpus only) ───────────────────────────────────────────────
+if (fetches.length > 0) {
+  step(
+    `Fetching the docs corpus for ${fetches.length} pack(s) into .cache/corpus`,
+  );
+  const tsx = join(ROOT, "node_modules", ".bin", "tsx");
+  for (const argv of fetches) {
+    const r = spawnSync(tsx, argv, { cwd: ROOT, stdio: "inherit" });
+    if (r.status !== 0)
+      fail(
+        `Corpus fetch failed for pack "${argv[2]}" (network?). The local stack is ready; retry with \`pnpm generate:corpus --pack ${argv[2]}\`.`,
+      );
+  }
+}
 
 console.log(`
 ✓ Local stack ready.
