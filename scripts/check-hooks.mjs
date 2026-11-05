@@ -8,8 +8,10 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT = resolve(dirname(new URL(import.meta.url).pathname), "..");
+// MF-0023: `new URL(...).pathname` is `/C:/…` on Windows, which `resolve` turned into `C:\C:\…`.
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 // 1. imports

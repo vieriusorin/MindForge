@@ -36,6 +36,7 @@ import {
   isRelevantSource,
   parseTscErrors,
   redAllowedIn,
+  spawnSpec,
   unverifiedFiles,
 } from "./lib/gate-core.mjs";
 import {
@@ -50,18 +51,16 @@ import {
 const CAP = 2;
 const BIN = join(ROOT, "node_modules", ".bin");
 const IS_WIN = process.platform === "win32";
-// MF-0023: Node refuses to spawn the `.cmd` shims (pnpm, biome, vitest) without a shell on Windows,
-// and a shell joins args unquoted, so quote anything cmd.exe would split or interpret (`(app)`).
-const quoteWin = (a) => (/[\s"&()<>^|]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a);
 
 /** @returns {Promise<{ code: number | null, out: string }>} */
 function run(cmd, args, timeoutMs, extraEnv = {}) {
   return new Promise((resolve) => {
-    // Its own process group, so a timeout kills the whole tree (e.g. vitest and its workers).
-    const child = spawn(IS_WIN ? [cmd, ...args].map(quoteWin).join(" ") : cmd, IS_WIN ? [] : args, {
+    // MF-0023: per-platform spec (shell + quoting on win32; own process group elsewhere).
+    const spec = spawnSpec({ cmd, args, platform: process.platform });
+    const child = spawn(spec.command, spec.args, {
       cwd: ROOT,
-      detached: !IS_WIN,
-      shell: IS_WIN,
+      detached: spec.detached,
+      shell: spec.shell,
       windowsHide: true,
       env: {
         ...process.env,
