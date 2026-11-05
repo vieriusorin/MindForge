@@ -1,0 +1,2 @@
+$ node scripts/check-planning.mjs
+gate:planning: 50 ticket folders checked, ok

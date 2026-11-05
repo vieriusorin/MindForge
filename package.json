@@ -23,6 +23,7 @@
     "generate:cards": "tsx scripts/generate/cards.ts",
     "generate:diagrams": "tsx scripts/generate/diagrams.ts",
     "generate:eval": "tsx scripts/generate/eval.ts",
+    "content:all": "tsx scripts/generate/content-all.ts",
     "prompts:lock": "tsx scripts/generate/lock-prompts.ts",
     "check:packs": "node scripts/check-pack-grounding.mjs",
     "gate:planning": "node scripts/check-planning.mjs"
