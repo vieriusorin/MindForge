@@ -5,11 +5,18 @@ import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { plantableSkills } from "@/engine/content";
+import {
+  EXPEDITION_MIN_MEMBERS,
+  isExpeditionAllowed,
+  summarizeExpedition,
+} from "@/engine/expedition";
 import { buildForest } from "@/engine/forest";
 import { countableAttempts, memoryBySkill } from "@/engine/memory";
 import type { Pack } from "@/engine/pack";
 import { stormProof } from "@/engine/storm";
 import { serializeDuel } from "@/features/duel/search-params";
+import { ExpeditionCard } from "@/features/expeditions/components/expedition-card";
+import { StartExpeditionForm } from "@/features/expeditions/components/start-expedition-form";
 import { Forest } from "@/features/forest/components/forest";
 import { rotateInviteCode } from "@/features/groups/actions";
 import { GroupHeatmap } from "@/features/groups/components/group-heatmap";
@@ -18,6 +25,8 @@ import { MemberList } from "@/features/groups/components/member-list";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getPackContent } from "@/server/content/get-pack-content";
 import { getReviewContext } from "@/server/content/get-review-context";
+import { getExpeditionProgress } from "@/server/expeditions/get-expedition-progress";
+import { getLatestExpedition } from "@/server/expeditions/get-latest-expedition";
 import { getGroup } from "@/server/groups/get-group";
 import { getGroupHeatmap } from "@/server/groups/get-group-heatmap";
 import { listMembers } from "@/server/groups/list-members";
@@ -26,6 +35,55 @@ import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
 import { finalizeExpiredStorms } from "@/server/storm/finalize-expired-storms";
 import { listMyStormResults } from "@/server/storm/list-my-storm-results";
+
+/**
+ * MF-0017: the group's expedition, streamed apart. C-2: only groups of ≥ 4 members run one, so
+ * the progress read is never called for a smaller group. The start form is the admin's only, and
+ * only while nothing is running (the database re-checks both).
+ */
+async function ExpeditionSlot(props: {
+  groupId: string;
+  pack: Pack;
+  memberCount: number;
+  isAdmin: boolean;
+  now: Date;
+}) {
+  if (!isExpeditionAllowed(props.memberCount))
+    return (
+      <ExpeditionCard status="too-small" minMembers={EXPEDITION_MIN_MEMBERS} />
+    );
+  const startForm = props.isAdmin ? (
+    <StartExpeditionForm
+      groupId={props.groupId}
+      domains={props.pack.domains.map((d) => ({ code: d.code, name: d.name }))}
+    />
+  ) : undefined;
+  const latest = await getLatestExpedition(props.groupId);
+  if (!latest) return <ExpeditionCard status="none" startForm={startForm} />;
+
+  const progress = await getExpeditionProgress(latest.id);
+  const summary = summarizeExpedition({
+    progress,
+    target: latest.target,
+    startsAt: new Date(latest.startsAt),
+    endsAt: new Date(latest.endsAt),
+    now: props.now,
+  });
+  // A domain dropped from the pack after the start still names itself by its code.
+  const domainName =
+    props.pack.domains.find((d) => d.code === latest.domainCode)?.name ??
+    latest.domainCode;
+  return (
+    <ExpeditionCard
+      status="shown"
+      domainName={domainName}
+      target={latest.target}
+      progress={progress}
+      summary={summary}
+      startForm={summary.isActive ? undefined : startForm}
+    />
+  );
+}
 
 /** MF-0011: streamed apart from the rest of the page. The viewer comes from the verified session. */
 async function GroupHeatmapSlot(props: {
@@ -110,6 +168,17 @@ async function GroupSlot({
             groupId={group.id}
             viewerId={user.id}
             pack={pack}
+            now={now}
+          />
+        </Suspense>
+      </div>
+      <div className="mb-8">
+        <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
+          <ExpeditionSlot
+            groupId={group.id}
+            pack={pack}
+            memberCount={members.length}
+            isAdmin={isAdmin}
             now={now}
           />
         </Suspense>

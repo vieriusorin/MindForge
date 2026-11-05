@@ -145,6 +145,11 @@ leaderboard, "N of M" line) states under "Constraints → how met" what the view
 that implies who contributed is itself a disclosure. Give one worked example at the minimum group size in
 the SC's proof. A high-risk plan over other people's data without this is not ready for approval (MF-0011
 retro: a threshold of 3 including the viewer passed every gate; only the fresh-context reviewer caught it).
+(d) Inference over time: the figure is read twice (before and after a join, a leave, a new attempt, an edit).
+State what a delta between two reads reveals. A figure that changes by exactly one member's contribution
+when membership changes is a per-member oracle; scope counted rows to the member's tenure (for example
+`answered_at >= joined_at`) or show that the change is indistinguishable from others' activity. Write the
+join/leave case in the SC's proof (MF-0017 B1: found only by the reviewer, cost a re-freeze).
 
 Decide what follows from existing decisions and record it under "Decided without a question",
 with its source. Ask only what does not — see `references/escalation.md`. Two defensible business

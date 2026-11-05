@@ -57,6 +57,45 @@ export type Database = {
           },
         ];
       };
+      expeditions: {
+        Row: {
+          created_by: string;
+          domain_code: string;
+          ends_at: string;
+          group_id: string;
+          id: string;
+          starts_at: string;
+          target: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_by: string;
+          domain_code: string;
+          ends_at: string;
+          group_id: string;
+          id?: string;
+          starts_at: string;
+          target: number;
+        };
+        Update: {
+          created_by?: string;
+          domain_code?: string;
+          ends_at?: string;
+          group_id?: string;
+          id?: string;
+          starts_at?: string;
+          target?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "expeditions_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       group_members: {
         Row: {
           group_id: string;
@@ -244,6 +283,10 @@ export type Database = {
         Args: { p_name: string; p_pack_slug: string };
         Returns: string;
       };
+      expedition_progress: {
+        Args: { p_expedition_id: string };
+        Returns: number;
+      };
       finalize_expired_storms: {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
@@ -258,6 +301,16 @@ export type Database = {
         }[];
       };
       join_group: { Args: { p_code: string }; Returns: string };
+      latest_expedition: {
+        Args: { p_group_id: string };
+        Returns: {
+          domain_code: string;
+          ends_at: string;
+          id: string;
+          starts_at: string;
+          target: number;
+        }[];
+      };
       list_open_flags: {
         Args: { p_pack_slug: string };
         Returns: {
@@ -321,6 +374,10 @@ export type Database = {
         }[];
       };
       rotate_invite_code: { Args: { p_group_id: string }; Returns: string };
+      start_expedition: {
+        Args: { p_domain_code: string; p_group_id: string; p_target: number };
+        Returns: string;
+      };
       start_storm: {
         Args: {
           p_domain_code?: string;
