@@ -17,13 +17,19 @@ export const MIN_OTHER_CONTRIBUTORS = 3;
 
 export type HeatmapStatus = "holding" | "fading" | "no-data";
 
+/**
+ * MF-0021 (user, 2026-11-05): the healthy share as a third, never a percent. Each band is at least ⅓
+ * wide, so every band is reachable for every pair count ≥ 3 and no figure pins how many have played.
+ */
+export const HEALTHY_BANDS = ["few", "some", "most"] as const;
+export type HealthyBand = (typeof HEALTHY_BANDS)[number];
+
+/** Only what the card shows (MF-0021): no percent, no recall number, no count. */
 export interface HeatmapRegion {
   domainCode: string;
   name: string;
-  /** Healthy (member, skill) pairs ÷ (contributors × skills in the region), whole percent. */
-  healthyPercent: number;
-  /** Mean retrievability over the (member, skill) pairs that have memory, whole percent; null when none. */
-  retrievabilityPercent: number | null;
+  /** Healthy (other member, skill) pairs ÷ (other contributors × skills): under ⅓, ⅓ to under ⅔, ⅔ and up. */
+  healthyBand: HealthyBand;
   status: HeatmapStatus;
 }
 
@@ -44,10 +50,14 @@ export interface GroupAttempts {
   others: readonly GroupMemberAttempts[];
 }
 
-const percent = (part: number, whole: number): number =>
-  whole > 0 ? Math.round((part / whole) * 100) : 0;
+/** Decided on integers, so ⅓ and ⅔ land exactly on their band's lower edge (MF-0021 SC-2). */
+function healthyBandOf(healthy: number, pairs: number): HealthyBand {
+  if (3 * healthy < pairs) return "few";
+  if (3 * healthy < 2 * pairs) return "some";
+  return "most";
+}
 
-/** Holding vs fading, decided on the SHOWN whole percent so the word never contradicts the number. */
+/** Holding vs fading on the whole-percent mean (MF-0011 N1 rule, kept by MF-0021 though the number is no longer shown). */
 function statusOf(retrievabilityPercent: number | null): HeatmapStatus {
   if (retrievabilityPercent === null) return "no-data";
   return retrievabilityPercent >=
@@ -57,8 +67,10 @@ function statusOf(retrievabilityPercent: number | null): HeatmapStatus {
 }
 
 /**
- * MF-0011: aggregate members' measured memory per region. The gate counts contributors other than
- * the viewer; the figures pool every contributor, the viewer included. Nothing per member is returned.
+ * MF-0011: aggregate members' measured memory per region. Nothing per member is returned.
+ * MF-0021 SC-7 (user, 2026-11-05): the gate AND the figures use the members other than the viewer.
+ * `viewer` is taken and deliberately left out: pooling it let the viewer compare two loads around one
+ * of their own answers and pin how many others have played.
  */
 export function summarizeGroupHeatmap(input: {
   pack: Pack;
@@ -69,14 +81,11 @@ export function summarizeGroupHeatmap(input: {
   if (others.length < MIN_OTHER_CONTRIBUTORS) {
     return { status: "not-enough-data" };
   }
-  const contributors =
-    input.viewer.size > 0 ? [input.viewer, ...others] : others;
-
   const regions = input.pack.domains.map((domain): HeatmapRegion => {
     let healthy = 0;
     let retrievabilitySum = 0;
     let remembered = 0;
-    for (const memory of contributors) {
+    for (const memory of others) {
       for (const skill of domain.skills) {
         const snapshot = memory.get(skill.code) ?? null;
         const tree = treeStage(snapshot);
@@ -94,11 +103,7 @@ export function summarizeGroupHeatmap(input: {
     return {
       domainCode: domain.code,
       name: domain.name,
-      healthyPercent: percent(
-        healthy,
-        contributors.length * domain.skills.length,
-      ),
-      retrievabilityPercent,
+      healthyBand: healthyBandOf(healthy, others.length * domain.skills.length),
       status: statusOf(retrievabilityPercent),
     };
   });
@@ -114,7 +119,8 @@ export function groupHeatmapFromAttempts(
     memoryBySkill(countableAttempts(m.attempts, m.review), input.now);
   return summarizeGroupHeatmap({
     pack: input.pack,
-    viewer: input.viewer ? replay(input.viewer) : new Map(),
+    // SC-7: the viewer never feeds the figures, so their attempts are not replayed
+    viewer: new Map(),
     others: input.others.map(replay),
   });
 }

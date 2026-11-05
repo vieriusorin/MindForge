@@ -2,7 +2,11 @@
  * MF-0011 acceptance (engine half): the group heatmap is an aggregate of each member's engine
  * replay, shown only when 3 members OTHER than the viewer have played (C-3), and it carries
  * nothing per member and no count. Expected values are worked by hand from the definitions in
- * GOAL.md ("Decided without a question"). Re-frozen 2026-11-04 (C-3, user approved).
+ * GOAL.md ("Decided without a question"). Re-frozen 2026-11-04 (C-3, user approved). Re-frozen
+ * 2026-11-05 by MF-0021 (user approved): the healthy share is a band (few < ⅓ ≤ some < ⅔ ≤ most) and
+ * the recall is a word only, so the region keys and values below changed; the fixtures did not.
+ * Re-frozen again 2026-11-05 by MF-0021 SC-7 (user approved): the figures pool the OTHER members only,
+ * so the viewer's own play can't move the card between two loads; the viewer's C.1 tree drops out.
  */
 import { describe, expect, it } from "vitest";
 import { emptyReviewContext } from "../../content/review";
@@ -94,43 +98,39 @@ describe("MF-0011 group heatmap (engine)", () => {
     for (const region of heatmap.regions) {
       expect(Object.keys(region).sort()).toEqual([
         "domainCode",
-        "healthyPercent",
+        "healthyBand",
         "name",
-        "retrievabilityPercent",
         "status",
       ]);
     }
   });
 
-  it("SC-4: region figures follow the definition (pairs over contributors × skills), the viewer pooled in", () => {
+  it("SC-4: region figures follow the definition (pairs over other contributors × skills), the viewer left out", () => {
     expect(
       summarizeGroupHeatmap({ pack, viewer: v, others: [m1, m2, m3] }),
     ).toEqual({
       status: "ready",
       regions: [
-        // A: 4 contributors × 2 = 8 pairs, healthy m1·A.1 + m3·A.1 = 2 → 25 %; R (0.9+0.6+0.7+1)/4 = 0.80 → fading
+        // A: 3 others × 2 = 6 pairs, healthy m1·A.1 + m3·A.1 = 2 → 2/6 = ⅓ → some; R (0.9+0.6+0.7+1)/4 = 0.80 → fading
         {
           domainCode: "A",
           name: "Alpha",
-          healthyPercent: 25,
-          retrievabilityPercent: 80,
+          healthyBand: "some",
           status: "fading",
         },
-        // B: 4 pairs, healthy m3·B.1 = 1 → 25 %; R 0.95 → holding
+        // B: 3 pairs, healthy m3·B.1 = 1 → 1/3 → some; R 0.95 → holding
         {
           domainCode: "B",
           name: "Beta",
-          healthyPercent: 25,
-          retrievabilityPercent: 95,
+          healthyBand: "some",
           status: "holding",
         },
-        // C: 4 pairs, healthy v·C.1 = 1 → 25 %; R 0.9 → holding
+        // C: 3 pairs, only the viewer has C.1 and is left out → 0 → few; no other has memory → no-data
         {
           domainCode: "C",
           name: "Gamma",
-          healthyPercent: 25,
-          retrievabilityPercent: 90,
-          status: "holding",
+          healthyBand: "few",
+          status: "no-data",
         },
       ],
     });
@@ -187,29 +187,26 @@ describe("MF-0011 group heatmap (engine)", () => {
       viewer: null,
       others,
     });
-    // A: 3 × 2 = 6 pairs, 2 healthy sprouts → 33 %; all three answered just now → R 100 % → holding
+    // A: 3 × 2 = 6 pairs, 2 healthy sprouts → 2/6 = ⅓ → some; all three answered just now → R 100 % → holding
     expect(heatmap).toEqual({
       status: "ready",
       regions: [
         {
           domainCode: "A",
           name: "Alpha",
-          healthyPercent: 33,
-          retrievabilityPercent: 100,
+          healthyBand: "some",
           status: "holding",
         },
         {
           domainCode: "B",
           name: "Beta",
-          healthyPercent: 0,
-          retrievabilityPercent: null,
+          healthyBand: "few",
           status: "no-data",
         },
         {
           domainCode: "C",
           name: "Gamma",
-          healthyPercent: 0,
-          retrievabilityPercent: null,
+          healthyBand: "few",
           status: "no-data",
         },
       ],

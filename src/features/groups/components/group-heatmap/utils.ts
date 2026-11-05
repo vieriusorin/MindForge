@@ -1,27 +1,31 @@
-import type { HeatmapRegion, HeatmapStatus } from "@/engine/forest";
-import type { HeatBucket, StatusLook, StatusLooks } from "./types";
+import {
+  HEALTHY_BANDS,
+  type HealthyBand,
+  type HeatmapStatus,
+} from "@/engine/forest";
+import type { BandLook, BandLooks, StatusLook, StatusLooks } from "./types";
 
-/** Lower bound (healthy %) of each swatch bucket. The legend reads these, so they can't drift. */
-export const HEAT_BUCKETS = [
-  { bucket: 1, from: 0, to: 19 },
-  { bucket: 2, from: 20, to: 39 },
-  { bucket: 3, from: 40, to: 59 },
-  { bucket: 4, from: 60, to: 79 },
-  { bucket: 5, from: 80, to: 100 },
-] as const satisfies readonly {
-  bucket: HeatBucket;
-  from: number;
-  to: number;
-}[];
-
-/** Full class names so Tailwind keeps them (no string building). */
-export const SWATCH_CLASS = {
-  1: "bg-chart-1",
-  2: "bg-chart-2",
-  3: "bg-chart-3",
-  4: "bg-chart-4",
-  5: "bg-chart-5",
-} as const satisfies Record<HeatBucket, string>;
+/**
+ * MF-0021: each band in words, with a swatch on the one-hue ramp (ui-design §2). Full class names
+ * so Tailwind keeps them. The legend reads this table, so it can't drift.
+ */
+const BAND_LOOK = {
+  few: {
+    label: "Few healthy trees",
+    range: "under a third",
+    swatch: "bg-chart-1",
+  },
+  some: {
+    label: "Some healthy trees",
+    range: "a third to two thirds",
+    swatch: "bg-chart-3",
+  },
+  most: {
+    label: "Most healthy trees",
+    range: "two thirds or more",
+    swatch: "bg-chart-5",
+  },
+} as const satisfies BandLooks;
 
 const STATUS_LOOK = {
   holding: { label: "Holding", badge: "secondary" },
@@ -29,24 +33,17 @@ const STATUS_LOOK = {
   "no-data": { label: "No data yet", badge: "outline" },
 } as const satisfies StatusLooks;
 
-/** The swatch bucket for a region's healthy share. */
-export function heatBucket(healthyPercent: number): HeatBucket {
-  const match = HEAT_BUCKETS.findLast((b) => healthyPercent >= b.from);
-  return match?.bucket ?? 1;
+/** The words and swatch for a region's healthy band: no percent, so no count (MF-0021). */
+export function bandLook(band: HealthyBand): BandLook {
+  return BAND_LOOK[band];
 }
+
+/** The legend rows, lightest to darkest, in the engine's band order. */
+export const BAND_LEGEND: readonly BandLook[] = HEALTHY_BANDS.map(bandLook);
 
 /** The word and badge for a region's status: colour is never the only signal (ui-design §5). */
 export function statusLook(status: HeatmapStatus): StatusLook {
   return STATUS_LOOK[status];
-}
-
-/** The figures line under a region's name. */
-export function regionFigures(region: HeatmapRegion): string {
-  const recall =
-    region.retrievabilityPercent === null
-      ? "no recall measured yet"
-      : `${region.retrievabilityPercent}% average recall`;
-  return `${region.healthyPercent}% healthy trees · ${recall}`;
 }
 
 /** Why the heatmap is hidden. No count: in a small group it tells who has played (MF-0011 C-3). */

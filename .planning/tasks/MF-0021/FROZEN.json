@@ -1,0 +1,34 @@
+{
+  "ticket": "MF-0021",
+  "frozen_at": "2026-11-05T09:13:15Z",
+  "files": [
+    {
+      "path": "src/engine/forest/__tests__/mf-0021-heatmap-bands.acceptance.test.ts",
+      "sha256": "026a27d34639b73571602bb568a6618239f5bfceae7e13a069fb742fe4b21471",
+      "first_failure": "SC-1..SC-4 x5: healthyBand absent (summarizeGroupHeatmap still returns healthyPercent/retrievabilityPercent): SC-2 'expected undefined to be few'"
+    },
+    {
+      "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
+      "sha256": "597efeb73c9c9d44e12d4399c4d5cd7c1b074e199423a0abda0c57b664d9e430",
+      "owner": "MF-0011",
+      "first_failure": "MF-0011 SC-2 key set and SC-4 x2 values: healthyBand expected, healthyPercent/retrievabilityPercent received; it-2: SC-4 test 1 expects others-only figures (A some, B some, C few/no-data)"
+    },
+    {
+      "path": "src/engine/forest/__tests__/mf-0021-viewer-excluded.acceptance.test.ts",
+      "sha256": "596f79eced25d7868ec441b5916120ea229e1df20d5ba5065d15c76c12857759",
+      "first_failure": "SC-7 x2: 'expected { status: ready, regions } to deeply equal …': the viewer's own memory changes the bands (pooled in)"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-05T09:29:11Z",
+      "reason": "it-2 (review blocking finding, user chose 'others only' 2026-11-05): add SC-7 file; re-freeze the MF-0011 engine file so the figures leave the viewer out.",
+      "previous": [
+        {
+          "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
+          "sha256": "5b13580a031c5573dd43d95563ad116954f253a025dd6c99725745d3312e4cfa"
+        }
+      ]
+    }
+  ]
+}

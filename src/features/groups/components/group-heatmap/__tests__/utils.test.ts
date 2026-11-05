@@ -1,35 +1,32 @@
 import { describe, expect, it } from "vitest";
-import {
-  HEAT_BUCKETS,
-  heatBucket,
-  notEnoughDataLine,
-  regionFigures,
-  SWATCH_CLASS,
-  statusLook,
-} from "../utils";
+import { BAND_LEGEND, bandLook, notEnoughDataLine, statusLook } from "../utils";
 
 describe("group-heatmap utils", () => {
-  it("heatBucket maps the healthy share onto 5 shades at 20-point steps", () => {
-    expect([0, 19, 20, 39, 40, 60, 79, 80, 100].map(heatBucket)).toEqual([
-      1, 1, 2, 2, 3, 4, 4, 5, 5,
-    ]);
+  it("bandLook names every band in words with its own swatch, lightest to darkest", () => {
+    expect(bandLook("few")).toEqual({
+      label: "Few healthy trees",
+      range: "under a third",
+      swatch: "bg-chart-1",
+    });
+    expect(bandLook("some")).toEqual({
+      label: "Some healthy trees",
+      range: "a third to two thirds",
+      swatch: "bg-chart-3",
+    });
+    expect(bandLook("most")).toEqual({
+      label: "Most healthy trees",
+      range: "two thirds or more",
+      swatch: "bg-chart-5",
+    });
   });
 
-  it("HEAT_BUCKETS cover 0–100 without gaps, one swatch class each", () => {
-    expect(HEAT_BUCKETS.map((b) => `${b.from}-${b.to}`)).toEqual([
-      "0-19",
-      "20-39",
-      "40-59",
-      "60-79",
-      "80-100",
+  it("BAND_LEGEND lists the three bands in order, with no percent anywhere (MF-0021)", () => {
+    expect(BAND_LEGEND.map((b) => b.label)).toEqual([
+      "Few healthy trees",
+      "Some healthy trees",
+      "Most healthy trees",
     ]);
-    expect(HEAT_BUCKETS.map((b) => SWATCH_CLASS[b.bucket])).toEqual([
-      "bg-chart-1",
-      "bg-chart-2",
-      "bg-chart-3",
-      "bg-chart-4",
-      "bg-chart-5",
-    ]);
+    expect(JSON.stringify(BAND_LEGEND)).not.toContain("%");
   });
 
   it("statusLook gives every status a word, Fading in the destructive badge", () => {
@@ -45,21 +42,6 @@ describe("group-heatmap utils", () => {
       label: "No data yet",
       badge: "outline",
     });
-  });
-
-  it("regionFigures says both numbers, or that recall isn't measured", () => {
-    const base = { domainCode: "A", name: "Alpha", status: "fading" } as const;
-    expect(
-      regionFigures({ ...base, healthyPercent: 33, retrievabilityPercent: 80 }),
-    ).toBe("33% healthy trees · 80% average recall");
-    expect(
-      regionFigures({
-        ...base,
-        status: "no-data",
-        healthyPercent: 0,
-        retrievabilityPercent: null,
-      }),
-    ).toBe("0% healthy trees · no recall measured yet");
   });
 
   it("notEnoughDataLine names the threshold and no count", () => {

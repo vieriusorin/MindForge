@@ -33,7 +33,7 @@ Canonical terms. When code, docs or tickets disagree with this file, this file w
 - **Learner**: a signed-in person who plays. Their forest is private to them.
 - **Group**: a study group of a few learners (about 5–6) working on one pack. A learner can be in several groups; memory is per learner per pack, shared across those groups.
 - **Group admin**: the member who created the group or was made admin; can rotate the invite code.
-- **Group heatmap**: per-region aggregate of a group's memory (average retrievability, share of healthy trees). Shown only when at least 3 members have attempts. No per-member figures are ever shown to other members.
+- **Group heatmap**: per-region aggregate of a group's memory: the share of healthy trees as a band (few: under a third, some: a third to two thirds, most: two thirds or more) and the average recall as a word (Holding, Fading, No data yet). Shown only when at least 3 members other than the viewer have attempts, and computed from those other members only, so the viewer's own play never changes it. It never shows a percent or a count, because either can tell how many members have played (MF-0021). No per-member figures are ever shown to other members.
 
 ## Content (continued)
 
