@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
-      "sha256": "f2d746e9bbf59e4e109a1700755c5b532a4aeb1d8a1208b298dac17244ec4e5e",
+      "sha256": "597efeb73c9c9d44e12d4399c4d5cd7c1b074e199423a0abda0c57b664d9e430",
       "first_failure": "SC-2 x2, SC-4 x3: Error: not implemented (summarizeGroupHeatmap / groupHeatmapFromAttempts stubs, new {viewer, others} API)"
     },
     {
@@ -35,6 +35,26 @@
         {
           "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
           "sha256": "110dd7805652cd8dce735d0b20799571ed5af91c6be6010d4cd0fb95a083f6b2"
+        }
+      ]
+    },
+    {
+      "at": "2026-11-05T09:13:15Z",
+      "reason": "MF-0021 (user approved 2026-11-05): the healthy share becomes a band (few/some/most on integers) and the recall a word only, so no region reveals how many members have played. SC-2 key set and SC-4 values changed; fixtures unchanged. Red until MF-0021 BUILD.",
+      "previous": [
+        {
+          "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
+          "sha256": "f2d746e9bbf59e4e109a1700755c5b532a4aeb1d8a1208b298dac17244ec4e5e"
+        }
+      ]
+    },
+    {
+      "at": "2026-11-05T09:29:11Z",
+      "reason": "MF-0021 it-2 (user approved 2026-11-05, 'others only'): the figures pool the members OTHER than the viewer, reversing the it-1 'viewer pooled in' decision, because two loads around the viewer's own answer pinned the contributor count. SC-4 test 1 values and title changed; fixtures unchanged.",
+      "previous": [
+        {
+          "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
+          "sha256": "5b13580a031c5573dd43d95563ad116954f253a025dd6c99725745d3312e4cfa"
         }
       ]
     }

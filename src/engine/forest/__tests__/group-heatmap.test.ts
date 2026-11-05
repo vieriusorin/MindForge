@@ -30,15 +30,20 @@ const none = new Map<string, MemorySnapshot>();
 const only = (r: number) => new Map([["A.1", snap(r)]]);
 
 describe("summarizeGroupHeatmap", () => {
-  it("rounds the healthy share to a whole percent (1 of 9 pairs → 11)", () => {
-    const heatmap = summarizeGroupHeatmap({
-      pack,
-      viewer: none,
-      others: [only(0.9), only(0.5), only(0.5)],
-    });
-    expect(
-      heatmap.status === "ready" && heatmap.regions[0]?.healthyPercent,
-    ).toBe(11);
+  it("bands the healthy share in thirds over every pair (1 of 9 → few, 3 of 9 → some, 6 of 9 → most)", () => {
+    const all = (r: number) =>
+      new Map([
+        ["A.1", snap(r)],
+        ["A.2", snap(r)],
+        ["A.3", snap(r)],
+      ]);
+    const band = (others: ReadonlyMap<string, MemorySnapshot>[]) => {
+      const heatmap = summarizeGroupHeatmap({ pack, viewer: none, others });
+      return heatmap.status === "ready" && heatmap.regions[0]?.healthyBand;
+    };
+    expect(band([only(0.9), only(0.5), only(0.5)])).toBe("few");
+    expect(band([all(0.9), only(0.5), only(0.5)])).toBe("some");
+    expect(band([all(0.9), all(0.9), only(0.5)])).toBe("most");
   });
 
   it("calls a region 'holding' exactly at the wilt threshold (85 %)", () => {
@@ -52,16 +57,15 @@ describe("summarizeGroupHeatmap", () => {
     );
   });
 
-  it("decides the word on the shown figure: a mean of 0.846 shows 85 % and reads 'holding' (review N1)", () => {
+  it("decides the word on the whole-percent mean: 0.846 rounds to 85 and reads 'holding' (review N1)", () => {
     const heatmap = summarizeGroupHeatmap({
       pack,
       viewer: none,
       others: [only(0.846), only(0.846), only(0.846)],
     });
-    expect(heatmap.status === "ready" && heatmap.regions[0]).toMatchObject({
-      retrievabilityPercent: 85,
-      status: "holding",
-    });
+    expect(heatmap.status === "ready" && heatmap.regions[0]?.status).toBe(
+      "holding",
+    );
   });
 
   it("does not count the viewer towards the 3, even with memory", () => {
@@ -88,8 +92,7 @@ describe("summarizeGroupHeatmap", () => {
         {
           domainCode: "A",
           name: "Alpha",
-          healthyPercent: 0,
-          retrievabilityPercent: null,
+          healthyBand: "few",
           status: "no-data",
         },
       ],

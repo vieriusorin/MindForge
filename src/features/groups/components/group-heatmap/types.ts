@@ -1,11 +1,8 @@
-import type { GroupHeatmap, HeatmapStatus } from "@/engine/forest";
+import type { GroupHeatmap, HealthyBand, HeatmapStatus } from "@/engine/forest";
 
 export interface GroupHeatmapProps {
   heatmap: GroupHeatmap;
 }
-
-/** The swatch ramp: chart-1 (lightest) … chart-5 (darkest), ui-design §2. */
-export type HeatBucket = 1 | 2 | 3 | 4 | 5;
 
 export type BadgeVariant = "secondary" | "destructive" | "outline";
 
@@ -15,3 +12,12 @@ export interface StatusLook {
 }
 
 export type StatusLooks = Record<HeatmapStatus, StatusLook>;
+
+/** A healthy band's words and its swatch class on the chart ramp (ui-design §2). */
+export interface BandLook {
+  label: string;
+  range: string;
+  swatch: "bg-chart-1" | "bg-chart-3" | "bg-chart-5";
+}
+
+export type BandLooks = Record<HealthyBand, BandLook>;
