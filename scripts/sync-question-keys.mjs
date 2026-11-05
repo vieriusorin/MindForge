@@ -11,6 +11,7 @@
  * problem.
  * MF-0016: cuckoos (packs/<slug>/cuckoos/*.yaml) are keyed like questions, with the flawed line's
  * number as the only correct option, and registered with item_type 'cuckoo'.
+ * MF-0032: a pack's keys and items are written in ONE transaction (record_attempt binds the two).
  *
  * DB: $SUPABASE_DB_URL, else the LOCAL stack from `supabase status`.
  * Usage: node scripts/sync-question-keys.mjs
@@ -166,6 +167,9 @@ try {
   console.log(`pack registry: ${packs.join(", ")}`);
   for (const pack of packs) {
     const keys = readKeys(pack);
+    const items = readItems(pack);
+    // MF-0032: keys and items commit together. record_attempt checks the answer's hash against
+    // private.items and grades with private.question_keys in one snapshot, so both must be one version.
     await sql.begin(async (tx) => {
       for (const k of keys) {
         await tx`
@@ -177,15 +181,11 @@ try {
                 correct_options = excluded.correct_options,
                 updated_at = now()`;
       }
-      const ids = keys.map((k) => k.question_id);
-      await tx`delete from private.question_keys where pack_slug = ${pack} and not (question_id = any(${ids}))`;
-    });
-    console.log(`${pack}: ${keys.length} key(s) synced`);
+      const keyIds = keys.map((k) => k.question_id);
+      await tx`delete from private.question_keys where pack_slug = ${pack} and not (question_id = any(${keyIds}))`;
 
-    // MF-0007: hash_synced_at moves only when the hash changes (C-3: the 48 h analogy clock).
-    // Only this pack's rows are deleted, so packs without a folder here are never touched.
-    const items = readItems(pack);
-    await sql.begin(async (tx) => {
+      // MF-0007: hash_synced_at moves only when the hash changes (C-3: the 48 h analogy clock).
+      // Only this pack's rows are deleted, so packs without a folder here are never touched.
       for (const i of items) {
         await tx`
           insert into private.items as cur
@@ -203,9 +203,10 @@ try {
                 content_hash = excluded.content_hash,
                 updated_at = now()`;
       }
-      const ids = items.map((i) => i.item_id);
-      await tx`delete from private.items where pack_slug = ${pack} and not (item_id = any(${ids}))`;
+      const itemIds = items.map((i) => i.item_id);
+      await tx`delete from private.items where pack_slug = ${pack} and not (item_id = any(${itemIds}))`;
     });
+    console.log(`${pack}: ${keys.length} key(s) synced`);
     console.log(`${pack}: ${items.length} item(s) registered`);
   }
 } finally {

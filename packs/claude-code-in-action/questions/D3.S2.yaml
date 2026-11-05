@@ -1,0 +1,158 @@
+skill: D3.S2
+questions:
+  - id: claude-code-in-action.D3.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Claude must not edit `.env`, `package-lock.json` or anything in `.git/` with its file-editing tools. Which hook setup from the guide blocks those edits?"
+    select: 1
+    options:
+      - id: A
+        text: "A line in CLAUDE.md in capital letters, which Claude Code turns into a check before every edit."
+        correct: false
+        rationale: "CLAUDE.md is guidance Claude reads. A hook is what makes the check run every time."
+      - id: B
+        text: "A `PreToolUse` hook on `Edit|Write` whose script exits 2 when the path matches a protected pattern."
+        correct: true
+        rationale: "The guide registers `protect-files.sh` as a `PreToolUse` hook on `Edit|Write`. It checks the target path against protected patterns and exits with code 2 to block the edit, and Claude receives the reason as feedback."
+      - id: C
+        text: "A `PostToolUse` hook on `Edit|Write` that restores the protected file after Claude has changed it."
+        correct: false
+        rationale: "`PostToolUse` hooks can't undo actions, since the tool has already executed. Blocking has to happen before the call."
+      - id: D
+        text: "A `Notification` hook that alerts you whenever Claude opens one of the protected files for editing."
+        correct: false
+        rationale: "`Notification` fires when Claude Code sends a notification, such as waiting for input. It can't block an edit."
+    source:
+      title: "Automate actions with hooks"
+      url: "https://code.claude.com/docs/en/hooks-guide"
+  - id: claude-code-in-action.D3.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "After a long session is compacted, Claude forgets that the project uses Bun, not npm. Which hook puts that reminder back?"
+    select: 1
+    options:
+      - id: A
+        text: "A `PreCompact` hook with the matcher `compact` that writes the reminder into the summary."
+        correct: false
+        rationale: "`PreCompact` matches on what triggered compaction (`manual` or `auto`), and the guide's re-inject example uses `SessionStart`."
+      - id: B
+        text: "A `Stop` hook that repeats the reminder each time Claude finishes responding to a prompt."
+        correct: false
+        rationale: "A `Stop` hook fires whenever Claude finishes responding. The guide's fix for compaction is a `SessionStart` hook."
+      - id: C
+        text: "A `UserPromptSubmit` hook with the matcher `compact` that adds the reminder to each prompt."
+        correct: false
+        rationale: "`UserPromptSubmit` has no matcher support and always fires on every occurrence."
+      - id: D
+        text: "A `SessionStart` hook with the matcher `compact` whose command echoes the reminder to stdout."
+        correct: true
+        rationale: "Use a `SessionStart` hook with a `compact` matcher to re-inject critical context after every compaction; Claude Code adds plain text the command writes to stdout to Claude's context."
+    source:
+      title: "Automate actions with hooks"
+      url: "https://code.claude.com/docs/en/hooks-guide"
+  - id: claude-code-in-action.D3.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your hook works when you run it by hand, but in a session the transcript shows \"PreToolUse hook error\" with \"command not found\". What is the guide's fix?"
+    select: 1
+    options:
+      - id: A
+        text: "Reference the script by an absolute path or `${CLAUDE_PROJECT_DIR}` instead of a relative path."
+        correct: true
+        rationale: "If you see \"command not found\", use absolute paths or `${CLAUDE_PROJECT_DIR}` to reference scripts."
+      - id: B
+        text: "Move the script's logic into CLAUDE.md so Claude runs the same steps itself without a shell."
+        correct: false
+        rationale: "That gives up the deterministic run a hook provides. The error is about how the script path is resolved."
+      - id: C
+        text: "Raise the hook's `timeout` field, because the shell gives up before it can find the command."
+        correct: false
+        rationale: "A timeout cancels a slow hook; it doesn't cause \"command not found\". The path to the script is the problem."
+      - id: D
+        text: "Return the result as JSON on stdout, since a plain-text hook can't be found by Claude Code."
+        correct: false
+        rationale: "JSON output changes how a decision is read, not whether the shell can find the script."
+    source:
+      title: "Automate actions with hooks"
+      url: "https://code.claude.com/docs/en/hooks-guide"
+  - id: claude-code-in-action.D3.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You want Claude to see type-check errors right after each edit so it fixes them in the same turn. Which hook design fits what the reference says each event can do?"
+    select: 1
+    options:
+      - id: A
+        text: "A `PreToolUse` hook on `Edit|Write` that type-checks and exits 2, so the bad edit never lands."
+        correct: false
+        rationale: "`PreToolUse` runs before the edit exists, so a type check there sees the old file, not Claude's change."
+      - id: B
+        text: "A `PostToolUse` hook that exits 1 with the errors, so the transcript shows a hook error notice."
+        correct: false
+        rationale: "Exit 1 is a non-blocking error: the notice carries only the first line of stderr, and the errors aren't shown to Claude as feedback."
+      - id: C
+        text: "A `PostToolUse` hook on `Edit|Write` that exits 2 with the errors on stderr, which Claude then sees."
+        correct: true
+        rationale: "On `PostToolUse`, exit 2 shows stderr to Claude; the tool already ran. Claude can't have the edit undone, but it reads the errors and fixes them."
+      - id: D
+        text: "A `Notification` hook that runs the type checker each time Claude waits for you to approve a call."
+        correct: false
+        rationale: "`Notification` hooks can't block or feed back: exit code and stderr are ignored on that event."
+    source:
+      title: "Hooks reference"
+      url: "https://code.claude.com/docs/en/hooks"
+  - id: claude-code-in-action.D3.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your CI scripts `claude -p` over third-party repositories you didn't write. What hook risk does the reference call out, and what is a safe default?"
+    select: 1
+    options:
+      - id: A
+        text: "None: hooks are skipped in `-p` mode, so a repository's settings can't run anything on the runner."
+        correct: false
+        rationale: "The opposite: a `-p` or SDK session treats the folder as trusted, so committed hooks run."
+      - id: B
+        text: "Hooks run in a sandbox with no file access in `-p` mode, so they can only print to the run log."
+        correct: false
+        rationale: "Command hooks execute shell commands with your full user permissions. They can modify, delete or access any file your account can."
+      - id: C
+        text: "The workspace trust dialog appears in CI and waits for input, so the job hangs until it times out."
+        correct: false
+        rationale: "In a `-p` or SDK session Claude Code never shows the dialog."
+      - id: D
+        text: "Committed hooks run untrusted; review `.claude/` first, use `--bare`, or set `disableAllHooks`."
+        correct: true
+        rationale: "A `-p` or SDK session never shows the trust dialog and treats the folder as trusted, so hooks committed in `.claude/settings.json` run. Review the repository's `.claude/` settings, start with `--bare`, or turn hooks off with `--settings '{\"disableAllHooks\": true}'`."
+    source:
+      title: "Hooks reference"
+      url: "https://code.claude.com/docs/en/hooks"
+  - id: claude-code-in-action.D3.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your `Stop` hook blocks until the tests pass. Claude keeps working, then the turn ends with a warning that the hook blocked too many consecutive times. What is the fix?"
+    select: 1
+    options:
+      - id: A
+        text: "Read `stop_hook_active` from the input and exit 0 early when it is `true`."
+        correct: true
+        rationale: "Claude Code overrides a Stop hook after it blocks eight times in a row with no tool call in between. Parse the `stop_hook_active` field from the JSON input and exit early if it's `true`."
+      - id: B
+        text: "Raise the hook's `timeout` field so the test run has time to finish before the cap applies."
+        correct: false
+        rationale: "The cap counts consecutive blocks, not time. The hook needs to check whether it already triggered a continuation."
+      - id: C
+        text: "Move the check to a `SessionEnd` hook, which is allowed to block the end of a session as often as needed."
+        correct: false
+        rationale: "`SessionEnd` can't block: exit 2 only shows stderr to the user."
+      - id: D
+        text: "Exit 1 instead of 2 so Claude Code counts the result as a warning and skips the cap."
+        correct: false
+        rationale: "Exit 1 is a non-blocking error, so the hook would stop blocking at all, and Claude would stop with the tests still failing."
+    source:
+      title: "Automate actions with hooks"
+      url: "https://code.claude.com/docs/en/hooks-guide"

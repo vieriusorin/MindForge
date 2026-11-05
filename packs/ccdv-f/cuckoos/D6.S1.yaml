@@ -3,6 +3,9 @@
 skill: D6.S1
 cuckoos:
   - id: ccdv-f.D6.S1.cuckoo-subagent-context
+    # grounded: only — "the subagent does that work in its own context and returns only the summary"
+    # grounded: only — line 4 is advice to the reader (scope each subagent's tools), not a doc claim
+    # example-name: explorer
     title: A team's CLAUDE.md notes on using subagents
     origin: ai
     author: sorin.vieriu@ddroidd.com
@@ -39,7 +42,7 @@ cuckoos:
       - 2. Fetch files when you need them; keep paths, not contents, in your notes.
       - "3. Never clear old tool results: the more tokens in context, the more accurate you become."
       - 4. When the history nears the limit, summarise it and continue from the summary.
-    flawLine: 3
+    flawLine: 4
     flawKind: false-claim
     explanation: More context is not more accuracy. As the window fills, recall of any one detail
       degrades (context rot), so context is a finite budget to spend on the smallest set of

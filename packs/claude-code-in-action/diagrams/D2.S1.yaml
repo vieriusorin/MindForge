@@ -1,0 +1,37 @@
+skill: D2.S1
+diagrams:
+  - id: claude-code-in-action.D2.S1.diagram-claude-md-loading
+    title: "Which instructions Claude reads in a session"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: START, label: "Start claude in foo/bar" }
+      - { id: POLICY, label: "Managed policy CLAUDE.md (org)" }
+      - { id: USER, label: "User: ~/.claude/CLAUDE.md" }
+      - { id: TREE, label: "foo/CLAUDE.md, then foo/bar/CLAUDE.md, each followed by its CLAUDE.local.md" }
+      - { id: IMPORTS, label: "@ imports expanded (up to four hops)" }
+      - { id: AUTO, label: "Auto memory: first 200 lines or 25KB" }
+      - { id: CONTEXT, label: "Session context, concatenated: closest file read last" }
+      - { id: SUBDIR, label: "Claude reads, writes or edits a file in a subdirectory?", shape: decision }
+      - { id: LAZY, label: "That subdirectory's CLAUDE.md, and any path-scoped rule matching the file, loads" }
+      - { id: RULES, label: "Unscoped rules in .claude/rules/" }
+      - { id: COMPACT, label: "/compact: project-root CLAUDE.md re-read from disk" }
+    edges:
+      - { from: START, to: POLICY, label: "at launch" }
+      - { from: POLICY, to: USER }
+      - { from: USER, to: TREE }
+      - { from: TREE, to: IMPORTS }
+      - { from: IMPORTS, to: CONTEXT }
+      - { from: START, to: AUTO, label: "at launch" }
+      - { from: AUTO, to: CONTEXT }
+      - { from: START, to: RULES, label: "at launch" }
+      - { from: RULES, to: CONTEXT }
+      - { from: CONTEXT, to: SUBDIR }
+      - { from: SUBDIR, to: LAZY, label: "yes" }
+      - { from: SUBDIR, to: CONTEXT, label: "no" }
+      - { from: LAZY, to: CONTEXT }
+      - { from: COMPACT, to: CONTEXT }
+    sources:
+      - https://code.claude.com/docs/en/memory

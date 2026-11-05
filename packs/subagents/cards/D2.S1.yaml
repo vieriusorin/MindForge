@@ -1,0 +1,35 @@
+skill: D2.S1
+cards:
+  - id: subagents.D2.S1.card-file-and-scope
+    concept: A subagent is a Markdown file, and where you save it decides who gets it
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      You create a subagent by asking Claude to write one ("Create a personal code-improver subagent in
+      ~/.claude/agents/ … make it read-only and have it use Sonnet") or by writing the file yourself.
+      Running `/agents` prints a reminder to ask Claude or edit `.claude/agents/` and `~/.claude/agents/`
+      directly. The result is a Markdown file such as `~/.claude/agents/code-improver.md`: YAML
+      frontmatter between `---` markers (`name: code-improver`, a `description` of when to use it,
+      `tools: Read, Grep, Glob`, `model: sonnet`), then a body that becomes its system prompt ("You are a
+      code improvement specialist…"). Only `name` and `description` are required. The folder sets the
+      reach: `~/.claude/agents/` follows you into every project, the repository's `.claude/agents/` is for
+      that codebase and can be checked into version control for the team.
+    inNature: >-
+      A seed packet and where you sow it. The packet carries everything the plant will be: its name, the
+      conditions it thrives in, and its growing instructions. Sow it in one garden bed and only that bed
+      grows it; keep it in the pot you carry with you and it goes everywhere you go.
+    whereItBreaks:
+      - "Two plants with the same name can share a bed. Two subagents with the same name cannot: Claude Code uses the one from the higher-priority location (managed settings, then `--agents`, then `.claude/agents/`, then `~/.claude/agents/`, then a plugin's `agents/` directory)."
+      - "A seed with a smudged label still grows. A subagent file with a `name` but no `description` is skipped, and a misspelled field such as `max_turns` is ignored without an error."
+      - "A planted seed is fixed in place. Claude Code watches `~/.claude/agents/` and `.claude/agents/`, so an edited file is used by the next delegation with no restart. A few cases still need one, such as the first file in an `agents` directory that did not exist when the session started."
+    contrast: >-
+      A file vs a definition in code. The `--agents` CLI flag takes the definitions as JSON: each key is the
+      agent's name, the body becomes `prompt`, the other frontmatter fields carry over except `color` and
+      `experimental`, and the definitions exist only for that session. In the Agent SDK the `agents` option of `query()`
+      defines subagents programmatically, and those take precedence over filesystem-based agents with the
+      same name.
+    diagram: subagents.D2.S1.diagram-which-definition-wins
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/agent-sdk/subagents

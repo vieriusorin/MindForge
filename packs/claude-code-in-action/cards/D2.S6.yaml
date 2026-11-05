@@ -1,0 +1,30 @@
+skill: D2.S6
+cards:
+  - id: claude-code-in-action.D2.S6.card-claude-in-github
+    concept: Claude Code inside your GitHub workflows
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      The Claude Code GitHub Action runs Claude Code inside your repository's workflows. Set it up
+      with `/install-github-app` from Claude Code, which installs the Claude GitHub App, saves the
+      authentication secret and prepares the workflow pull request. With no `prompt` input it runs in
+      interactive mode: someone writes "@claude fix the TypeError in the user dashboard component" in
+      an issue or PR comment, and Claude replies in a comment on the same issue or PR. With a `prompt`
+      input it runs in automation mode on any GitHub event, such as a pull request opening or a cron
+      schedule. A `CLAUDE.md` at the repository root gives it your project standards on every run.
+    inNature: >-
+      A cleaner wrasse's station on a coral reef. Reef fish swim up and hold still to signal they want
+      cleaning, and the wrasse goes to work on the fish that asked. Some stations are busy all day
+      whether or not anyone signals.
+    whereItBreaks:
+      - "A wrasse cleans any fish that signals. The action checks who triggered it first: on issue and pull request events the user needs write access, and bots are rejected unless listed in `allowed_bots`."
+      - "A wrasse needs nothing to start work. The action needs a credential: a GitHub secret (`ANTHROPIC_API_KEY` or `CLAUDE_CODE_OAUTH_TOKEN`) that is never committed to the repository, or workload identity federation, which avoids storing a long-lived secret."
+      - "The wrasse's work is visible on the fish. In automation mode the results appear in the workflow run log by default, and reach the issue or PR only when the prompt directs Claude to post and it has a tool that can."
+    contrast: >-
+      Code Review is a separate product that reviews every pull request automatically without a
+      workflow file. The Claude Code GitHub Action is the one you configure with workflow files, so you
+      control the prompt, the model and the triggers yourself.
+    diagram: claude-code-in-action.D2.S6.diagram-comment-to-reply
+    sources:
+      - https://code.claude.com/docs/en/github-actions

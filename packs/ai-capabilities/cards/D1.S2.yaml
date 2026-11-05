@@ -1,0 +1,32 @@
+skill: D1.S2
+cards:
+  - id: ai-capabilities.D1.S2.card-trained-character
+    concept: Pretraining gives the knowledge of language; later training gives the character
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Pretraining teaches a model to predict the next word over a large unlabeled corpus of text.
+      The result is not inherently good at answering questions or following instructions. Later
+      training shapes behaviour: fine-tuning and RLHF (people rank example outputs), Constitutional
+      AI (AI feedback guided by a written set of principles), and character training (traits such as
+      honesty and curiosity). Example: when you ask Claude to review a pull request and it points out
+      a mistake instead of praising the code, that disposition was trained in, not programmed as a rule.
+    inNature: >-
+      A young songbird. First it listens to the adult birds around it and absorbs their song. Then it
+      practises, and what it hears back shapes its own song until it settles into a style of its own.
+      Listening comes first; refining the song comes after.
+    whereItBreaks:
+      - "A songbird learns from a few tutors. Pretraining uses a vast unlabeled corpus of text."
+      - "A songbird's practice has no written rulebook. RLHF uses people ranking outputs; Constitutional AI and character training start from written principles and traits, and the model's own feedback is judged against them."
+      - "A songbird keeps refining its song for life. Claude's character is set in training: a conversation does not retrain it, and Anthropic changes the character by iterating on training."
+      - "A song can be fixed. Anthropic does not want Claude to treat its traits like rules from which it never deviates; training nudges general behaviour."
+    contrast: >-
+      Training sets the model's defaults before you ever call it. A prompt or system prompt steers
+      behaviour for one request without changing the model. Fine-tuning changes the model itself, and
+      the Claude API does not currently offer it.
+    diagram: ai-capabilities.D1.S2.diagram-training-stages
+    sources:
+      - https://platform.claude.com/docs/en/about-claude/glossary
+      - https://www.anthropic.com/research/claude-character
+      - https://www.anthropic.com/news/claudes-constitution

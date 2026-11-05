@@ -1,0 +1,41 @@
+skill: D3.S2
+diagrams:
+  - id: claude-code-in-action.D3.S2.diagram-pick-a-hook
+    title: "Pick a hook, then close its gaps"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: NEED, label: "What should always happen?", shape: decision }
+      - { id: FMT, label: "Format after edits: PostToolUse, matcher Edit|Write" }
+      - { id: PROT, label: "Protect files: PreToolUse on Edit|Write, exit 2 with a reason" }
+      - { id: CTX, label: "Re-inject context after compaction: SessionStart, matcher compact" }
+      - { id: NOTIF, label: "Alert when Claude needs input: Notification" }
+      - { id: DONE, label: "Keep working until a check passes: Stop hook" }
+      - { id: UNDO, label: "Gap: PostToolUse can't undo, the tool already ran" }
+      - { id: SHELL, label: "Gap: shell commands also write files; match Bash|PowerShell or scan in a Stop hook" }
+      - { id: LOOP, label: "Gap: exit early when stop_hook_active is true, or the block cap ends the turn" }
+      - { id: PATH, label: "Gap: reference scripts by absolute path or $CLAUDE_PROJECT_DIR" }
+      - { id: PERMS, label: "Gap: command hooks run with your full user permissions; review them" }
+      - { id: TEST, label: "Test: pipe sample JSON into the script and check the exit code" }
+    edges:
+      - { from: NEED, to: FMT, label: "formatting after edits" }
+      - { from: NEED, to: PROT, label: "files Claude mustn't edit" }
+      - { from: NEED, to: CTX, label: "context lost to compaction" }
+      - { from: NEED, to: NOTIF, label: "knowing when Claude waits" }
+      - { from: NEED, to: DONE, label: "a check before Claude stops" }
+      - { from: FMT, to: UNDO }
+      - { from: FMT, to: SHELL }
+      - { from: PROT, to: SHELL }
+      - { from: DONE, to: LOOP }
+      - { from: CTX, to: PATH }
+      - { from: NOTIF, to: PERMS }
+      - { from: UNDO, to: PATH }
+      - { from: SHELL, to: PATH }
+      - { from: LOOP, to: PATH }
+      - { from: PATH, to: PERMS }
+      - { from: PERMS, to: TEST }
+    sources:
+      - https://code.claude.com/docs/en/hooks-guide
+      - https://code.claude.com/docs/en/hooks

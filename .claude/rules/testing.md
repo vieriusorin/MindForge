@@ -50,4 +50,5 @@ msw and Playwright are not installed. Ask before adding any further test toolcha
 ## Before hand-off
 
 `pnpm typecheck && pnpm lint && pnpm test`. Add `pnpm test:db` when touching `supabase/**` or
-`src/server/**`, and `pnpm build` when touching UI.
+`src/server/**`, `pnpm build` when touching UI, and `pnpm check:packs` when touching `packs/**`
+(MF-0036: every line of a cuckoo except its flaw must be grounded in a cited source).

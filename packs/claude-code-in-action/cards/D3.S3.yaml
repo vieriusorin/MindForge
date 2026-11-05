@@ -1,0 +1,28 @@
+skill: D3.S3
+cards:
+  - id: claude-code-in-action.D3.S3.card-headless-and-agent-sdk
+    concept: Headless runs and the Agent SDK
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Add `-p` to a `claude` command and it runs non-interactively: it answers, prints and exits,
+      so it fits in a build script, a git hook or a CI job. For example, piping `git diff main`
+      into `claude -p` with a short instruction turns Claude into a typo linter for your diff. When you
+      want the same agent inside your own Python or TypeScript program, the Agent SDK gives you
+      the same tools, agent loop and context management that power Claude Code, as a library.
+      The course called this the Claude Code SDK; today's docs call it the Agent SDK.
+    inNature: >-
+      A forager bee sent out from the hive. It leaves with one job, works the flowers with nobody
+      from the hive watching, and comes back with a result the others can read.
+    whereItBreaks:
+      - "A forager picks any flower it likes. A `-p` run only uses the tools its permission rules and mode allow; in a Manual mode run, a call that needs approval is denied unless something approves it."
+      - "A bee carries the hive's habits wherever it flies. A `-p` run carries your hooks, skills, MCP servers and CLAUDE.md only because it loads them from the folder and `~/.claude`; `--bare` skips that auto-discovery, apart from skills in a folder you name with `--add-dir`."
+      - "A bee comes home with what it found. A run stopped with SIGTERM exits with code 143 and records no result for the turn it was in."
+    contrast: >-
+      The Client SDK calls the Claude API directly and leaves the tool loop to you. The Agent SDK
+      and `claude -p` bring Claude Code's own loop and built-in tools with them.
+    diagram: claude-code-in-action.D3.S3.diagram-run-without-the-terminal
+    sources:
+      - https://code.claude.com/docs/en/headless
+      - https://code.claude.com/docs/en/agent-sdk/overview

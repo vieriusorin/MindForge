@@ -1,0 +1,158 @@
+skill: D2.S1
+questions:
+  - id: claude-code-in-action.D2.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You've just installed Claude Code. How do you confirm it works, and get a fuller check of the install and settings?"
+    select: 1
+    options:
+      - id: A
+        text: "Run npm update -g; if it finishes without errors, the install and settings are both valid."
+        correct: false
+        rationale: "Updating is not a check, and the docs advise against npm update -g because it may not move you to the newest release."
+      - id: B
+        text: "Open any project and type /init; a CLAUDE.md appearing proves the install and settings are fine."
+        correct: false
+        rationale: "The setup page's check is claude --version, then claude doctor for a more detailed look; creating a project file is not part of verifying the install."
+      - id: C
+        text: "Run claude --version for a version number, then claude doctor for install and settings diagnostics."
+        correct: true
+        rationale: "A working installation prints a version number from claude --version. claude doctor prints read-only installation and settings diagnostics without starting a session, including settings-file validation errors."
+      - id: D
+        text: "Run claude -p \"hello\"; the reply proves the install and lists any invalid settings files."
+        correct: false
+        rationale: "A one-off query shows Claude can answer, but the diagnostics for install health and settings-file validation come from claude doctor."
+    source:
+      title: "Advanced setup"
+      url: "https://code.claude.com/docs/en/setup"
+  - id: claude-code-in-action.D2.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You want Claude to know your personal sandbox URL for this one project, without committing it for the team. Where does it go?"
+    select: 1
+    options:
+      - id: A
+        text: "./CLAUDE.local.md at the project root, added to .gitignore."
+        correct: true
+        rationale: "Local instructions live in ./CLAUDE.local.md: personal, project-specific preferences such as sandbox URLs. It loads alongside CLAUDE.md, and you add it to .gitignore."
+      - id: B
+        text: "./CLAUDE.md, the project file shared through version control."
+        correct: false
+        rationale: "The project CLAUDE.md is shared with the team through version control, so it should hold project-level standards, not personal preferences."
+      - id: C
+        text: "~/.claude/CLAUDE.md, your user file for every project."
+        correct: false
+        rationale: "The user file applies to all your projects, so a sandbox URL for one project doesn't belong there."
+      - id: D
+        text: "The managed policy CLAUDE.md that IT deploys for the org."
+        correct: false
+        rationale: "The managed policy file holds organization-wide instructions, shared with all users in the organization."
+    source:
+      title: "How Claude remembers your project"
+      url: "https://code.claude.com/docs/en/memory"
+  - id: claude-code-in-action.D2.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "In a session you say \"always use pnpm, not npm\". Where does Claude save it, and how do you put it in the team's CLAUDE.md instead?"
+    select: 1
+    options:
+      - id: A
+        text: "In CLAUDE.md directly; anything you ask Claude to remember is written to the project file."
+        correct: false
+        rationale: "When you ask Claude to remember something, it saves it to auto memory, not to CLAUDE.md."
+      - id: B
+        text: "Nowhere: it lasts until /clear, so the only option is to repeat it in every new session."
+        correct: false
+        rationale: "Auto memory persists across sessions: the first 200 lines or 25KB of MEMORY.md load at the start of every conversation."
+      - id: C
+        text: "In the managed policy file, which /memory then copies into every project's CLAUDE.md."
+        correct: false
+        rationale: "The managed policy file is organization-wide and managed by IT/DevOps; /memory lists and opens your memory files, it doesn't copy policy."
+      - id: D
+        text: "In auto memory; to reach CLAUDE.md, ask \"add this to CLAUDE.md\" or edit the file via /memory."
+        correct: true
+        rationale: "The docs say a request to remember is saved to auto memory. To add instructions to CLAUDE.md instead, ask Claude directly or edit the file yourself via /memory."
+    source:
+      title: "How Claude remembers your project"
+      url: "https://code.claude.com/docs/en/memory"
+  - id: claude-code-in-action.D2.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your CLAUDE.md should pull in the README and package.json instead of copying them. What does the docs' import syntax do?"
+    select: 1
+    options:
+      - id: A
+        text: "Writing @README loads it only when Claude decides it needs it, so imports cost no context."
+        correct: false
+        rationale: "Imported files load together with the CLAUDE.md that imports them, so imports help you organize but don't reduce the context cost."
+      - id: B
+        text: "Writing @README and @package.json expands those files into context with the CLAUDE.md."
+        correct: true
+        rationale: "CLAUDE.md files can import files with @path/to/import syntax. Imported files are expanded and loaded into context alongside the CLAUDE.md that references them."
+      - id: C
+        text: "Relative import paths resolve from the directory where you started Claude, not the file."
+        correct: false
+        rationale: "Relative paths resolve relative to the file containing the import, not the working directory."
+      - id: D
+        text: "Imports can nest without limit, so one root CLAUDE.md can chain in the whole docs folder."
+        correct: false
+        rationale: "Imported files can import other files, with a maximum depth of four hops."
+    source:
+      title: "How Claude remembers your project"
+      url: "https://code.claude.com/docs/en/memory"
+  - id: claude-code-in-action.D2.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your CLAUDE.md says \"never edit files under migrations/\", yet Claude edited one. You need a guarantee, not a reminder. What do the docs point to?"
+    select: 1
+    options:
+      - id: A
+        text: "Move the rule to the top of CLAUDE.md in capitals; position and emphasis make it enforced."
+        correct: false
+        rationale: "Claude treats CLAUDE.md as context, not enforced configuration, wherever the line sits. Specific, concise wording helps consistency but is not a guarantee."
+      - id: B
+        text: "A PreToolUse hook, which blocks the action regardless of what Claude decides."
+        correct: true
+        rationale: "The memory page says CLAUDE.md and auto memory are context, not enforced configuration, and that to block an action regardless of what Claude decides you use a PreToolUse hook instead."
+      - id: C
+        text: "Copy the rule into CLAUDE.local.md too, so it loads last and overrides the project file."
+        correct: false
+        rationale: "Files are concatenated rather than overriding each other, and every one of them is still context, not enforcement."
+      - id: D
+        text: "Put it in auto memory, which Claude treats as enforced because it wrote the note itself."
+        correct: false
+        rationale: "Both memory systems are loaded as context; neither is enforced configuration."
+    source:
+      title: "How Claude remembers your project"
+      url: "https://code.claude.com/docs/en/memory"
+  - id: claude-code-in-action.D2.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your root CLAUDE.md has grown to 600 lines, half of it about the API package, and Claude follows it less reliably. What do the docs recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Split it into several files joined by @ imports; that keeps every line but costs less context."
+        correct: false
+        rationale: "Imports help you organize a long file but don't reduce its context cost, because imported files load together with the CLAUDE.md that imports them."
+      - id: B
+        text: "Keep it as one file: longer files give Claude more to go on, so adherence rises with length."
+        correct: false
+        rationale: "The docs say longer files consume more context and reduce adherence."
+      - id: C
+        text: "Aim for under 200 lines and move the API-only part to a path-scoped rule in .claude/rules/."
+        correct: true
+        rationale: "The docs target under 200 lines per CLAUDE.md and say to move instructions that matter for only part of the codebase into path-scoped rules, which load only when Claude works with matching files."
+      - id: D
+        text: "Move it all to ~/.claude/CLAUDE.md, which is loaded once and doesn't count toward context."
+        correct: false
+        rationale: "The user file loads into every session like the others, and it applies to all your projects, so it is the wrong home for project instructions."
+    source:
+      title: "How Claude remembers your project"
+      url: "https://code.claude.com/docs/en/memory"

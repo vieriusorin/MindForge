@@ -1,0 +1,31 @@
+skill: D4.S1
+cards:
+  - id: claude-code-in-action.D4.S1.card-closed-loop-session
+    concept: A working session as a closed loop
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      A good session runs as a loop: understand the code you are about to touch, agree a plan
+      (plan mode makes no edits until you approve), make the change, then run something that comes
+      back pass or fail, such as a test file, a build's exit code or a linter. If it fails, Claude
+      reads the output, fixes it and runs the check again; when it passes, ask for the evidence
+      before you commit. A prompt like "write a failing test that reproduces it, then fix it" builds
+      the check into the request. Around the loop, put each kind of knowledge where it belongs:
+      facts Claude can't find in `CLAUDE.md`, team procedures in a skill, rules with no exceptions
+      in a hook or deny rule.
+    inNature: >-
+      A beaver repairing its dam. It finds the leak by the sound of running water, packs mud and
+      sticks into it, and keeps working until the sound stops. The sound is its pass-or-fail check.
+    whereItBreaks:
+      - "The beaver's check is built in. Claude stops when the work looks done; unless you give it something to run, 'looks done' is all it has to go on."
+      - "You can't hand a beaver a rule. Claude reads `CLAUDE.md` and follows it nearly every time, but a rule that must never bend belongs in a `command` hook or a deny rule, which Claude Code applies every time."
+      - "A beaver judges its own dam. Claude can get a reviewer that hasn't seen how the code was written, such as `/code-review` or a subagent, which is a different thing from asking the same model twice."
+    contrast: >-
+      Non-deterministic instructions (your prompt, `CLAUDE.md`, skills) are read and weighed by the
+      model. Deterministic ones (hooks, deny rules, managed settings) are executed by the harness no
+      matter what the model decided.
+    diagram: claude-code-in-action.D4.S1.diagram-working-session
+    sources:
+      - https://code.claude.com/docs/en/best-practices
+      - https://code.claude.com/docs/en/common-workflows

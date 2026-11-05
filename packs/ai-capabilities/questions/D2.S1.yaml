@@ -1,0 +1,158 @@
+skill: D2.S1
+questions:
+  - id: ai-capabilities.D2.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "During pretraining, what is the underlying model behind an assistant like Claude trained to do?"
+    select: 1
+    options:
+      - id: A
+        text: "Predict the next word, given the previous context of text in the document."
+        correct: true
+        rationale: "Autoregressive language models such as Claude's underlying model are pretrained on a large unlabeled corpus to predict the next word from the previous context."
+      - id: B
+        text: "Look up the stored answer to each question in an index of its training documents."
+        correct: false
+        rationale: "Pretraining teaches the model to predict text from patterns in a large corpus. It generates its output; it does not query an index of the documents it was trained on."
+      - id: C
+        text: "Run a rule set that its developers wrote by hand for each kind of task it supports."
+        correct: false
+        rationale: "Pretraining is training on a large unlabeled corpus of text, not hand-written rules. Later steps such as fine-tuning and RLHF are also training, not programming."
+      - id: D
+        text: "Follow user instructions reliably, without any further training after pretraining."
+        correct: false
+        rationale: "Pretrained models are not inherently good at answering questions or following instructions. Fine-tuning and RLHF are used to make them useful assistants."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"
+  - id: ai-capabilities.D2.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your FAQ bot words the same answer slightly differently on each call. You set temperature to 0. What should you expect?"
+    select: 1
+    options:
+      - id: A
+        text: "Byte-identical output on every call, because temperature 0 makes generation fully deterministic."
+        correct: false
+        rationale: "Even with temperature set to 0, results are not fully deterministic: identical inputs might produce different outputs across API calls."
+      - id: B
+        text: "More creative and surprising phrasing, because a lower temperature widens the choice of words."
+        correct: false
+        rationale: "It is the reverse. Higher temperatures give more creative and diverse outputs; lower temperatures stick to the most probable phrasing."
+      - id: C
+        text: "More conservative wording close to the most probable phrasing, though outputs can still vary."
+        correct: true
+        rationale: "Lower temperatures give more conservative, deterministic outputs that stick to the most probable phrasing, but the glossary warns that temperature 0 is still not fully deterministic."
+      - id: D
+        text: "No change in wording, because temperature controls how long the response is allowed to be."
+        correct: false
+        rationale: "Temperature controls the randomness of the model's predictions during generation, which is what changes the wording. It is not a length setting."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"
+  - id: ai-capabilities.D2.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Claude tells you, in confident and well-formed prose, which release of a library added an API. A teammate says: 'It reads so fluently, it must be right.' Which reasoning is correct?"
+    select: 1
+    options:
+      - id: A
+        text: "Fluency is good evidence, because anti-hallucination training stops the model from answering whenever it is unsure."
+        correct: false
+        rationale: "Anthropic calls that training relatively successful but imperfect. When a 'known answer' signal misfires, the model answers anyway and confabulates."
+      - id: B
+        text: "Fluency is not evidence: training rewards a plausible next word, and a misfire yields a confident, untrue answer."
+        correct: true
+        rationale: "Language model training incentivizes guessing the next word. When the model wrongly decides it knows the answer, it generates a plausible but untrue response, so the claim must be checked."
+      - id: C
+        text: "Fluency is not evidence, because the model picks each word at random with no internal plan for the sentence."
+        correct: false
+        rationale: "The conclusion is right but the reason is wrong. Anthropic's tracing shows the model can plan many words ahead, for example choosing a rhyme before writing the line."
+      - id: D
+        text: "Fluency is good evidence for long answers, since a model cannot keep a made-up story coherent across many sentences."
+        correct: false
+        rationale: "Once the model has decided to answer, it confabulates a plausible but untrue response, and features that push for grammatical and semantic coherence keep it finishing what it started. Length is no check on truth."
+    source:
+      title: "Tracing the thoughts of a large language model"
+      url: "https://www.anthropic.com/research/tracing-thoughts-language-model"
+  - id: ai-capabilities.D2.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "On a model that supports manual extended thinking, you set `budget_tokens` for a hard multi-step analysis. Which statement about that budget is correct?"
+    select: 1
+    options:
+      - id: A
+        text: "It is a strict cap: Claude spends exactly that many tokens thinking before it answers."
+        correct: false
+        rationale: "The budget is a target rather than a strict cap. Actual usage varies with the task, and Claude might stop reasoning well before the budget is used up."
+      - id: B
+        text: "Thinking tokens are free and sit outside the `max_tokens` limit, so the budget can be any size."
+        correct: false
+        rationale: "Thinking tokens count toward the `max_tokens` limit for the turn, so the budget must leave room for the final response (interleaved thinking is the documented exception)."
+      - id: C
+        text: "For simple tasks it can be set below 1,024 tokens to keep the thinking short and cheap."
+        correct: false
+        rationale: "The minimum is 1,024 tokens; the API rejects smaller values. For simple tasks the guidance is to start near that minimum and increase."
+      - id: D
+        text: "It is a target: Claude may stop thinking before it, and `max_tokens` stays the hard ceiling."
+        correct: true
+        rationale: "The page says the budget is a target rather than a strict cap, that Claude might stop reasoning well before the budget is exhausted, and that `max_tokens` remains the hard ceiling on total output."
+    source:
+      title: "Extended thinking"
+      url: "https://platform.claude.com/docs/en/build-with-claude/extended-thinking"
+  - id: ai-capabilities.D2.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You store Claude's written step-by-step reasoning as an audit trail of why it reached each decision. What does Anthropic's interpretability research imply about that trail?"
+    select: 1
+    options:
+      - id: A
+        text: "It is a faithful record of the computation, because the model must write the steps before its answer."
+        correct: false
+        rationale: "Anthropic found that the written chain of thought is sometimes misleading: Claude can make up plausible-sounding steps to get where it wants to go."
+      - id: B
+        text: "It is meaningless, because the model reaches its answers without any intermediate reasoning steps."
+        correct: false
+        rationale: "The research shows real intermediate steps in some cases, such as going from 'Dallas is in Texas' to 'the capital of Texas is Austin', and a faithful chain of thought for the square root of 0.64."
+      - id: C
+        text: "It is useful but can be unfaithful: the model sometimes builds steps toward an answer it already chose."
+        correct: true
+        rationale: "Given a hint, Claude sometimes works backwards and finds intermediate steps that lead to the target, a form of motivated reasoning. The written steps can be convincing without reflecting the actual computation."
+      - id: D
+        text: "It is faithful whenever the final answer is correct, so checking the answer validates the reasoning too."
+        correct: false
+        rationale: "In the mental-math case Claude gets 36+59 right, yet describes the carry-the-1 algorithm, while internally it used parallel approximate and precise paths. A correct answer does not prove the explanation."
+    source:
+      title: "Tracing the thoughts of a large language model"
+      url: "https://www.anthropic.com/research/tracing-thoughts-language-model"
+  - id: ai-capabilities.D2.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A colleague argues: 'The model emits one token at a time, so it cannot plan beyond the next word; a rhyme at the end of a line is picked at the last moment.' What did Anthropic's tracing of a rhyming task find?"
+    select: 1
+    options:
+      - id: A
+        text: "The colleague is right: the model picks the rhyming word when it reaches the end of the line."
+        correct: false
+        rationale: "That is what the researchers expected to find. Instead, they found that Claude plans ahead."
+      - id: B
+        text: "It thought of candidate rhyme words before writing the line, then wrote toward the planned word."
+        correct: true
+        rationale: "Before starting the second line, Claude began 'thinking' of on-topic words that rhyme with 'grab it', then wrote a line to end with the planned word."
+      - id: C
+        text: "The model drafted several complete lines in parallel and then returned the line that scored best."
+        correct: false
+        rationale: "The study describes planning a target word and writing toward it, not drafting and ranking whole lines."
+      - id: D
+        text: "The model plans ahead, but when the planned word is suppressed it can no longer finish the line."
+        correct: false
+        rationale: "When researchers subtracted the 'rabbit' concept, Claude wrote a new line ending in 'habit', another sensible completion. The plan adapts."
+    source:
+      title: "Tracing the thoughts of a large language model"
+      url: "https://www.anthropic.com/research/tracing-thoughts-language-model"

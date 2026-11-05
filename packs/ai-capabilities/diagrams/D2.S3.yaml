@@ -1,0 +1,38 @@
+skill: D2.S3
+diagrams:
+  - id: ai-capabilities.D2.S3.diagram-growing-context
+    title: "A context window that keeps growing"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: REQ, label: "Request: system prompt, messages, tool definitions" }
+      - { id: FIT, label: "Does the input alone fit the window?", shape: decision }
+      - { id: TOOLONG, label: "400 invalid_request_error: prompt is too long" }
+      - { id: OLD, label: "Earlier models: validation error" }
+      - { id: GEN, label: "Generate (output and thinking count toward the window)" }
+      - { id: HIT, label: "Stops: model_context_window_exceeded" }
+      - { id: GROW, label: "Turns accumulate in the window" }
+      - { id: NEAR, label: "Near the limit, or recall degrading?", shape: decision }
+      - { id: COMPACT, label: "Compaction: summarize, continue in a new window" }
+      - { id: NOTES, label: "Structured notes kept outside the window" }
+      - { id: SUB, label: "Sub-agents with clean windows return summaries" }
+    edges:
+      - { from: REQ, to: FIT }
+      - { from: FIT, to: TOOLONG, label: "no" }
+      - { from: FIT, to: OLD, label: "input + max_tokens too large (pre-4.5)" }
+      - { from: FIT, to: GEN, label: "yes" }
+      - { from: GEN, to: HIT, label: "generation reaches the limit (Claude 4.5 and newer)" }
+      - { from: GEN, to: GROW, label: "turn ends" }
+      - { from: GROW, to: NEAR }
+      - { from: NEAR, to: REQ, label: "no, next turn" }
+      - { from: NEAR, to: COMPACT, label: "yes, back-and-forth task" }
+      - { from: NEAR, to: NOTES, label: "yes, milestone-based work" }
+      - { from: NEAR, to: SUB, label: "yes, parallel research" }
+      - { from: COMPACT, to: REQ }
+      - { from: NOTES, to: REQ }
+      - { from: SUB, to: REQ }
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/context-windows
+      - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents

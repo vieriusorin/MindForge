@@ -1,0 +1,158 @@
+skill: D2.S1
+questions:
+  - id: platform-foundations.D2.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A platform engineer must compare five log-storage vendors across their public docs, pricing pages and the team's own evaluation notes in Google Docs. She opens Research on Claude on the web. What does the Help Center say she needs for it to work as intended?"
+    select: 1
+    options:
+      - id: A
+        text: "Web search switched off, so research stays inside the team's connected tools and notes."
+        correct: false
+        rationale: "The page says you must have web search turned on for research to function."
+      - id: B
+        text: "Claude Mobile, since mobile is where research reads from connectors such as Google Docs."
+        correct: false
+        rationale: "The page says research started in Claude Mobile searches the web and does not use your connectors; it points to the web or Desktop for connectors."
+      - id: C
+        text: "One broad search: research runs a single query and summarises whatever comes back first."
+        correct: false
+        rationale: "The page describes research as running multiple searches that build on each other and deciding what to look into next."
+      - id: D
+        text: "Web search on and the Google Workspace connector, so it reads the web and her notes."
+        correct: true
+        rationale: "The page says web search must be on, and that research covers the web and connected tools, including Google Workspace (Gmail, Google Calendar and Google Docs)."
+    source:
+      title: "Use research on Claude"
+      url: "https://support.claude.com/en/articles/11088861-use-research-on-claude"
+  - id: platform-foundations.D2.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A tech lead asks Claude for a short reply to a teammate and, separately, for an onboarding checklist the team will keep editing and reuse with every new hire. Per the Help Center, which of these does Claude create as an artifact, and why?"
+    select: 1
+    options:
+      - id: A
+        text: "Both, because Claude places any reply longer than one line in an artifact by default."
+        correct: false
+        rationale: "The page lists criteria for an artifact, such as being significant and self-contained, typically over 15 lines; a short reply does not meet them."
+      - id: B
+        text: "The checklist: it is self-contained, substantial, and something the team will edit and reuse."
+        correct: true
+        rationale: "The page says Claude creates an artifact for content that is significant and self-contained, likely to be edited, iterated on or reused, and likely to be referred back to."
+      - id: C
+        text: "Neither, because artifacts can be made from a project's knowledge base and not from a chat."
+        correct: false
+        rationale: "The page says you can ask for an artifact in any conversation with Claude, or start from a template in the Artifacts tab."
+      - id: D
+        text: "Neither, because artifacts are a Claude Code feature and chats return plain text."
+        correct: false
+        rationale: "The page lists Claude on the web, Claude Desktop and the mobile apps as places to create or view artifacts, as well as Claude Code."
+    source:
+      title: "What are artifacts and how do I use them?"
+      url: "https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them"
+  - id: platform-foundations.D2.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A freelance developer writes a weekly progress report for one client, using the same architecture notes, report template and formal tone each time. Which setup does the Help Center's description of projects fit?"
+    select: 1
+    options:
+      - id: A
+        text: "A project: notes and template in its knowledge base, the formal tone in project instructions."
+        correct: true
+        rationale: "The page says you can upload documents to a project's knowledge base, which Claude uses for the chats in that project, and define project instructions such as a more formal tone."
+      - id: B
+        text: "A project, but with the notes pasted into each chat, since chats there ignore project knowledge."
+        correct: false
+        rationale: "The page says Claude uses the knowledge base to understand the context and background for the individual chats within that project."
+      - id: C
+        text: "Project instructions set once for the whole account, so they shape chats outside the project too."
+        correct: false
+        rationale: "The page describes instructions defined for each project, inside a self-contained workspace with its own chat history and knowledge base."
+      - id: D
+        text: "One long chat kept open, because projects on a free account are capped at five files."
+        correct: false
+        rationale: "The page's cap for free users is a maximum of five projects, not five files."
+    source:
+      title: "What are projects?"
+      url: "https://support.claude.com/en/articles/9517075-what-are-projects"
+  - id: platform-foundations.D2.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Five minutes before a design review, a developer needs the latest release number of an open-source database and a link to its release notes. Which approach matches the Help Center's web search guidance?"
+    select: 1
+    options:
+      - id: A
+        text: "Upload a saved copy of the project's site to a project first, because search cannot reach it."
+        correct: false
+        rationale: "The page says Claude invokes a search tool to ground responses in content from the live web, so no upload is needed for a public page."
+      - id: B
+        text: "Paste the release-notes URL with web search off, because links are fetched without it."
+        correct: false
+        rationale: "The page says web fetch, which reads a specific URL, works when 'Web search' is toggled on."
+      - id: C
+        text: "A normal chat with web search on, then open the cited link Claude returns to confirm."
+        correct: true
+        rationale: "The page describes web search for questions that need current information, with citations and source links in the response, and advises cross-referencing cited sources."
+      - id: D
+        text: "Switch web search off to save usage, since release numbers do not need current information."
+        correct: false
+        rationale: "The page suggests turning web search off for conversations that don't require current information; a latest release number does need it."
+    source:
+      title: "Enable and use web search"
+      url: "https://support.claude.com/en/articles/10684626-enable-and-use-web-search"
+  - id: platform-foundations.D2.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A team wants their internal API assistant to search the web like claude.ai does, but restricted to two vendor documentation sites and with a hard cap on searches per request. How does the web search tool page say to configure the Messages API call?"
+    select: 1
+    options:
+      - id: A
+        text: "Add the tool and set both `allowed_domains` and `blocked_domains`, so the filter is double-checked."
+        correct: false
+        rationale: "The page says to provide allowed_domains or blocked_domains, not both; a request with both returns a 400 error."
+      - id: B
+        text: "Add a `web_search` tool to `tools`, with `allowed_domains` for the two sites and `max_uses`."
+        correct: true
+        rationale: "The page says the Messages API takes a web_search tool in the request's tools, that domain lists and max_uses go on that tool, and that max_uses is the hard constraint on searches."
+      - id: C
+        text: "Add nothing: the Messages API searches by itself whenever a question concerns recent events."
+        correct: false
+        rationale: "For the Messages API the page says to add a web_search tool to the request's tools; being on by default is described for Managed Agents."
+      - id: D
+        text: "Tell Claude in the system prompt to search less; the system prompt is the hard cap on searches."
+        correct: false
+        rationale: "The page says the system prompt steers how readily Claude searches, and that for a hard constraint you use max_uses."
+    source:
+      title: "Web search tool"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool"
+  - id: platform-foundations.D2.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "In a multi-turn API chat that uses the web search tool, a developer trims the assistant's search result blocks before sending the history back, to save bandwidth. The next request fails with a 400 validation error. What does the web search tool page point to?"
+    select: 1
+    options:
+      - id: A
+        text: "A search rate limit was hit; the API reports `too_many_requests` as a 400 on the request."
+        correct: false
+        rationale: "The page says that when the tool hits an error such as a rate limit, the API still returns a 200 and puts the error in the response body."
+      - id: B
+        text: "The previous search matched no results, and an empty search fails the follow-up request."
+        correct: false
+        rationale: "The page says a search that matches no results returns an empty content list, not an error."
+      - id: C
+        text: "The search count passed `max_uses`, which rejects the entire request with a 400."
+        correct: false
+        rationale: "The page says exceeding max_uses makes the web_search_tool_result an error with the max_uses_exceeded code, not a failed request."
+      - id: D
+        text: "A result lost or changed its `encrypted_content`; blocks must go back exactly as received."
+        correct: true
+        rationale: "The page says to send the assistant's content blocks back exactly as received, including each result's encrypted_content, and that a missing or modified one fails with a 400 validation error."
+    source:
+      title: "Web search tool"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool"

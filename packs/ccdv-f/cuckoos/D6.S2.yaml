@@ -3,6 +3,7 @@
 skill: D6.S2
 cuckoos:
   - id: ccdv-f.D6.S2.cuckoo-shouting-rules
+    # grounded: only — "not only" is part of the snippet's own instruction, not an absolute claim
     title: A prompt-style guide pinned in a team wiki
     origin: ai
     author: sorin.vieriu@ddroidd.com
@@ -26,6 +27,7 @@ cuckoos:
     sources:
       - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
   - id: ccdv-f.D6.S2.cuckoo-follow-ticket-instructions
+    # grounded: only — an output-format instruction inside the snippet's prompt, not a doc claim
     title: A prompt template for a support-ticket classifier
     origin: ai
     author: sorin.vieriu@ddroidd.com

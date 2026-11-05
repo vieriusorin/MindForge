@@ -9,6 +9,7 @@ import type { AnswerQuestionResult } from "./types";
 const MESSAGE = {
   "not-in-pack": "This question doesn't belong to this pack.",
   withdrawn: "This question was withdrawn for review. Start a new duel.",
+  changed: "This question changed since you opened it. Start a new duel.",
   "not-gradable":
     "This question isn't available for grading yet. Ask an admin to sync the answer keys.",
 } as const satisfies Record<GradeError, string>;

@@ -1,0 +1,29 @@
+skill: D1.S1
+cards:
+  - id: ai-capabilities.D1.S1.card-generated-not-looked-up
+    concept: A language model generates text; it does not look it up
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      A large language model (LLM) is trained on vast amounts of text and then generates new text.
+      Ask Claude for a commit message for your diff: the diff is encoded into tokens, placed in the
+      context window (its working memory for this request), and the message is generated from
+      patterns learned in training plus what is in that window. It is not fetched from a database.
+      If the answer needs facts the model was not trained on, you put them in the context window
+      yourself, or retrieve them at runtime (RAG).
+    inNature: >-
+      A lyrebird. It spends its life hearing the forest, then produces long new songs built from the
+      patterns it absorbed: other birds, wing beats, the odd camera shutter. The song is not a
+      recording it plays back; it is generated fresh each time from what it learned.
+    whereItBreaks:
+      - "A lyrebird repeats whole sounds. An LLM works in tokens, which can be words, subwords, characters or bytes."
+      - "A lyrebird's song draws on what it heard over months and years. An LLM also reads the context window, so text you supply in this prompt changes this answer."
+      - "A lyrebird's song is its own. Claude is not a bare language model: it has been fine-tuned and trained with RLHF to be a helpful assistant."
+    contrast: >-
+      Retrieval (search, or the retrieval half of RAG) returns stored documents. Generation writes new
+      text. RAG combines them: documents are retrieved at runtime and passed into the context window,
+      and the model generates its answer guided by them.
+    diagram: ai-capabilities.D1.S1.diagram-prompt-to-text
+    sources:
+      - https://platform.claude.com/docs/en/about-claude/glossary

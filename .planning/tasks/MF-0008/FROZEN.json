@@ -9,7 +9,7 @@
     },
     {
       "path": "src/engine/questions/__tests__/mf-0008-schema.acceptance.test.ts",
-      "sha256": "27770c0c8282559a27f383003bb99cd2b030699232952bc34d4b9fee0ef12e7e",
+      "sha256": "fb595c0b31a6c674f17db2aad8e3971e2131cd33f0cd14f971e49f54bdf4f428",
       "first_failure": "SC-8: QuestionValidationError: Unrecognized key: \"generatedBy\"; SC-9: AssertionError: D1.S1 has no sources: expected 0 to be greater than or equal to 1"
     }
   ],
@@ -17,6 +17,13 @@
     {
       "at": "2026-11-04",
       "reason": "SC-2 custom_id changed from <skill>.<i> to D2_S1-3 before the first freeze (Batches pattern ^[a-zA-Z0-9_-]{1,64}$), user-approved"
+    },
+    {
+      "at": "2026-11-04T14:48:21.033Z",
+      "reason": "MF-0032, user-approved 2026-11-04 at plan approval: line 70 calls toPlayableQuestion(q, \"h\") (the hash argument is now required). The no-generatedBy / no-author assertions are unchanged.",
+      "previous": {
+        "src/engine/questions/__tests__/mf-0008-schema.acceptance.test.ts": "27770c0c8282559a27f383003bb99cd2b030699232952bc34d4b9fee0ef12e7e"
+      }
     }
   ]
 }

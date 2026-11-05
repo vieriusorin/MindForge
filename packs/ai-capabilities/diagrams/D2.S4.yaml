@@ -1,0 +1,32 @@
+skill: D2.S4
+diagrams:
+  - id: ai-capabilities.D2.S4.diagram-steering-levers
+    title: "Choosing a steering lever"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: NEED, label: "What do you need to control?", shape: decision }
+      - { id: INST, label: "Clear, specific instructions plus the reason" }
+      - { id: ROLE, label: "Role in the system prompt" }
+      - { id: EX, label: "3–5 relevant, diverse examples in tags" }
+      - { id: SO, label: "Structured outputs: guaranteed schema compliance" }
+      - { id: PRE, label: "Prefill: 400 error on Claude 4.6 and later" }
+      - { id: CHECK, label: "Check the output, refine the prompt" }
+    edges:
+      - { from: NEED, to: INST, label: "the task itself" }
+      - { from: NEED, to: ROLE, label: "behaviour and tone" }
+      - { from: NEED, to: EX, label: "format and structure" }
+      - { from: NEED, to: SO, label: "JSON that must match a schema" }
+      - { from: NEED, to: PRE, label: "legacy format trick" }
+      - { from: PRE, to: SO, label: "migrate: forced format/JSON" }
+      - { from: PRE, to: INST, label: "migrate: preambles, other uses" }
+      - { from: INST, to: CHECK }
+      - { from: ROLE, to: CHECK }
+      - { from: EX, to: CHECK }
+      - { from: SO, to: CHECK }
+      - { from: CHECK, to: NEED, label: "iterate" }
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+      - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency

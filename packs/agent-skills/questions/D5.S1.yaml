@@ -1,0 +1,158 @@
+skill: D5.S1
+questions:
+  - id: agent-skills.D5.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You wrote a skill that walks Claude through your team's release checklist. You want everyone who clones the repository to get it too. Where do you save it?"
+    select: 1
+    options:
+      - id: A
+        text: "In ~/.claude/skills/ on your own machine, so it is available in every project you open."
+        correct: false
+        rationale: "A personal skill loads in all your projects on this machine. It lives in your home directory, so teammates who clone the repository don't get it."
+      - id: B
+        text: "In ~/.claude/skills/synced/, the folder Claude Code shares with other people."
+        correct: false
+        rationale: "The name `synced` is reserved: Claude Code uses that folder for skills downloaded from claude.ai and skips a skill you author under that name."
+      - id: C
+        text: "In a separate folder you pass with --add-dir each time you start a session."
+        correct: false
+        rationale: "A skill in a directory passed with `--add-dir` loads for that session only. It is not part of the repository your teammates clone."
+      - id: D
+        text: "In .claude/skills/ inside the repository, committed to version control with the code."
+        correct: true
+        rationale: "Project skills live in `.claude/skills/<skill-name>/SKILL.md` and load in sessions in that repository. The page's sharing advice for project skills is to commit `.claude/skills/` to version control."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D5.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You install a plugin named my-plugin. It contains a skill folder called review. How do you run that skill yourself?"
+    select: 1
+    options:
+      - id: A
+        text: "Type /review; the plugin's skill takes over any other skill that has the same name."
+        correct: false
+        rationale: "Plugin skills don't take over other skills. When a plugin skill and a skill in another location share a name, both load, because plugin skills are namespaced."
+      - id: B
+        text: "You can't; skills that come from a plugin are loaded by Claude and never typed."
+        correct: false
+        rationale: "Plugin skills are invocable like any other skill: the skills table lists a plugin skill as loading wherever the plugin is enabled, as `/plugin-name:skill-name`."
+      - id: C
+        text: "Type /my-plugin:review, the plugin's name and the skill's name joined by a colon."
+        correct: true
+        rationale: "A skill in a plugin's `skills/` subdirectory is namespaced by the plugin: `my-plugin/skills/review/SKILL.md` becomes `/my-plugin:review`."
+      - id: D
+        text: "Copy the folder into .claude/skills/ first; a plugin only delivers files to disk."
+        correct: false
+        rationale: "No copy is needed. A plugin skill loads wherever the plugin is enabled, under the plugin's namespace."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D5.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "The repository commits a deploy skill in .claude/skills/deploy/. One teammate's /deploy behaves differently from everyone else's. You find an old deploy skill in their ~/.claude/skills/. What is going on?"
+    select: 1
+    options:
+      - id: A
+        text: "The project copy wins, so their copy is ignored and something else in their setup is to blame."
+        correct: false
+        rationale: "The order is the other way round: with `deploy` in both `~/.claude/skills/` and the project's `.claude/skills/`, `/deploy` runs the personal one."
+      - id: B
+        text: "Personal skills take precedence over project skills, so /deploy runs their personal copy."
+        correct: true
+        rationale: "When two of enterprise, personal and project share a name, enterprise wins over personal, and personal over project. Their older personal skill shadows the committed one."
+      - id: C
+        text: "Both skills run one after another, and the personal copy adds steps the project lacks."
+        correct: false
+        rationale: "Only one skill runs for the name. The page's name-clash table picks a single winner among enterprise, personal and project."
+      - id: D
+        text: "Claude Code picks whichever of the two files was edited most recently on that machine."
+        correct: false
+        rationale: "Edit time doesn't decide it. Where each skill came from decides which one `/name` runs."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D5.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A platform team wants the same code-review skill in all of the company's repositories, shipped together with a hook and an MCP server, with versioned releases. Which approach fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Package the skill, hook and MCP server as one plugin and install it from a marketplace."
+        correct: true
+        rationale: "A plugin packages several skills, subagents, hooks or MCP servers as one unit. Making one lets you give your setup to teammates, install it in many projects and publish versioned releases."
+      - id: B
+        text: "Copy the skill folder into each repository's .claude/skills/ and keep the copies in sync."
+        correct: false
+        rationale: "Skills work on their own without a plugin, but the page recommends plugins for packaging several components as one unit. Hand-copied folders give no single install or versioned release."
+      - id: C
+        text: "Have each engineer save the skill in their own ~/.claude/skills/ folder by hand."
+        correct: false
+        rationale: "A skill in `~/.claude/skills/` is available in every project on that one machine, but it doesn't bundle the hook and MCP server or give updates from a marketplace."
+      - id: D
+        text: "Have every engineer load the plugin folder with --plugin-dir at the start of each session."
+        correct: false
+        rationale: "Loading from a folder with `--plugin-dir` is how you develop a plugin without a marketplace, not how a team installs it and receives updates."
+    source:
+      title: "Plugins overview"
+      url: "https://code.claude.com/docs/en/plugins"
+  - id: agent-skills.D5.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A colleague found a public skill that formats changelogs. Its SKILL.md reads cleanly. The folder also holds two scripts, and one step fetches a template from an external URL. What audit does the Agent Skills overview call for before anyone uses it?"
+    select: 1
+    options:
+      - id: A
+        text: "Read SKILL.md closely; scripts run only when it tells them to, so a clean SKILL.md is enough."
+        correct: false
+        rationale: "The overview's first rule is to use skills only from trusted sources: those you created yourself or obtained from Anthropic. If you must use one from an untrusted or unknown source, exercise extreme caution and audit all bundled files, scripts included, before use. A malicious skill can direct Claude to call tools or run code in ways that don't match its stated purpose."
+      - id: B
+        text: "Audit it once and pin that copy; a skill that passed an audit stays trustworthy from then on."
+        correct: false
+        rationale: "Even trustworthy skills can be compromised if their external dependencies change over time, and fetched content might contain malicious instructions."
+      - id: C
+        text: "Review every bundled file for calls or file access that don't match its stated purpose."
+        correct: true
+        rationale: "The overview's audit covers `SKILL.md`, scripts, images and other resources, looking for unexpected network calls, file access patterns or operations that don't match the purpose. It flags external URLs as a particular risk."
+      - id: D
+        text: "Upload it through the Skills API first, so that content scanning checks it for you."
+        correct: false
+        rationale: "Claude Enterprise organizations can turn on skill content scanning for custom skills uploaded in claude.ai and Claude Cowork; it is something an organization turns on, and it doesn't cover skills uploaded through the Skills API or the Claude Console."
+    source:
+      title: "Agent Skills overview"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"
+  - id: agent-skills.D5.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your organization deploys a deploy skill through managed settings. A repository also commits its own .claude/skills/deploy/, and an enabled plugin named ops ships a deploy skill too. A developer in that repository types /deploy. What happens?"
+    select: 1
+    options:
+      - id: A
+        text: "The enterprise skill runs; the plugin's copy still loads and is reached as /ops:deploy."
+        correct: true
+        rationale: "Among enterprise, personal and project, enterprise wins. A plugin skill and a skill at those locations both load, because plugin skills are namespaced as `/plugin-name:skill-name`."
+      - id: B
+        text: "The repository's skill runs, since the project location is closest to the code being deployed."
+        correct: false
+        rationale: "Closeness to the code isn't the rule. Enterprise wins over personal, and personal over project, so the committed skill is shadowed here."
+      - id: C
+        text: "The plugin's skill runs, because plugins are loaded last and override the other locations."
+        correct: false
+        rationale: "Plugin skills don't override anything: they load alongside other skills under their own namespace."
+      - id: D
+        text: "None of them load until two are renamed, since Claude Code rejects clashing skill names."
+        correct: false
+        rationale: "Clashes are resolved, not rejected: the page's table names which skill runs for each kind of clash."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"

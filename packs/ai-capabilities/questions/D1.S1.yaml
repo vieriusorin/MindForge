@@ -1,0 +1,158 @@
+skill: D1.S1
+questions:
+  - id: ai-capabilities.D1.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A teammate says Claude \"looks up\" its answers in a database of facts. Which description of a large language model (LLM) is accurate?"
+    select: 1
+    options:
+      - id: A
+        text: "A search engine over its training documents that returns the stored passage closest to your question."
+        correct: false
+        rationale: "An LLM generates text; it does not return stored passages. Retrieval is a separate technique (RAG) that passes documents into the context window."
+      - id: B
+        text: "A model with many parameters, trained on vast amounts of text, that generates human-like text."
+        correct: true
+        rationale: "The glossary defines LLMs as models with many parameters, trained on vast amounts of text data, that can generate human-like text, answer questions and summarize."
+      - id: C
+        text: "A rules engine whose answers were written by hand, one rule for each kind of question it supports."
+        correct: false
+        rationale: "LLMs learn from training data rather than hand-written rules; Claude is based on an LLM that was fine-tuned and trained using RLHF."
+      - id: D
+        text: "A classifier that can sort text into the labels it saw during training but cannot write new text."
+        correct: false
+        rationale: "LLMs generate human-like text, answer questions and summarize information; writing new text is their core ability."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"
+  - id: ai-capabilities.D1.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your app sends Claude the text of a bug report. Before the model can process it, what happens to that text?"
+    select: 1
+    options:
+      - id: A
+        text: "It is split on spaces into whole words, with exactly one token for each word in the report."
+        correct: false
+        rationale: "Tokens can be words, subwords, characters or even bytes, so a token need not be a whole word."
+      - id: B
+        text: "It is added to the model's training data, so later requests can use the bug report too."
+        correct: false
+        rationale: "Sending a prompt does not train the model: the glossary separates the context window (working memory) from the training corpus, and the API does not currently offer fine-tuning."
+      - id: C
+        text: "It is converted at a fixed rate of one token per 3.5 characters, the same for every model and language."
+        correct: false
+        rationale: "The characters per token depend on the model and the language; newer models use a tokenizer that produces about 30 percent more tokens for the same text."
+      - id: D
+        text: "It is encoded into a series of tokens, which can be words, subwords, characters or bytes."
+        correct: true
+        rationale: "When Claude is given text, it is encoded into a series of tokens for the model to process; tokens can be words, subwords, characters or bytes."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"
+  - id: ai-capabilities.D1.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You paste your team's internal API spec, which was never published, into the prompt. Claude then answers questions about it correctly. Where did that knowledge come from?"
+    select: 1
+    options:
+      - id: A
+        text: "The context window: the text the model can look back on while it generates this response."
+        correct: true
+        rationale: "The context window is the text a model can reference when generating, a working memory distinct from the corpus it was trained on. The spec you pasted is in it."
+      - id: B
+        text: "Its training corpus: the spec must have leaked into the data the model was pretrained on."
+        correct: false
+        rationale: "The spec is unpublished, and you supplied it in the prompt. The glossary distinguishes the context window from the training corpus."
+      - id: C
+        text: "Fine-tuning that the API runs on each prompt, so the model learns your spec before it answers."
+        correct: false
+        rationale: "Fine-tuning is further training on additional data, and the Claude API does not currently offer it. A prompt is read, not trained on."
+      - id: D
+        text: "RAG: the model searched for your spec in an external knowledge base before it answered."
+        correct: false
+        rationale: "In RAG, data is retrieved and passed into the context window; here you pasted the spec yourself, so nothing was retrieved."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"
+  - id: ai-capabilities.D1.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A test asserts that Claude returns the exact same summary on every run, with temperature set to 0. The test is flaky. What is the most accurate explanation?"
+    select: 1
+    options:
+      - id: A
+        text: "Temperature 0 is ignored by the API unless the request also sets a separate seed parameter."
+        correct: false
+        rationale: "Temperature is not ignored: lower temperatures give more conservative, deterministic outputs. The glossary mentions no seed, and says results are still not fully deterministic at temperature 0."
+      - id: B
+        text: "Temperature 0 only applies to the first token; later tokens are sampled at the default temperature."
+        correct: false
+        rationale: "The glossary describes temperature as controlling the randomness of predictions during text generation, not the choice of one token."
+      - id: C
+        text: "Even at temperature 0, output is not fully deterministic: one input can give different outputs."
+        correct: true
+        rationale: "The glossary says that even with temperature 0, results will not be fully deterministic and identical inputs might produce different outputs across API calls. Assert on properties, not exact text."
+      - id: D
+        text: "Temperature 0 makes the model pick a random token at each step, so variation is the intended behaviour."
+        correct: false
+        rationale: "The reverse: lower temperatures give more conservative, deterministic outputs. The variation comes from non-determinism that remains even at temperature 0."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"
+  - id: ai-capabilities.D1.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You add RAG to a support bot: relevant docs are retrieved at runtime and passed into the context window. Answers are now good, except for one product line, where they are still wrong. Where should you look first?"
+    select: 1
+    options:
+      - id: A
+        text: "At training: RAG retrains the model on the docs, and that product line has not finished training yet."
+        correct: false
+        rationale: "RAG does not train the model. Data is retrieved at runtime and passed into the context window along with the query."
+      - id: B
+        text: "At conversation length: RAG can ground the first question in a chat but not the follow-up questions."
+        correct: false
+        rationale: "Retrieval happens when a query is sent to the model, so every query can be grounded; nothing limits it to the first question."
+      - id: C
+        text: "At the model: it disregards retrieved text and answers that product line from memorized data instead."
+        correct: false
+        rationale: "The model uses the retrieved information to guide its output; RAG reduces reliance on memorization rather than being ignored by the model."
+      - id: D
+        text: "At the knowledge base and retrieval: what they return for that product line may be poor or off-topic."
+        correct: true
+        rationale: "The glossary says the effectiveness of RAG depends on the quality and relevance of the external knowledge base and the knowledge retrieved at runtime."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"
+  - id: ai-capabilities.D1.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You move a pipeline from an earlier Claude model to Claude 4.7 and keep the same per-request character budget. Prompts that fitted before now run into token limits. Why?"
+    select: 1
+    options:
+      - id: A
+        text: "Claude 4.7 uses a newer tokenizer that produces about 30 percent more tokens for the same text."
+        correct: true
+        rationale: "Claude 4.7 and later models use a newer tokenizer that produces approximately 30 percent more tokens for the same text. Budget in tokens, counted with the model you plan to use."
+      - id: B
+        text: "Claude 4.7 packs about 3.5 English characters into each token, so the same prompts need fewer tokens."
+        correct: false
+        rationale: "About 3.5 characters per token describes earlier models. Claude 4.7's tokenizer produces about 30 percent more tokens for the same text, not fewer."
+      - id: C
+        text: "Claude 4.7 counts every whole word as one token, so long words now take up more room in the prompt."
+        correct: false
+        rationale: "Tokens can be words, subwords, characters or bytes; there is no rule of one token per whole word."
+      - id: D
+        text: "Characters per token are fixed across models, so the new limit must come from higher latency instead."
+        correct: false
+        rationale: "Characters per token depend on the model and the language. Latency is response time, not a limit on prompt size."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"

@@ -1,0 +1,32 @@
+skill: D5.S2
+cards:
+  - id: platform-foundations.D5.S2.card-rain-barrel
+    concept: Usage limits and rate limits
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      In claude.ai, usage limits cap how much you can use Claude over time, and claude.ai, Claude
+      Code and Claude Desktop all count towards the same limit. Long chats, big files,
+      tools, the model and the effort level change how fast you use it. Plan long work: group related
+      questions in one message, give background up front, keep reused documents in a project,
+      and check Settings > Usage. On the API the counterpart is rate limits (requests and tokens
+      per minute) and a monthly spend cap on the Start, Build and Scale tiers.
+    inNature: >-
+      A gardener watering from a rain barrel. Open the tap wide on whichever bed is nearest and the barrel
+      runs dry halfway through the garden; plan which beds need water most, water them in one
+      round, and keep the mulch down so the soil holds what it gets, and the same barrel covers
+      the whole plot.
+    whereItBreaks:
+      - "Rain comes when it likes; claude.ai paid plans have a session limit that resets every five hours and weekly limits that reset at a fixed time assigned to your account."
+      - "A barrel refills in storms; the API uses the token bucket algorithm, so capacity is continuously replenished up to your maximum rather than reset at fixed intervals."
+      - "Water from the barrel counts the same however often you reuse the bed; in claude.ai cached project content counts less against your limits, and on the API cache reads do not count toward ITPM for most models."
+    contrast: >-
+      D5.S1 (context budget) is about how much one conversation can hold; this skill is about how
+      much you can use across conversations over time. D4.S1 (model tiers) sets how fast each
+      request draws the limit down.
+    diagram: platform-foundations.D5.S2.diagram-hit-a-limit
+    sources:
+      - https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work
+      - https://support.claude.com/en/articles/9797557-usage-limit-best-practices
+      - https://platform.claude.com/docs/en/api/rate-limits

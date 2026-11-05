@@ -1,7 +1,7 @@
 ---
 verdict: approve
-reviewed_hash: beb27b0debf3e60d19f670fa16a372f61c8d1a3cd5c9fddff36b05ab100aacdc
-reviewed_at: 2026-11-04T16:27:00+02:00
+reviewed_hash: e6c0213705b4c8cc175911ad4ae41e3b84aaa523f309805361ef6d7e4dd93768
+reviewed_at: 2026-11-04T16:33:00+02:00
 ---
 Hash = `git diff HEAD -- <the 6 MF-0034 paths> | shasum -a 256`, with the 3 untracked files marked `git add -N`
 (undone afterwards). Paths: `src/dev-seed/{resolve-seed-packs,plan-demo-world,seed-demo-world}.ts`,
@@ -123,3 +123,59 @@ diff is as approved above.
   insert constraints) still leave group-less demo users. That behaviour dates from MF-0029, and a re-run recovers.
 - [note] `scripts/dev-seed.ts:61`: `--seed ""` is `Number("") === 0`, so it is accepted silently as seed 0. That is
   harmless (it's an integer, and nothing is written outside the demo world), and recorded only.
+
+## Delta review 2
+
+**Verdict: approve** (0 blocking, 2 notes). Rebound from `beb27b0d…acdc` to
+`e6c0213705b4c8cc175911ad4ae41e3b84aaa523f309805361ef6d7e4dd93768`, which is `git diff HEAD -- <the 7 paths> | shasum -a 256`.
+Nothing is untracked any more, so `add -N` was not needed. HEAD is now `da583a0`, which already contains the work approved
+above, so this hash covers only the 3-file delta (`seed-demo-world.ts`, `mf-0034-regressions.db.test.ts`, `scripts/dev-seed.ts`).
+Only that delta was re-read.
+
+### What was checked
+
+- **Domain check moved, nothing else did.** The diff in `seed-demo-world.ts` has two hunks. The first adds the learner loop
+  at `:133-140`, just before `assertWorldSeedable(sql, …)` (`:141`) and step (a) (`:143`). The second removes the same
+  check from step (d) (`:164-171`). The comment wording changed. No other line moved.
+  - The condition is the same as before. Every learner except `persona === "you"` is checked against `suffix`. The
+    lower-cased email is used and the message is the same. `you` still goes through the existing `you.endsWith(suffix)`
+    refusal (`:130`).
+  - `learners` is `sharedLearners(worlds)`, the same list that (d) iterates. So no learner that (d) creates bypasses
+    the check.
+  - The delete in (a) still filters on `suffix`. The only `createConfirmedUser` calls are (c), for your own non-demo
+    email, and (d), for learners that are now proven to be on the demo domain. No non-demo email can be created or
+    deleted. A refusal now happens before any delete or create, not partway through (d).
+- **Regression cases can't pass vacuously.**
+  - Every case passes `previous: first`. YOU already exists, so (c) reuses `youId === first.youId` and (b) would
+    delete `first.youAttemptIds`. If any refusal moved below (a), the demo user ids would change. If it moved below
+    (b), `yourSeededAnswers` would drop. Either way the `toEqual(before)` check at `:87` would fail.
+  - `before.groups === 1` and `before.yourSeededAnswers === first.youAttemptIds.length` are asserted first. A
+    scratch probe of the same plan gives 88 of your attempts, 1 `flag` review and a `steady` learner, so every
+    fixture lookup is non-empty. The test itself doesn't assert `first.youAttemptIds.length > 0` (see the first note).
+  - Each `rejects.toThrow` regex matches only its own message in `assertWorldSeedable` or the domain loop, so a
+    different refusal can't satisfy another case.
+  - The self-review case sets the reviewer to the registry's `author_email`, which is lower-cased in the query and
+    in the comparison. The rejected case inserts `action = 'reject'` for the registry's current hash, which
+    `private.item_state` checks first.
+- **Cleanup.** `afterAll` deletes `flag_resolutions` by the run-scoped comment before it deletes YOU. Because
+  `resolved_by` is `on delete set null`, the order doesn't matter anyway. It also runs when a case fails after the
+  insert. After the run there were 0 rows with `comment like 'mf0034r %'` and 0 `auth.users` matching `mf0034r`.
+- **Order.** Vitest runs the cases in file order, and only the last case writes anything (the reject row). The
+  earlier cases leave state untouched when the code is correct. If one of them deleted something, the next case's
+  `before` assertions would fail loudly, so a failure can't be hidden. Even if the reject row came earlier, the
+  unregistered check, the domain check and the stale check (on `reviews[0]`) fire before the rejected check is reached.
+  Only the self-review case would depend on whether the flagged review sorts after `reviews[0]`.
+- **CLI.** `scripts/dev-seed.ts:62` refuses an empty or whitespace-only `--seed` before `Number.isInteger`. This is
+  still in `parseArgs`, before any DB call.
+- **Gates.** `pnpm vitest --project db src/dev-seed`: 4 files, 13 tests green. Unit: 6 files, 18 tests. Typecheck green.
+  Biome is clean on `src/dev-seed` and `scripts/dev-seed.ts`. Both frozen sha256 still match FROZEN.json.
+
+### Findings
+
+- [note] `src/dev-seed/__tests__/mf-0034-regressions.db.test.ts:76`: the "your answers survive" half asserts
+  `before.yourSeededAnswers === first.youAttemptIds.length` and never asserts that the length is above 0. If a future
+  planner change gave you no attempts, that half would pass vacuously while the user-id half still guarded the
+  deletes. Today the length is 88.
+- [note] Hash scope: because the earlier MF-0034 work is now in `HEAD` (`da583a0`), `git diff HEAD` over the 7 paths
+  covers only this delta. A future rebind has to use the same base, or diff against the pre-ticket base, for the
+  hashes to be comparable.

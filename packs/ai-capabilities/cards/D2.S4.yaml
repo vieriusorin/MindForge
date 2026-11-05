@@ -1,0 +1,30 @@
+skill: D2.S4
+cards:
+  - id: ai-capabilities.D2.S4.card-steering
+    concept: Steering with prompts
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Steerability is how far you can shape the model's behaviour with what you write: clear and
+      specific instructions, the reason behind them, a role in the system prompt, a few diverse
+      examples, and XML tags that separate instructions from data. "Summarize this incident" gives
+      summaries of every length; "Summarize this incident for the on-call channel as short bullets
+      (impact, cause, next step), because people read it on a phone" gives far more consistent ones.
+    inNature: >-
+      A shepherd working a sheepdog with whistles. Clear, distinct signals move the flock exactly
+      where the shepherd wants. A vague or mixed signal gets a dog that guesses, and a guessing dog
+      scatters the sheep.
+    whereItBreaks:
+      - "A working sheepdog has been trained with its own shepherd for months. Claude is more like a brilliant but new employee who lacks context on your norms and workflows, so you supply that context."
+      - "Shouting helps with a distant dog. With Claude, explaining why ('read aloud by a text-to-speech engine') works better than an emphatic NEVER."
+      - "A well-trained dog obeys the same whistle the same way each time. Prompts make output more consistent, but guaranteed schema compliance for JSON comes from structured outputs, not from wording."
+    contrast: >-
+      Steering shapes behaviour within a request, through the prompt. Fine-tuning is further
+      training of a pretrained model on additional data, which changes the model itself; the Claude
+      API does not currently offer it.
+    diagram: ai-capabilities.D2.S4.diagram-steering-levers
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+      - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency
+      - https://platform.claude.com/docs/en/about-claude/glossary

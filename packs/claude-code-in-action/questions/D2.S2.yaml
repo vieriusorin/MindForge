@@ -1,0 +1,158 @@
+skill: D2.S2
+questions:
+  - id: claude-code-in-action.D2.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A layout bug is easier to show than to describe. How can you give Claude Code a screenshot of it?"
+    select: 1
+    options:
+      - id: A
+        text: "Drag it into the window, paste it with Ctrl+V (Alt+V on Windows and WSL), or give its file path."
+        correct: true
+        rationale: "The docs list three ways to add an image: drag and drop it into the Claude Code window, paste it with Ctrl+V (Alt+V on Windows and WSL), or give Claude the image path."
+      - id: B
+        text: "You can't: Claude Code reads text only, so describe the layout bug in words instead."
+        correct: false
+        rationale: "Claude can analyze images, including screenshots of errors, UI designs, mockups and diagrams."
+      - id: C
+        text: "Upload it to an image host first; Claude Code accepts images only as public web URLs."
+        correct: false
+        rationale: "Images can come straight from the clipboard, a drag and drop, or a local file path."
+      - id: D
+        text: "Convert it to base64 and paste the text, since the prompt accepts characters, not files."
+        correct: false
+        rationale: "No conversion is needed: you can paste an image straight into the CLI with Ctrl+V, and Claude refers to it as [Image #1]."
+    source:
+      title: "Common workflows"
+      url: "https://code.claude.com/docs/en/common-workflows"
+  - id: claude-code-in-action.D2.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You want to review Claude's approach to a change before anything touches disk. What does plan mode do?"
+    select: 1
+    options:
+      - id: A
+        text: "It writes the change on a new git branch, which you then review and merge yourself."
+        correct: false
+        rationale: "Plan mode makes no edits at all until you approve; it doesn't write changes to a branch."
+      - id: B
+        text: "It edits the files but holds every shell command until you approve the full plan."
+        correct: false
+        rationale: "In plan mode Claude reads files and proposes a plan, and makes no edits until you approve, so nothing is edited ahead of the plan."
+      - id: C
+        text: "Claude reads files and proposes a plan, and makes no edits until you approve it."
+        correct: true
+        rationale: "The docs say that in plan mode Claude reads files and proposes a plan but makes no edits until you approve. The status bar shows plan mode on while it is active."
+      - id: D
+        text: "It turns on extended thinking, then applies the edits it planned without asking you."
+        correct: false
+        rationale: "Plan mode is a permission mode about editing, not a thinking switch, and it waits for your approval."
+    source:
+      title: "Common workflows"
+      url: "https://code.claude.com/docs/en/common-workflows"
+  - id: claude-code-in-action.D2.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You're about to start a risky refactor and want the session to begin in plan mode from the first prompt. Which command does that?"
+    select: 1
+    options:
+      - id: A
+        text: "claude -p \"plan the refactor\", which plans inside the session and then waits for you"
+        correct: false
+        rationale: "claude -p runs Claude non-interactively, for scripts and CI: it answers and exits rather than opening a session that waits for approval."
+      - id: B
+        text: "claude --permission-mode plan, which starts the session in plan mode"
+        correct: true
+        rationale: "The docs give claude --permission-mode plan to start in plan mode. Mid-session you can instead press Shift+Tab until the status bar shows plan mode on."
+      - id: C
+        text: "claude --worktree plan, which opens a read-only copy of the repo to plan in"
+        correct: false
+        rationale: "--worktree starts an isolated parallel session in a git worktree with that name; it does not set a planning mode."
+      - id: D
+        text: "Start normally and ask \"use a subagent to plan it\", which keeps the session from editing"
+        correct: false
+        rationale: "A subagent reads files in its own context window and reports a summary; it doesn't put your session into plan mode."
+    source:
+      title: "Common workflows"
+      url: "https://code.claude.com/docs/en/common-workflows"
+  - id: claude-code-in-action.D2.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "On Opus 5.5 you press Option+T to turn on extended thinking for a hard bug, but nothing seems to change. Why?"
+    select: 1
+    options:
+      - id: A
+        text: "Option+T only works after you configure Option as Meta in your macOS terminal."
+        correct: false
+        rationale: "The shortcut table says Option+T works on macOS without configuring Option as Meta."
+      - id: B
+        text: "Extended thinking is available only in plan mode, so switch modes with Shift+Tab first."
+        correct: false
+        rationale: "The thinking toggle is a general control in interactive mode, not tied to a permission mode."
+      - id: C
+        text: "The shortcut toggles fast mode, not thinking; extended thinking is set in settings only."
+        correct: false
+        rationale: "Option+O toggles fast mode. Option+T is the extended thinking toggle."
+      - id: D
+        text: "The toggle has no effect on Opus 5.5, which always uses extended thinking."
+        correct: true
+        rationale: "The interactive mode reference says the toggle has no effect on Opus 5.5, Sonnet 5.5, Haiku 5.5 or the Fable models, which always use extended thinking."
+    source:
+      title: "Interactive mode"
+      url: "https://code.claude.com/docs/en/interactive-mode"
+  - id: claude-code-in-action.D2.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your settings allow Bash(aws s3 ls) and deny Bash(aws *). Claude tries to run aws s3 ls. What happens?"
+    select: 1
+    options:
+      - id: A
+        text: "It runs: the narrower allow rule is more specific, so it wins over the broad deny."
+        correct: false
+        rationale: "Rule specificity doesn't change the order. An allow rule can't carve an exception out of a deny rule."
+      - id: B
+        text: "Claude Code asks you, because an allow and a deny that both match count as a conflict."
+        correct: false
+        rationale: "There is no conflict prompt: the first match in the order deny, ask, allow decides."
+      - id: C
+        text: "It's blocked: rules are checked deny, then ask, then allow, and the first match decides."
+        correct: true
+        rationale: "Rules are evaluated in order: deny, then ask, then allow. The docs use this exact case: a broad deny like Bash(aws *) blocks every matching call, including one that also matches Bash(aws s3 ls)."
+      - id: D
+        text: "It runs, but only in plan mode, where read-only commands bypass the deny rules."
+        correct: false
+        rationale: "Plan mode limits Claude to exploring; it doesn't lift a deny rule."
+    source:
+      title: "Configure permissions"
+      url: "https://code.claude.com/docs/en/permissions"
+  - id: claude-code-in-action.D2.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A developer wants bypassPermissions so Claude stops prompting. Your security team wants it off on every laptop. What do the docs say?"
+    select: 1
+    options:
+      - id: A
+        text: "It's safe anywhere, because protected paths such as .git still prompt in bypassPermissions."
+        correct: false
+        rationale: "The warning says bypassPermissions skips prompts including for writes to protected paths such as .git and .claude."
+      - id: B
+        text: "Containers or VMs only; set permissions.disableBypassPermissionsMode in managed settings."
+        correct: true
+        rationale: "The docs say to use bypassPermissions only in isolated environments like containers or VMs, and to prevent it by setting permissions.disableBypassPermissionsMode to disable, which is most useful in managed settings that can't be overridden."
+      - id: C
+        text: "Set defaultMode to plan in managed settings; that removes bypassPermissions from the cycle."
+        correct: false
+        rationale: "defaultMode sets the mode sessions start in; disabling bypassPermissions is a separate setting."
+      - id: D
+        text: "Write \"never use bypassPermissions\" in the org CLAUDE.md, which Claude Code enforces."
+        correct: false
+        rationale: "Permission rules are enforced by Claude Code, not by the model; instructions in CLAUDE.md shape what Claude tries to do but don't change what Claude Code allows."
+    source:
+      title: "Configure permissions"
+      url: "https://code.claude.com/docs/en/permissions"

@@ -1,0 +1,26 @@
+skill: D2.S1
+cards:
+  - id: claude-code-in-action.D2.S1.card-claude-md
+    concept: CLAUDE.md as the project's memory
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Every session starts with a fresh context window, so Claude would re-learn your project each
+      time. CLAUDE.md is the file where you write down what you'd otherwise re-explain: build
+      commands, conventions, layout. Run /init to generate a starting one. Put team rules in
+      ./CLAUDE.md, personal ones for this project in ./CLAUDE.local.md, and ones for all your
+      projects in ~/.claude/CLAUDE.md. Pull in other files with @README-style imports.
+    inNature: >-
+      Ant pheromone trails. Ants that found food mark the route, and a newcomer leaving the nest
+      follows the marks instead of searching from scratch.
+    whereItBreaks:
+      - "A trail fades unless ants keep walking it. CLAUDE.md stays until you edit it, and the project-root file is re-read from disk after /compact."
+      - "Ants follow a trail by instinct. Claude treats CLAUDE.md as context, not enforced configuration; to block an action regardless of what Claude decides, use a PreToolUse hook."
+      - "One colony shares one set of trails. CLAUDE.md has scopes (managed policy, user, project, local) and every discovered file is concatenated into context rather than overriding the others."
+    contrast: >-
+      Auto memory is written by Claude from your corrections and preferences. CLAUDE.md is written
+      by you and holds instructions and rules; the project CLAUDE.md is the one you share with the team.
+    diagram: claude-code-in-action.D2.S1.diagram-claude-md-loading
+    sources:
+      - https://code.claude.com/docs/en/memory

@@ -1,0 +1,51 @@
+skill: D2.S4
+diagrams:
+  - id: claude-code-in-action.D2.S4.diagram-prompt-to-skill
+    title: "From a prompt you keep pasting to a skill"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: REPEAT, label: "You keep pasting the same procedure into chat" }
+      - { id: FILE, label: "Write <name>/SKILL.md (an older .claude/commands/<name>.md still works)" }
+      - { id: WHERE, label: "Who should load it?", shape: decision }
+      - { id: ENTERPRISE, label: "Enterprise: managed settings directory, all users" }
+      - { id: PERSONAL, label: "Personal: ~/.claude/skills, all your projects" }
+      - { id: PROJECT, label: "Project: .claude/skills, commit it for the team" }
+      - { id: NESTED, label: "Nested: <subdir>/.claude/skills, sessions in or below it" }
+      - { id: ADDDIR, label: "Additional directory: passed with --add-dir, that session" }
+      - { id: PLUGIN, label: "Plugin: <plugin>/skills, as /plugin-name:skill-name" }
+      - { id: ACCOUNT, label: "claude.ai account: synced skills" }
+      - { id: WHO, label: "Who may invoke it?", shape: decision }
+      - { id: DEFAULT, label: "Default: you or Claude; description always in context" }
+      - { id: MANUAL, label: "disable-model-invocation: true: only you, by /name" }
+      - { id: BACKGROUND, label: "user-invocable: false: only Claude, background knowledge" }
+      - { id: INVOKE, label: "Invoked: $ARGUMENTS, $0, $1 … filled in" }
+      - { id: LOADED, label: "Body enters the conversation and stays across turns" }
+    edges:
+      - { from: REPEAT, to: FILE }
+      - { from: FILE, to: WHERE }
+      - { from: WHERE, to: ENTERPRISE, label: "the organisation" }
+      - { from: WHERE, to: PERSONAL, label: "just you" }
+      - { from: WHERE, to: PROJECT, label: "this repository" }
+      - { from: WHERE, to: NESTED, label: "one package of a monorepo" }
+      - { from: WHERE, to: ADDDIR, label: "a directory outside the project" }
+      - { from: WHERE, to: PLUGIN, label: "anyone who installs the plugin" }
+      - { from: WHERE, to: ACCOUNT, label: "your claude.ai account" }
+      - { from: ENTERPRISE, to: WHO }
+      - { from: PERSONAL, to: WHO }
+      - { from: PROJECT, to: WHO }
+      - { from: NESTED, to: WHO }
+      - { from: ADDDIR, to: WHO }
+      - { from: PLUGIN, to: WHO }
+      - { from: ACCOUNT, to: WHO }
+      - { from: WHO, to: DEFAULT, label: "no side effects" }
+      - { from: WHO, to: MANUAL, label: "side effects or timing matter" }
+      - { from: WHO, to: BACKGROUND, label: "not a meaningful command" }
+      - { from: DEFAULT, to: INVOKE }
+      - { from: MANUAL, to: INVOKE }
+      - { from: BACKGROUND, to: INVOKE }
+      - { from: INVOKE, to: LOADED }
+    sources:
+      - https://code.claude.com/docs/en/skills

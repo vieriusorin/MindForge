@@ -1,0 +1,35 @@
+skill: D1.S2
+diagrams:
+  - id: subagents.D1.S2.diagram-who-gets-the-task
+    title: "Who gets the task"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: SESS, label: "Session started with --agent or the agent setting: the main thread is that subagent" }
+      - { id: REQ, label: "Your request" }
+      - { id: EXP, label: "Did you name a subagent?", shape: decision }
+      - { id: AT, label: "@-mention: that subagent runs for this one task" }
+      - { id: AUTO, label: "Claude matches the task against each description and the current context" }
+      - { id: PLAN, label: "Plan mode research: Plan (read-only)" }
+      - { id: EXPL, label: "Search without changes: Explore (read-only)" }
+      - { id: GP, label: "Explore and modify, multi-step: general-purpose" }
+      - { id: CUST, label: "A custom subagent whose description fits" }
+      - { id: MAIN, label: "No good match: Claude works directly" }
+      - { id: FORK, label: "Side task needing the whole conversation: a fork (fork mode is on by default)" }
+      - { id: HELP, label: "Helper built-ins: claude-code-guide (Claude Code questions), statusline-setup (/statusline), claude (catch-all)" }
+    edges:
+      - { from: SESS, to: REQ, label: "applies to every request" }
+      - { from: REQ, to: EXP }
+      - { from: EXP, to: AT, label: "@-mention" }
+      - { from: EXP, to: AUTO, label: "no, or named in plain words: Claude decides" }
+      - { from: AUTO, to: PLAN }
+      - { from: AUTO, to: EXPL }
+      - { from: AUTO, to: GP }
+      - { from: AUTO, to: CUST }
+      - { from: AUTO, to: MAIN }
+      - { from: AUTO, to: FORK }
+      - { from: AUTO, to: HELP }
+    sources:
+      - https://code.claude.com/docs/en/sub-agents

@@ -1,0 +1,95 @@
+# Introduction to Subagents (MF-0040)
+# A course pack. The course is behind a login and is never a source (CONTEXT.md Source): only its outline (the four
+# lesson titles and the "you'll learn" topics) shaped this blueprint. Every skill is grounded in public pages only.
+# Weights are MindForge's; the course gives none. Design patterns weigh a little more (two of four course topics).
+# Items carry a `level`: foundation (junior), practitioner (mid), expert (senior: Agent SDK + multi-agent design).
+slug: subagents
+name: Introduction to Subagents
+kind: course
+version: 1
+domains:
+  - code: D1
+    name: What subagents are
+    weight: 24
+    skills:
+      - code: D1.S1
+        name: "Own context window, summary back"
+        weight: 12
+        description: A subagent works in its own context window with its own system prompt, tools and permissions, and returns only a summary, which keeps search results, logs and file contents out of the main conversation.
+        sources:
+          - https://code.claude.com/docs/en/sub-agents
+          - https://code.claude.com/docs/en/context-window
+          - https://www.anthropic.com/research/effective-context-engineering-for-ai-agents
+      - code: D1.S2
+        name: Built-in subagents and automatic delegation
+        weight: 12
+        description: The built-in subagents (Explore, Plan, general-purpose), how Claude picks a subagent from its description, explicit invocation, and foreground versus background runs.
+        sources:
+          - https://code.claude.com/docs/en/sub-agents
+          - https://code.claude.com/docs/en/agents
+          - https://code.claude.com/docs/en/agent-sdk/subagents
+
+  - code: D2
+    name: Creating a subagent
+    weight: 24
+    skills:
+      - code: D2.S1
+        name: "/agents, scopes and subagent files"
+        weight: 12
+        description: Creating a subagent by asking Claude or writing the file (today /agents only points there), where subagent files live (project, user, plugin) and which wins on a name clash, and the Markdown file with YAML frontmatter and a system prompt body.
+        sources:
+          - https://code.claude.com/docs/en/sub-agents
+          - https://code.claude.com/docs/en/agent-sdk/subagents
+      - code: D2.S2
+        name: "Model, effort, skills, memory and isolation"
+        weight: 12
+        description: Choosing a subagent's model and effort for cost and quality, preloading skills, persistent memory, and running in an isolated git worktree.
+        sources:
+          - https://code.claude.com/docs/en/sub-agents
+          - https://code.claude.com/docs/en/costs
+          - https://code.claude.com/docs/en/worktrees
+          - https://code.claude.com/docs/en/agent-sdk/subagents
+
+  - code: D3
+    name: Designing effective subagents
+    weight: 28
+    skills:
+      - code: D3.S1
+        name: "The brief and the return contract"
+        weight: 14
+        description: Giving a subagent an objective, an output format, guidance on tools and sources, and clear task boundaries, writing a description Claude can match, and making it finish and report what it could not do (turn limits, partial output).
+        sources:
+          - https://code.claude.com/docs/en/sub-agents
+          - https://www.anthropic.com/research/multi-agent-research-system
+          - https://www.anthropic.com/research/effective-context-engineering-for-ai-agents
+      - code: D3.S2
+        name: "Least-privilege tools, permission modes and hooks"
+        weight: 14
+        description: Limiting a subagent to the tools its job needs with tools and disallowedTools, permission modes, and hooks that enforce conditional rules a tool list cannot express.
+        sources:
+          - https://code.claude.com/docs/en/sub-agents
+          - https://code.claude.com/docs/en/permissions
+          - https://code.claude.com/docs/en/hooks
+          - https://code.claude.com/docs/en/agent-sdk/subagents
+
+  - code: D4
+    name: Using subagents effectively
+    weight: 24
+    skills:
+      - code: D4.S1
+        name: When delegation pays off
+        weight: 12
+        description: Isolating high-volume operations, running parallel research, chaining subagents, and weighing the token cost and latency of delegation against what it saves.
+        sources:
+          - https://code.claude.com/docs/en/sub-agents
+          - https://code.claude.com/docs/en/costs
+          - https://www.anthropic.com/research/multi-agent-research-system
+      - code: D4.S2
+        name: Anti-patterns and the alternatives
+        weight: 12
+        description: When the main conversation, a skill, a forked conversation or an agent team fits better than a subagent, and the common ways delegation goes wrong.
+        sources:
+          - https://code.claude.com/docs/en/sub-agents
+          - https://code.claude.com/docs/en/agent-teams
+          - https://code.claude.com/docs/en/skills
+          - https://www.anthropic.com/research/building-effective-agents

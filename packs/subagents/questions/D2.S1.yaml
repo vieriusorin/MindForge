@@ -1,0 +1,158 @@
+skill: D2.S1
+questions:
+  - id: subagents.D2.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You wrote a code-review subagent and want it available in every project on your machine, not only the current repository. Where do you save its file?"
+    select: 1
+    options:
+      - id: A
+        text: "In `~/.claude/agents/`, the user scope that covers all your projects."
+        correct: true
+        rationale: "User subagents in `~/.claude/agents/` are personal subagents available in all your projects."
+      - id: B
+        text: "In the repository's `.claude/agents/`, checked into version control."
+        correct: false
+        rationale: "`.claude/agents/` is the project scope: it covers the current project only. It suits subagents specific to one codebase that the team shares."
+      - id: C
+        text: "In the project's CLAUDE.md, under a heading named after the subagent."
+        correct: false
+        rationale: "CLAUDE.md is not a subagent location. The scope table lists managed settings, the `--agents` CLI flag, `.claude/agents/`, `~/.claude/agents/` and a plugin's `agents/` directory."
+      - id: D
+        text: "In a JSON object passed with the `--agents` flag when you launch Claude Code."
+        correct: false
+        rationale: "CLI-defined subagents exist only for that session and aren't saved to disk, so they are not available in your other projects."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D2.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A junior opens `.claude/agents/test-runner.md` for the first time. What is the structure of a subagent file?"
+    select: 1
+    options:
+      - id: A
+        text: "A JSON object with a `prompt` key and the subagent's settings beside it."
+        correct: false
+        rationale: "JSON with a `prompt` key is the format of the `--agents` CLI flag. Subagent files use YAML frontmatter followed by the system prompt in Markdown."
+      - id: B
+        text: "A Markdown file whose filename must equal the subagent's `name` field."
+        correct: false
+        rationale: "The `name` field is the identifier and the filename doesn't have to match it."
+      - id: C
+        text: "YAML frontmatter between `---` markers, then the system prompt in Markdown."
+        correct: true
+        rationale: "Subagent files use YAML frontmatter for configuration, followed by the system prompt in Markdown; the body becomes the system prompt that guides the subagent's behavior."
+      - id: D
+        text: "YAML frontmatter in which only `name` is required, then optional notes for humans."
+        correct: false
+        rationale: "Both `name` and `description` are required, and the body is not notes: it becomes the subagent's system prompt."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D2.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "The repository has `.claude/agents/code-reviewer.md` and you also have a personal `~/.claude/agents/code-reviewer.md`. Both declare `name: code-reviewer`. Which one runs when Claude delegates in this project?"
+    select: 1
+    options:
+      - id: A
+        text: "Your personal one, because user settings override the project's settings."
+        correct: false
+        rationale: "In the scope table `~/.claude/agents/` has priority 4 and `.claude/agents/` priority 3, so the user file loses this clash."
+      - id: B
+        text: "The project one, because `.claude/agents/` has higher priority than `~/.claude/agents/`."
+        correct: true
+        rationale: "When multiple subagents share the same name, Claude Code uses the one from the higher-priority location; the project scope (3) is above the user scope (4)."
+      - id: C
+        text: "Both load, and Claude picks between them by matching each one's description."
+        correct: false
+        rationale: "A name clash does not load two subagents: Claude Code uses the one from the higher-priority location."
+      - id: D
+        text: "Neither, because Claude Code refuses to start a session that has duplicate names."
+        correct: false
+        rationale: "The page documents a priority order for same-name subagents, not a refusal: the higher-priority location wins."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D2.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A teammate's subagent has the frontmatter `name: test-runner`, `description: Runs the test suite and reports failures`, `max_turns: 10`. It loads, but it keeps working well past 10 turns. Why?"
+    select: 1
+    options:
+      - id: A
+        text: "A turn limit applies only to subagents that run in the foreground."
+        correct: false
+        rationale: "The file never sets a turn limit at all: `max_turns` is not a field Claude Code recognizes, so it is ignored without an error, whichever way the subagent runs. The supported field is `maxTurns`."
+      - id: B
+        text: "Turn limits can be set with the `--agents` flag only, not in a subagent file."
+        correct: false
+        rationale: "`maxTurns` is a frontmatter field, and the `--agents` JSON accepts the same frontmatter fields."
+      - id: C
+        text: "The file must also list `tools:` before any limit field takes effect."
+        correct: false
+        rationale: "Only `name` and `description` are required; `tools` is optional and inherits every tool available to subagents if omitted."
+      - id: D
+        text: "The field is `maxTurns`; an unrecognized field is silently ignored."
+        correct: true
+        rationale: "Multi-word field names use camelCase, such as `maxTurns`, and must match exactly: Claude Code ignores a field it doesn't recognize without reporting an error."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D2.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your Agent SDK app defines `code-reviewer` in the `agents` option of `query()`. The repository it runs in also has `.claude/agents/code-reviewer.md`. Which definition does the app use?"
+    select: 1
+    options:
+      - id: A
+        text: "The file in `.claude/agents/`, because it is checked into the repository."
+        correct: false
+        rationale: "The SDK guide says programmatically defined agents take precedence over filesystem-based agents with the same name."
+      - id: B
+        text: "Neither: the SDK stops with an error because the name is defined twice."
+        correct: false
+        rationale: "The guide documents a precedence for the same name, not an error: the programmatic definition wins."
+      - id: C
+        text: "The programmatic one, which takes precedence over a same-name file."
+        correct: true
+        rationale: "Programmatically defined agents take precedence over filesystem-based agents with the same name; the guide recommends the programmatic approach for SDK applications."
+      - id: D
+        text: "A merge: the file's frontmatter fills in fields the code leaves out."
+        correct: false
+        rationale: "The SDK guide says `agents` passed to `query()` override a filesystem agent with the same name: the programmatic definition replaces the file rather than merging with it."
+    source:
+      title: "Subagents in the SDK"
+      url: "https://code.claude.com/docs/en/agent-sdk/subagents"
+  - id: subagents.D2.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A platform team wants every developer in the organization to get the same `security-reviewer` subagent, and a developer's own `~/.claude/agents/security-reviewer.md` must not replace it. How should they deliver it?"
+    select: 1
+    options:
+      - id: A
+        text: "Ship it in a plugin's `agents/` directory and ask everyone to enable the plugin."
+        correct: false
+        rationale: "A plugin's `agents/` directory has the lowest priority (5), so a user file with the same name wins. Plugin subagents also ignore `hooks`, `mcpServers` and `permissionMode`."
+      - id: B
+        text: "Deploy it as a managed subagent through the managed settings directory."
+        correct: true
+        rationale: "Managed subagents are deployed by organization administrators, are organization-wide at priority 1 (highest), and take precedence over project and user subagents with the same name."
+      - id: C
+        text: "Commit it to `.claude/agents/` in one shared template repository."
+        correct: false
+        rationale: "`.claude/agents/` is the project scope: it applies to the current project, so it does not reach the organization's other repositories."
+      - id: D
+        text: "Add `--agents` with its JSON to a shell alias that everyone is told to use."
+        correct: false
+        rationale: "`--agents` definitions exist only for that session and aren't saved to disk; the organization-wide scope is managed settings."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"

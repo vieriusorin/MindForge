@@ -1,0 +1,30 @@
+skill: D2.S3
+cards:
+  - id: ai-capabilities.D2.S3.card-context-window
+    concept: The context window as working memory
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      The context window is everything the model can reference for one response: the system
+      prompt, every message (tool results and documents too), your tool definitions, and the output
+      it writes. It is a working memory, separate from what the model was trained on. A coding
+      agent that reads 40 files carries those files into every later turn, and as the token count
+      grows, accuracy and recall degrade (context rot). Keep the few files that matter in context and
+      fetch others just in time.
+    inNature: >-
+      A squirrel's cheek pouches and its buried caches. The pouches hold what it is carrying right
+      now, and the fuller they get the clumsier it becomes. The caches hold far more, but each nut
+      has to be dug up before it is any use.
+    whereItBreaks:
+      - "A squirrel fills its pouches with nuts it chose. A model's window also fills with its own output and thinking tokens, which count toward the limit."
+      - "A squirrel slows down because of weight. A model's recall fades because every token attends to every other, giving n² pairwise relationships that stretch thin as the context grows: a performance gradient rather than a hard cliff."
+      - "The squirrel digs up its own caches. An agent needs tools and habits you design for it: lightweight references loaded just in time, structured notes kept outside the window, or sub-agents with clean windows."
+    contrast: >-
+      Knowledge from training is the large corpus the model learned from and cannot change per
+      request. The context window is the working memory for this request: you decide what goes in,
+      and every token you add competes for the model's attention.
+    diagram: ai-capabilities.D2.S3.diagram-growing-context
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/context-windows
+      - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents

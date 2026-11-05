@@ -1,0 +1,47 @@
+skill: D2.S3
+diagrams:
+  - id: claude-code-in-action.D2.S3.diagram-context-controls
+    title: "Which context control do you reach for?"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: START, label: "Something is off in the session" }
+      - { id: MIDTURN, label: "Is Claude mid-turn and heading the wrong way?", shape: decision }
+      - { id: ESC, label: "Esc: stop the turn, keep the work done so far" }
+      - { id: BADEDITS, label: "Did earlier turns go wrong?", shape: decision }
+      - { id: RESTORE, label: "/rewind or Esc twice: restore code, conversation, or both" }
+      - { id: GIT, label: "File changed only by Bash: not tracked, revert with Git" }
+      - { id: CROWDED, label: "Is the context crowded?", shape: decision }
+      - { id: SAMETASK, label: "Does the same task continue?", shape: decision }
+      - { id: COMPACT, label: "/compact with a focus: summarize the whole conversation" }
+      - { id: SUMMARIZE, label: "/rewind: Summarize from here or up to here" }
+      - { id: CLEAR, label: "/clear: new session, the old one can be resumed" }
+      - { id: AUTO, label: "Near the limit: Claude Code compacts automatically" }
+      - { id: WORK, label: "Keep working" }
+    edges:
+      - { from: START, to: MIDTURN }
+      - { from: MIDTURN, to: ESC, label: "yes" }
+      - { from: MIDTURN, to: BADEDITS, label: "no" }
+      - { from: ESC, to: BADEDITS }
+      - { from: BADEDITS, to: RESTORE, label: "yes" }
+      - { from: RESTORE, to: GIT, label: "a file was changed only by a shell command" }
+      - { from: RESTORE, to: WORK }
+      - { from: GIT, to: WORK }
+      - { from: BADEDITS, to: CROWDED, label: "no" }
+      - { from: CROWDED, to: WORK, label: "no" }
+      - { from: CROWDED, to: SAMETASK, label: "yes" }
+      - { from: SAMETASK, to: COMPACT, label: "yes, compress everything" }
+      - { from: SAMETASK, to: SUMMARIZE, label: "yes, compress one stretch" }
+      - { from: SAMETASK, to: CLEAR, label: "no, unrelated work" }
+      - { from: WORK, to: AUTO, label: "you do nothing and the window fills" }
+      - { from: COMPACT, to: WORK }
+      - { from: SUMMARIZE, to: WORK }
+      - { from: CLEAR, to: WORK }
+      - { from: AUTO, to: WORK }
+    sources:
+      - https://code.claude.com/docs/en/context-window
+      - https://code.claude.com/docs/en/checkpointing
+      - https://code.claude.com/docs/en/interactive-mode
+      - https://code.claude.com/docs/en/costs

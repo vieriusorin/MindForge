@@ -1,0 +1,29 @@
+skill: D1.S1
+cards:
+  - id: platform-foundations.D1.S1.card-starlight
+    concept: A fluent answer is not a checked answer
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Claude can write things that look correct and sound sure of themselves but are wrong, including
+      quotes that are not grounded in fact. Its knowledge is most reliable up to a cutoff date, so for anything
+      recent turn on web search (or write "Search the web"), and for anything high-stakes open the
+      cited sources and read the originals before you act.
+    inNature: >-
+      Starlight. A star can shine bright and steady in the night sky, yet the light you see left it long
+      ago, and how bright it looks tells you nothing about whether it has changed since. Claude's answer
+      is that light: brightness is fluency, and the age of the light is the knowledge cutoff.
+    whereItBreaks:
+      - "Starlight is at least an honest record of the star's past; Claude can produce a convincing quote that is not grounded in fact."
+      - "Nobody can fetch a fresher view of a star; with web search on, Claude can ground the answer in the live web and cite where each part came from."
+      - "Even with citations the picture is not finished: the answer is a synthesis, and the original pages may hold context it left out."
+    contrast: >-
+      This skill is about how far to trust one answer. D2.S1 chooses where the work happens (chat,
+      project, artifact, research), and D5.S1 covers what happens to answers as a long session fills
+      its context.
+    diagram: platform-foundations.D1.S1.diagram-check-before-trust
+    sources:
+      - https://support.claude.com/en/articles/8525154-claude-is-providing-incorrect-or-misleading-responses-what-s-going-on
+      - https://support.claude.com/en/articles/10684626-enable-and-use-web-search
+      - https://platform.claude.com/docs/en/models/overview

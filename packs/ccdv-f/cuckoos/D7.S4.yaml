@@ -28,6 +28,7 @@ cuckoos:
       - https://platform.claude.com/docs/en/manage-claude/authentication
       - https://code.claude.com/docs/en/authentication
   - id: ccdv-f.D7.S4.cuckoo-token-in-prompt
+    # grounded: never — a behaviour rule inside the snippet's system prompt, not a doc claim
     title: The system prompt of a billing assistant
     origin: ai
     author: sorin.vieriu@ddroidd.com

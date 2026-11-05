@@ -1,0 +1,37 @@
+skill: D2.S2
+cards:
+  - id: subagents.D2.S2.card-tune-the-worker
+    concept: Fit each subagent to its job with model, effort, skills, memory and isolation
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      Frontmatter fields tune what a subagent costs and knows. A `log-summarizer` that only reads test
+      output gets `model: haiku` (the cost guide's advice for simple subagent tasks), and an `effort`
+      field can lower its effort level where the model supports it. An `api-developer` gets `skills: [api-conventions, error-handling-patterns]`, so the
+      full content of those skills is injected into its context at startup. A `code-reviewer` gets
+      `memory: project`, a persistent directory in `.claude/agent-memory/<name-of-agent>/` where it keeps
+      the patterns it learns, shareable via version control. A `refactorer` that edits many files next to
+      other subagents gets `isolation: worktree`, a temporary git worktree that is cleaned up if it makes
+      no changes. Leave `model` out and Claude Code walks the model order: the per-invocation `model`
+      parameter, then the frontmatter, then `CLAUDE_CODE_SUBAGENT_MODEL`, then the main conversation's model.
+    inNature: >-
+      Darwin's finches. On the Galapagos, finch species carry different beaks for different food: a deep,
+      heavy beak cracks hard seeds, a thin, pointed one picks insects. No finch needs the heaviest beak
+      for every meal; the beak fits the food.
+    whereItBreaks:
+      - "A finch's beak was shaped over generations by natural selection; one bird cannot swap it for the next meal. A subagent's model is chosen per job, and a model Claude passes for one invocation comes first in the model order and overrides the `model` field."
+      - "A young finch gets better at handling seeds through practice. A subagent with `skills` starts with the full content of those skills already injected into its context."
+      - "Finches on one island feed on the same ground. With `isolation: worktree` each subagent works in its own copy of the repository, branched by default from the default branch rather than your current `HEAD`."
+    contrast: >-
+      `model` vs `effort`. `model` chooses which model runs the subagent; `effort` sets the effort level
+      while the subagent is active, overriding the session effort level but not the
+      `CLAUDE_CODE_EFFORT_LEVEL` environment variable. In the Agent SDK, `model`, `effort`, `skills` and
+      `memory` are fields of an `AgentDefinition` passed in the `agents` option; the SDK table has no
+      `isolation` field.
+    diagram: subagents.D2.S2.diagram-which-model-runs
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/costs
+      - https://code.claude.com/docs/en/worktrees
+      - https://code.claude.com/docs/en/agent-sdk/subagents

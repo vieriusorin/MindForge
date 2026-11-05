@@ -1,0 +1,32 @@
+skill: D2.S3
+cards:
+  - id: claude-code-in-action.D2.S3.card-session-controls
+    concept: "Steering a session: stop, rewind, compact, clear"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Claude Code's context window holds your instructions, every file Claude reads and its own
+      replies. You have four controls over it. Press Esc to stop a turn that is going the wrong way;
+      Claude keeps the work done so far. Run /rewind (or Esc twice on an empty prompt) to restore code,
+      conversation or both to an earlier prompt, or to summarize part of the conversation. Run /compact
+      with a focus, like "/compact focus on the auth bug fix", when the same task continues but the
+      context is crowded. Run /clear when you switch to unrelated work, because stale context costs
+      tokens on every message.
+    inNature: >-
+      A bird building a nest. It can drop a twig the moment it sees it is the wrong one, pull out the
+      last few twigs it wove in, press the base down to make room for more, or leave the nest and start
+      a new one for a new brood.
+    whereItBreaks:
+      - "A bird can pull out any twig. Rewind restores only files Claude edited with its file tools: a file that only Bash commands changed isn't tracked, so you revert it with Git."
+      - "A pressed-down nest keeps every twig. Compaction is a summary: path-scoped rules and nested CLAUDE.md files are summarized away and reload on demand, while the project-root CLAUDE.md is re-injected from disk."
+      - "An abandoned nest is gone. After /clear the previous conversation is preserved and can be resumed."
+    contrast: >-
+      Checkpoints are quick, session-level recovery; they are not a replacement for version control.
+      Use Git for commits, branches and long-term history, and for anything a shell command changed.
+    diagram: claude-code-in-action.D2.S3.diagram-context-controls
+    sources:
+      - https://code.claude.com/docs/en/context-window
+      - https://code.claude.com/docs/en/checkpointing
+      - https://code.claude.com/docs/en/interactive-mode
+      - https://code.claude.com/docs/en/costs

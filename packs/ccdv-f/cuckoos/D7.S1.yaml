@@ -3,6 +3,7 @@
 skill: D7.S1
 cuckoos:
   - id: ccdv-f.D7.S1.cuckoo-hidden-page-instruction
+    # uncached: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf — corpus.ts does not store PDF sources (content type unsupported)
     title: A web page returned to your browsing agent by its fetch tool
     origin: ai
     author: sorin.vieriu@ddroidd.com
@@ -25,6 +26,7 @@ cuckoos:
       - https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf
       - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks
   - id: ccdv-f.D7.S1.cuckoo-log-full-prompts
+    # uncached: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1783542875/Claude+Certified+Developer+%E2%80%93+Foundations+Exam+Guide.pdf — corpus.ts does not store PDF sources (content type unsupported)
     title: The logging config of a customer-support chat app
     origin: ai
     author: sorin.vieriu@ddroidd.com

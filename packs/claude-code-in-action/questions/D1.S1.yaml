@@ -1,0 +1,158 @@
+skill: D1.S1
+questions:
+  - id: claude-code-in-action.D1.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "When you give Claude Code a task, which three phases does it work through?"
+    select: 1
+    options:
+      - id: A
+        text: "Read the whole repository, write a full patch, then hand the patch to you to apply."
+        correct: false
+        rationale: "Claude gathers the context a task needs as it goes rather than reading everything first, and it makes edits itself, with your permission settings deciding when it asks."
+      - id: B
+        text: "Gather context, take action, verify results, repeating until the task is complete."
+        correct: true
+        rationale: "The docs name the three phases of the agentic loop as gather context, take action and verify results. They blend together, and Claude repeats them until the task is complete."
+      - id: C
+        text: "Plan, code, deploy: each phase runs exactly once, in that fixed order, for every task."
+        correct: false
+        rationale: "The loop adapts to the task: a question may only need context gathering, while a bug fix cycles through all three phases repeatedly."
+      - id: D
+        text: "Autocomplete the current line, then the current file, then suggest tests for that file."
+        correct: false
+        rationale: "That describes an inline assistant. Claude Code sees your whole project and makes coordinated edits across files, which the docs contrast with assistants that only see the current file."
+    source:
+      title: "How Claude Code works"
+      url: "https://code.claude.com/docs/en/how-claude-code-works"
+  - id: claude-code-in-action.D1.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A colleague asks why Claude Code can fix a bug in their repo while a plain chat with the same model cannot. What does the documentation say makes the difference?"
+    select: 1
+    options:
+      - id: A
+        text: "Claude Code ships a larger model trained only on code, so it no longer needs to read files."
+        correct: false
+        rationale: "Claude Code uses Claude models; what it adds is the layer around the model that provides tools and manages context, not a different code-only model."
+      - id: B
+        text: "Claude Code uploads the repository once at install time and remembers it for every session."
+        correct: false
+        rationale: "Sessions are independent: each new session starts with a fresh context window, and Claude reads files as it needs them."
+      - id: C
+        text: "Claude Code turns off the model's reasoning so that it follows shell output step by step."
+        correct: false
+        rationale: "The loop is powered by two components: models that reason and tools that act. Reasoning is kept, not turned off."
+      - id: D
+        text: "Its tools: with them Claude reads code, edits files and runs commands, not only replies."
+        correct: true
+        rationale: "The docs say tools are what make Claude Code agentic. Without tools, Claude can only respond with text; with tools it can read your code, edit files, run commands and search the web, and each result feeds back into the loop."
+    source:
+      title: "How Claude Code works"
+      url: "https://code.claude.com/docs/en/how-claude-code-works"
+  - id: claude-code-in-action.D1.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You type \"fix the failing tests\". Which sequence of tool uses is the one the docs give as the agentic loop in action?"
+    select: 1
+    options:
+      - id: A
+        text: "Run the suite, read the errors, search for and read the source, edit it, run the tests again."
+        correct: true
+        rationale: "This is the docs' own example: run the test suite, read the error output, search for the relevant source files, read them, edit them, then run the tests again to verify."
+      - id: B
+        text: "Edit every test file to expect the current output, then report that the suite is now green."
+        correct: false
+        rationale: "Changing the tests to match the output skips the gather-context phase and verifies nothing about the bug; the example edits the source after reading the errors."
+      - id: C
+        text: "Ask you which files to open, wait for you to paste them, then suggest a fix in plain text."
+        correct: false
+        rationale: "You don't need to specify which files to read or what commands to run. Claude finds them with its search and file tools."
+      - id: D
+        text: "Read every file in the project first, then run the tests once at the very end of the task."
+        correct: false
+        rationale: "Claude chooses tools based on what it learns along the way, starting from the failing output, and runs the tests again to check its fix."
+    source:
+      title: "How Claude Code works"
+      url: "https://code.claude.com/docs/en/how-claude-code-works"
+  - id: claude-code-in-action.D1.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Halfway through a task you see Claude editing the wrong module. What are your options without starting over?"
+    select: 1
+    options:
+      - id: A
+        text: "None: the loop runs to completion, so wait for it to finish and then ask for a revert."
+        correct: false
+        rationale: "You're part of the loop and can interrupt at any point to steer Claude in a different direction."
+      - id: B
+        text: "Run /clear, which keeps the edits but tells Claude to restart the plan from the first step."
+        correct: false
+        rationale: "Clearing the conversation throws away the context you'd want Claude to keep. The docs describe steering without starting over."
+      - id: C
+        text: "Press Esc to stop it, or type a correction and press Enter to queue it for Claude."
+        correct: true
+        rationale: "Esc stops Claude immediately and cancels the running tool call. A message typed and sent with Enter is queued, and Claude reads it as soon as the running tool calls finish, within the same turn."
+      - id: D
+        text: "Close the terminal; Claude Code then rolls back every file it touched in that session."
+        correct: false
+        rationale: "Closing the terminal is not a steering mechanism. File rewinds come from checkpoints (press Esc twice), not from quitting."
+    source:
+      title: "How Claude Code works"
+      url: "https://code.claude.com/docs/en/how-claude-code-works"
+  - id: claude-code-in-action.D1.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "In one task Claude edited three files and also ran a script that changed rows in your staging database. You press Esc twice and rewind. What is restored, and what should have protected the database?"
+    select: 1
+    options:
+      - id: A
+        text: "Files and database rows are both restored, because checkpoints snapshot the whole environment."
+        correct: false
+        rationale: "Checkpoints only cover file changes. Actions that affect remote systems such as databases, APIs and deployments can't be checkpointed."
+      - id: B
+        text: "Nothing is restored: checkpoints are git commits, so you must reset the branch yourself."
+        correct: false
+        rationale: "Checkpoints are separate from git. Before Claude edits a file, it snapshots the current contents, and Esc twice rewinds to them."
+      - id: C
+        text: "The database is restored but the files are not, since file edits are expected to be kept."
+        correct: false
+        rationale: "It is the other way round: file edits are reversible through checkpoints; the remote change is not."
+      - id: D
+        text: "Only the file edits; gate remote actions like this with your permission mode and rules."
+        correct: true
+        rationale: "The docs say checkpoints only cover file changes, and actions that affect remote systems can't be checkpointed. You control those with your permission mode and permission rules."
+    source:
+      title: "How Claude Code works"
+      url: "https://code.claude.com/docs/en/how-claude-code-works"
+  - id: claude-code-in-action.D1.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Early in a long session you told Claude to use pnpm. Hours later, after automatic compaction, it runs npm, and the next morning a new session does the same. What is the durable fix?"
+    select: 1
+    options:
+      - id: A
+        text: "Put the rule in CLAUDE.md: compaction can drop early instructions, and new sessions start fresh."
+        correct: true
+        rationale: "The summary made by compaction keeps your requests and key code snippets, but detailed instructions from early in the conversation may be lost, and each new session starts with a fresh context window. The docs say to put persistent rules in CLAUDE.md."
+      - id: B
+        text: "Repeat the instruction at the start of every prompt; compaction always keeps the latest message."
+        correct: false
+        rationale: "Repeating it works for one turn but doesn't survive a new session, which starts without the previous conversation history."
+      - id: C
+        text: "Turn compaction off; the context window then grows without limit, so nothing is ever dropped."
+        correct: false
+        rationale: "The context window has a limit; compaction is how Claude Code manages context as you approach it."
+      - id: D
+        text: "Resume yesterday's session with claude --continue so the new session inherits the instruction."
+        correct: false
+        rationale: "Resuming reopens one conversation, which still holds the compacted summary; it does not make the rule persistent for every session the way CLAUDE.md does."
+    source:
+      title: "How Claude Code works"
+      url: "https://code.claude.com/docs/en/how-claude-code-works"

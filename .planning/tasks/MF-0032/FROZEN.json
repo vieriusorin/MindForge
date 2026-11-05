@@ -1,0 +1,36 @@
+{
+  "ticket": "MF-0032",
+  "frozen_at": "2026-11-04T14:38:19.920Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/server/db/__tests__/mf-0032-attempt-hash.db.acceptance.test.ts",
+      "sha256": "5f7925090e506830a24fdbb27e90439d720eefeb1a3bdaaa43bc7ee4a7eedc75",
+      "first_failure": "SC-1: expected [ { code: PGRST202 }, null ] to deeply equal [ null, true ] (3-arg record_attempt missing); SC-6: column \"content_hash\" does not exist (42703); SC-2: expected PGRST202 to be 55000; SC-7: signature list differs. Same on 2nd run."
+    },
+    {
+      "path": "src/engine/content/__tests__/mf-0032-answer-hash.acceptance.test.ts",
+      "sha256": "1e2dc6ee32df2e9f60084abfd1a60537e9956b837bed6dd2482cf832995eb585",
+      "first_failure": "SC-3: Error: not implemented (checkQuestionAnswer stub); SC-4: expected false to be true (AnswerInput strictObject refuses contentHash)"
+    },
+    {
+      "path": "src/features/__tests__/mf-0032-changed-message.acceptance.test.ts",
+      "sha256": "d1c21d17d1ba71d69bf166265f2293932d0a8512c2aa8fd1cb28a100c462a527",
+      "first_failure": "SC-5: expected error \"This question changed since you opened it. Start a new duel.\", received \"Pick an answer first.\" (input refuses contentHash; no changed message)"
+    },
+    {
+      "path": "src/features/__tests__/mf-0032-answer-hash.acceptance.test.tsx",
+      "sha256": "150bc6e390cb35b98e6f32d611cbf5fbb8a4b604857c9b619c747a2fb3aace7c",
+      "first_failure": "SC-4: action called without contentHash (- \"contentHash\": \"h-p.S1.1\") in Duel, Walk, Seed Planting"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-04T14:55:31.691Z",
+      "reason": "MF-0032 review (changes-requested), user-approved 2026-11-04: the SC-2 case was vacuous (PostgrestBuilder is lazy; the RPC ran after COMMIT). Now the RPC is awaited inside the open sync transaction and the case asserts it answered before COMMIT (isCommittedAtResponse: false) and graded on the committed key (false). Renamed to what it proves; the single-snapshot read is proven by diff review. SC-1/6/7 cases and the post-commit assertions unchanged.",
+      "previous": {
+        "src/server/db/__tests__/mf-0032-attempt-hash.db.acceptance.test.ts": "1f053913ecb25d082422d07acfb33d75dc750b6852dbbc41275240dee3a0cbf3"
+      }
+    }
+  ]
+}

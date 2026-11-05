@@ -1,0 +1,26 @@
+skill: D1.S1
+cards:
+  - id: claude-code-in-action.D1.S1.card-agentic-loop
+    concept: The agentic loop
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Claude Code works in a loop of three phases: gather context, take action, verify results.
+      Ask it to "fix the failing tests" and it runs the suite, reads the errors, searches for and
+      reads the source, edits it, then runs the tests again. Tools make this possible: without
+      them the model can only reply with text. Each tool result feeds the next decision, and you
+      can interrupt at any point to steer.
+    inNature: >-
+      A heron fishing in the shallows. It watches the water, strikes, checks whether it caught
+      anything, and goes back to watching, adjusting where it stands after every miss.
+    whereItBreaks:
+      - "A heron sees the water with its own eyes. Claude sees your project through what its tools return (file reads, searches and command output) plus the context Claude Code loads for it, such as CLAUDE.md."
+      - "Nobody steers a heron mid-strike. You can press Esc to stop Claude, or queue a correction it reads as soon as the running tool calls finish."
+      - "A heron's strike can't be undone. Before Claude edits a file it snapshots the contents, so file edits are reversible, but actions on remote systems such as databases are not."
+    contrast: >-
+      An inline code assistant only sees the current file and suggests text. Claude Code sees
+      your whole project, makes coordinated edits across files and runs tests to verify them.
+    diagram: claude-code-in-action.D1.S1.diagram-agentic-loop
+    sources:
+      - https://code.claude.com/docs/en/how-claude-code-works

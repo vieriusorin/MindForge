@@ -1,0 +1,39 @@
+skill: D6.S1
+diagrams:
+  - id: agent-skills.D6.S1.diagram-troubleshooting-tree
+    title: "Troubleshooting a skill: symptom to fix"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: S, label: "What goes wrong?", shape: decision }
+      - { id: NT, label: "Not triggering when expected", shape: decision }
+      - { id: NT1, label: "Put the words users would say in the description; check it shows under What skills are available?; rephrase; invoke it with /skill-name if it is user-invocable" }
+      - { id: NT2, label: "/skill-name not recognized either: check whether Claude Code refused the skill's name" }
+      - { id: NT3, label: "Malformed frontmatter: body loads with empty metadata; see the error with --debug or claude plugin validate" }
+      - { id: NT4, label: "Skill sets paths: files must be inside the current working directory; start or /cd there" }
+      - { id: TO, label: "Triggers too often: make the description more specific; add disable-model-invocation: true for manual-only use" }
+      - { id: SF, label: "Followed at first, then dropped: what was skipped?", shape: decision }
+      - { id: SF1, label: "A rule that must hold every time: move it into a hook (or the skill's hooks frontmatter)" }
+      - { id: SF2, label: "Guidance applied with judgment: word it for the whole task, e.g. after every edit" }
+      - { id: SF3, label: "Conversation was compacted: invoke the skill again; keep key instructions near the top" }
+      - { id: CUT, label: "Descriptions cut short: key use case first; name-only in skillOverrides; raise skillListingBudgetFraction; find unused skills with /skill-doctor" }
+      - { id: ANG, label: "Angle brackets in the description show as &lt; and &gt;: use square brackets or argument-hint" }
+      - { id: GONE, label: "Personal skills disappeared: look in ~/.claude/skills/.trash/ and move the folder back" }
+    edges:
+      - { from: S, to: NT, label: "never fires" }
+      - { from: NT, to: NT1, label: "first checks" }
+      - { from: NT, to: NT2, label: "name rejected" }
+      - { from: NT, to: NT3, label: "metadata empty" }
+      - { from: NT, to: NT4, label: "uses paths" }
+      - { from: S, to: TO, label: "fires on unrelated work" }
+      - { from: S, to: SF, label: "ignored later" }
+      - { from: SF, to: SF1, label: "hard rule" }
+      - { from: SF, to: SF2, label: "judgment call" }
+      - { from: SF, to: SF3, label: "after compaction" }
+      - { from: S, to: CUT, label: "many skills, some stop matching" }
+      - { from: S, to: ANG, label: "placeholder garbled" }
+      - { from: S, to: GONE, label: "folders missing" }
+    sources:
+      - https://code.claude.com/docs/en/skills

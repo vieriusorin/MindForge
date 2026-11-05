@@ -1,0 +1,31 @@
+skill: D2.S2
+cards:
+  - id: ai-capabilities.D2.S2.card-knowledge-cutoff
+    concept: Knowledge with a cutoff
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      What a model knows comes from its training data, and each model has a reliable knowledge
+      cutoff: the date through which its knowledge is most extensive and reliable. Ask about a
+      library release from after that date and you can get a fluent, confident answer that is
+      wrong, a hallucination. To reduce this, bring the facts into the request (documents with
+      citations, or the web search tool) and let Claude say "I don't know".
+    inNature: >-
+      A migrating bird flying a route learned in earlier years. On the paths it knows it is fast and
+      sure. A new dam or a cleared forest since last season is not on its map, and it flies the old
+      route with the same confidence.
+    whereItBreaks:
+      - "A bird picks up fresh cues on the way. A model sees new facts only if you supply them in the request, for example through the web search tool, which reaches beyond its knowledge cutoff."
+      - "The cutoff is not one sharp line: the models overview lists a reliable knowledge cutoff and a broader training data cutoff."
+      - "A bird's old map at least shows places that once existed. A model can generate text that is factually incorrect or inconsistent with the given context, and still sound sure, which is why critical claims need validating."
+    contrast: >-
+      Knowledge is what the model learned in training. Documents you send are material for this
+      request only: with citations enabled, the answer is grounded in your documents and returns
+      the passages that support each claim.
+    diagram: ai-capabilities.D2.S2.diagram-where-facts-come-from
+    sources:
+      - https://platform.claude.com/docs/en/about-claude/models/overview
+      - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+      - https://platform.claude.com/docs/en/build-with-claude/citations

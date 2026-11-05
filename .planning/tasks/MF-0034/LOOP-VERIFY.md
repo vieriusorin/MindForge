@@ -52,3 +52,13 @@ Both frozen hashes are unchanged (`6b7a7602…4d27`, `2929e454…1a2c`).
 
 The post-review changes were re-read: approve, 0 blocking, 3 notes. `reviewed_hash` = `beb27b0d…acdc`, which is the receipt's diff hash, so the review now covers the current tree.
 Notes left open: the regression test doesn't exercise the "previous answers / account creation" steps or the rejected / self-review branches; the demo-domain learner check still runs after the deletes; `--seed ""` reads as 0.
+
+## Delta review 2 (2026-11-04)
+
+The delta notes 1–3 were fixed after `da583a0`:
+- The demo-domain learner check moved before the deletes, shown RED first: `expected { userIds: [], groups: +0, …(1) } to deeply equal { userIds: [ …(5) ], groups: 1, …(1) }`.
+- The regression cases now pass `previous` and assert that your seeded answers survive. New cases cover self-review, an off-domain learner and a rejected item.
+- `--seed ""` is refused.
+
+Gates: typecheck ✓; lint clean; `pnpm test` 337/337; `pnpm test:db` 48/48; the real `pnpm dev:seed` re-seeded both packs.
+Re-read: approve, 0 blocking. `reviewed_hash` = `e6c02137…3768` (a diff against `da583a0`). Its note 1 (assert the fixture seeded answers) was then added as a test-only change, re-run green.

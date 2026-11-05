@@ -302,3 +302,36 @@ What I found: <fact, file:line or command output>.
 Options: A) <…> — consequence. B) <…> — consequence.
 I recommend <A>, because <reason>. Nothing has been changed for this yet.
 ```
+
+## Course-pack ticket (precedent: MF-0039)
+
+For a new `packs/<slug>/` ticket, copy the shape of `.planning/tasks/MF-0039/GOAL.md` and `LOOP-PLAN.md` instead of
+re-deriving it:
+- SCs per loader (`loadPackFile`, `loadPackContent`), counts per skill and level, answer-key spread, diagram
+  connectivity and the named capstone, all in one frozen acceptance file;
+- a source-copy SC: 12-word overlap against any saved course page, run after the verifier fixes. Extract the
+  course text into a folder only the orchestrator writes (`<scratchpad>/mf-<id>-sc8/`), never a path a drafting
+  fork is told about, and tell the forks to write only under `packs/<slug>/` and `.planning/tasks/<id>/`. The check
+  prints the course file's word count, and the run asserts it equals the count recorded when the page was saved
+  (MF-0040: a fork overwrote the shared scratch file, the run showed `shared=26` against the wrong page, and only
+  the changed word count exposed it);
+- an SC-9 verifier SC with `verify/<domains>.md` tables (item, severity, claim, page says with file:line, fix);
+- 3 drafters by domain, then 3 fresh verifiers; the drafter brief carries the four semantic checks in SKILL.md. The grounding note (`grounding/<D>.md`) is a form the drafter must fill, and each verifier checks its cells first (MF-0031 and MF-0037 both put 'list every branch' in the brief and still got 6 of 9 and 6 of 8 diagrams back as FIX; a brief line does not change what is written, an empty cell does): per diagram, a `branches` cell listing every branch, table row or conditional the cited page documents next to the node or edge id that draws it ('left out: <reason>' is allowed, silence is not); per card, an `analogy` cell naming the real-world behaviour that `inNature` and each `whereItBreaks` line asserts, its source or `[GK]` (a `[GK]` claim about animals or plants is dropped unless it is textbook-safe), and a note of how each `whereItBreaks` line differs in mechanism, not only in size; per question, one quoted passage that refutes each distractor (silence in the page is not a refutation); every quoted passage, and every clause of the stem, carries the short name of the page it comes from, and that page must be the item's `source.url`: when an expert item bridges a claude.ai feature and its API counterpart, either cite the page that holds both facts, split the item, or cut the clause (MF-0038: 3 of 8 FIX opened a stem or rationale with a fact from the sibling page, with 0 matches on the cited one); when a page documents two product versions (current and legacy), the stem names the version it asks about;
+- `pnpm db:sync-keys` twice (the second run changes nothing); `pnpm dev:seed` once. `dev:seed` without `--pack`
+  refuses before any delete if any pack in the tree is incomplete (another session's in-progress pack), and with
+  `--pack` it replaces the whole demo world, so name every pack whose demo group must survive and record which
+  groups are gone;
+- screen proof: browser, or HTTP render as a seeded learner when the shared browser is held (memory
+  `feedback-browser-verification`). Do not prove it on the shared :3001 dev server: it returns 404 for a pack added
+  after it started, because `listPacks()` is `"use cache"` with `cacheLife("days")` (MF-0042). Run
+  `pnpm build && pnpm exec next start -p 3002` and render `/review/<slug>` and one `/play/<slug>/plant/<skill>`
+  page there, and tell the user the :3001 server needs a restart;
+- `pnpm check:packs` stays green.
+- the LOOP-PLAN drafting brief is these bullets plus a per-skill answer-key letter plan (so the 40% key-letter SC
+  passes first time) and, where an SC reads nodes by label (a capstone diagram), the label trap spelled out
+  verbatim; copy `.planning/tasks/MF-0042/LOOP-PLAN.md` "Key-letter plan" and "Contract trap (SC-6)". Drafters run
+  `pnpm check:packs` in their own loop, not only at TEST.
+- before spawning the drafters, open the previous pack ticket's `RETRO.md`. If it has no `applied:` front-matter
+  line yet, copy its Actions text into this ticket's drafting brief and say so under "Decided without a question"
+  (MF-0037, MF-0039 and MF-0040 were each drafted before the prior retro was applied, so the lesson reached the
+  next pack as a brief line at best, or not at all).

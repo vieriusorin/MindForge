@@ -23,6 +23,7 @@ const question = (id: string, skillCode: string): PlayableQuestion => ({
     { id: "B", text: "Second" },
   ],
   source: { title: "Docs", url: "https://example.com" },
+  contentHash: `h-${id}`,
 });
 
 const STEPS: WalkStep[] = [
@@ -99,6 +100,7 @@ describe("WalkSession", () => {
       packSlug: "p",
       questionId: "p.S1.1",
       chosen: ["A"],
+      contentHash: "h-p.S1.1",
     });
     expect(screen.getByText("Why B is right")).toBeVisible();
 

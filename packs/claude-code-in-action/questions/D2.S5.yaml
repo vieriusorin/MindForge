@@ -1,0 +1,158 @@
+skill: D2.S5
+questions:
+  - id: claude-code-in-action.D2.S5.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A teammate says \"connect an MCP server for our issue tracker\". What does MCP give Claude Code?"
+    select: 1
+    options:
+      - id: A
+        text: "A larger model that has been trained on your issue tracker's data and your team's codebase."
+        correct: false
+        rationale: "MCP does not change the model; it is a protocol that connects Claude Code to tools, databases and APIs."
+      - id: B
+        text: "A file format for CLAUDE.md that lets you paste issue text into memory in bulk."
+        correct: false
+        rationale: "MCP is an open source standard for AI-tool integrations, not a memory file format."
+      - id: C
+        text: "An open source standard that connects Claude Code to your tools, databases and APIs."
+        correct: true
+        rationale: "MCP is \"an open source standard for AI-tool integrations\"; once a server is connected, Claude can read and act on that system directly instead of working from what you paste."
+      - id: D
+        text: "A hosted service that runs Claude Code in CI each time a new issue is opened in the tracker."
+        correct: false
+        rationale: "MCP is not a hosting service; MCP servers give Claude Code access to your tools, databases and APIs."
+    source:
+      title: "Connect Claude Code to tools via MCP"
+      url: "https://code.claude.com/docs/en/mcp"
+  - id: claude-code-in-action.D2.S5.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You add a local server with `claude mcp add --env KEY=value --transport stdio myserver -- python server.py --port 8080`. What does the `--` do?"
+    select: 1
+    options:
+      - id: A
+        text: "It marks the end of the server name, and it is required for remote HTTP servers as well."
+        correct: false
+        rationale: "The double dash is described for stdio servers, where it separates Claude's options from the command that runs the server."
+      - id: B
+        text: "It comments out the rest of the line, so the port flag is ignored when the server starts."
+        correct: false
+        rationale: "Everything after `--` is passed to the server untouched, so `--port 8080` reaches the server."
+      - id: C
+        text: "It tells Claude Code to start the server in the background and return to the prompt."
+        correct: false
+        rationale: "The double dash only splits the arguments; it says nothing about backgrounding."
+      - id: D
+        text: "It separates Claude's own options from the command and arguments that run the server."
+        correct: true
+        rationale: "\"the `--` (double dash) separates Claude's own options, such as `--transport`, `--env`, and `--scope`, from the command and arguments that run the server.\" Without it, Claude Code would try to parse `--port` as its own option."
+    source:
+      title: "Connect Claude Code to tools via MCP"
+      url: "https://code.claude.com/docs/en/mcp"
+  - id: claude-code-in-action.D2.S5.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Everyone on your team should get the same MCP server through version control. Which scope do you add it with?"
+    select: 1
+    options:
+      - id: A
+        text: "`--scope project`: Claude Code writes the server to `.mcp.json` at the project root, which you check in."
+        correct: true
+        rationale: "Project-scoped servers are stored in `.mcp.json` at your project's root; check it into version control so everyone on your team gets the same MCP tools."
+      - id: B
+        text: "The default local scope, which writes the server to the project folder for everyone who clones it."
+        correct: false
+        rationale: "Local scope is stored in `~/.claude.json` under that project's path and stays private to you."
+      - id: C
+        text: "User scope, which shares the server with everyone who works in any of your repositories."
+        correct: false
+        rationale: "User scope loads the server in all your projects, but it is stored in `~/.claude.json` and not shared with the team."
+      - id: D
+        text: "Any scope, then commit `~/.claude.json` from your home directory into the repository."
+        correct: false
+        rationale: "`~/.claude.json` holds your local and user-scoped servers; the team-shared file is `.mcp.json` in the project root."
+    source:
+      title: "Connect Claude Code to tools via MCP"
+      url: "https://code.claude.com/docs/en/mcp"
+  - id: claude-code-in-action.D2.S5.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You want Claude to use every tool of your `puppeteer` MCP server without a permission prompt. Which allow rule works?"
+    select: 1
+    options:
+      - id: A
+        text: "`mcp__*`, which matches every MCP tool across all servers you have configured."
+        correct: false
+        rationale: "An unanchored allow glob such as `mcp__*` is skipped and doesn't auto-approve anything; allow globs need a literal `mcp__<server>__` prefix."
+      - id: B
+        text: "`mcp__puppeteer__*`, which matches every tool from the `puppeteer` server."
+        correct: true
+        rationale: "\"`mcp__puppeteer__*` uses wildcard syntax and also matches all tools from the `puppeteer` server\"; the bare `mcp__puppeteer` matches them too."
+      - id: C
+        text: "The bare server name with a `*` specifier in parentheses, the form Bash rules use for commands."
+        correct: false
+        rationale: "MCP tools are matched by their `mcp__<server>__<tool>` names, not by a server name with a specifier."
+      - id: D
+        text: "`mcp__puppeteer__puppeteer_navigate` with a URL pattern in parentheses, scoped to the pages it may open."
+        correct: false
+        rationale: "When Claude Code loads a settings file, it skips any `mcp__` rule that has parentheses."
+    source:
+      title: "Configure permissions"
+      url: "https://code.claude.com/docs/en/permissions"
+  - id: claude-code-in-action.D2.S5.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your CI job runs `claude -p` in a repository whose `.mcp.json` declares a server you don't want in CI. What happens, and how do you keep it out?"
+    select: 1
+    options:
+      - id: A
+        text: "Nothing to do: in `-p` runs Claude Code skips every `.mcp.json` server because nobody is there to approve it."
+        correct: false
+        rationale: "The opposite: in `claude -p` runs Claude Code can't show the approval prompt, so it loads project-scoped servers without asking."
+      - id: B
+        text: "Remove the server from your own `~/.claude.json`, which is where CI reads project servers from."
+        correct: false
+        rationale: "Project-scoped servers come from `.mcp.json` at the project root; `~/.claude.json` holds your local and user-scoped servers."
+      - id: C
+        text: "Run `claude mcp reset-project-choices` in the job before `claude -p`, which blocks the server."
+        correct: false
+        rationale: "`claude mcp reset-project-choices` resets your approval choices; it does not block a server in a run that never asks."
+      - id: D
+        text: "It loads without asking; block it with `disabledMcpjsonServers`, `--setting-sources`, or `--strict-mcp-config`."
+        correct: true
+        rationale: "In `claude -p` runs Claude Code loads project-scoped servers without asking. To keep one out: `disabledMcpjsonServers`, exclude project settings with `--setting-sources`, or start with `--strict-mcp-config` and pass only what you want with `--mcp-config`."
+    source:
+      title: "Connect Claude Code to tools via MCP"
+      url: "https://code.claude.com/docs/en/mcp"
+  - id: claude-code-in-action.D2.S5.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A repository you just cloned commits a `.mcp.json` server plus `enabledMcpjsonServers` in its `.claude/settings.json`. Before trusting the folder you run `claude mcp list`. What do you see?"
+    select: 1
+    options:
+      - id: A
+        text: "The server connected and health-checked, because the repository has already approved it."
+        correct: false
+        rationale: "A cloned repository can't approve its own servers: committed approvals are ignored in an untrusted folder."
+      - id: B
+        text: "The server at Pending approval: the committed approval is ignored until you trust the workspace."
+        correct: true
+        rationale: "\"A cloned repository can't approve its own servers\": `enabledMcpjsonServers` committed to `.claude/settings.json` is ignored in an untrusted folder, and the server stays at Pending approval."
+      - id: C
+        text: "The server as Blocked by enterprise managed policy, since project servers need an administrator."
+        correct: false
+        rationale: "That status is for a server one of your organisation's policies refuses, not for an unapproved project server."
+      - id: D
+        text: "No entry, because Claude Code deletes a `.mcp.json` it finds in an untrusted folder."
+        correct: false
+        rationale: "Claude Code lists the project server with a pending status; it does not delete the file."
+    source:
+      title: "Connect Claude Code to tools via MCP"
+      url: "https://code.claude.com/docs/en/mcp"

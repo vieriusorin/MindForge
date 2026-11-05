@@ -1,0 +1,158 @@
+skill: D2.S6
+questions:
+  - id: claude-code-in-action.D2.S6.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You use Claude Code locally and want `@claude` to work in your github.com repository. What is the quick setup path?"
+    select: 1
+    options:
+      - id: A
+        text: "Run `/install-github-app` in Claude Code: it installs the app, saves the secret and prepares the workflow PR."
+        correct: true
+        rationale: "Quick setup is `/install-github-app`: Claude Code installs the Claude GitHub App, adds your authentication secret and prepares the workflow pull request. You merge that pull request and `@claude` works."
+      - id: B
+        text: "Commit any workflow that names the action; on its first run the action installs the GitHub App by itself."
+        correct: false
+        rationale: "The action relies on the Claude GitHub App being installed already. In manual setup you install the app, add the secret and copy the workflow file yourself."
+      - id: C
+        text: "Add your `ANTHROPIC_API_KEY` to CLAUDE.md so the action can read the key when someone mentions it."
+        correct: false
+        rationale: "The key is stored as a repository secret (`ANTHROPIC_API_KEY`). The docs warn never to commit API keys or OAuth tokens to the repository."
+      - id: D
+        text: "Mention `@claude` in any issue; GitHub then offers to install the Claude app for that repository."
+        correct: false
+        rationale: "A mention does nothing until the app, the secret and the workflow are in place. Mentioning `@claude` is how you test the setup afterwards."
+    source:
+      title: "Claude Code GitHub Actions"
+      url: "https://code.claude.com/docs/en/github-actions"
+  - id: claude-code-in-action.D2.S6.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your workflow uses `anthropics/claude-code-action@v1` and sets no `prompt` input. What does the action do?"
+    select: 1
+    options:
+      - id: A
+        text: "It reviews every push to the default branch and writes the findings to the workflow run log."
+        correct: false
+        rationale: "Running without a mention is automation mode, which needs a `prompt` input. With no `prompt`, the action waits for the trigger phrase."
+      - id: B
+        text: "Interactive mode: it waits for `@claude` in a comment, review or new issue, then answers there."
+        correct: true
+        rationale: "With no `prompt` input the action runs in interactive mode: it waits for the trigger phrase, `@claude` by default, and shows progress and results as a comment on the triggering issue or PR."
+      - id: C
+        text: "It fails validation, because `prompt` is a required input of the action in every workflow."
+        correct: false
+        rationale: "`prompt` is optional. When it is omitted, Claude responds to the trigger phrase instead."
+      - id: D
+        text: "It runs once a day on a schedule and opens an issue that summarises the open pull requests."
+        correct: false
+        rationale: "A scheduled run is automation mode with a `prompt` and a cron trigger. Without a `prompt`, the action waits for the trigger phrase."
+    source:
+      title: "Claude Code GitHub Actions"
+      url: "https://code.claude.com/docs/en/github-actions"
+  - id: claude-code-in-action.D2.S6.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "An outside contributor mentions `@claude` in a comment on their pull request, asking it to fix a failing test. The workflow is fine, yet the run fails before Claude starts. What is the most likely reason?"
+    select: 1
+    options:
+      - id: A
+        text: "The comment must use `/claude` rather than `@claude` when it is written on a pull request."
+        correct: false
+        rationale: "The opposite: the comment must contain `@claude` as a complete word, not `/claude` or `@claude-bot`."
+      - id: B
+        text: "The Claude GitHub App lacks the Discussions permission, which it needs to read pull request comments."
+        correct: false
+        rationale: "Pull request access comes from the Pull requests permission. The failure here is the check on who triggered the run."
+      - id: C
+        text: "The user lacks write access; allow them with `allowed_non_write_users` and your own `github_token`."
+        correct: true
+        rationale: "On issue and pull request events the triggering user must have write access, and the run fails when the check rejects it. To allow specific users without write access, set `allowed_non_write_users` and pass your own `github_token` input."
+      - id: D
+        text: "The workflow authenticates with an OAuth token, which only answers the person who generated that token."
+        correct: false
+        rationale: "An OAuth token decides how the run is billed and authenticated, not who may trigger it. The trigger checks are write access and the human-actor check."
+    source:
+      title: "Claude Code GitHub Actions"
+      url: "https://code.claude.com/docs/en/github-actions"
+  - id: claude-code-in-action.D2.S6.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Claude pushes commits to a pull request branch, but your CI workflow never runs on them. The workflow passes `github_token: ${{ secrets.GITHUB_TOKEN }}` to the action. What should you change?"
+    select: 1
+    options:
+      - id: A
+        text: "Raise `--max-turns` in `claude_args`, because the run stops before the CI event can be sent."
+        correct: false
+        rationale: "`--max-turns` caps how much work a run does. It doesn't decide whether GitHub starts workflows on the pushed commits."
+      - id: B
+        text: "Give the workflow the `actions: read` permission so Claude can start the CI jobs itself."
+        correct: false
+        rationale: "`actions: read` lets Claude read CI results on PRs. It doesn't make GitHub trigger workflows on the commits."
+      - id: C
+        text: "Add `push` to the trigger of the Claude workflow so it reruns every time Claude pushes a commit."
+        correct: false
+        rationale: "The CI workflow, not the Claude workflow, needs to run. The cause is the token the commits were made with."
+      - id: D
+        text: "Remove `github_token` so the action uses the Claude GitHub App, or pass a custom app token instead."
+        correct: true
+        rationale: "GitHub doesn't trigger workflows on commits made with the default `GITHUB_TOKEN`. Remove it so the action authenticates as the Claude GitHub App, or pass a custom app token, and check that CI triggers include `push` or `pull_request`."
+    source:
+      title: "Claude Code GitHub Actions"
+      url: "https://code.claude.com/docs/en/github-actions"
+  - id: claude-code-in-action.D2.S6.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A scheduled workflow runs the action with the plain-text prompt \"Summarise yesterday's commits\" and no checkout. Claude reports it cannot read any commits. What is missing?"
+    select: 1
+    options:
+      - id: A
+        text: "A checkout step: the action can read commits only from a local clone made by `actions/checkout`."
+        correct: false
+        rationale: "The docs' daily report omits the checkout and reads commits through the GitHub API. The missing piece is permission to use those tools."
+      - id: B
+        text: "Tool access: grant it with `--allowedTools` in `claude_args` or a `permissions.allow` rule in `settings`."
+        correct: true
+        rationale: "For a plain-text prompt, Claude has no shell or GitHub API access until you grant the tools it needs, with `--allowedTools` in `claude_args` or a `permissions.allow` rule in the `settings` input. The daily report allows `mcp__github__list_commits` this way."
+      - id: C
+        text: "A trigger phrase: automation mode still waits for `@claude` before it starts on a schedule."
+        correct: false
+        rationale: "With a `prompt` input the action runs in automation mode without waiting for a mention."
+      - id: D
+        text: "A `CLAUDE.md` file at the repository root that lists which GitHub tools Claude may call."
+        correct: false
+        rationale: "CLAUDE.md holds project standards Claude follows. Tool permissions come from `claude_args` or the `settings` input."
+    source:
+      title: "Claude Code GitHub Actions"
+      url: "https://code.claude.com/docs/en/github-actions"
+  - id: claude-code-in-action.D2.S6.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You roll the action out to 40 repositories with one organisation-level secret. Which credential do the docs recommend sharing, and why?"
+    select: 1
+    options:
+      - id: A
+        text: "A Claude Console API key, since an OAuth token is tied to the subscription of whoever made it."
+        correct: true
+        rationale: "For a secret shared across repositories, authenticate with an API key from the Claude Console rather than an OAuth token, since an OAuth token is tied to the subscription of the person who ran `claude setup-token`. Federation avoids a long-lived secret entirely."
+      - id: B
+        text: "A `CLAUDE_CODE_OAUTH_TOKEN`, since an OAuth token is scoped to the organisation that installed the app."
+        correct: false
+        rationale: "An OAuth token is tied to the subscription of the person who generated it, which is why the docs prefer an API key for a shared secret."
+      - id: C
+        text: "The key committed in each repository's settings file, so every clone and runner has a copy of it."
+        correct: false
+        rationale: "Never commit API keys or OAuth tokens to the repository. Store them as GitHub Secrets and reference them in workflows."
+      - id: D
+        text: "A separate key per repository, because an organisation-level Actions secret cannot hold an API key."
+        correct: false
+        rationale: "The docs recommend storing the secret as an organization-level Actions secret so each repository doesn't need its own copy."
+    source:
+      title: "Claude Code GitHub Actions"
+      url: "https://code.claude.com/docs/en/github-actions"

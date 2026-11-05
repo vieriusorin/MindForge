@@ -1,0 +1,37 @@
+skill: D4.S1
+diagrams:
+  - id: claude-code-in-action.D4.S1.diagram-working-session
+    title: "A working session as one loop, and what feeds it"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    direction: LR
+    nodes:
+      - { id: EXPLORE, label: "Explore: ask for an overview, find the files that matter" }
+      - { id: PLAN, label: "Plan mode: Claude proposes, makes no edits until you approve" }
+      - { id: IMPL, label: "Implement the approved change" }
+      - { id: CHECK, label: "Verify: run a check that comes back pass or fail" }
+      - { id: COMMIT, label: "Commit, open a PR; a person approves the merge" }
+      - { id: STEER, label: "Drifting? Esc, /rewind, or /clear after two failed corrections" }
+      - { id: FACT, label: "A fact Claude can't find in the repo: CLAUDE.md" }
+      - { id: PROC, label: "A team procedure: a skill" }
+      - { id: RULE, label: "A rule with zero exceptions: a hook or a deny rule" }
+      - { id: SYS, label: "A system with no CLI: an MCP server" }
+      - { id: SUB, label: "Parallel work, long output, a fresh reviewer: a subagent" }
+    edges:
+      - { from: EXPLORE, to: PLAN }
+      - { from: PLAN, to: IMPL, label: "you approve" }
+      - { from: IMPL, to: CHECK }
+      - { from: CHECK, to: COMMIT, label: "passes, with evidence" }
+      - { from: CHECK, to: IMPL, label: "fails: read the output, fix, run again" }
+      - { from: IMPL, to: STEER, label: "heads somewhere you didn't intend" }
+      - { from: STEER, to: PLAN, label: "redirect with a better prompt" }
+      - { from: FACT, to: EXPLORE, label: "loaded into every session" }
+      - { from: PROC, to: IMPL, label: "read in full when the task calls for it" }
+      - { from: RULE, to: IMPL, label: "a PreToolUse hook or deny rule blocks the forbidden edit" }
+      - { from: RULE, to: CHECK, label: "a Stop hook sends Claude back until the check passes or the block limit is reached" }
+      - { from: SYS, to: EXPLORE, label: "issue tracker, dashboards" }
+      - { from: SUB, to: CHECK, label: "a reviewer that hasn't seen the reasoning" }
+    sources:
+      - https://code.claude.com/docs/en/best-practices
+      - https://code.claude.com/docs/en/common-workflows

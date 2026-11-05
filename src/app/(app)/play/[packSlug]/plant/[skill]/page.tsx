@@ -4,10 +4,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { planSeedPlanting } from "@/engine/content";
 import { treeStage } from "@/engine/forest";
 import { memoryBySkill } from "@/engine/memory";
-import { toPlayableQuestion } from "@/engine/questions";
+import { toPlayableQuestions } from "@/engine/questions";
 import { SeedChecks } from "@/features/seed-planting/components/seed-checks";
 import { SeedPrimer } from "@/features/seed-planting/components/seed-primer";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getItemHashes } from "@/server/content/get-item-hashes";
 import { getPackContent } from "@/server/content/get-pack-content";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
@@ -28,9 +29,10 @@ async function PlantSlot({
   }
   if (!(await listPacks()).some((p) => p.slug === packSlug)) notFound();
 
-  const [pack, content, review, attempts] = await Promise.all([
+  const [pack, content, hashes, review, attempts] = await Promise.all([
     getPack(packSlug),
     getPackContent(packSlug),
+    getItemHashes(packSlug),
     getReviewContext(user.id, packSlug),
     listMyAttempts(user.id, packSlug),
   ]);
@@ -55,7 +57,8 @@ async function PlantSlot({
         <SeedPrimer card={plan.card} diagram={plan.diagram} />
         <SeedChecks
           packSlug={packSlug}
-          checks={plan.checks.map(toPlayableQuestion)}
+          // MF-0032: each check carries the version this page shows.
+          checks={toPlayableQuestions(plan.checks, hashes)}
           wasSeed={treeStage(memory).stage === "seed"}
           forestHref="/today"
         />

@@ -1,0 +1,31 @@
+skill: D1.S1
+diagrams:
+  - id: platform-foundations.D1.S1.diagram-check-before-trust
+    title: "Before you trust an answer"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    direction: TB
+    nodes:
+      - { id: Q, label: "You ask Claude a question" }
+      - { id: CUR, label: "Does it depend on current or recent information?", shape: decision }
+      - { id: TRAIN, label: "Answer from training: most reliable up to the model's knowledge cutoff" }
+      - { id: WS, label: "Web search: toggle it on, or write 'Search the web' (new Claude experience: Claude searches when it helps)" }
+      - { id: CITE, label: "Answer grounded in the live web, with citations and source links" }
+      - { id: STAKES, label: "High-stakes decision riding on it?", shape: decision }
+      - { id: CHECK, label: "Scrutinise the advice; if it cites sources, open them and read the originals" }
+      - { id: USE, label: "Use the answer, knowing fluent text can still be mistaken" }
+    edges:
+      - { from: Q, to: CUR }
+      - { from: CUR, to: TRAIN, label: "no" }
+      - { from: CUR, to: WS, label: "yes" }
+      - { from: WS, to: CITE }
+      - { from: TRAIN, to: STAKES }
+      - { from: CITE, to: STAKES }
+      - { from: STAKES, to: CHECK, label: "yes" }
+      - { from: STAKES, to: USE, label: "no" }
+      - { from: CHECK, to: USE }
+    sources:
+      - https://support.claude.com/en/articles/8525154-claude-is-providing-incorrect-or-misleading-responses-what-s-going-on
+      - https://support.claude.com/en/articles/10684626-enable-and-use-web-search
+      - https://platform.claude.com/docs/en/models/overview

@@ -1,0 +1,158 @@
+skill: D3.S1
+questions:
+  - id: ai-capabilities.D3.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your support bot answers a customer's refund question with a confident, well-written policy that your company does not have. The prompt held no policy document. Fluent text met a gap in what the model knows. Which change addresses that collision?"
+    select: 1
+    options:
+      - id: A
+        text: "Supply the real policy document, and let the bot say it lacks the information when the answer is not there."
+        correct: true
+        rationale: "The guide's first strategy is to explicitly give Claude permission to admit uncertainty, which can drastically reduce false information. Supplying the real policy, and telling Claude to use only that document, removes the gap the fluent text was filling."
+      - id: B
+        text: "Ask the bot to keep its answers shorter, so that there is less room for a mistake to slip into the reply."
+        correct: false
+        rationale: "Length is not the cause. A short answer built on a policy the model did not see is still invented; the fix is to give it the source and permission to admit uncertainty."
+      - id: C
+        text: "Add the role \"You are an expert refund specialist\" to the system prompt so the bot sounds more authoritative."
+        correct: false
+        rationale: "A role focuses behaviour and tone, but it supplies no facts. Sounding more authoritative makes an invented policy more convincing, not more correct."
+      - id: D
+        text: "Ask the bot to reply in a strict JSON format, so the policy text it returns is easier for your app to parse."
+        correct: false
+        rationale: "Output format controls the shape of the answer, not where its facts come from. A parseable invented policy is still invented."
+    source:
+      title: "Reduce hallucinations"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations"
+  - id: ai-capabilities.D3.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Three hours into a coding agent session, after hundreds of tool results, the agent edits a file you told it at the start not to touch. Which two properties collided?"
+    select: 1
+    options:
+      - id: A
+        text: "Knowledge and next token prediction: the agent never learned what that file is for during its training."
+        correct: false
+        rationale: "The rule was given in the session, not expected from training. What changed over the session is how much context the instruction has to compete with."
+      - id: B
+        text: "Working memory and steerability: as the context fills, recall of the early instruction weakens, and the steer is lost."
+        correct: true
+        rationale: "Context rot: as the number of tokens in the context window increases, the model's ability to accurately recall information from that context decreases. An instruction steers only as well as it is recalled."
+      - id: C
+        text: "Knowledge and steerability: the instruction was ignored because the model's training data is older than your repository."
+        correct: false
+        rationale: "Training data age does not decide whether a stated instruction is followed. The instruction was in the context; the growing context is what weakened it."
+      - id: D
+        text: "Next token prediction alone: the agent sampled a different file name by chance, and nothing else played a part in it."
+        correct: false
+        rationale: "Blaming chance hides the cause you can fix. The trigger is the long, crowded context, which is why context engineering (compaction, notes, sub-agents) helps."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  - id: ai-capabilities.D3.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You send a 60k-token contract with your question placed above it. The answers miss clauses that are in the contract and once cite a clause that is not. What should you change first?"
+    select: 1
+    options:
+      - id: A
+        text: "Add \"be accurate and do not make mistakes\" to the end of your question, and keep the rest of the prompt exactly as it is."
+        correct: false
+        rationale: "A vague plea does not change how the long document is structured or grounded. The guide's levers are placement, structure and quote extraction."
+      - id: B
+        text: "Split the contract into separate conversations, one per clause, and ask the question in each one without the rest of the contract."
+        correct: false
+        rationale: "Each conversation would lack the clauses that relate to the question, so the model has less to ground in, not more."
+      - id: C
+        text: "Put the contract at the top, the question at the end, and ask Claude to quote the relevant clauses before answering."
+        correct: true
+        rationale: "For 20k+ token inputs, place long documents above the query (queries at the end can improve quality by up to 30 percent) and ask for relevant quotes first so Claude focuses on the content that matters."
+      - id: D
+        text: "Ask for a much longer answer, so that the model has room to cover every clause of the contract in detail."
+        correct: false
+        rationale: "More output does not fix retrieval from the input. A longer answer can repeat the same misses and add more invented detail."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: ai-capabilities.D3.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your long-running agent compacts its history near the context limit. After one compaction it reintroduces a bug it had fixed earlier, because a subtle constraint it found mid-task did not survive. What is the best fix?"
+    select: 1
+    options:
+      - id: A
+        text: "Turn compaction off and wait for models with larger context windows, so the history never has to be summarized."
+        correct: false
+        rationale: "The post expects context windows of all sizes to stay subject to context pollution and relevance concerns, so waiting for a bigger window does not solve it."
+      - id: B
+        text: "Make compaction more aggressive, so the summary is shorter and leaves more room in the window for new work."
+        correct: false
+        rationale: "Overly aggressive compaction is exactly what loses subtle but critical context whose importance only becomes apparent later."
+      - id: C
+        text: "List every constraint and edge case the agent could ever meet as rules in the system prompt, up front."
+        correct: false
+        rationale: "Stuffing a laundry list of edge cases into a prompt is explicitly not recommended. Diverse, canonical examples and curated context work better."
+      - id: D
+        text: "Have the agent keep structured notes outside the context, and tune the compaction prompt for recall first."
+        correct: true
+        rationale: "Structured note-taking persists critical context outside the window, and compaction prompts should be tuned by maximizing recall first, then improving precision."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  - id: ai-capabilities.D3.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You run the same prompt about an internal library five times. Two runs name one function and three name another for the same job. What does this tell you, and what is the sound next step?"
+    select: 1
+    options:
+      - id: A
+        text: "It is ordinary sampling variation, so take the function name that appears most often and ship it as the answer."
+        correct: false
+        rationale: "The guide reads inconsistent outputs as a possible sign of hallucination, not noise to vote away; critical information still needs validating."
+      - id: B
+        text: "It may signal hallucination: ground the answer in the library's docs and retract claims it cannot quote."
+        correct: true
+        rationale: "Best-of-N verification: inconsistencies across outputs could indicate hallucinations. Grounding in supplied text and retracting claims without a supporting quote addresses it."
+      - id: C
+        text: "The model is unsure of its role, so add \"You are a senior engineer on this library\" to make the answers agree."
+        correct: false
+        rationale: "A role sets focus and tone; it does not supply the library's real function names, so the answers could agree on a wrong one."
+      - id: D
+        text: "The context window overflowed on this request, so start a new conversation and send the same short prompt again."
+        correct: false
+        rationale: "A short prompt does not fill the window. Resending it unchanged repeats the conditions that produced the inconsistent answers."
+    source:
+      title: "Reduce hallucinations"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations"
+  - id: ai-capabilities.D3.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your team debates loading a large codebase index into the context up front versus letting the agent fetch files just in time with search tools. Which statement is the honest trade-off?"
+    select: 1
+    options:
+      - id: A
+        text: "Just in time keeps context tight, but exploring at runtime is slower and needs good tools; a hybrid can fit."
+        correct: true
+        rationale: "Just-in-time retrieval avoids drowning the agent in irrelevant context, but runtime exploration is slower than pre-computed data and needs the right tools and heuristics; a hybrid (as in Claude Code) can work best."
+      - id: B
+        text: "Loading everything is safe on a large enough model, because context rot only affects smaller and weaker models."
+        correct: false
+        rationale: "Context rot emerges across all models; some degrade more gently than others, but none are exempt."
+      - id: C
+        text: "Just-in-time retrieval is faster than pre-computed retrieval, so it wins on every axis, including speed."
+        correct: false
+        rationale: "The post names the cost directly: runtime exploration is slower than retrieving pre-computed data."
+      - id: D
+        text: "Loading up front costs nothing extra, because every token gets the same share of the model's attention."
+        correct: false
+        rationale: "Every token attends to every other, giving n² pairwise relationships; as context grows that attention gets stretched thin, so extra tokens deplete the attention budget."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"

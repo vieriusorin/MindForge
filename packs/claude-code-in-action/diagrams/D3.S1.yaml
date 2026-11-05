@@ -1,0 +1,50 @@
+skill: D3.S1
+diagrams:
+  - id: claude-code-in-action.D3.S1.diagram-tool-call-hooks
+    title: "Hooks around one tool call"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: CALL, label: "Claude proposes a tool call (tool_name, tool_input)" }
+      - { id: MATCH, label: "Does a PreToolUse matcher match the tool name?", shape: decision }
+      - { id: PRE, label: "PreToolUse hooks run in parallel, event JSON on stdin" }
+      - { id: OUT, label: "Exit code and stdout?", shape: decision }
+      - { id: E0, label: "Exit 0, plain text or nothing: no decision" }
+      - { id: E2, label: "Exit 2: block the tool call, stderr is fed back to Claude (JSON can't override it)" }
+      - { id: EJ, label: "JSON that passes validation, on exit 0 or any code but 2: the JSON decides", shape: decision }
+      - { id: EO, label: "Other exit code with plain text, invalid JSON, a crash or a timeout: hook failure" }
+      - { id: FAILMODE, label: "Does the hook set onFailure: block?", shape: decision }
+      - { id: DEFER, label: "defer (-p only): the turn ends with the tool call preserved" }
+      - { id: PERM, label: "Normal permission flow: rules, mode, prompt" }
+      - { id: RUN, label: "Tool runs and succeeds" }
+      - { id: POST, label: "PostToolUse hooks run (matcher on the tool name)" }
+      - { id: POSTFB, label: "PostToolUse exit 2 or decision block: reason shown to Claude, the tool already ran" }
+      - { id: NEXT, label: "Claude continues the turn" }
+    edges:
+      - { from: CALL, to: MATCH }
+      - { from: MATCH, to: PRE, label: "yes" }
+      - { from: MATCH, to: PERM, label: "no" }
+      - { from: PRE, to: OUT }
+      - { from: OUT, to: E0, label: "exit 0, no JSON" }
+      - { from: OUT, to: E2, label: "exit 2" }
+      - { from: OUT, to: EJ, label: "valid JSON, exit not 2" }
+      - { from: OUT, to: EO, label: "anything else" }
+      - { from: E0, to: PERM }
+      - { from: EO, to: FAILMODE }
+      - { from: FAILMODE, to: PERM, label: "no: non-blocking error, the action proceeds" }
+      - { from: FAILMODE, to: NEXT, label: "yes: blocked like exit 2" }
+      - { from: EJ, to: PERM, label: "allow (skips the prompt; deny and ask rules still apply) or ask" }
+      - { from: EJ, to: NEXT, label: "deny: reason fed back to Claude" }
+      - { from: EJ, to: DEFER, label: "defer, in a -p run" }
+      - { from: E2, to: NEXT }
+      - { from: PERM, to: RUN, label: "approved" }
+      - { from: PERM, to: NEXT, label: "denied" }
+      - { from: RUN, to: POST }
+      - { from: POST, to: POSTFB, label: "exit 2 or block" }
+      - { from: POST, to: NEXT, label: "exit 0" }
+      - { from: POSTFB, to: NEXT }
+    sources:
+      - https://code.claude.com/docs/en/hooks
+      - https://code.claude.com/docs/en/hooks-guide

@@ -1,0 +1,28 @@
+skill: D2.S5
+cards:
+  - id: claude-code-in-action.D2.S5.card-mcp-network
+    concept: "MCP servers: plugging other systems into Claude Code"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Connect an MCP server when you find yourself copying data into chat from another tool, like an
+      issue tracker or a monitoring dashboard. MCP is an open source standard: the server gives Claude
+      Code tools for that system, and Claude reads and acts on it directly. You add one from your shell
+      with claude mcp add, as a remote HTTP server or a local stdio process. The scope decides where it loads: local (default, just
+      you, this project), project (.mcp.json, shared through git) or user (all your projects). Check
+      what is connected with /mcp.
+    inNature: >-
+      A tree's roots joined to a fungal network underground. Through the fungus, the tree reaches water
+      and nutrients far beyond its own roots, and trades with what lives there.
+    whereItBreaks:
+      - "A fungus cannot talk the tree into anything. A server that fetches external content can expose you to prompt injection, so verify you trust each server before connecting it."
+      - "Roots join the network on their own. A project-scoped server from .mcp.json waits for your approval in an interactive session, and a cloned repository can't approve its own servers."
+      - "Everything the network offers reaches the tree. Each server's tools still go through your permission rules: an allow rule like mcp__puppeteer__* is one way to let them run without a prompt."
+    contrast: >-
+      Scope decides where a server you add loads and who shares it. Permission rules decide which of
+      its tools run without asking.
+    diagram: claude-code-in-action.D2.S5.diagram-connect-server
+    sources:
+      - https://code.claude.com/docs/en/mcp
+      - https://code.claude.com/docs/en/permissions

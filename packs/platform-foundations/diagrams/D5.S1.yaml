@@ -1,0 +1,33 @@
+skill: D5.S1
+diagrams:
+  - id: platform-foundations.D5.S1.diagram-context-budget
+    title: "A long session: restart, summarize or persist"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: G, label: "Session grows: messages, tool results and replies add tokens" }
+      - { id: Q, label: "Accuracy or recall slipping, or nearing the window?", shape: decision }
+      - { id: R, label: "Restart: open a new chat and ask Claude to search past chats" }
+      - { id: P, label: "Persist: let memory save the facts (or tell Claude to remember them)" }
+      - { id: S, label: "Summarize: compaction replaces older turns with a summary" }
+      - { id: W, label: "On the API, who decides when, and who writes the summary?", shape: decision }
+      - { id: OD, label: "You: compaction on demand (a loop that swaps the summary in)" }
+      - { id: TH, label: "The API: compaction at a token threshold (one parameter)" }
+      - { id: OWN, label: "Your own summarizer on the client" }
+    edges:
+      - { from: G, to: Q }
+      - { from: Q, to: G, label: "no, keep working" }
+      - { from: Q, to: R, label: "restart" }
+      - { from: Q, to: P, label: "persist" }
+      - { from: Q, to: S, label: "summarize" }
+      - { from: P, to: R, label: "the new chat starts with it" }
+      - { from: S, to: W }
+      - { from: W, to: OD, label: "you decide; Claude summarizes on the server" }
+      - { from: W, to: TH, label: "the API, at your token trigger" }
+      - { from: W, to: OWN, label: "you decide and summarize in your own code" }
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/context-windows
+      - https://platform.claude.com/docs/en/build-with-claude/compaction
+      - https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context

@@ -1,0 +1,158 @@
+skill: D2.S2
+questions:
+  - id: subagents.D2.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your subagent file has no `model` field. Claude passes no model when it delegates, and `CLAUDE_CODE_SUBAGENT_MODEL` is not set. Which model does the subagent run on?"
+    select: 1
+    options:
+      - id: A
+        text: "Haiku, the default that Claude Code picks for every subagent."
+        correct: false
+        rationale: "No fixed Haiku default is documented. With no per-invocation parameter, no frontmatter `model` and no environment variable, the order ends at the main conversation's model."
+      - id: B
+        text: "Sonnet, unless the file adds `model: inherit` to use your session's model."
+        correct: false
+        rationale: "Leaving `model` out does not pin Sonnet. Claude Code falls through the subagent model order to the main conversation's model."
+      - id: C
+        text: "None: Claude Code refuses to start a subagent that names no model."
+        correct: false
+        rationale: "`model` is optional. Only `name` and `description` are required, and when `model` is omitted Claude Code picks the model in the subagent model order."
+      - id: D
+        text: "The main conversation's model, the last step of the subagent model order."
+        correct: true
+        rationale: "Claude Code resolves the model from the per-invocation `model` parameter, then the frontmatter `model`, then `CLAUDE_CODE_SUBAGENT_MODEL`, then the main conversation's model."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D2.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A subagent only reads long test logs and returns a short list of failures. You want it to cost less. What does the Claude Code cost guide suggest?"
+    select: 1
+    options:
+      - id: A
+        text: "Switch your session to Opus so the subagent finishes in fewer turns."
+        correct: false
+        rationale: "Sonnet costs less than Opus, and a switch to Opus also applies to the subagents that inherit your session's model, so this raises cost."
+      - id: B
+        text: "Specify `model: haiku` in the subagent's configuration."
+        correct: true
+        rationale: "The cost guide says: for simple subagent tasks, specify `model: haiku` in your subagent configuration."
+      - id: C
+        text: "Leave it as is: a subagent's requests don't count toward your usage."
+        correct: false
+        rationale: "The subagent's own requests still draw on your usage; choosing a smaller model for it is how to spend less."
+      - id: D
+        text: "Read the logs in the main conversation, so no extra requests are made."
+        correct: false
+        rationale: "The guide recommends the opposite: delegate log processing to a subagent so the verbose output stays in its context and only a summary returns."
+    source:
+      title: "Manage costs effectively"
+      url: "https://code.claude.com/docs/en/costs"
+  - id: subagents.D2.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A `pr-reviewer` subagent should start every review already knowing your team's checklist, which is the project skill `review-checklist`. Which frontmatter does that?"
+    select: 1
+    options:
+      - id: A
+        text: "`tools: Read, Grep, Skill` so it can open the checklist when it needs it."
+        correct: false
+        rationale: "Listing `Skill` in `tools` does not preload anything; the reference says to preload skills into context, use the `skills` field rather than listing `Skill`."
+      - id: B
+        text: "`memory: project` so the checklist is kept in its memory directory."
+        correct: false
+        rationale: "`memory` gives the subagent a persistent directory for what it learns across conversations; it does not load a skill."
+      - id: C
+        text: "`skills: [review-checklist]` so the skill's full content loads at startup."
+        correct: true
+        rationale: "The `skills` field preloads the listed skills: the full content of each is injected into the subagent's context at startup, not only the description."
+      - id: D
+        text: "`initialPrompt: /review-checklist` so the skill runs as its first turn."
+        correct: false
+        rationale: "`initialPrompt` is auto-submitted only when the agent runs as the main session agent (via `--agent` or the `agent` setting), not when it is delegated to."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D2.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Two custom subagents will edit files at the same time, and their changes must not collide in your checkout. What do you add to their frontmatter?"
+    select: 1
+    options:
+      - id: A
+        text: "`isolation: worktree`, so each gets an isolated copy of the repository."
+        correct: true
+        rationale: "Setting `isolation` to `worktree` runs the subagent in a temporary git worktree, an isolated copy of the repository; it is cleaned up automatically if the subagent makes no changes."
+      - id: B
+        text: "`background: true`, so each runs as its own separate task."
+        correct: false
+        rationale: "`background` keeps a subagent in the background even when Claude asks to wait for it; it does not give the subagent its own copy of the files."
+      - id: C
+        text: "`memory: local`, so each keeps its changes out of version control."
+        correct: false
+        rationale: "`memory: local` stores the subagent's memory in `.claude/agent-memory-local/<name-of-agent>/`; it does not isolate the files it edits."
+      - id: D
+        text: "A line in each prompt telling it to `cd` into a copy of the repo first."
+        correct: false
+        rationale: "Within a subagent, `cd` commands don't persist between Bash or PowerShell tool calls; the documented way to get an isolated copy is `isolation: worktree`."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D2.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A subagent with `isolation: worktree` must run the tests on your unpushed feature-branch commits, but its worktree doesn't contain them. What explains this, and what is the fix?"
+    select: 1
+    options:
+      - id: A
+        text: "They branch from the default branch; set `worktree.baseRef` to `\"head\"`."
+        correct: true
+        rationale: "Subagent worktrees use the same base branch as `--worktree`: the repository's default branch unless `worktree.baseRef` is set to `\"head\"`, which carries your unpushed commits and feature-branch state."
+      - id: B
+        text: "Worktrees are cloned from the remote; push the branch first, then retry."
+        correct: false
+        rationale: "The default base is the repository's default branch on the remote, not your feature branch, so pushing the branch changes nothing. `\"head\"` branches from your current local `HEAD`, which carries your unpushed commits."
+      - id: C
+        text: "Worktree isolation applies only to background subagents; run it in background."
+        correct: false
+        rationale: "Which commits the worktree has is set by its base branch, the default branch unless `worktree.baseRef` is `\"head\"`, not by how the subagent runs."
+      - id: D
+        text: "Its worktree was removed for having no changes before the tests could start."
+        correct: false
+        rationale: "Claude Code removes a subagent's worktree when the subagent finishes without changes; that cleanup is not why the commits are missing."
+    source:
+      title: "Run parallel sessions with worktrees"
+      url: "https://code.claude.com/docs/en/worktrees"
+  - id: subagents.D2.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "In your Agent SDK app, a cheap triage subagent should use the `haiku` model alias, set its effort field to `'low'`, and stop after at most 5 agentic turns. Which `AgentDefinition` spells these fields correctly?"
+    select: 1
+    options:
+      - id: A
+        text: "`{ description, prompt, model: 'haiku', reasoningEffort: 'low', max_turns: 5 }`"
+        correct: false
+        rationale: "The fields are `effort` and `maxTurns`; even in the Python SDK multi-word field names keep their camelCase spelling to match the wire format."
+      - id: B
+        text: "`{ prompt, model: 'haiku', effort: 'low', maxTurns: 5 }` with no description"
+        correct: false
+        rationale: "`description` is required: it is the natural language description of when to use this agent."
+      - id: C
+        text: "`{ description, prompt, model: 'haiku', effort: 'low', turns: 5 }`"
+        correct: false
+        rationale: "The `AgentDefinition` table has no `turns` field; the turn limit is `maxTurns`."
+      - id: D
+        text: "`{ description, prompt, model: 'haiku', effort: 'low', maxTurns: 5 }`"
+        correct: true
+        rationale: "`description` and `prompt` are required, `model` accepts the alias `'haiku'`, `effort` accepts `'low'`, and `maxTurns` stops the agent, returning its output marked as partial."
+    source:
+      title: "Subagents in the SDK"
+      url: "https://code.claude.com/docs/en/agent-sdk/subagents"

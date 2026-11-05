@@ -1,0 +1,158 @@
+skill: D4.S1
+questions:
+  - id: subagents.D4.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You ask Claude Code to run the full test suite. It prints thousands of lines, and you only care which tests fail and why. What does the subagents page recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Delegate the run to a subagent and ask it to report only the failing tests with their error messages."
+        correct: true
+        rationale: "Running tests is the page's first example of a high-volume operation: the verbose output stays in the subagent's context and only the relevant summary returns to the main conversation."
+      - id: B
+        text: "Run the suite in the main conversation, because verbose output is a reason to keep work in the main context."
+        correct: false
+        rationale: "It is the reverse: the page lists a task that produces verbose output you don't need in your main context as a reason to use a subagent."
+      - id: C
+        text: "Ask the question with /btw, so the test output is not added to the conversation history."
+        correct: false
+        rationale: "/btw is for a question about something already in your conversation, and it has no tool access, so it cannot run the test suite."
+      - id: D
+        text: "Write a skill for the test run, because a skill keeps its output out of the main conversation context."
+        correct: false
+        rationale: "The page offers skills for reusable prompts or workflows that run in the main conversation context, which is exactly where you do not want thousands of lines of output."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D4.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A teammate says that handing log processing to a subagent is free, because only the subagent's summary reaches the main conversation. What does the Claude Code costs page say?"
+    select: 1
+    options:
+      - id: A
+        text: "They are right: only the summary that returns to the main conversation counts toward your usage."
+        correct: false
+        rationale: "The costs page says the subagent's own requests still draw on your usage; only the context saving is free, not the work."
+      - id: B
+        text: "The output stays in the subagent's context, but its own requests still draw on your usage."
+        correct: true
+        rationale: "The page recommends delegating verbose operations so the output stays in the subagent's context, and adds that the subagent's own requests still draw on your usage; a smaller model for the subagent spends less."
+      - id: C
+        text: "Delegation costs more than doing the work in the main conversation, so the page advises against it for logs."
+        correct: false
+        rationale: "The page does the opposite: under 'Delegate verbose operations to subagents' it names processing log files as a case for delegation."
+      - id: D
+        text: "Subagents run on Haiku by default, so their usage is too small to matter."
+        correct: false
+        rationale: "Haiku is something you choose: the page says to specify model: haiku in the subagent configuration for simple tasks, and that a switch to Opus also applies to subagents that inherit the session's model."
+    source:
+      title: "Manage costs effectively"
+      url: "https://code.claude.com/docs/en/costs"
+  - id: subagents.D4.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You are tuning a page layout with Claude: change the spacing, look, adjust the header, look again, many times in a row. Where should this work happen?"
+    select: 1
+    options:
+      - id: A
+        text: "In a subagent, so each round of changes stays out of your main context window."
+        correct: false
+        rationale: "Isolation pays off for self-contained work that can return a summary; a task that needs frequent back-and-forth loses the conversation it depends on."
+      - id: B
+        text: "In parallel subagents, one per layout idea, with Claude synthesizing the results at the end."
+        correct: false
+        rationale: "Parallel research works best when the paths don't depend on each other; each layout tweak depends on what you saw in the last one."
+      - id: C
+        text: "In the main conversation, because the task needs frequent back-and-forth and iterative refinement."
+        correct: true
+        rationale: "The page's first reason to use the main conversation is a task that needs frequent back-and-forth or iterative refinement."
+      - id: D
+        text: "In a chain of subagents, each one applying one tweak and handing the page to the next."
+        correct: false
+        rationale: "Chaining suits multi-step workflows where each subagent completes a task; here you need to react to every step yourself, which is back-and-forth work for the main conversation."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D4.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "To explain a request's path, you need findings on the authentication, database and API modules. None of the three investigations depends on another. Which approach does the page describe for this?"
+    select: 1
+    options:
+      - id: A
+        text: "Chain three subagents so each one receives the previous one's findings before it starts."
+        correct: false
+        rationale: "Chaining is for multi-step workflows where Claude passes relevant context from one subagent to the next; independent investigations gain nothing from waiting on each other."
+      - id: B
+        text: "Investigate all three in the main conversation, since a quick, targeted change belongs there."
+        correct: false
+        rationale: "Three module investigations are not a quick, targeted change; the page's example for exactly this request uses separate subagents."
+      - id: C
+        text: "Spawn three subagents and have each return its full file listings so that nothing is lost on the way back."
+        correct: false
+        rationale: "The page warns that many subagents each returning detailed results can consume significant context; the point is to return what matters."
+      - id: D
+        text: "Research the three modules in parallel with separate subagents, then let Claude synthesize the findings."
+        correct: true
+        rationale: "For independent investigations the page spawns multiple subagents to work simultaneously; each explores its area and Claude synthesizes the findings. It works best when the paths don't depend on each other."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D4.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your team proposes routing every task through a lead agent that spawns parallel subagents. In Anthropic's multi-agent research write-up, what did token usage look like?"
+    select: 1
+    options:
+      - id: A
+        text: "Multi-agent systems used about 15% more tokens than a single agent, which the gains easily covered."
+        correct: false
+        rationale: "The figure is a multiple, not a percentage: multi-agent systems used about 15× more tokens than chats."
+      - id: B
+        text: "About 4× a chat's tokens for agents and 15× for multi-agent systems; the task must be worth it."
+        correct: true
+        rationale: "The post reports agents typically use about 4× more tokens than chat interactions and multi-agent systems about 15× more, and that economic viability needs tasks valuable enough to pay for the increased performance."
+      - id: C
+        text: "Multi-agent systems used fewer tokens than chats, because each subagent's context window is smaller."
+        correct: false
+        rationale: "The post says these architectures burn through tokens fast; separate context windows add capacity for parallel reasoning, they do not cut the total."
+      - id: D
+        text: "Token use matched a chat's, and the only cost was that each answer took about twice as long."
+        correct: false
+        rationale: "Token use rose sharply (about 15× chats for multi-agent systems), and parallel subagents cut research time by up to 90% for complex queries rather than doubling it."
+    source:
+      title: "How we built our multi-agent research system"
+      url: "https://www.anthropic.com/research/multi-agent-research-system"
+  - id: subagents.D4.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Which finding about where multi-agent systems fit matches Anthropic's multi-agent research write-up?"
+    select: 1
+    options:
+      - id: A
+        text: "Breadth-first work in independent directions; most coding has fewer truly parallel tasks."
+        correct: true
+        rationale: "The post says multi-agent research systems excel at breadth-first queries pursuing independent directions, and that most coding tasks involve fewer truly parallelizable tasks than research."
+      - id: B
+        text: "Coding is the best fit, because coding tasks split into more parallel pieces than research does."
+        correct: false
+        rationale: "The post says the opposite: most coding tasks involve fewer truly parallelizable tasks than research."
+      - id: C
+        text: "Agents now coordinate well in real time, so tasks with many dependencies between agents are a good fit."
+        correct: false
+        rationale: "The post says LLM agents are not yet great at coordinating and delegating to other agents in real time, and that domains with many dependencies between agents are not a good fit today."
+      - id: D
+        text: "More subagents help any query, so even simple fact-finding should fan out to many of them."
+        correct: false
+        rationale: "Spawning 50 subagents for simple queries was an early failure; the scaling rules give simple fact-finding just 1 agent with 3-10 tool calls."
+    source:
+      title: "How we built our multi-agent research system"
+      url: "https://www.anthropic.com/research/multi-agent-research-system"

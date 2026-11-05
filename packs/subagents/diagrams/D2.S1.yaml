@@ -1,0 +1,35 @@
+skill: D2.S1
+diagrams:
+  - id: subagents.D2.S1.diagram-which-definition-wins
+    title: "Where subagent definitions come from, and which one wins"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    direction: TB
+    nodes:
+      - { id: MANAGED, label: "1 Managed settings: organization-wide" }
+      - { id: CLI, label: "2 --agents CLI flag: this session only, not saved to disk" }
+      - { id: PROJECT, label: "3 .claude/agents/: current project (nested folders: closest to the working directory wins; --add-dir folders also load theirs)" }
+      - { id: USER, label: "4 ~/.claude/agents/: all your projects" }
+      - { id: PLUGIN, label: "5 Plugin's agents/ directory: where the plugin is enabled (loads under its filename if its frontmatter has no name or does not parse)" }
+      - { id: VALID, label: "Managed, project or user file: frontmatter parses and has a valid name and a description?", shape: decision }
+      - { id: SKIP, label: "File skipped, not reported in the session (no name, or an opening --- not on the first line: treated as documentation; bad name, no description or YAML that doesn't parse: reason in the --debug log)" }
+      - { id: SAME, label: "Same name twice in one agents directory tree: only one loads, by filesystem read order (run /doctor)" }
+      - { id: CLASH, label: "Same name defined in another location?", shape: decision }
+      - { id: WIN, label: "Claude Code uses the definition from the higher-priority location" }
+      - { id: LOADED, label: "Subagent available; Claude matches tasks to its description" }
+    edges:
+      - { from: MANAGED, to: VALID }
+      - { from: CLI, to: CLASH }
+      - { from: PROJECT, to: VALID }
+      - { from: USER, to: VALID }
+      - { from: PLUGIN, to: CLASH }
+      - { from: VALID, to: SKIP, label: "no" }
+      - { from: VALID, to: CLASH, label: "yes" }
+      - { from: VALID, to: SAME, label: "duplicate in the same tree" }
+      - { from: SAME, to: CLASH }
+      - { from: CLASH, to: WIN, label: "yes" }
+      - { from: CLASH, to: LOADED, label: "no" }
+      - { from: WIN, to: LOADED }
+    sources:
+      - https://code.claude.com/docs/en/sub-agents

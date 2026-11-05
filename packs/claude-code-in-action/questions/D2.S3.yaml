@@ -1,0 +1,158 @@
+skill: D2.S3
+questions:
+  - id: claude-code-in-action.D2.S3.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Halfway through a turn you see Claude editing the wrong module. What is the quickest way to stop it and redirect?"
+    select: 1
+    options:
+      - id: A
+        text: "Type `/clear`, which stops the turn and keeps the conversation so you can correct Claude."
+        correct: false
+        rationale: "`/clear` starts a new session; it is for switching to unrelated work, not for stopping a turn in progress."
+      - id: B
+        text: "Close the terminal window, since Claude Code has no key that stops a turn once it has started."
+        correct: false
+        rationale: "Claude Code has a key for this: `Esc` stops the current response or tool call mid-turn."
+      - id: C
+        text: "Let the turn finish first, because stopping mid-turn throws away every edit Claude has made so far."
+        correct: false
+        rationale: "Stopping with `Esc` keeps the work done so far, so there is no reason to wait for a wrong turn to finish."
+      - id: D
+        text: "Press `Esc`: it stops the current response or tool call so you can redirect, keeping work done so far."
+        correct: true
+        rationale: "The interactive-mode shortcuts list `Esc` as \"Stop the current response or tool call mid-turn so you can redirect. Claude keeps the work done so far.\""
+    source:
+      title: "Interactive mode"
+      url: "https://code.claude.com/docs/en/interactive-mode"
+  - id: claude-code-in-action.D2.S3.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You have just finished a bug fix and want to start an unrelated feature in the same terminal. What do the docs recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Run `/compact` so the bug-fix history comes along into the new feature in a shorter form."
+        correct: false
+        rationale: "For unrelated work the docs point to `/clear`. `/compact` reads the conversation it summarizes, so compacting a large context is itself a large request."
+      - id: B
+        text: "Run `/clear` to start fresh, because stale context wastes tokens on every message that follows."
+        correct: true
+        rationale: "Under Manage context proactively: \"Clear between tasks: Use `/clear` to start fresh when switching to unrelated work. Stale context wastes tokens on every subsequent message.\""
+      - id: C
+        text: "Keep going in the same conversation, since history costs nothing once it has been cached."
+        correct: false
+        rationale: "Cached history is re-read at the cached token rate on every request, so a long session still draws usage for the whole conversation."
+      - id: D
+        text: "Open `/rewind` and choose Restore code, which empties the context window for the new task."
+        correct: false
+        rationale: "Restore code reverts file changes; it does not start a fresh context for new work."
+    source:
+      title: "Manage costs effectively"
+      url: "https://code.claude.com/docs/en/costs"
+  - id: claude-code-in-action.D2.S3.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Claude's file edits over the last two prompts broke the build, and the conversation has drifted with them. You want both the files and the conversation back to before those prompts. What do you do?"
+    select: 1
+    options:
+      - id: A
+        text: "Run `/clear`, which reverts every file Claude edited in the session and empties the context."
+        correct: false
+        rationale: "`/clear` starts a new session; it does not touch files on disk. Reverting edits is what the rewind menu is for."
+      - id: B
+        text: "Open the rewind menu, pick the prompt, and choose Restore conversation, which reverts the files too."
+        correct: false
+        rationale: "Restore conversation rewinds to that message while keeping current code, so the broken edits would stay."
+      - id: C
+        text: "Run `/rewind` (or press `Esc` twice on empty input), pick the prompt, then Restore code and conversation."
+        correct: true
+        rationale: "The rewind menu's Restore code and conversation option reverts both code and conversation to that point; `/rewind` or a double `Esc` on an empty prompt opens it."
+      - id: D
+        text: "Run `/compact` with an instruction to undo the last two prompts, and Claude rolls the files back."
+        correct: false
+        rationale: "Compacting summarizes the conversation; summarizing doesn't change files on disk."
+    source:
+      title: "Checkpointing"
+      url: "https://code.claude.com/docs/en/checkpointing"
+  - id: claude-code-in-action.D2.S3.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A long debugging session filled the context with logs. Your first messages hold the task's instructions and you want to keep them word for word, while staying in this session with a summary of what the debugging found. How do you free space?"
+    select: 1
+    options:
+      - id: A
+        text: "In `/rewind`, select the message where the debugging began and choose Summarize from here."
+        correct: true
+        rationale: "Summarize from here compresses the conversation from that point forward into a summary, freeing context window space; the docs name this case: summarize a verbose debugging session from the midpoint forward, keeping your initial instructions intact."
+      - id: B
+        text: "Run `/clear`, then paste the original instructions into the fresh session by hand."
+        correct: false
+        rationale: "That leaves the whole debugging history behind in the old session; rewind's summarize options compress only part of the conversation and keep you in the same session."
+      - id: C
+        text: "In `/rewind`, choose Restore code at the midpoint, which frees the space the logs took up."
+        correct: false
+        rationale: "Restore code reverts file changes while keeping the conversation, so the logs stay in context."
+      - id: D
+        text: "In `/rewind`, choose Summarize up to here at the midpoint, which compresses the logs after it."
+        correct: false
+        rationale: "Summarize up to here compresses the conversation before the point, which is where your instructions are, and keeps later messages intact."
+    source:
+      title: "Checkpointing"
+      url: "https://code.claude.com/docs/en/checkpointing"
+  - id: claude-code-in-action.D2.S3.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your team keeps API conventions in a rule file with `paths:` frontmatter. After a compaction, Claude stops applying them until it reads an API file again. The conventions must survive compaction. What is the documented fix?"
+    select: 1
+    options:
+      - id: A
+        text: "Drop the `paths:` frontmatter, or move the rule into the project-root CLAUDE.md, which is re-injected from disk."
+        correct: true
+        rationale: "Path-scoped rules load into message history with their trigger file, so compaction summarizes them away; the page says to drop the `paths:` frontmatter or move the rule to the project-root CLAUDE.md, which is re-injected from disk after compaction."
+      - id: B
+        text: "Have a hook print the conventions once at the start; context that hooks added survives compaction word for word."
+        correct: false
+        rationale: "Context that hooks added earlier is summarized with the rest of the conversation. Only SessionStart hooks that match the `compact` source run again after compaction."
+      - id: C
+        text: "Raise the threshold with `/autocompact` so the rule is never summarized away during the session."
+        correct: false
+        rationale: "`/autocompact` sets how full the window gets before the automatic pass runs; once compaction happens, a path-scoped rule is still summarized away."
+      - id: D
+        text: "Move the rule into a nested CLAUDE.md inside the API folder, which is re-injected from disk after compaction."
+        correct: false
+        rationale: "Nested CLAUDE.md files in subdirectories are reloaded on demand, like path-scoped rules, not re-injected after compaction."
+    source:
+      title: "Explore the context window"
+      url: "https://code.claude.com/docs/en/context-window"
+  - id: claude-code-in-action.D2.S3.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Claude ran a shell script that rewrote a config file it had never edited with its file tools. You pick Restore code in the rewind menu, but the config file stays changed. Why, and what do you use?"
+    select: 1
+    options:
+      - id: A
+        text: "Checkpoints keep snapshots for the 10 most recent prompts; the change is older, so restore from a backup."
+        correct: false
+        rationale: "Claude Code keeps file snapshots for the 100 most recent checkpoints in a session; the limit is not the cause here."
+      - id: B
+        text: "Restore code skips files over 5,000 tokens; split the config file and rewind again."
+        correct: false
+        rationale: "The 5,000-token limit belongs to the files re-read after compaction, not to rewind. Rewind skips symlinked and hard-linked paths, not large files."
+      - id: C
+        text: "Rewind restores files only after you turn on `/debug`; enable it and choose Restore code again."
+        correct: false
+        rationale: "`/debug` only turns on debug logging so you can see which paths a restore skips; it does not make a file tracked."
+      - id: D
+        text: "A file that only Bash commands changed isn't tracked by checkpoints; revert it with version control such as Git."
+        correct: true
+        rationale: "Under Limitations: \"A file that only Bash commands changed isn't tracked and stays as it is. To revert it, use version control, such as Git.\""
+    source:
+      title: "Checkpointing"
+      url: "https://code.claude.com/docs/en/checkpointing"

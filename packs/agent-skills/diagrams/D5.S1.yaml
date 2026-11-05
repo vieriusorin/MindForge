@@ -1,0 +1,46 @@
+skill: D5.S1
+diagrams:
+  - id: agent-skills.D5.S1.diagram-who-needs-this-skill
+    title: "Who needs this skill?"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: W, label: "Who needs this skill?", shape: decision }
+      - { id: PER, label: "Only you, in your projects on this machine: ~/.claude/skills/<skill-name>/" }
+      - { id: PRJ, label: "Everyone in this repository: .claude/skills/<skill-name>/, committed" }
+      - { id: NST, label: "Work in one part of a monorepo: <subdir>/.claude/skills/<skill-name>/" }
+      - { id: ADD, label: "One session that needs another directory's skills: pass it with --add-dir" }
+      - { id: PLG, label: "Many projects, bundled with agents, hooks or MCP servers: a plugin's skills/ directory" }
+      - { id: ENT, label: "Every user on machines your organization manages: the managed settings directory (enterprise)" }
+      - { id: ACC, label: "Cowork and cloud sessions: enable it for your claude.ai account" }
+      - { id: CL, label: "Same name in another of these locations?", shape: decision }
+      - { id: PREC, label: "Two of enterprise, personal and project: enterprise wins over personal, personal over project" }
+      - { id: CLX, label: "Other clashes: nested and project-root skills both load; an added directory's or synced claude.ai skill runs under a prefixed or full name; a skill beats an older .claude/commands/ file and replaces a bundled or built-in command, not its aliases" }
+      - { id: NS, label: "Both load: plugin skills run as /plugin-name:skill-name" }
+      - { id: AUD, label: "Use skills only from trusted sources (your own or Anthropic's); untrusted or unknown source: extreme caution and a thorough audit of every bundled file before use" }
+    edges:
+      - { from: W, to: PER, label: "just me" }
+      - { from: W, to: PRJ, label: "my team, this repo" }
+      - { from: W, to: NST, label: "one package" }
+      - { from: W, to: ADD, label: "this session" }
+      - { from: W, to: PLG, label: "teams, many repos" }
+      - { from: W, to: ENT, label: "the organization" }
+      - { from: W, to: ACC, label: "cloud" }
+      - { from: PER, to: CL }
+      - { from: PRJ, to: CL }
+      - { from: ENT, to: CL }
+      - { from: NST, to: CL }
+      - { from: ADD, to: CL }
+      - { from: ACC, to: CL }
+      - { from: CL, to: PREC, label: "yes, between those three" }
+      - { from: CL, to: CLX, label: "yes, other locations" }
+      - { from: PER, to: AUD, label: "skill you didn't write" }
+      - { from: PRJ, to: AUD, label: "skill you didn't write" }
+      - { from: PLG, to: NS, label: "name clash" }
+      - { from: PLG, to: AUD, label: "skill you didn't write" }
+    sources:
+      - https://code.claude.com/docs/en/skills
+      - https://code.claude.com/docs/en/plugins
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview

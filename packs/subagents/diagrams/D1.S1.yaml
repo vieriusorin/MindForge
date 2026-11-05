@@ -1,0 +1,53 @@
+skill: D1.S1
+diagrams:
+  - id: subagents.D1.S1.diagram-delegation-loop
+    title: "The delegation loop"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    direction: TB
+    nodes:
+      - { id: MC, label: "Main conversation: your request" }
+      - { id: D, label: "Does the task match a subagent's description and the current context, or did you @-mention one?", shape: decision }
+      - { id: N, label: "No delegation: Claude does the work itself" }
+      - { id: IN, label: "Non-fork start: its prompt, Claude's task message, CLAUDE.md and git status (Explore and Plan skip these two; a fork inherits the conversation instead)" }
+      - { id: SC, label: "Subagent works in its own context window, with its own tools and permissions" }
+      - { id: V, label: "File reads, searches and test output stay there" }
+      - { id: S, label: "Only the summary comes back, plus a small metadata trailer" }
+    edges:
+      - { from: MC, to: D }
+      - { from: D, to: SC, label: "match: delegate" }
+      - { from: D, to: N, label: "no match" }
+      - { from: IN, to: SC, label: "initial context" }
+      - { from: SC, to: V, label: "verbose work" }
+      - { from: SC, to: S, label: "finishes" }
+      - { from: S, to: MC, label: "returns to" }
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/context-window
+  - id: subagents.D1.S1.diagram-fresh-or-fork
+    title: "What a subagent starts with: fresh or fork"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: P, label: "Parent session: history, system prompt, tools, model" }
+      - { id: Q, label: "Fork or regular subagent?", shape: decision }
+      - { id: F, label: "Fork: full history, same prompt, tools and model, shared prompt cache" }
+      - { id: R, label: "Regular subagent: fresh, isolated context window; tools and model from its own definition; separate prompt cache" }
+      - { id: IN, label: "Gets: own system prompt, task message, CLAUDE.md, git status, preloaded skills, and a roster of named agents if it has SendMessage" }
+      - { id: EP, label: "Explore and Plan skip CLAUDE.md and git status; omitClaudeMd skips user, project and local CLAUDE.md" }
+      - { id: NOT, label: "Never gets: your history, output style, auto memory" }
+      - { id: OUT, label: "Its tool calls stay out; only its final result returns" }
+    edges:
+      - { from: P, to: Q }
+      - { from: Q, to: F, label: "fork" }
+      - { from: Q, to: R, label: "not a fork" }
+      - { from: R, to: IN }
+      - { from: IN, to: EP, label: "exceptions" }
+      - { from: R, to: NOT }
+      - { from: F, to: OUT }
+      - { from: R, to: OUT }
+    sources:
+      - https://code.claude.com/docs/en/sub-agents

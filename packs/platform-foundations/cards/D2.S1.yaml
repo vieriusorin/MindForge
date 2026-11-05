@@ -1,0 +1,31 @@
+skill: D2.S1
+cards:
+  - id: platform-foundations.D2.S1.card-where-to-plant
+    concept: Choose the entry point before the prompt
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      Decide where the work lives before you write the prompt. A one-off question goes in a chat, with
+      web search on when it needs current facts. Recurring work on the same documents goes in a project,
+      whose knowledge base and instructions shape the chats inside it. Something you will edit, reuse or
+      hand to others becomes an artifact. A question that needs many searches building on each other,
+      across the web and your connected tools, goes to research.
+    inNature: >-
+      Choosing where to plant. A seed you want to try once goes in a pot on the windowsill. A crop you
+      tend each season gets a prepared garden bed, with the soil already right. A bouquet you will hand
+      to someone is cut and arranged on its own. Surveying a whole valley for the best site is an
+      expedition, not a pot.
+    whereItBreaks:
+      - "A plant cannot leave its bed; an artifact opens beside any conversation, is saved to the Artifacts tab, and can be shared with others."
+      - "An expedition walks the valley in one direction; research decides what to look into next from what each search finds."
+      - "A garden bed works the same wherever you stand; research started in Claude Mobile searches the web and does not use your connectors."
+    contrast: >-
+      This skill picks the entry point. D2.S2 looks inside a project (instructions, knowledge, when one
+      pays off), and D3.S1 to D3.S3 add the capability layer on top of whichever entry point you chose.
+    diagram: platform-foundations.D2.S1.diagram-entry-points
+    sources:
+      - https://support.claude.com/en/articles/9517075-what-are-projects
+      - https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them
+      - https://support.claude.com/en/articles/11088861-use-research-on-claude
+      - https://support.claude.com/en/articles/10684626-enable-and-use-web-search

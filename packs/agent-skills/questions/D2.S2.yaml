@@ -1,0 +1,158 @@
+skill: D2.S2
+questions:
+  - id: agent-skills.D2.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You start a new session with ten skills installed and haven't typed anything yet. What does Claude already know about those skills?"
+    select: 1
+    options:
+      - id: A
+        text: "Each skill's name and description, just enough to know when that skill should be used."
+        correct: true
+        rationale: "At startup the agent pre-loads the name and description of every installed skill into its system prompt: just enough to know when each skill should be used."
+      - id: B
+        text: "The full SKILL.md of all ten skills, so it can follow any of them without reading files."
+        correct: false
+        rationale: "The body is the second level: Claude reads the full SKILL.md into context only when it thinks the skill is relevant to the current task."
+      - id: C
+        text: "Nothing yet: Claude looks inside the skill folders only after you mention a skill by name."
+        correct: false
+        rationale: "The metadata is loaded at startup, before any request; that first level is what lets Claude know when a skill applies."
+      - id: D
+        text: "The output of each bundled script, since every script runs once when the session starts."
+        correct: false
+        rationale: "Scripts are tools Claude runs at its discretion during a task, not at startup; bundled files are the third level, read only as needed."
+    source:
+      title: "Equipping agents for the real world with Agent Skills"
+      url: "https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills"
+  - id: agent-skills.D2.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A colleague says skills work by \"progressive disclosure.\" What does that mean?"
+    select: 1
+    options:
+      - id: A
+        text: "Claude shows the user its plan step by step and asks for approval before each tool call."
+        correct: false
+        rationale: "Progressive disclosure is about what enters Claude's context, not about approvals: Claude loads skill information in stages as needed."
+      - id: B
+        text: "A skill unlocks more of its features as the account moves from one paid plan to the next."
+        correct: false
+        rationale: "The term describes loading, not plans: metadata is always loaded, instructions when triggered, resources as needed."
+      - id: C
+        text: "A new skill is shown to more teammates over time, like a staged rollout of an app release."
+        correct: false
+        rationale: "It is not a rollout: the overview defines it as Claude loading information in stages as needed rather than consuming context upfront."
+      - id: D
+        text: "Claude loads a skill's content in stages, as needed, rather than all of it upfront."
+        correct: true
+        rationale: "The overview: the filesystem-based architecture allows progressive disclosure, where Claude loads information in stages as needed rather than consuming context upfront."
+    source:
+      title: "Agent Skills"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"
+  - id: agent-skills.D2.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your pdf-processing skill holds SKILL.md, FORMS.md and scripts/fill_form.py. You ask Claude to extract the text from a PDF and summarize it. What gets loaded?"
+    select: 1
+    options:
+      - id: A
+        text: "SKILL.md, FORMS.md and the source of fill_form.py, since a triggered skill loads its folder."
+        correct: false
+        rationale: "Claude accesses bundled files only when referenced and needed, and a script's code never enters context; only its output does when it runs."
+      - id: B
+        text: "SKILL.md is read into context; FORMS.md stays on disk since this task has no form."
+        correct: true
+        rationale: "The overview's walkthrough of this exact request: Claude reads pdf-processing/SKILL.md, determines form filling is not needed, and does not read FORMS.md."
+      - id: C
+        text: "Only FORMS.md, because Claude goes straight to the most specific file that fits the request."
+        correct: false
+        rationale: "SKILL.md is read first when the skill triggers; FORMS.md is a level-3 file, read only if the instructions point to it and the task needs it."
+      - id: D
+        text: "Nothing more: the description already in context carries enough instructions for this task."
+        correct: false
+        rationale: "The description is discovery metadata; the instructions are in the SKILL.md body, which enters context when the skill is triggered."
+    source:
+      title: "Agent Skills"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"
+  - id: agent-skills.D2.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your skill bundles a long scripts/validate_form.py, and SKILL.md tells Claude to run it after filling a form. When Claude runs it, what enters the context window?"
+    select: 1
+    options:
+      - id: A
+        text: "The full script source, which Claude reads first to check what the code is going to do."
+        correct: false
+        rationale: "When instructions mention executable scripts, Claude runs them through bash; the script code itself never enters context."
+      - id: B
+        text: "The script source and its output together, because bash hands both back to Claude."
+        correct: false
+        rationale: "Claude receives only the output; the overview says the script's code never loads into the context window."
+      - id: C
+        text: "Only its output, such as a pass message or an error; the code stays out of context."
+        correct: true
+        rationale: "Only the script's output, such as 'Validation passed' or a specific error message, consumes tokens; the code never loads into the context window."
+      - id: D
+        text: "Nothing: the script runs in the background and writes its result to a log file instead."
+        correct: false
+        rationale: "Claude runs the script through bash and receives its output, which is what consumes tokens."
+    source:
+      title: "Agent Skills"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"
+  - id: agent-skills.D2.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Early in a long session Claude invoked your migration skill. Hours later, after auto-compaction, it skips a step near the end of SKILL.md. Which explanation fits the docs?"
+    select: 1
+    options:
+      - id: A
+        text: "Claude Code re-reads SKILL.md every turn, and an edit to the file since then removed the step."
+        correct: false
+        rationale: "Claude Code does not re-read the skill file on later turns; the rendered content entered the conversation once, when the skill was invoked."
+      - id: B
+        text: "The body left context after Claude's first reply, since skill content lasts for one turn."
+        correct: false
+        rationale: "Invoked skill content stays in the conversation across later turns; it is the allowed-tools grant that clears with your next message."
+      - id: C
+        text: "Its description was dropped from the listing, and that also removes the body already loaded."
+        correct: false
+        rationale: "Dropped descriptions affect matching new requests; the page doesn't tie them to loaded content. Compaction is what limits re-attached skill content."
+      - id: D
+        text: "Compaction re-attaches only the start of each invoked skill, so late steps can be lost."
+        correct: true
+        rationale: "After compaction Claude Code keeps the first part of each re-attached skill within a budget; invoke the skill again, and put the key instructions near the top."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D2.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A teammate wants to paste a huge internal API reference into SKILL.md, arguing that skills load only when needed anyway. What is the better design?"
+    select: 1
+    options:
+      - id: A
+        text: "Keep SKILL.md lean and link the reference as its own file, read only when a task needs it."
+        correct: true
+        rationale: "When SKILL.md becomes unwieldy, split content into separate files and reference them by name; Claude reads them only as needed, so bundled context is effectively unbounded."
+      - id: B
+        text: "Move the reference into the description, so Claude sees it before deciding to trigger the skill."
+        correct: false
+        rationale: "Name and description are pre-loaded into the system prompt for every installed skill at startup, so a huge description is paid for on every task."
+      - id: C
+        text: "Leave it in SKILL.md: once triggered, Claude reads only the parts of the body that match the task."
+        correct: false
+        rationale: "When a skill is relevant, Claude loads it by reading its full SKILL.md into context, so a huge body is paid for in full each time."
+      - id: D
+        text: "Put it in the system prompt directly, so the skill body stays short and loads more quickly."
+        correct: false
+        rationale: "Skill metadata in the system prompt is only each skill's name and description; detail belongs in SKILL.md and bundled files that Claude discovers only as needed."
+    source:
+      title: "Equipping agents for the real world with Agent Skills"
+      url: "https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills"

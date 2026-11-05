@@ -31,6 +31,8 @@ export interface PlayableQuestion {
   select: number;
   options: { id: string; text: string }[];
   source: { title: string; url: string };
+  /** MF-0032: the deployed file's hash of this question; the answer sends it back (version read). */
+  contentHash: string;
 }
 
 /** Revealed only after the database graded the answer: the key and every option's rationale. */

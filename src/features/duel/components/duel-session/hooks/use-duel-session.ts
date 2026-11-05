@@ -98,7 +98,12 @@ export function useDuelSession(
   const submit = (): void => {
     if (!question || !isSubmittable || isInFlight.current) return;
     isInFlight.current = true;
-    mutation.mutate({ packSlug, questionId: question.id, chosen });
+    mutation.mutate({
+      packSlug,
+      questionId: question.id,
+      chosen,
+      contentHash: question.contentHash,
+    });
   };
 
   const next = (): void => {

@@ -1,0 +1,87 @@
+# AI Capabilities and Limitations (MF-0037)
+# A course pack. The course is behind a login and is never a source (CONTEXT.md Source): only its outline (section
+# order and the four property names) shaped this blueprint. Every skill is grounded in public pages only.
+# Weights are MindForge's; the course gives none. The four properties weigh most (4 of the course's 6 sections).
+# Items carry a `level`: foundation (junior), practitioner (mid), expert (senior).
+slug: ai-capabilities
+name: AI Capabilities and Limitations
+kind: course
+version: 1
+domains:
+  - code: D1
+    name: What AI is and how it is made
+    weight: 22
+    skills:
+      - code: D1.S1
+        name: Generative AI and language models
+        weight: 11
+        description: What a large language model is, tokens, and why a model's output is generated rather than looked up.
+        sources:
+          - https://platform.claude.com/docs/en/about-claude/glossary
+      - code: D1.S2
+        name: How training gives a model its character
+        weight: 11
+        description: Pretraining on large text corpora, then fine-tuning, RLHF and Constitutional AI that shape helpful, honest and harmless behaviour, and why character is trained, not programmed.
+        sources:
+          - https://platform.claude.com/docs/en/about-claude/glossary
+          - https://www.anthropic.com/research/claude-character
+          - https://www.anthropic.com/news/claudes-constitution
+
+  - code: D2
+    name: The four properties
+    weight: 52
+    skills:
+      - code: D2.S1
+        name: Next token prediction
+        weight: 13
+        description: Output produced one token at a time from probabilities, temperature and sampling, fluent text that is not the same as checked text, and what interpretability shows about planning ahead and thinking before answering.
+        sources:
+          - https://platform.claude.com/docs/en/about-claude/glossary
+          - https://www.anthropic.com/research/tracing-thoughts-language-model
+          - https://platform.claude.com/docs/en/build-with-claude/extended-thinking
+      - code: D2.S2
+        name: "Knowledge: what the model knows and does not"
+        weight: 13
+        description: Knowledge frozen at a training cutoff, hallucinations and how to reduce them, and grounding answers in fresh or supplied material with web search and citations.
+        sources:
+          - https://platform.claude.com/docs/en/about-claude/models/overview
+          - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+          - https://platform.claude.com/docs/en/build-with-claude/citations
+      - code: D2.S3
+        name: "Working memory: the context window"
+        weight: 13
+        description: The context window as everything the model can see at once, its limits, no memory between requests, context as a finite resource that degrades as it fills, and counting tokens before sending.
+        sources:
+          - https://platform.claude.com/docs/en/build-with-claude/context-windows
+          - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+          - https://platform.claude.com/docs/en/build-with-claude/token-counting
+      - code: D2.S4
+        name: "Steerability: prompts, roles and consistency"
+        weight: 13
+        description: Steering behaviour with clear instructions, context, examples, system prompts and roles, and making output format and behaviour consistent.
+        sources:
+          - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+          - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency
+          - https://platform.claude.com/docs/en/about-claude/glossary
+
+  - code: D3
+    name: Putting it together
+    weight: 26
+    skills:
+      - code: D3.S1
+        name: When properties collide
+        weight: 13
+        description: Real failures that come from two properties at once, such as a fluent answer past the training cutoff, an instruction lost in a crowded context, or a steered tone that hides uncertainty, and how to diagnose which property is at work.
+        sources:
+          - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations
+          - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+          - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+      - code: D3.S2
+        name: Using AI safely and effectively
+        weight: 13
+        description: Defining success criteria before trusting output, verifying claims, guarding against jailbreaks and prompt injection, and choosing which tasks to hand to a model.
+        sources:
+          - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks
+          - https://platform.claude.com/docs/en/test-and-evaluate/define-success
+          - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations

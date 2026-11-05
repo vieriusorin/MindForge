@@ -1,0 +1,39 @@
+skill: D3.S1
+diagrams:
+  - id: ai-capabilities.D3.S1.diagram-property-collisions
+    title: "The four properties, where they collide, and the fix for each collision"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: NTP, label: "Next token prediction: fluent, plausible text" }
+      - { id: KN, label: "Knowledge: what the model learned, not your private facts" }
+      - { id: WM, label: "Working memory (context window): recall degrades as tokens pile up" }
+      - { id: ST, label: "Steerability: instructions, roles and examples" }
+      - { id: F1, label: "Confident answer the sources do not support" }
+      - { id: F2, label: "Early instruction lost in a long session" }
+      - { id: F3, label: "Missed or invented detail from a long document" }
+      - { id: F4, label: "Brittle prompt stuffed with edge-case rules, spending the attention budget" }
+      - { id: M1, label: "Supply the source, allow 'I don't know', cite or retract each claim" }
+      - { id: M2, label: "Keep context tight: compaction, structured notes, sub-agents" }
+      - { id: M3, label: "Long document at the top, question at the end, quotes first" }
+      - { id: M4, label: "Minimal clear prompt plus a few diverse, canonical examples" }
+    edges:
+      - { from: NTP, to: F1 }
+      - { from: KN, to: F1 }
+      - { from: F1, to: M1, label: "fix" }
+      - { from: WM, to: F2 }
+      - { from: ST, to: F2 }
+      - { from: F2, to: M2, label: "fix" }
+      - { from: WM, to: F3 }
+      - { from: NTP, to: F3 }
+      - { from: F3, to: M3, label: "fix" }
+      - { from: ST, to: F4 }
+      - { from: ST, to: F1, label: "authoritative tone, no 'I don't know'" }
+      - { from: WM, to: F4 }
+      - { from: F4, to: M4, label: "fix" }
+    sources:
+      - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations
+      - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices

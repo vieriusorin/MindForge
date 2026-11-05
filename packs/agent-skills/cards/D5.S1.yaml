@@ -1,0 +1,37 @@
+skill: D5.S1
+cards:
+  - id: agent-skills.D5.S1.card-where-a-skill-lives
+    concept: Where you save a skill decides who gets it
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      A skill is a folder with a SKILL.md file, and its location is its audience. Say you wrote a
+      skill that runs your team's release checklist. Saved in ~/.claude/skills/, it follows only you,
+      across your projects on this machine. Committed to the repository's .claude/skills/, everyone who
+      works in that repository gets it. Placed in a plugin's skills/ directory, it travels wherever the
+      plugin is enabled and runs as /plugin-name:skill-name. Deployed through managed settings, it
+      reaches every user on the machines your organization manages. If two of enterprise, personal and
+      project hold a skill with the same name, enterprise wins over personal, and personal over project.
+      Use skills only from trusted sources, ones you wrote or got from Anthropic; a skill from an untrusted
+      or unknown source brings instructions and code, so it needs extreme caution and a thorough audit
+      of every bundled file before use.
+    inNature: >-
+      Seed dispersal. A tree can drop seeds under its own canopy, send runners through the shared bed
+      around it, pack seeds into fruit that birds carry to distant forests, or be planted across a
+      whole estate by the forester. The same seed reaches a different patch of ground depending on
+      how it travels.
+    whereItBreaks:
+      - "Seeds that land on the same spot can all sprout. When enterprise, personal and project skills share a name, only one runs for /name: enterprise over personal, and personal over project."
+      - "A bird-carried seed can crowd out what already grows where it lands. A plugin skill doesn't displace a same-named skill: plugin skills are namespaced as /plugin-name:skill-name, so both load."
+      - "A seed can't decide to harm the garden. A skill can direct Claude to call tools or run code in ways that don't match its stated purpose, so use skills only from trusted sources, and treat one from an unknown source with extreme caution and a thorough audit of every bundled file."
+    contrast: >-
+      Personal skills (~/.claude/skills/) serve one person on one machine. Project skills
+      (.claude/skills/, committed) serve one repository. Plugins bundle skills with agents, hooks and
+      MCP servers for many projects, with versioned releases. Managed settings deploy skills
+      organization-wide.
+    diagram: agent-skills.D5.S1.diagram-who-needs-this-skill
+    sources:
+      - https://code.claude.com/docs/en/skills
+      - https://code.claude.com/docs/en/plugins
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview

@@ -1,0 +1,33 @@
+skill: D1.S1
+cards:
+  - id: subagents.D1.S1.card-own-context-summary-back
+    concept: A subagent works in its own context window and hands back only a summary
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      You ask Claude Code which services still call the old parseInvoice helper in a 300-file
+      repo. Claude writes a short delegation message and hands the search to a subagent. The
+      subagent starts with a fresh, isolated context window: its own system prompt and that task
+      message, plus your CLAUDE.md files and a git status snapshot unless it is the built-in Explore
+      or Plan, which skip both. It never sees your conversation history. It reads dozens of files
+      there. Only its summary (and a small metadata trailer) comes back to
+      your main conversation, so the file contents never crowd your own context window. If a rule
+      from your chat must apply, restate it when you delegate.
+    inNature: >-
+      A honeybee scout. She flies out alone, finds a rich flower patch, and back in the hive performs
+      a waggle dance that encodes the patch's direction and distance. Her nestmates fly to it using
+      that short report, without retracing her search.
+    whereItBreaks:
+      - "A scout needs no briefing: she searches on her own. A non-fork subagent works only from Claude's delegation message, so anything it needs from your chat must be written into that message."
+      - "A scout's flight costs the hive almost nothing. A subagent sends its own requests, which count toward the same usage limits as your main conversation."
+      - "A forager can fly back to the same patch and carry on. The built-in Explore and Plan agents can't: they are one-shot and return no agent ID. Only a custom or general-purpose subagent can be resumed with its full history."
+    contrast: >-
+      A fork is the exception: it inherits the whole conversation instead of starting fresh, yet its
+      tool calls still stay out of your conversation and only its final result comes back.
+      `/compact` is different again: it summarizes your own conversation in place rather than doing
+      the work somewhere else.
+    diagram: subagents.D1.S1.diagram-delegation-loop
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/context-window

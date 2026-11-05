@@ -1,0 +1,158 @@
+skill: D4.S1
+questions:
+  - id: agent-skills.D4.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "On a new project you tell Claude, again, which command builds the app and where the tests live. You want it to know this in every session without being told. Where does it belong?"
+    select: 1
+    options:
+      - id: A
+        text: "In a skill, so Claude loads the build details when a request mentions building or testing."
+        correct: false
+        rationale: "Skills are for task-specific instructions that don't need to be in context all the time; they load only when invoked or judged relevant. Facts for every session go in CLAUDE.md."
+      - id: B
+        text: "In a hook, so a shell command prints the build details each time Claude starts a task."
+        correct: false
+        rationale: "Hooks are for things that must run at a specific point, such as before every commit. Facts Claude should simply know are what CLAUDE.md is for."
+      - id: C
+        text: "In auto memory, by letting Claude note the commands as it discovers them over time."
+        correct: false
+        rationale: "Auto memory holds notes Claude writes itself from your corrections. The page points instructions you write to guide Claude, such as build commands, to CLAUDE.md."
+      - id: D
+        text: "In the project CLAUDE.md, which Claude reads at the start of every session."
+        correct: true
+        rationale: "CLAUDE.md is where you write what you'd otherwise re-explain. The page says to keep it to facts Claude should hold in every session, such as build commands, conventions and project layout."
+    source:
+      title: "How Claude remembers your project"
+      url: "https://code.claude.com/docs/en/memory"
+  - id: agent-skills.D4.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Several times a day you copy ticket text from your issue tracker and paste it into Claude Code. What should you set up?"
+    select: 1
+    options:
+      - id: A
+        text: "A longer prompt template that you paste first, so the copied ticket text gets formatted well."
+        correct: false
+        rationale: "This keeps you copying and pasting. The page names that habit as the signal to connect an MCP server, so Claude works on the system directly."
+      - id: B
+        text: "An MCP server for the issue tracker, so Claude reads and acts on tickets directly."
+        correct: true
+        rationale: "The page says to connect a server when you find yourself copying data into chat from another tool, like an issue tracker. Once connected, Claude can read and act on that system directly."
+      - id: C
+        text: "A bigger context window, so all the pasted tickets fit in a single long-running session."
+        correct: false
+        rationale: "The problem is the copying, not the space. MCP servers give Claude Code access to your tools, databases and APIs, so the data doesn't have to be pasted in."
+      - id: D
+        text: "A copy of every open ticket committed to the repo, so Claude can read them as plain files."
+        correct: false
+        rationale: "This is still copying data out of another tool by hand. With an MCP server connected, Claude reads and acts on the issue tracker directly instead of working from what you paste."
+    source:
+      title: "Connect Claude Code to tools via MCP"
+      url: "https://code.claude.com/docs/en/mcp"
+  - id: agent-skills.D4.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your CLAUDE.md says \"Run the formatter after every file edit.\" Claude follows it most of the time, but not always. What change makes it happen every time?"
+    select: 1
+    options:
+      - id: A
+        text: "Turn the rule into a hook on file edits; it runs whatever Claude decides."
+        correct: true
+        rationale: "For something that must run at a specific point, such as after each file edit, the page says to write a hook. Hooks run at fixed lifecycle events, regardless of what Claude decides."
+      - id: B
+        text: "Move the rule into a skill so it loads exactly when Claude is about to edit a file."
+        correct: false
+        rationale: "A skill is still instructions Claude reads, loaded when invoked or judged relevant. It doesn't guarantee an action at a fixed point; a hook does."
+      - id: C
+        text: "Repeat the rule higher up in CLAUDE.md, in capitals, so it carries more weight in context."
+        correct: false
+        rationale: "Claude treats CLAUDE.md as context, not enforced configuration. Specific, concise instructions help, but nothing in CLAUDE.md is guaranteed to run."
+      - id: D
+        text: "Ask Claude to remember the rule, so it is saved to auto memory and loaded each session."
+        correct: false
+        rationale: "Auto memory is also loaded as context, like CLAUDE.md; neither is enforced. The page sends must-run actions to hooks."
+    source:
+      title: "How Claude remembers your project"
+      url: "https://code.claude.com/docs/en/memory"
+  - id: agent-skills.D4.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You ask Claude to run the full test suite and find out why three tests fail. The run prints thousands of log lines you won't look at again. What keeps them out of your main conversation?"
+    select: 1
+    options:
+      - id: A
+        text: "A skill with the test steps, since skills keep their work out of the main conversation."
+        correct: false
+        rationale: "The page points to skills for reusable workflows that run in the main conversation context; a plain skill run inline would land the logs in your session. A subagent is the documented tool for keeping that output out of it."
+      - id: B
+        text: "The main conversation, since debugging needs back-and-forth and shared context."
+        correct: false
+        rationale: "The main conversation suits frequent back-and-forth. A self-contained task with verbose output you don't need is the case the page gives for a subagent."
+      - id: C
+        text: "A subagent, which runs the tests in its own context and returns only a summary."
+        correct: true
+        rationale: "Running tests is the page's example of a high-volume operation: delegated to a subagent, the verbose output stays in the subagent's context and only the relevant summary returns."
+      - id: D
+        text: "The /btw command, which answers side questions without adding them to history."
+        correct: false
+        rationale: "/btw is for a question about something already in your conversation, and it has no tool access, so it can't run the test suite."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: agent-skills.D4.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your CLAUDE.md has grown a long, multi-step release procedure that is used once a week, and it costs context in every session. You want to keep the procedure but stop paying for it daily. Which move does that?"
+    select: 1
+    options:
+      - id: A
+        text: "Move it into a skill, which loads only when invoked or when Claude finds it relevant."
+        correct: true
+        rationale: "The page says a multi-step procedure should move out of CLAUDE.md into a skill. Skills only load when you invoke them or when Claude determines they're relevant, unlike content that is in context all the time."
+      - id: B
+        text: "Move it to a separate file and pull it in with an @path import, so CLAUDE.md stays short."
+        correct: false
+        rationale: "Imports help you organise a long file but don't reduce its context cost, because imported files load together with the CLAUDE.md that imports them."
+      - id: C
+        text: "Move it to a rules file in ~/.claude/rules/ with no paths field, so it leaves the project."
+        correct: false
+        rationale: "Rules without `paths` frontmatter are loaded at launch, and personal rules apply to every project on your machine, so the cost moves rather than going away."
+      - id: D
+        text: "Ask Claude to save it to auto memory, so the steps sit in notes instead of in CLAUDE.md."
+        correct: false
+        rationale: "The start of MEMORY.md is loaded at the start of every conversation too, and auto memory is meant for notes Claude writes, not procedures you author."
+    source:
+      title: "How Claude remembers your project"
+      url: "https://code.claude.com/docs/en/memory"
+  - id: agent-skills.D4.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A database MCP server exposes many tools that only your db-analyst subagent needs. You don't want their tool descriptions taking up context in the main conversation. How do you configure it?"
+    select: 1
+    options:
+      - id: A
+        text: "Add the server to `.mcp.json` and list its tools in the subagent's `tools` field."
+        correct: false
+        rationale: "A server in `.mcp.json` is available to the main conversation too, so its tools still cost context there; the `tools` field only narrows what the subagent may use."
+      - id: B
+        text: "Add the server to the subagent's `skills` field, so it is preloaded when the subagent starts."
+        correct: false
+        rationale: "The `skills` field preloads skill content into the subagent's context. It doesn't connect MCP servers; that is the `mcpServers` field."
+      - id: C
+        text: "Keep it in `.mcp.json`; a subagent can only use MCP servers that the main session also has."
+        correct: false
+        rationale: "The `mcpServers` field exists to give a subagent MCP servers that aren't available in the main conversation."
+      - id: D
+        text: "Define the server inline in the subagent's `mcpServers` field rather than in `.mcp.json`."
+        correct: true
+        rationale: "The page says that to keep an MCP server out of the main conversation and stop its tool descriptions using context there, you define it inline in `mcpServers` rather than in `.mcp.json`. The subagent gets the tools; the parent doesn't."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"

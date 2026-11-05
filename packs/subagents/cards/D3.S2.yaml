@@ -1,0 +1,33 @@
+skill: D3.S2
+cards:
+  - id: subagents.D3.S2.card-least-privilege
+    concept: Give a subagent the tools its job needs, and check what a tool list cannot
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      A subagent inherits the main conversation's tools, minus a few that Claude Code always removes,
+      unless you narrow them further. Take a `db-reader`
+      that answers questions from the database. `tools: Bash` gives it only Bash. Bash can run any
+      SQL, so a `PreToolUse` hook matched on Bash runs a script before each command, and the script
+      exits with code 2 to block INSERT, UPDATE, DELETE and the other write statements. A code
+      reviewer gets `tools: Read, Grep, Glob, Bash`, which leaves out Edit and Write. To keep Bash but
+      block one command such as `git push`, use a deny rule in `permissions.deny`, which applies to the
+      main conversation and to subagents.
+    inNature: >-
+      Castes in a termite colony (analogy). Workers, soldiers and reproductives each have a body
+      suited to one job: a soldier's large jaws or chemical-spraying head make it a strong guard, and
+      it leaves gathering food to the workers.
+    whereItBreaks:
+      - "A soldier's jaws are grown during a moult, not granted. A subagent's tool set is one line of frontmatter: `tools` is an allowlist, `disallowedTools` a denylist, and `disallowedTools` is applied first."
+      - "In many termite species a soldier's jaws are so specialized that it cannot feed itself. A `PreToolUse` hook is finer: it can allow some uses of a tool, such as SELECT queries, and block others with exit code 2."
+      - "A soldier keeps its jaws wherever it goes in the nest. A subagent's own `permissionMode` can be overridden: when the main conversation is in `bypassPermissions`, `acceptEdits` or auto mode, the subagent runs in that mode and Claude Code ignores the `permissionMode` you set."
+    contrast: >-
+      A `disallowedTools` entry `Bash(git push *)` removes the whole Bash tool from the subagent. A deny rule
+      `Bash(git push *)` in `permissions.deny` keeps Bash and blocks only the matching commands.
+      Deny rules are evaluated before ask and allow rules, and a hook that exits with code 2 stops
+      the call before permission rules are evaluated.
+    diagram: subagents.D3.S2.diagram-limit-a-subagent
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/permissions

@@ -1,0 +1,158 @@
+skill: D2.S2
+questions:
+  - id: ai-capabilities.D2.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "The models overview lists a 'reliable knowledge cutoff' for each Claude model. What does that date tell you?"
+    select: 1
+    options:
+      - id: A
+        text: "The date the model was released and first became available on the Claude API."
+        correct: false
+        rationale: "The cutoff describes the model's knowledge from training. Availability and lifecycle facts, such as the retirement date, are listed as separate rows."
+      - id: B
+        text: "The last date the model can look up on the web when it answers a question."
+        correct: false
+        rationale: "The cutoff describes what the model learned in training. It is not a setting of any search feature."
+      - id: C
+        text: "The date after which the model refuses to answer any question about events."
+        correct: false
+        rationale: "The cutoff marks where the model's knowledge stops being most extensive and reliable. It is not a refusal rule."
+      - id: D
+        text: "The date through which the model's knowledge is most extensive and reliable."
+        correct: true
+        rationale: "The overview defines the reliable knowledge cutoff this way, and notes that the training data cutoff is the broader range of data used."
+    source:
+      title: "Models overview"
+      url: "https://platform.claude.com/docs/en/about-claude/models/overview"
+  - id: ai-capabilities.D2.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your internal assistant confidently describes a config option that does not exist. Which basic technique does Anthropic say 'can drastically reduce false information'?"
+    select: 1
+    options:
+      - id: A
+        text: "Ask for a longer and more detailed answer, so the model has room to reason."
+        correct: false
+        rationale: "Length does not ground a claim. The guide's basic strategies are admitting uncertainty, grounding in direct quotes and verifying with citations."
+      - id: B
+        text: "Explicitly give Claude permission to say 'I don't know' when it is unsure."
+        correct: true
+        rationale: "The guide's first basic strategy is to let Claude admit uncertainty, and it says this technique can drastically reduce false information."
+      - id: C
+        text: "Tell Claude that it is a world-class expert, so it answers with more confidence."
+        correct: false
+        rationale: "Confidence is the problem here, not the cure. The guide asks you to make room for admitted uncertainty instead."
+      - id: D
+        text: "Remove any instruction about sources, so the model stops naming options."
+        correct: false
+        rationale: "This hides the symptom. The guide moves the other way: make the response auditable by having Claude cite quotes and sources for each claim."
+    source:
+      title: "Reduce hallucinations"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations"
+  - id: ai-capabilities.D2.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your app answers questions about this week's exchange rates, and the model's training data ends months before today. What is the right move?"
+    select: 1
+    options:
+      - id: A
+        text: "Add 'be accurate about current rates' to the system prompt so the model takes extra care."
+        correct: false
+        rationale: "An instruction cannot add data the model never saw. Current prices and rates are the kind of request that depends on information outside the training data."
+      - id: B
+        text: "Ask the model for the rate it considers most likely, since that is its best estimate of today."
+        correct: false
+        rationale: "The model's most likely answer comes from its training data, which is the stale information the question is about. It needs current content."
+      - id: C
+        text: "Add the web search tool, so Claude can fetch current content and cite its sources."
+        correct: true
+        rationale: "The web search tool gives Claude real-time web content to answer beyond its knowledge cutoff, and the response includes citations. Current rates are a listed case where Claude searches."
+      - id: D
+        text: "Have the model state a confidence level next to each rate it gives the user."
+        correct: false
+        rationale: "A confidence label on stale data is still stale data. The fix is to bring current content into the request."
+    source:
+      title: "Web search tool"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool"
+  - id: ai-capabilities.D2.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You build Q&A over your runbooks and need every answer traced to a passage. Why enable the citations feature on the documents instead of prompting Claude to quote its sources?"
+    select: 1
+    options:
+      - id: A
+        text: "Its citations are guaranteed to point to valid passages of the documents you supplied."
+        correct: true
+        rationale: "The API parses citations and extracts `cited_text` directly, so citations are guaranteed to contain valid pointers to the provided documents; it is also more likely to cite the most relevant quotes."
+      - id: B
+        text: "It lets Claude cite web pages it remembers from training, alongside the runbooks."
+        correct: false
+        rationale: "Citations point into the documents you provide in the request, not into anything the model saw during training."
+      - id: C
+        text: "It cites the images and diagrams inside your PDF runbooks as well as their text."
+        correct: false
+        rationale: "Only text citations are supported; citing images from PDFs is not currently supported."
+      - id: D
+        text: "It can be combined with structured outputs to return the answer and citations as one JSON object."
+        correct: false
+        rationale: "Citations cannot be used together with structured outputs; combining them returns a 400 error. The page suggests one line per field instead."
+    source:
+      title: "Citations"
+      url: "https://platform.claude.com/docs/en/build-with-claude/citations"
+  - id: ai-capabilities.D2.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A review of a 60k-token contract keeps referring to clauses that are not in the contract. Which technique targets this failure most directly?"
+    select: 1
+    options:
+      - id: A
+        text: "Have Claude extract word-for-word quotes first, then analyse only those quotes."
+        correct: true
+        rationale: "For long documents (>20k tokens) the guide recommends extracting word-for-word quotes before the task, which grounds the response in the actual text and reduces hallucinations."
+      - id: B
+        text: "Run the prompt several times and keep the answer that refers to the most clauses."
+        correct: false
+        rationale: "Best-of-N verification compares outputs to spot inconsistencies that could indicate hallucinations. Picking the busiest answer rewards invention."
+      - id: C
+        text: "Tell Claude to fill gaps in the contract with its general legal knowledge."
+        correct: false
+        rationale: "This is the opposite of the guide's external knowledge restriction, which tells Claude to use information from the provided documents, not its general knowledge."
+      - id: D
+        text: "Drop the request to reference clauses, so the review stops naming any of them."
+        correct: false
+        rationale: "This hides the error rather than fixing it. The guide makes answers auditable by having Claude cite quotes for each claim and retract claims it cannot support."
+    source:
+      title: "Reduce hallucinations"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations"
+  - id: ai-capabilities.D2.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your team applied the guide's techniques to a feature that summarizes drug-interaction documents and asks whether its outputs can now skip human review. What does the guide say?"
+    select: 1
+    options:
+      - id: A
+        text: "Yes: with direct quotes and citations in place, hallucinations are eliminated for every document task."
+        correct: false
+        rationale: "The guide says the techniques significantly reduce hallucinations but don't eliminate them entirely."
+      - id: B
+        text: "Yes, if the documents are under 20k tokens, since hallucinations come from long inputs."
+        correct: false
+        rationale: "The 20k-token figure is when to use the quote-extraction technique, not a size below which outputs are safe."
+      - id: C
+        text: "Yes, if best-of-N runs agree, because agreement proves each claim is true."
+        correct: false
+        rationale: "Inconsistent outputs can signal a hallucination, but consistent outputs are not proof. The guide still asks you to validate critical information."
+      - id: D
+        text: "No: the techniques reduce hallucinations without removing them; critical claims still need validating."
+        correct: true
+        rationale: "The guide's closing note: the techniques don't eliminate hallucinations entirely, so validate critical information, especially for high-stakes decisions."
+    source:
+      title: "Reduce hallucinations"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations"

@@ -1,0 +1,37 @@
+skill: D3.S3
+diagrams:
+  - id: claude-code-in-action.D3.S3.diagram-run-without-the-terminal
+    title: "Running Claude Code without the terminal interface"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: NEED, label: "Run an agent from your own code or pipeline" }
+      - { id: WHO, label: "Who runs the agent loop?", shape: decision }
+      - { id: MANAGED, label: "Managed Agents: Anthropic hosts the harness" }
+      - { id: CLIENT, label: "Client SDK: you write the tool loop yourself" }
+      - { id: LANG, label: "Your process, in Python or TypeScript?", shape: decision }
+      - { id: SDK, label: "Agent SDK: built-in tools, permissions, sessions, hooks" }
+      - { id: CLI, label: "CLI as a subprocess: claude -p" }
+      - { id: SAME, label: "CI, a script, or a folder you've never trusted?", shape: decision }
+      - { id: BARE, label: "--bare: skip hooks, skills, MCP servers, CLAUDE.md; key from ANTHROPIC_API_KEY" }
+      - { id: LOADS, label: "Loads the project's hooks and .mcp.json servers, with no trust dialog" }
+      - { id: PERMS, label: "Pre-approve with --allowedTools; set a --permission-mode" }
+      - { id: OUT, label: "Output: text, json (result; structured_output with --json-schema) or stream-json" }
+    edges:
+      - { from: NEED, to: WHO }
+      - { from: WHO, to: MANAGED, label: "Anthropic, configured through the API" }
+      - { from: WHO, to: CLIENT, label: "you, calling the API directly" }
+      - { from: WHO, to: LANG, label: "you, with Claude Code's agent" }
+      - { from: LANG, to: SDK, label: "yes" }
+      - { from: LANG, to: CLI, label: "no, or a shell script" }
+      - { from: CLI, to: SAME }
+      - { from: SAME, to: BARE, label: "yes" }
+      - { from: SAME, to: LOADS, label: "no" }
+      - { from: BARE, to: PERMS }
+      - { from: LOADS, to: PERMS }
+      - { from: PERMS, to: OUT }
+    sources:
+      - https://code.claude.com/docs/en/agent-sdk/overview
+      - https://code.claude.com/docs/en/headless

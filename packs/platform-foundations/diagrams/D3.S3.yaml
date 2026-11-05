@@ -1,0 +1,32 @@
+skill: D3.S3
+diagrams:
+  - id: platform-foundations.D3.S3.diagram-memory-scope
+    title: "Which memory does this chat use?"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: S, label: "Starting a new chat (memory on for your account)" }
+      - { id: H, label: "Should the chat be kept in your chat history?", shape: decision }
+      - { id: I, label: "Incognito chat from the ghost icon, outside a project: not saved to history or memory" }
+      - { id: U, label: "Should Claude use and add to memory in this chat?", shape: decision }
+      - { id: O, label: "Turn off Memory in the + menu before the first message; the chat stays in history" }
+      - { id: P, label: "Is the chat in a project?", shape: decision }
+      - { id: A, label: "Claude uses your account memory" }
+      - { id: Q, label: "Keep the project fully separate from account memory?", shape: decision }
+      - { id: B, label: "Project memory plus account memory, not other projects' memory" }
+      - { id: X, label: "Turn off Use account memory on the project's page" }
+    edges:
+      - { from: S, to: H }
+      - { from: H, to: I, label: "no" }
+      - { from: H, to: U, label: "yes" }
+      - { from: U, to: O, label: "no" }
+      - { from: U, to: P, label: "yes" }
+      - { from: P, to: A, label: "no" }
+      - { from: P, to: Q, label: "yes" }
+      - { from: Q, to: B, label: "no" }
+      - { from: Q, to: X, label: "yes" }
+    sources:
+      - https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context
+      - https://support.claude.com/en/articles/12260368-use-incognito-chats

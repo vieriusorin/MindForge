@@ -1,0 +1,27 @@
+skill: D3.S3
+cards:
+  - id: platform-foundations.D3.S3.card-squirrel-caches
+    concept: Memory, project scope and incognito
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      Memory carries everyday context (your role, preferences, project details) from one chat
+      into the next. Each project keeps its own memory. An incognito chat is kept out of both
+      your history and memory; a chat with Memory turned off stays in history but adds nothing
+      to memory.
+    inNature: >-
+      A squirrel buries food in separate caches around the wood and returns to the right one
+      when it is back in that corner. A cache in the oak grove does not feed the squirrel in the
+      pine stand, and a snack eaten on the spot leaves no cache behind.
+    whereItBreaks:
+      - "A squirrel can't inspect its caches from a distance; you can view, edit or delete each memory topic in settings, or tell Claude in a chat to change what it remembers."
+      - "Caches in different groves stay apart; a project's chats still draw on account memory from chats outside projects unless you turn off Use account memory on the project's page."
+      - "A squirrel buries whatever it finds; some information is never saved to memory even if you ask, such as government ID numbers and financial account numbers."
+    contrast: >-
+      Memory is context Claude saves as you chat and brings into later chats. Setting up a
+      project's instructions and knowledge is D2.S2, and a reusable procedure is a skill (D3.S1).
+    diagram: platform-foundations.D3.S3.diagram-memory-scope
+    sources:
+      - https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context
+      - https://support.claude.com/en/articles/12260368-use-incognito-chats

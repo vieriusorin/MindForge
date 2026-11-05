@@ -6,6 +6,13 @@ export {
   checkCuckooAnswer,
 } from "./check-cuckoo-answer";
 export {
+  type CheckQuestionAnswerInput,
+  type CheckQuestionAnswerResult,
+  checkQuestionAnswer,
+  QUESTION_GRADE_ERRORS,
+  type QuestionGradeError,
+} from "./check-question-answer";
+export {
   findPackItem,
   itemSkillCode,
   itemTitle,

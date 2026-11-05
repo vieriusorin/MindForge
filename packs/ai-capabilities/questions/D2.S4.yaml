@@ -1,0 +1,158 @@
+skill: D2.S4
+questions:
+  - id: ai-capabilities.D2.S4.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "The prompt 'Summarize this incident' returns summaries that vary widely in length and focus. What does Anthropic's prompting guidance recommend first?"
+    select: 1
+    options:
+      - id: A
+        text: "Repeat the instruction in capital letters so that it carries more weight."
+        correct: false
+        rationale: "The guide's example shows that explaining the reason behind an instruction works better than a bare emphatic rule like 'NEVER use ellipses'."
+      - id: B
+        text: "Keep the prompt short and let the model infer what matters most."
+        correct: false
+        rationale: "The guide says to request what you want explicitly rather than relying on the model to infer it from vague prompts."
+      - id: C
+        text: "Be specific about the format and constraints, and explain why they matter."
+        correct: true
+        rationale: "Be clear and direct: be specific about the output format and constraints, and add context or motivation so Claude can deliver more targeted responses."
+      - id: D
+        text: "Tell the model it is the world's best writer, to raise the quality of the summary."
+        correct: false
+        rationale: "A role focuses behaviour and tone, but it does not state the length or the focus you need."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: ai-capabilities.D2.S4.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You set the system prompt to 'You are a helpful coding assistant specializing in Python.' What does Anthropic's guide say a role like this does?"
+    select: 1
+    options:
+      - id: A
+        text: "Nothing measurable, because a role only matters in long, multi-paragraph system prompts."
+        correct: false
+        rationale: "The guide says even a single sentence makes a difference."
+      - id: B
+        text: "It gives the model Python knowledge that it did not learn during training."
+        correct: false
+        rationale: "A role focuses how Claude behaves for your use case. It does not add new knowledge."
+      - id: C
+        text: "It has an effect only when placed in the user message rather than in the system prompt."
+        correct: false
+        rationale: "The guide's advice is to set the role in the system prompt."
+      - id: D
+        text: "It focuses Claude's behavior and tone for your use case; one sentence matters."
+        correct: true
+        rationale: "Setting a role in the system prompt focuses Claude's behavior and tone for your use case, and even a single sentence makes a difference."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: ai-capabilities.D2.S4.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "The tone and structure of your ticket-triage replies drift across inputs. Your prompt has one example. How does the guide say to improve the examples?"
+    select: 1
+    options:
+      - id: A
+        text: "Use 3–5 relevant, diverse examples, each wrapped in example tags apart from instructions."
+        correct: true
+        rationale: "The guide calls examples one of the most reliable ways to steer format, tone and structure: make them relevant, diverse and structured in `<example>` tags, and include 3–5 for best results."
+      - id: B
+        text: "Use many near-identical examples so that the pattern you want is impossible to miss."
+        correct: false
+        rationale: "Examples should be diverse, covering edge cases, so Claude doesn't pick up unintended patterns."
+      - id: C
+        text: "Write the examples inline with the instructions, without tags, so they read as rules."
+        correct: false
+        rationale: "The guide wraps examples in tags precisely so Claude can distinguish them from instructions."
+      - id: D
+        text: "Replace the example with a full list of edge-case rules, since written rules steer better than examples."
+        correct: false
+        rationale: "The guide names examples as one of the most reliable steering tools; dropping them removes that lever."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: ai-capabilities.D2.S4.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You move a summarizer to a Claude 4.6 or later model. It used a prefilled assistant turn, 'Here is the summary:', to skip the preamble. What should you do?"
+    select: 1
+    options:
+      - id: A
+        text: "Keep the prefill, since newer models still accept it and only log a deprecation warning."
+        correct: false
+        rationale: "Requests with a prefilled last assistant turn to Claude 4.6 and later models return a 400 error."
+      - id: B
+        text: "Tell Claude in the system prompt to skip the preamble; strip any that slips through."
+        correct: true
+        rationale: "The guide's migration for preambles is a direct system-prompt instruction (or XML tags, structured outputs or tool calling), and stripping an occasional preamble in post-processing."
+      - id: C
+        text: "Stay on an earlier model for good, because prefill has no replacement on newer models."
+        correct: false
+        rationale: "The guide lists a migration for each common prefill use, so there is no need to stay on an older model."
+      - id: D
+        text: "Send an empty prefilled assistant message, which newer models still accept."
+        correct: false
+        rationale: "A prefilled last assistant turn is what newer models reject with a 400 error, and an empty one would not skip the preamble anyway."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: ai-capabilities.D2.S4.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your prompt is written with markdown headings and bullets and says 'Do not use markdown'. The output is still full of bullets. What is the best fix?"
+    select: 1
+    options:
+      - id: A
+        text: "Repeat 'Do not use markdown' in capital letters at both the start and the end of the prompt."
+        correct: false
+        rationale: "The guide advises telling Claude what to do instead of what not to do; repeating the prohibition keeps the negative framing."
+      - id: B
+        text: "Lower `max_tokens` so that there is no room left for lists in the response."
+        correct: false
+        rationale: "A token limit truncates output; it does not change the format the model chooses."
+      - id: C
+        text: "Add a few-shot example that shows a bulleted answer marked as what to avoid."
+        correct: false
+        rationale: "The formatting style in your prompt might influence Claude's response style, so a bulleted example adds more markdown for Claude to mirror, and it still frames the request as what not to do."
+      - id: D
+        text: "Say what to write instead (flowing prose) and remove markdown from your own prompt."
+        correct: true
+        rationale: "Tell Claude what to do instead of what not to do, and match your prompt style to the output you want: removing markdown from the prompt can reduce markdown in the output."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: ai-capabilities.D2.S4.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A support bot must return JSON that matches your schema on every response, and you still see an occasional malformed object. Which approach gives guaranteed compliance?"
+    select: 1
+    options:
+      - id: A
+        text: "Keep adding format instructions and examples to the prompt until the errors stop."
+        correct: false
+        rationale: "Format instructions and examples make output more consistent, but the page sends you to Structured Outputs when JSON must always match a schema."
+      - id: B
+        text: "Use Structured Outputs, which constrain the response to follow your JSON schema."
+        correct: true
+        rationale: "The page says that if you need Claude to always output valid JSON that conforms to a specific schema, use Structured Outputs, which provide guaranteed schema compliance."
+      - id: C
+        text: "Prefill the assistant turn with an opening brace on the newest Claude models."
+        correct: false
+        rationale: "Prefilling is not supported on Claude 4.6 and later models; the page points to structured outputs or system prompt instructions instead."
+      - id: D
+        text: "Chain prompts, so that each smaller subtask returns one part of the JSON object."
+        correct: false
+        rationale: "Chaining reduces inconsistency errors in complex workflows, but it does not guarantee that the assembled object matches the schema."
+    source:
+      title: "Increase output consistency"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency"

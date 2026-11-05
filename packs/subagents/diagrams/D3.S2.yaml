@@ -1,0 +1,34 @@
+skill: D3.S2
+diagrams:
+  - id: subagents.D3.S2.diagram-limit-a-subagent
+    title: "Which control limits a subagent?"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    direction: TB
+    nodes:
+      - { id: Q, label: "What must you limit?", shape: decision }
+      - { id: AL, label: "tools: allowlist (only these, e.g. Read, Grep, Glob)" }
+      - { id: DL, label: "disallowedTools: denylist (all but these), applied first" }
+      - { id: DR, label: "permissions.deny rule, e.g. Bash(git push *): blocks matching commands, keeps the tool" }
+      - { id: HK, label: "PreToolUse hook: script exits with code 2 to block (e.g. SQL writes)" }
+      - { id: PM, label: "permissionMode: default, acceptEdits, auto, dontAsk, bypassPermissions, plan" }
+      - { id: MM, label: "Main conversation's permission mode?", shape: decision }
+      - { id: IG, label: "Subagent runs in the main conversation's mode; its permissionMode is ignored" }
+      - { id: PL, label: "Subagent stays in plan mode" }
+      - { id: SET, label: "Subagent runs in the mode you set; it keeps the main mode if you set bypassPermissions, or auto where auto mode isn't available" }
+      - { id: UN, label: "permissionMode unset: subagent inherits the main conversation's mode" }
+    edges:
+      - { from: Q, to: AL, label: "only a few tools" }
+      - { from: Q, to: DL, label: "all but a few tools" }
+      - { from: Q, to: DR, label: "some commands of a kept tool" }
+      - { from: Q, to: HK, label: "a rule a list cannot express" }
+      - { from: Q, to: PM, label: "how tool calls get approved" }
+      - { from: PM, to: MM, label: "set" }
+      - { from: PM, to: UN, label: "unset" }
+      - { from: MM, to: IG, label: "bypassPermissions, acceptEdits or auto" }
+      - { from: MM, to: PL, label: "plan" }
+      - { from: MM, to: SET, label: "default or dontAsk" }
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/permissions

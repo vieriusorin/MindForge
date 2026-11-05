@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "src/engine/questions/__tests__/mf-0003-questions.acceptance.test.ts",
-      "sha256": "676eec940716bc0e72e20ff3620ae87c5ff9924c36c8d227ed2b135f06495616",
+      "sha256": "533ec65449c5bc38d8579903d3d11c461694ac0c9eb27bd3e1be3d84534874d5",
       "first_failure": "SC-1/2/6: Error: not implemented (load-questions.ts / playable.ts stubs)"
     },
     {
@@ -31,6 +31,13 @@
       "reason": "MF-0016 K-3, user-approved 2026-11-04: cuckoo keys share private.question_keys (correct_options = [flawLine]). SC-5 counts questions + cuckoos (loadPackContent) instead of questions alone; every question key is still checked one by one. No assertion removed or weakened.",
       "files": {
         "src/server/db/__tests__/mf-0003-attempts.db.acceptance.test.ts": "ae278b6351eec3d45eff760216eba67f50a6f4af5975d4475cc950539116be0f"
+      }
+    },
+    {
+      "at": "2026-11-04T14:48:21.033Z",
+      "reason": "MF-0032 C-2, user-approved 2026-11-04: SC-6 calls toPlayableQuestion(q, \"h\") and the expected DTO keys add \"contentHash\" (the version the learner read, sent back with the answer; deliberate pre-answer field, as toPlayableCuckoo). Correctness/rationale assertions byte-identical.",
+      "previous": {
+        "src/engine/questions/__tests__/mf-0003-questions.acceptance.test.ts": "676eec940716bc0e72e20ff3620ae87c5ff9924c36c8d227ed2b135f06495616"
       }
     }
   ]

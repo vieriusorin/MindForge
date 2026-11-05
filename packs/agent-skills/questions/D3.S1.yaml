@@ -1,0 +1,158 @@
+skill: D3.S1
+questions:
+  - id: agent-skills.D3.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You write a deploy skill and add `disable-model-invocation: true` to its frontmatter. What changes?"
+    select: 1
+    options:
+      - id: A
+        text: "The skill leaves the / menu, so only Claude can load it when it judges a deploy is relevant."
+        correct: false
+        rationale: "That describes `user-invocable: false`, which hides the skill from the / menu and leaves Claude able to invoke it. This field does the opposite."
+      - id: B
+        text: "Claude can still pick it up when relevant, but every tool call it makes during the deploy is blocked."
+        correct: false
+        rationale: "The field is about who may invoke the skill, not about tools. Removing tools while a skill is active is the job of `disallowed-tools`."
+      - id: C
+        text: "Claude can't invoke it on its own; it runs when you type /deploy, so you choose when it happens."
+        correct: true
+        rationale: "With `disable-model-invocation: true` Claude can't invoke the skill on its own. The page recommends it for workflows with side effects, such as /deploy, because you don't want Claude deciding to deploy."
+      - id: D
+        text: "The skill runs in a separate subagent, so the deploy steps never appear in your main conversation."
+        correct: false
+        rationale: "Running a skill in a subagent is what `context: fork` does. `disable-model-invocation` only controls whether Claude may invoke the skill."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D3.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A skill's body says \"Fix GitHub issue $ARGUMENTS following our coding standards.\" You type /fix-issue 123. What does Claude read in place of the placeholder?"
+    select: 1
+    options:
+      - id: A
+        text: "123, the text you typed after the skill name, so Claude reads: Fix GitHub issue 123."
+        correct: true
+        rationale: "The `$ARGUMENTS` placeholder is replaced with whatever follows the skill name, so running /fix-issue 123 gives Claude \"Fix GitHub issue 123 following our coding standards\"."
+      - id: B
+        text: "The word $ARGUMENTS unchanged, because only names declared in the frontmatter get replaced."
+        correct: false
+        rationale: "`$ARGUMENTS` needs no declaration: it expands to all arguments passed when the skill is invoked. Declared names in `arguments` are an extra, optional form."
+      - id: C
+        text: "The issue's title and body, which Claude Code fetches from GitHub using the number you gave."
+        correct: false
+        rationale: "Substitution inserts the text you typed; it does not fetch anything. Pulling live data in before Claude reads the skill is a separate feature, dynamic context injection."
+      - id: D
+        text: "Nothing at all, since arguments are only passed through when Claude invokes the skill itself."
+        correct: false
+        rationale: "The page says both you and Claude can pass arguments when invoking a skill, and they are available through the `$ARGUMENTS` placeholder."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D3.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You write a legacy-system-context skill that explains how an old billing system works. Claude should use it when relevant, but typing /legacy-system-context makes no sense as a command. Which frontmatter fits?"
+    select: 1
+    options:
+      - id: A
+        text: "`disable-model-invocation: true`, so the skill stays out of the way until someone needs it."
+        correct: false
+        rationale: "This blocks the half you want: Claude could no longer invoke the skill on its own, and its description would not even be in context. Only you could run it."
+      - id: B
+        text: "`context: fork`, so the background knowledge is read by a subagent instead of the main session."
+        correct: false
+        rationale: "A forked skill needs an actionable task; given only guidelines, the subagent receives no actionable prompt and returns without meaningful output. It also doesn't hide the command."
+      - id: C
+        text: "`paths`, limited to the billing folders, so the skill only applies where the old code lives."
+        correct: false
+        rationale: "`paths` limits when Claude loads the skill automatically to matching files. It doesn't remove the skill from the / menu, so the meaningless command stays."
+      - id: D
+        text: "`user-invocable: false`, which drops it from the / menu while Claude can still load it."
+        correct: true
+        rationale: "The page uses this exact case: `user-invocable: false` is for background knowledge that isn't actionable as a command. Claude Code hides the skill from the / menu, and Claude can still invoke it."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D3.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your pr-summary skill has two injected lines. The line \"- PR diff: !`gh pr diff`\" arrives with the real diff. The line \"FILES=!`gh pr diff --name-only`\" reaches Claude as literal text. Why?"
+    select: 1
+    options:
+      - id: A
+        text: "Injected commands only run in skills that set `context: fork`; the first line worked by chance."
+        correct: false
+        rationale: "Dynamic context injection works in ordinary skills; the page's first example skill injects `git diff HEAD` with no fork. Fork has nothing to do with it."
+      - id: B
+        text: "The ! follows the = sign; the inline form runs only at a line start or after whitespace."
+        correct: true
+        rationale: "The inline form is recognised only when `!` is at the start of a line or immediately after whitespace. After another character, as in the page's `` KEY=!`cmd` `` example, it is left as literal text and the command doesn't run."
+      - id: C
+        text: "The second command isn't pre-approved in `allowed-tools`, so Claude Code skipped it quietly."
+        correct: false
+        rationale: "An injected command whose permission check isn't allow doesn't get skipped quietly: outside auto mode, Claude Code aborts the whole invocation with a permission-check error."
+      - id: D
+        text: "Command output is pasted in once, so a second command on the same skill is ignored by design."
+        correct: false
+        rationale: "A skill can inject several commands; the page's pr-summary example runs three. What isn't re-scanned is a command's output, so output can't create new placeholders."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D3.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You clone a repo whose project skill sets a broad `allowed-tools` list. A colleague says: \"It's harmless. The field only narrows the tools Claude may call, and nothing applies until you trust the folder.\" What is the accurate review?"
+    select: 1
+    options:
+      - id: A
+        text: "Correct: a broad list narrows nothing, so it's no riskier than a skill that sets no list."
+        correct: false
+        rationale: "`allowed-tools` doesn't restrict: every tool remains callable. It grants permission so the listed tools run without asking, which is what makes a broad list risky."
+      - id: B
+        text: "Partly: the grant is real, but it holds for the whole session after one run, so delete the skill."
+        correct: false
+        rationale: "The grant lasts only for the turn that invokes the skill and clears when you send your next message; invoking the skill again re-applies it for that turn."
+      - id: C
+        text: "Correct: project skills' grants stay off until you accept the workspace trust dialog."
+        correct: false
+        rationale: "The page says workspace trust doesn't gate this field: Claude Code applies a project skill's `allowed-tools` even in a `-p` run in a folder you've never trusted."
+      - id: D
+        text: "Wrong twice: it pre-approves rather than limits, and trust doesn't gate it; review it first."
+        correct: true
+        rationale: "The field lets Claude use the listed tools without asking during the invoking turn, and workspace trust doesn't gate it. The page tells you to review the `allowed-tools` of repository skills before running Claude Code there."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D3.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "To save main-session context, a teammate adds `context: fork` and `agent: Explore` to the team's api-conventions skill, whose body is only a list of API design guidelines. What happens when it runs?"
+    select: 1
+    options:
+      - id: A
+        text: "The Explore subagent reads your conversation so far and applies the guidelines to the code under discussion."
+        correct: false
+        rationale: "A forked skill's subagent doesn't see your conversation history; despite the name, `context: fork` is not a fork of the current conversation."
+      - id: B
+        text: "The guidelines merge with your CLAUDE.md inside Explore, so the subagent sees both rule sets at once."
+        correct: false
+        rationale: "Explore starts without CLAUDE.md: a forked skill using `agent: Explore` gets the skill content and the agent's own system prompt, and none of your CLAUDE.md files."
+      - id: C
+        text: "The subagent gets guidelines but no task, so it returns without meaningful output; keep this skill inline."
+        correct: true
+        rationale: "The page warns that `context: fork` only makes sense for skills with explicit instructions. Given guidelines without a task, the subagent has no actionable prompt and returns nothing useful. Reference content like this belongs inline, next to your conversation."
+      - id: D
+        text: "The guidelines are applied in the main session as usual, only now at a lower token cost per turn."
+        correct: false
+        rationale: "With `context: fork` the content goes to a new subagent as its prompt, not to the main session, so the main conversation doesn't get the guidelines at all."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"

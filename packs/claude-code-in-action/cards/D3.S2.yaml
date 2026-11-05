@@ -1,0 +1,29 @@
+skill: D3.S2
+cards:
+  - id: claude-code-in-action.D3.S2.card-hook-guards
+    concept: Useful hooks and the gaps around them
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      Four hooks earn their keep in most projects: a `PostToolUse` hook on `Edit|Write` that runs the
+      formatter, a `PreToolUse` hook that exits 2 to block edits to `.env` or `.git/`, a
+      `SessionStart` hook with a `compact` matcher that re-injects project reminders after
+      compaction, and a `Notification` hook that alerts you when Claude needs input. Each one is a
+      script, so treat it like code: reference it with `$CLAUDE_PROJECT_DIR` or an absolute path,
+      make it executable, and test it by piping sample JSON into it and checking the exit code.
+    inNature: >-
+      Guard bees at a hive entrance. They check every bee that lands at the entrance, by scent, and
+      turn away the ones that don't belong.
+    whereItBreaks:
+      - "A bee that gets in through a crack in the wall never meets the guards. Claude can also create or modify files by running shell commands, so a hook that matches only `Edit|Write` misses them: also match `Bash|PowerShell`, or add a `Stop` hook that scans the working tree once per turn."
+      - "Guard bees can't harm the hive. Command hooks execute shell commands with your full user permissions and can modify, delete or access any file your account can, so review and test every command before adding it."
+      - "Guards act when the bee arrives. A `PostToolUse` hook runs after the tool has executed, so it can tell Claude what went wrong but can't undo the action."
+    contrast: >-
+      A permission deny rule is a fixed rule Claude Code enforces. A hook's `if` filter is
+      best-effort, so the guide says to use the permission system rather than a hook to enforce a
+      hard allow or deny.
+    diagram: claude-code-in-action.D3.S2.diagram-pick-a-hook
+    sources:
+      - https://code.claude.com/docs/en/hooks-guide
+      - https://code.claude.com/docs/en/hooks

@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0042",
+  "frozen_at": "2026-11-04T14:52:18.582Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0042-claude-code-in-action.acceptance.test.ts",
+      "sha256": "2d21d8a5fa852f0ac28e1c1285fe50416ccf140704e7e422de0bae8dc190062f",
+      "first_failure": "SC-1..SC-7 all red: ENOENT packs/claude-code-in-action/pack.yaml (SC-1, SC-2) and the questions/diagrams dirs (SC-3..SC-7). Same on 2nd run. Typecheck 0 at freeze."
+    }
+  ],
+  "history": []
+}

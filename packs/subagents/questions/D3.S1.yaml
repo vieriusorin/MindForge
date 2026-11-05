@@ -1,0 +1,158 @@
+skill: D3.S1
+questions:
+  - id: subagents.D3.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You created a `test-runner` subagent, but Claude keeps running the tests itself instead of delegating. Which field of the subagent file does Claude read to decide when to delegate?"
+    select: 1
+    options:
+      - id: A
+        text: "The `name` field, which Claude matches against the words in your request to pick a subagent."
+        correct: false
+        rationale: "`name` identifies the subagent, but the page states that Claude uses each subagent's description to decide when to delegate tasks."
+      - id: B
+        text: "The `description` field, which tells Claude when the subagent should be used for a task."
+        correct: true
+        rationale: "The frontmatter table defines `description` as \"When Claude should delegate to this subagent\", and the page advises a clear description so Claude knows when to use it."
+      - id: C
+        text: "The `model` field, because Claude delegates only to subagents that run on a cheaper model."
+        correct: false
+        rationale: "`model` chooses which model the subagent runs on; delegation is decided from the task, the `description` field and the current context."
+      - id: D
+        text: "The `tools` field, because Claude delegates any task whose tools match the subagent's list."
+        correct: false
+        rationale: "`tools` restricts what the subagent can do once it runs; Claude decides when to delegate from the description, not the tool list."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D3.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A subagent runs your full test suite, which prints thousands of lines of output. What reaches your main conversation when it finishes?"
+    select: 1
+    options:
+      - id: A
+        text: "Only the relevant summary the subagent returns; the verbose output stays in its own context."
+        correct: true
+        rationale: "The page lists running tests as an operation to isolate: the verbose output stays in the subagent's context while only the relevant summary returns to your main conversation."
+      - id: B
+        text: "The full test output, copied into the main conversation so Claude can read every failing line."
+        correct: false
+        rationale: "Copying the output back would defeat the point: the subagent does the work in its own context and returns only the summary."
+      - id: C
+        text: "Every tool call the subagent made, with its result, in the order the subagent made them."
+        correct: false
+        rationale: "Intermediate tool calls and their results stay in the subagent's own context window; what comes back is the summary."
+      - id: D
+        text: "Nothing at all; you have to open the subagent's transcript yourself to see what it found."
+        correct: false
+        rationale: "The subagent returns its results to Claude: the page describes a subagent that works independently and returns results."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D3.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "An orchestrating agent sends three research subagents the same one-line task, \"research the payment provider outage\". Two of them run the same searches and one misses the root cause. Which change does Anthropic's multi-agent research post describe for this failure?"
+    select: 1
+    options:
+      - id: A
+        text: "Spawn more subagents with the same short task, so that overlapping searches still cover the gaps."
+        correct: false
+        rationale: "More copies of a vague task repeat the problem: the post says vague instructions led subagents to perform the exact same searches as other agents."
+      - id: B
+        text: "Make the instruction even shorter, so that each subagent is free to choose its own part of the work."
+        correct: false
+        rationale: "The post started with simple, short instructions and found they were often vague enough that subagents misinterpreted the task."
+      - id: C
+        text: "Let every subagent read the other subagents' context windows, so they can see who searched what."
+        correct: false
+        rationale: "The post describes subagents operating in parallel with their own context windows; the fix it gives is in how the lead describes each task."
+      - id: D
+        text: "Give each subagent an objective, an output format, tool and source guidance, and clear boundaries."
+        correct: true
+        rationale: "The post says each subagent needs an objective, an output format, guidance on the tools and sources to use, and clear task boundaries; without detailed task descriptions, agents duplicate work and leave gaps."
+    source:
+      title: "How we built our multi-agent research system"
+      url: "https://www.anthropic.com/research/multi-agent-research-system"
+  - id: subagents.D3.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your `repo-auditor` subagent sometimes keeps working long after it has found enough. You set `maxTurns` to 30 in its frontmatter. What happens when it reaches 30 agentic turns?"
+    select: 1
+    options:
+      - id: A
+        text: "Claude Code discards everything it did and returns an error, so Claude has to start the audit over."
+        correct: false
+        rationale: "The work is not thrown away: at the limit Claude Code returns the subagent's output marked as partial."
+      - id: B
+        text: "Nothing changes in practice; the subagent keeps going in the background until it decides it is done."
+        correct: false
+        rationale: "`maxTurns` is the maximum number of agentic turns before the subagent stops; it does not keep going past the limit."
+      - id: C
+        text: "It stops; Claude Code returns its output marked as partial, and Claude can resume it to continue."
+        correct: true
+        rationale: "The frontmatter table says that when the subagent reaches the limit, Claude Code returns its output marked as partial, and Claude can resume it to continue."
+      - id: D
+        text: "The main conversation starts a fresh copy of the subagent, which repeats the audit from its first turn."
+        correct: false
+        rationale: "The page describes resuming the stopped subagent to continue its work, not starting a fresh copy from the beginning."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D3.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your orchestrator spends as many subagents on \"which version of Node does this repo use?\" as on a full dependency audit. How did Anthropic's research system address this kind of overinvestment?"
+    select: 1
+    options:
+      - id: A
+        text: "It embedded explicit scaling rules in the prompts, matching subagents and tool calls to query complexity."
+        correct: true
+        rationale: "The post: agents struggle to judge appropriate effort, so scaling rules were embedded in the prompts (simple fact-finding needs 1 agent with 3-10 tool calls; complex research might use more than 10 subagents), which prevented overinvestment in simple queries."
+      - id: B
+        text: "It hard-coded a single subagent for every query, because extra subagents did not improve the results."
+        correct: false
+        rationale: "The post describes direct comparisons using 2-4 subagents and complex research using more than 10; one subagent was the rule only for simple fact-finding."
+      - id: C
+        text: "It left effort to each subagent, which learned on its own how many tool calls each kind of task needs."
+        correct: false
+        rationale: "The post says agents struggle to judge appropriate effort for different tasks; that is why the guidance was written into the prompts."
+      - id: D
+        text: "It removed the lead agent, so subagents claimed tasks from a shared queue at the speed each one needed."
+        correct: false
+        rationale: "The system keeps an orchestrator-worker pattern: a lead agent coordinates the process and delegates to subagents."
+    source:
+      title: "How we built our multi-agent research system"
+      url: "https://www.anthropic.com/research/multi-agent-research-system"
+  - id: subagents.D3.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A subagent generates a long migration script. Passing it back through the coordinator's conversation loses detail and costs tokens. Which pattern does Anthropic's multi-agent research post recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Raise the coordinator's context window so the full script can be copied through the conversation history."
+        correct: false
+        rationale: "The post names the cost of copying large outputs through conversation history as the problem to avoid, not one to make room for."
+      - id: B
+        text: "Have the coordinator re-generate the script itself from the subagent's short summary of what it wrote."
+        correct: false
+        rationale: "The post says outputs like code work well when the subagent's specialized prompt produces them, rather than filtering through a general coordinator."
+      - id: C
+        text: "Have the subagent store its work in an external system and pass a lightweight reference back."
+        correct: true
+        rationale: "The post: subagents call tools to store their work in external systems, then pass lightweight references back, which prevents information loss and reduces token overhead; it works well for structured outputs like code."
+      - id: D
+        text: "Have the subagent return its whole transcript, so the coordinator can pick out the final script itself."
+        correct: false
+        rationale: "A whole transcript copies even more through the coordinator; the post's pattern is to persist the output outside the conversation and pass a reference."
+    source:
+      title: "How we built our multi-agent research system"
+      url: "https://www.anthropic.com/research/multi-agent-research-system"

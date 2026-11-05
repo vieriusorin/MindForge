@@ -1,0 +1,12 @@
+{
+  "ticket": "MF-0037",
+  "frozen_at": "2026-11-04T14:38:01Z",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0037-ai-capabilities.acceptance.test.ts",
+      "sha256": "1b6043affa3e16b90b7a559a465f6f499aa21e51ae101360b28a48727ead2b69",
+      "first_failure": "SC-1, SC-2: ENOENT packs/ai-capabilities/pack.yaml; SC-3, SC-4: ENOENT packs/ai-capabilities/questions; SC-5, SC-6: ENOENT packs/ai-capabilities/diagrams"
+    }
+  ],
+  "history": []
+}

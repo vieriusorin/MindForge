@@ -1,0 +1,31 @@
+skill: D3.S1
+cards:
+  - id: ai-capabilities.D3.S1.card-property-collisions
+    concept: When properties collide
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Many real failures involve two properties at once, and each pair needs its own fix. Example: a coding
+      agent is three hours into a refactor. Its context is full of tool output, so an instruction from the start
+      is recalled less well (working memory weakens steerability). Then it calls a helper function that does not
+      exist, in fluent, confident code (next token prediction meets a gap in knowledge). Name the pair first,
+      then pick the matching fix: ground the answer in supplied text and allow "I don't know", keep the context
+      tight with compaction, notes or sub-agents, and put long documents above the question.
+    inNature: >-
+      A honeybee forager finds flowers by combining cues: the sun's position, landmarks it has learned, and the
+      directions it got from a waggle dance back at the hive. One faded cue rarely sends it astray. It goes wrong
+      when cues fail together, as when clouds hide the sun and the dance it followed is hours old.
+    whereItBreaks:
+      - "A lost bee keeps searching. A model with a gap in its knowledge tends to produce fluent text anyway; explicit permission to say it does not know drastically reduces this, but does not eliminate it."
+      - "Context does not run out like daylight at a single moment. Recall degrades gradually as tokens pile up, a performance gradient rather than a hard cliff."
+      - "The bee cannot change its cues, but you can: what goes into the context, where the question sits and what the model may say are engineering choices."
+    contrast: >-
+      A single-property failure has one cause and one fix: a fact the model did not have, asked in a short clean
+      prompt, is a knowledge problem, solved by supplying the source. A collision has two causes, so fixing one
+      (a stronger instruction) can leave the other (a crowded context) still breaking the result.
+    diagram: ai-capabilities.D3.S1.diagram-property-collisions
+    sources:
+      - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations
+      - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices

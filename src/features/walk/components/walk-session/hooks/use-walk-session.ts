@@ -80,7 +80,12 @@ export function useWalkSession(
 
   const submit = (): void => {
     if (!step || !isSubmittable) return;
-    mutation.mutate({ packSlug, questionId: step.question.id, chosen });
+    mutation.mutate({
+      packSlug,
+      questionId: step.question.id,
+      chosen,
+      contentHash: step.question.contentHash,
+    });
   };
 
   const next = (): void => {

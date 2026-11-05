@@ -129,7 +129,15 @@ export async function seedDemoWorlds({
   if (you.endsWith(suffix))
     throw new Error("seedDemoWorld: your email must not be a demo address");
 
-  // MF-0034 review: refuse a pack that cannot be seeded before anything is deleted.
+  // MF-0034 review: refuse a world that cannot be seeded before anything is deleted.
+  for (const learner of learners)
+    if (
+      learner.persona !== "you" &&
+      !learner.email.toLowerCase().endsWith(suffix)
+    )
+      throw new Error(
+        `seedDemoWorld: ${learner.email.toLowerCase()} is not on the demo domain`,
+      );
   for (const world of worlds) await assertWorldSeedable(sql, world);
 
   // (a) the previous demo world
@@ -158,8 +166,6 @@ export async function seedDemoWorlds({
   for (const learner of learners) {
     if (learner.persona === "you") continue;
     const email = learner.email.toLowerCase();
-    if (!email.endsWith(suffix))
-      throw new Error(`seedDemoWorld: ${email} is not on the demo domain`);
     const id = await createConfirmedUser(admin, email);
     idOf.set(email, id);
     await sql`update public.profiles set display_name = ${learner.displayName} where id = ${id}`;

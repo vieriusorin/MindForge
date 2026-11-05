@@ -1,0 +1,35 @@
+skill: D2.S1
+diagrams:
+  - id: agent-skills.D2.S1.diagram-anatomy
+    title: "How Claude Code reads a SKILL.md"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: DIR, label: "Skill folder, e.g. .claude/skills/commit-helper/" }
+      - { id: FILE, label: "SKILL.md inside the folder" }
+      - { id: FIRST, label: "Opening --- on the file's first line?", shape: decision }
+      - { id: NOFM, label: "No frontmatter: the whole file, markers included, is skill content" }
+      - { id: PARSE, label: "YAML between the markers parses?", shape: decision }
+      - { id: EMPTY, label: "Loads with no fields set: /skill-name still works, but Claude can't match a description" }
+      - { id: FM, label: "Frontmatter fields (all optional in Claude Code)" }
+      - { id: NAME, label: "name: the command in the / menu; defaults to the directory name" }
+      - { id: DESC, label: "description (recommended): what it does and when to use it; if omitted, the first non-empty line of the content" }
+      - { id: MORE, label: "Other fields, e.g. when_to_use, disable-model-invocation, allowed-tools; unknown names are ignored" }
+      - { id: BODY, label: "Markdown body: the instructions Claude follows when the skill runs" }
+    edges:
+      - { from: DIR, to: FILE }
+      - { from: FILE, to: FIRST }
+      - { from: FIRST, to: NOFM, label: "no" }
+      - { from: FIRST, to: PARSE, label: "yes" }
+      - { from: PARSE, to: EMPTY, label: "no (find the error with --debug)" }
+      - { from: PARSE, to: FM, label: "yes" }
+      - { from: FM, to: NAME }
+      - { from: FM, to: DESC }
+      - { from: FM, to: MORE }
+      - { from: FM, to: BODY, label: "after the closing ---" }
+      - { from: NOFM, to: BODY }
+      - { from: EMPTY, to: BODY }
+    sources:
+      - https://code.claude.com/docs/en/skills

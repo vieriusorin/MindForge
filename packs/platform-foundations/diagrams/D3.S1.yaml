@@ -1,0 +1,31 @@
+skill: D3.S1
+diagrams:
+  - id: platform-foundations.D3.S1.diagram-progressive-disclosure
+    title: "How a skill loads: progressive disclosure"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: M, label: "Startup: each skill's name and description go into the system prompt (Level 1)" }
+      - { id: R, label: "A request arrives" }
+      - { id: T, label: "Does the request match a skill's description?", shape: decision }
+      - { id: N, label: "Claude works without loading the skill body" }
+      - { id: L, label: "Claude reads SKILL.md with bash; its instructions enter context (Level 2)" }
+      - { id: X, label: "Do the instructions point to more files or scripts?", shape: decision }
+      - { id: F, label: "Reference file: read into context when needed (Level 3)" }
+      - { id: S, label: "Script: run with bash; its output enters context, its code does not (Level 3)" }
+      - { id: D, label: "Claude completes the task with the loaded instructions" }
+    edges:
+      - { from: M, to: R }
+      - { from: R, to: T }
+      - { from: T, to: N, label: "no" }
+      - { from: T, to: L, label: "yes" }
+      - { from: L, to: X }
+      - { from: X, to: F, label: "reference file" }
+      - { from: X, to: S, label: "script" }
+      - { from: X, to: D, label: "neither needed" }
+      - { from: F, to: D }
+      - { from: S, to: D }
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview

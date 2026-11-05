@@ -121,8 +121,9 @@ describe("MF-0003 question format", () => {
     );
     expect(questions.length).toBeGreaterThanOrEqual(53);
     for (const q of questions) {
-      const p = toPlayableQuestion(q);
+      const p = toPlayableQuestion(q, "h");
       expect(Object.keys(p).sort()).toEqual([
+        "contentHash",
         "id",
         "options",
         "origin",

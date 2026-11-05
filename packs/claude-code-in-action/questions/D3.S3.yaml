@@ -1,0 +1,158 @@
+skill: D3.S3
+questions:
+  - id: claude-code-in-action.D3.S3.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A teammate's CI script runs `claude -p \"What does the auth module do?\"`. What does the `-p` flag do?"
+    select: 1
+    options:
+      - id: A
+        text: "It starts the session in plan mode, so Claude proposes changes but makes no edits."
+        correct: false
+        rationale: "Plan mode is a permission mode you set with `--permission-mode`; `-p` is short for `--print`, the non-interactive flag."
+      - id: B
+        text: "It pins the session to one project, so Claude loads no settings from `~/.claude`."
+        correct: false
+        rationale: "Without `--bare`, `claude -p` discovers and loads hooks, skills, MCP servers and CLAUDE.md as an interactive session would, including anything configured in `~/.claude`."
+      - id: C
+        text: "It runs Claude Code non-interactively: it answers the prompt, prints the result and exits."
+        correct: true
+        rationale: "The page says to add the `-p` (or `--print`) flag to any `claude` command to run it non-interactively, which is how Claude Code runs in scripts and CI."
+      - id: D
+        text: "It sends the prompt to the Client SDK, which calls the Claude API without any tools."
+        correct: false
+        rationale: "`claude -p` is the Agent SDK used through the CLI: it keeps the same tools, agent loop and context management that power Claude Code."
+    source:
+      title: "Run Claude Code programmatically"
+      url: "https://code.claude.com/docs/en/headless"
+  - id: claude-code-in-action.D3.S3.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You want Claude Code's agent, with its built-in tools, permissions, sessions and hooks, inside your own Python service. Which option do the docs point you to?"
+    select: 1
+    options:
+      - id: A
+        text: "The Agent SDK: a library that runs Claude Code's agent loop in a process you operate."
+        correct: true
+        rationale: "The comparison table says to use the Agent SDK to embed Claude Code's agent in your own Python or TypeScript application, with built-in tools, permissions, sessions and hooks."
+      - id: B
+        text: "The Client SDK: it calls the Claude API and brings Claude Code's built-in tools along."
+        correct: false
+        rationale: "The Client SDK gives direct access to the Claude API; you write the tool loop yourself or use its beta tool runner. Claude Code's built-in tools are not part of it."
+      - id: C
+        text: "The Claude Code CLI in a terminal tab that your Python service keeps open beside it."
+        correct: false
+        rationale: "The CLI is the terminal interface built for daily interactive use and one-off tasks, not a library you embed in an application."
+      - id: D
+        text: "Managed Agents: Anthropic runs the loop inside your Python process, on your own machine."
+        correct: false
+        rationale: "With Managed Agents, Anthropic hosts the agent harness, with sessions in an Anthropic-managed cloud sandbox or a self-hosted sandbox; it does not run inside your Python process."
+    source:
+      title: "Agent SDK overview"
+      url: "https://code.claude.com/docs/en/agent-sdk/overview"
+  - id: claude-code-in-action.D3.S3.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A CI step asks `claude -p` for the main function names in `auth.py` and must parse them as a JSON array that matches a schema. What do you pass and read?"
+    select: 1
+    options:
+      - id: A
+        text: "`--output-format stream-json` alone, then read the first line the run prints."
+        correct: false
+        rationale: "`stream-json` is newline-delimited JSON for real-time streaming; the result arrives in the last line, and no schema is applied without `--json-schema`."
+      - id: B
+        text: "`--verbose` with the default `text` output, then parse the names out of the prose."
+        correct: false
+        rationale: "`text` is plain text output. Parsing prose is fragile; the page offers `--output-format json` with `--json-schema` for output that conforms to a schema."
+      - id: C
+        text: "`--output-format json` alone, then read the names from the `session_id` field."
+        correct: false
+        rationale: "`session_id` identifies the conversation. With plain `json` output the text answer is in `result`, and schema-shaped data needs `--json-schema`."
+      - id: D
+        text: "`--output-format json` with `--json-schema`; read `structured_output` if present."
+        correct: true
+        rationale: "With both flags the structured output is in the `structured_output` field. A run that ends without valid structured output, for example a declined request, has no such field, so check that it is present."
+    source:
+      title: "Run Claude Code programmatically"
+      url: "https://code.claude.com/docs/en/headless"
+  - id: claude-code-in-action.D3.S3.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A commit script pre-approves `Bash(git diff *)` and `Bash(git commit *)` with `--allowedTools`. A reviewer asks to tidy the first to `Bash(git diff*)`. Why keep the space?"
+    select: 1
+    options:
+      - id: A
+        text: "The space is required by the shell; without it the quoted list fails to parse at all."
+        correct: false
+        rationale: "The list is inside quotes, so the shell passes it through either way. The space changes what the permission rule matches, not whether it parses."
+      - id: B
+        text: "Without the space, `Bash(git diff*)` would also match commands like `git diff-index`."
+        correct: true
+        rationale: "The trailing ` *` enables prefix matching on `git diff`. The page warns that without the space, `Bash(git diff*)` would also match `git diff-index`."
+      - id: C
+        text: "Without the space, the rule matches nothing, so every `git diff` call needs approval."
+        correct: false
+        rationale: "`Bash(git diff*)` still matches `git diff`; the risk is that it matches more than intended, such as `git diff-index`."
+      - id: D
+        text: "The space tells Claude Code to run the command in the sandbox instead of the shell."
+        correct: false
+        rationale: "The `--allowedTools` flag uses permission rule syntax; the space is part of the prefix pattern and has nothing to do with the sandbox."
+    source:
+      title: "Run Claude Code programmatically"
+      url: "https://code.claude.com/docs/en/headless"
+  - id: claude-code-in-action.D3.S3.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your CI checks out a contributor's branch and runs `claude -p` on it. The branch adds hooks to `.claude/settings.json` and a server to `.mcp.json`. What is the risk, and the fix?"
+    select: 1
+    options:
+      - id: A
+        text: "No risk: a `-p` run shows the workspace trust dialog, and CI never accepts it."
+        correct: false
+        rationale: "The page says a `-p` session shows no workspace trust dialog and no per-server approval prompt."
+      - id: B
+        text: "Those hooks run and that server connects; run it with `--bare` and pass context by flag."
+        correct: true
+        rationale: "Without `--bare`, a `-p` session runs the hooks in a project's `.claude/settings.json` and connects the servers in its `.mcp.json`, even in a folder you've never trusted. Bare mode never reads them; pass what the run needs with `--settings`, `--mcp-config` and similar flags."
+      - id: C
+        text: "Only the MCP server is a risk; hooks are skipped in `-p` mode, so remove `.mcp.json`."
+        correct: false
+        rationale: "Hooks are not skipped: without `--bare`, `claude -p` loads hooks, skills, MCP servers and CLAUDE.md as an interactive session would."
+      - id: D
+        text: "Only the hooks are a risk; add `--allowedTools \"Read\"` so that they cannot execute."
+        correct: false
+        rationale: "`--allowedTools` pre-approves tools Claude calls; it does not stop project hooks from running or project servers from connecting. `--bare` skips their auto-discovery."
+    source:
+      title: "Run Claude Code programmatically"
+      url: "https://code.claude.com/docs/en/headless"
+  - id: claude-code-in-action.D3.S3.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A process supervisor stops a long `claude -p` run with SIGTERM in the middle of a turn. What happens, and how could you have ended the turn cleanly?"
+    select: 1
+    options:
+      - id: A
+        text: "Exit code 0 with a partial result; to keep the turn, raise the timeout instead."
+        correct: false
+        rationale: "On SIGTERM Claude Code exits with code 143 and records no result for the turn that was in progress."
+      - id: B
+        text: "Claude finishes the turn first, then exits with code 143 and the full result printed."
+        correct: false
+        rationale: "Claude Code leaves the in-progress turn unfinished; while exiting it starts no new tool call and sends no new model request."
+      - id: C
+        text: "Exit code 143, turn left unfinished with no result; send SIGINT or call `interrupt()` first."
+        correct: true
+        rationale: "The page says SIGTERM makes Claude Code exit with code 143, leaving the turn unfinished and recording no result. To end the turn instead, send SIGINT, or call the Agent SDK's `interrupt()`, before you stop the process."
+      - id: D
+        text: "The run pauses and resumes on its own when the supervisor restarts the same process."
+        correct: false
+        rationale: "A stopped run does not resume itself. You can resume the session later; by default Claude Code leaves the interrupted turn as it is unless `CLAUDE_CODE_RESUME_INTERRUPTED_TURN=1` is set."
+    source:
+      title: "Run Claude Code programmatically"
+      url: "https://code.claude.com/docs/en/headless"

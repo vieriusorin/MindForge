@@ -1,0 +1,46 @@
+skill: D4.S2
+diagrams:
+  - id: subagents.D4.S2.diagram-which-tool
+    title: "Main conversation, skill, fork, subagent or agent team?"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    direction: TB
+    nodes:
+      - { id: T, label: "Work to do" }
+      - { id: SIMPLE, label: "Start simple: add complexity only when it demonstrably improves outcomes" }
+      - { id: D1, label: "Back-and-forth, shared phases, a quick change, or latency matters?", shape: decision }
+      - { id: MAIN, label: "Main conversation" }
+      - { id: D2, label: "Reusable prompt or workflow to apply while you work?", shape: decision }
+      - { id: SKILL, label: "Skill: runs in the main conversation context" }
+      - { id: D3, label: "Needs the whole conversation so far, or several approaches from the same start?", shape: decision }
+      - { id: FORK, label: "Fork: inherits history, reuses the parent's prompt cache, only its result returns" }
+      - { id: D4, label: "Workers must share findings and coordinate on their own?", shape: decision }
+      - { id: TEAM, label: "Agent team: teammates message each other, shared task list, higher token cost" }
+      - { id: SUB, label: "Subagent: fresh context, reports a result to the caller, lower token cost" }
+      - { id: CF, label: "Skill with context: fork: a new subagent that doesn't see your history" }
+      - { id: D0, label: "A question about something already in the conversation?", shape: decision }
+      - { id: BTW, label: "/btw: no tool access, answer not added to history" }
+      - { id: D5, label: "Can teammates work independently?", shape: decision }
+      - { id: SEQ, label: "Sequential steps, same-file edits or many dependencies: a single session or subagents are more effective" }
+    edges:
+      - { from: T, to: SIMPLE }
+      - { from: SIMPLE, to: D0 }
+      - { from: D0, to: BTW, label: "yes" }
+      - { from: D0, to: D1, label: "no" }
+      - { from: D1, to: MAIN, label: "yes" }
+      - { from: D1, to: D2, label: "no" }
+      - { from: D2, to: SKILL, label: "yes" }
+      - { from: SKILL, to: CF, label: "run it isolated (explicit task instructions only)" }
+      - { from: D2, to: D3, label: "no" }
+      - { from: D3, to: FORK, label: "yes" }
+      - { from: D3, to: D4, label: "no" }
+      - { from: D4, to: D5, label: "yes" }
+      - { from: D5, to: TEAM, label: "yes" }
+      - { from: D5, to: SEQ, label: "no" }
+      - { from: D4, to: SUB, label: "no: only the result matters" }
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/agent-teams
+      - https://code.claude.com/docs/en/skills
+      - https://www.anthropic.com/research/building-effective-agents

@@ -1,0 +1,31 @@
+skill: D1.S2
+diagrams:
+  - id: ai-capabilities.D1.S2.diagram-training-stages
+    title: "How training gives a model its character"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: LR
+    nodes:
+      - { id: C, label: "Large unlabeled corpus of text" }
+      - { id: PT, label: "Pretraining: predict the next word" }
+      - { id: PM, label: "Pretrained model (not inherently good at following instructions)" }
+      - { id: RLHF, label: "RLHF: people rank example outputs" }
+      - { id: CAI1, label: "Constitutional AI, phase 1: critique and revise with principles" }
+      - { id: CAI2, label: "Constitutional AI, phase 2: RL from AI feedback" }
+      - { id: CH, label: "Character training: Claude ranks its own responses" }
+      - { id: A, label: "Assistant: helpful, honest, harmless" }
+    edges:
+      - { from: C, to: PT }
+      - { from: PT, to: PM }
+      - { from: PM, to: RLHF, label: "human preferences" }
+      - { from: PM, to: CAI1, label: "written principles" }
+      - { from: CAI1, to: CAI2 }
+      - { from: PM, to: CH, label: "character variant of CAI" }
+      - { from: RLHF, to: A }
+      - { from: CAI2, to: A }
+      - { from: CH, to: A, label: "traits nudge behaviour" }
+    sources:
+      - https://platform.claude.com/docs/en/about-claude/glossary
+      - https://www.anthropic.com/research/claude-character
+      - https://www.anthropic.com/news/claudes-constitution

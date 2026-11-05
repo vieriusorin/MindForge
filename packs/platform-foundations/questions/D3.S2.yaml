@@ -1,0 +1,158 @@
+skill: D3.S2
+questions:
+  - id: platform-foundations.D3.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A support lead uploads a CSV of last quarter's tickets and asks Claude for average resolution time per team as a spreadsheet. With code execution and file creation turned on, what does Claude do?"
+    select: 1
+    options:
+      - id: A
+        text: "Reads a sample of the rows, estimates the averages, and describes a spreadsheet layout for the lead to build by hand."
+        correct: false
+        rationale: "The page says Claude can execute code to work with files and generate Excel spreadsheets you can download; it does not hand back a layout to rebuild."
+      - id: B
+        text: "Sends the CSV to the lead's own computer and runs a spreadsheet macro there to work out the figures."
+        correct: false
+        rationale: "The page says the work happens in an isolated, sandboxed container, a controlled environment separate from your systems."
+      - id: C
+        text: "Returns the figures as a chart image, since spreadsheets can be produced inside Excel and nowhere else."
+        correct: false
+        rationale: "The page lists Excel spreadsheets (.xlsx) among the files Claude creates, with working formulas, alongside charts as PNG images."
+      - id: D
+        text: "Writes and runs code in its private computing environment, then produces an .xlsx file to download."
+        correct: true
+        rationale: "The page says Claude has a private computing environment in claude.ai where it writes and runs code, can analyze uploaded CSV files, and creates Excel files you can download."
+    source:
+      title: "Create and edit files with Claude"
+      url: "https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude"
+  - id: platform-foundations.D3.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A backend sends four requests with the code execution tool attached. According to the tool's docs, which one is Claude most likely to answer by running code rather than replying directly?"
+    select: 1
+    options:
+      - id: A
+        text: "\"How many miles are in a 10 km race?\""
+        correct: false
+        rationale: "The docs list simple unit conversions among the requests Claude answers directly without running code."
+      - id: B
+        text: "\"Loan balance after 360 payments, to the cent?\""
+        correct: true
+        rationale: "The docs say Claude runs code for non-trivial math: large numbers, many steps, precision-sensitive results."
+      - id: C
+        text: "\"What is 12 times 12, for a quick sanity check?\""
+        correct: false
+        rationale: "The docs list simple arithmetic and well-known math facts among the requests Claude answers directly."
+      - id: D
+        text: "\"Write a short poem about missing a sprint deadline.\""
+        correct: false
+        rationale: "The docs list factual, conversational or creative requests among those Claude answers without running code."
+    source:
+      title: "Code execution tool"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool"
+  - id: platform-foundations.D3.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "The security lead of an Enterprise organization that handles client financial data wants staff to keep building spreadsheets with Claude, while removing the risk that a prompt injection sends data out of the sandbox. Which configuration matches the Help Center's guidance?"
+    select: 1
+    options:
+      - id: A
+        text: "Keep code execution and file creation on, with Allow network egress toggled off."
+        correct: true
+        rationale: "The page says disabling network access prevents data from leaving the sandbox, and the team still gets full code execution and file creation with pre-installed packages."
+      - id: B
+        text: "Choose the All domains option, so Claude can check each data source it reads against the open web."
+        correct: false
+        rationale: "The page calls All domains the riskiest option and asks you to review the security considerations before enabling it."
+      - id: C
+        text: "Turn code execution off, because Claude cannot create files once network egress is toggled off."
+        correct: false
+        rationale: "The page says that with network egress off Claude can still execute code and create files; it just cannot communicate externally."
+      - id: D
+        text: "Leave egress on and count on the egress setting to also block traffic through MCP connectors."
+        correct: false
+        rationale: "The page notes that network communication remains possible through MCP integrations regardless of the network egress setting."
+    source:
+      title: "Create and edit files with Claude"
+      url: "https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude"
+  - id: platform-foundations.D3.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "During a file-creation task built from a PDF downloaded off a vendor's website, you see Claude start opening project files that have nothing to do with your request. What does the Help Center recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Let it finish: sandboxes are shared between users, and another user's task may need those files."
+        correct: false
+        rationale: "The page says sandbox isolation is implemented so that no sandbox environments are shared between users."
+      - id: B
+        text: "Ignore it: inside a sandboxed container Claude cannot be tricked into leaking anything it reads."
+        correct: false
+        rationale: "The page warns that instructions hidden in external files or websites can trick Claude into sending information from its context to malicious third parties."
+      - id: C
+        text: "Stop Claude, which you are advised to monitor, and report it with the thumbs down."
+        correct: true
+        rationale: "The page recommends monitoring Claude while using the feature, stopping it if you see it using or accessing data unexpectedly, and reporting issues with the thumbs down."
+      - id: D
+        text: "Widen network access to All domains so the task completes before the injected text does harm."
+        correct: false
+        rationale: "The page calls All domains the riskiest option; more network access increases the chance that data leaves the sandbox."
+    source:
+      title: "Create and edit files with Claude"
+      url: "https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude"
+  - id: platform-foundations.D3.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your service calls the Messages API with the `code_execution_20250825` tool. Claude's reply says it saved report.xlsx in a working folder, but the tool result carries no `file_id` for it. What explains this, and what is the fix?"
+    select: 1
+    options:
+      - id: A
+        text: "The container has no disk for files, so ask Claude to return the spreadsheet as CSV text in its reply."
+        correct: false
+        rationale: "The docs give the container 5 GiB of workspace storage, and the file Claude wrote is still in the container."
+      - id: B
+        text: "Files outside the top of `$OUTPUT_DIR` aren't returned; reuse the container and have Claude copy it in."
+        correct: true
+        rationale: "The docs say files at the top level of `$OUTPUT_DIR` are captured as `file_id` entries while files written elsewhere stay in the container, which you can reuse to ask Claude to copy the file in."
+      - id: C
+        text: "A `file_id` is returned when the request also includes the web search tool, so add it to the request."
+        correct: false
+        rationale: "Web search changes code execution pricing in the docs, not file capture; capture depends on the file being in `$OUTPUT_DIR`."
+      - id: D
+        text: "Container files are wiped as each request ends, so the task has to be rerun from scratch in a new container."
+        correct: false
+        rationale: "The docs say a file written elsewhere is still in the container and that containers can be reused across requests by passing back the container id."
+    source:
+      title: "Code execution tool"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool"
+  - id: platform-foundations.D3.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "In claude.ai, a team's chart workflow has Claude install a plotting package from PyPI before drawing. They port the workflow to the Messages API with the code execution tool. What changes?"
+    select: 1
+    options:
+      - id: A
+        text: "Nothing changes: the API container follows the network egress settings of the team's claude.ai organization."
+        correct: false
+        rationale: "The API docs describe the container's internet access as completely disabled, with no outbound network requests allowed."
+      - id: B
+        text: "They need to send an `anthropic-beta` header that turns on network access inside the container."
+        correct: false
+        rationale: "The docs say none of the tool versions requires an `anthropic-beta` header, and no header enables internet access in the container."
+      - id: C
+        text: "They need the `code_execution_20260521` version, which is the one that adds outbound internet access."
+        correct: false
+        rationale: "The docs say `code_execution_20260521` is the same runtime as the previous version; it differs in telling Claude about the 90-second cell limit."
+      - id: D
+        text: "The container has no internet, so use pre-installed packages such as matplotlib instead."
+        correct: true
+        rationale: "The docs say the container has no internet access, so Claude can't download packages at runtime and the pre-installed libraries, matplotlib and seaborn among them, are what is available."
+    source:
+      title: "Code execution tool"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool"

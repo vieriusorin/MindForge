@@ -59,7 +59,7 @@ function parseArgs(argv: string[]): { packs: string[]; seed: number } {
     if (flag === "--pack") packs.push(value);
     else {
       seed = Number(value);
-      if (!Number.isInteger(seed))
+      if (value.trim() === "" || !Number.isInteger(seed))
         throw new Error("dev:seed: --seed must be an integer");
     }
   }

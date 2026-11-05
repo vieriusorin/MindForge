@@ -1,0 +1,158 @@
+skill: D2.S1
+questions:
+  - id: agent-skills.D2.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You open a teammate's SKILL.md for the first time. What two parts should you expect to find in it?"
+    select: 1
+    options:
+      - id: A
+        text: "A JSON manifest listing the skill's tools, then a Python module that Claude imports."
+        correct: false
+        rationale: "SKILL.md is not JSON or Python: it has YAML frontmatter between --- markers and markdown content with the instructions."
+      - id: B
+        text: "A title line naming the command, then shell commands that Claude Code runs in order."
+        correct: false
+        rationale: "The body is markdown instructions that Claude follows; the command name comes from the directory name or the frontmatter name."
+      - id: C
+        text: "A block of permission rules, then a changelog of the skill's earlier published versions."
+        correct: false
+        rationale: "Neither part is a permission list or a changelog: frontmatter tells Claude when to use the skill, and the markdown holds its instructions."
+      - id: D
+        text: "YAML frontmatter between --- markers, then markdown instructions Claude follows."
+        correct: true
+        rationale: "Every skill needs a SKILL.md with two parts: YAML frontmatter between --- markers that tells Claude when to use it, and markdown content with the instructions."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D2.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Which frontmatter field does Claude use to decide when to apply your skill on its own?"
+    select: 1
+    options:
+      - id: A
+        text: "name, because Claude compares the skill's folder name with the words in your request"
+        correct: false
+        rationale: "name is the command name shown in the / menu, defaulting to the directory name; Claude decides when to apply a skill from its description."
+      - id: B
+        text: "argument-hint, because it lists the phrases that should make the skill trigger"
+        correct: false
+        rationale: "argument-hint is shown during autocomplete to indicate expected arguments, such as [issue-number]; it is not used for matching."
+      - id: C
+        text: "description, which says what the skill does and when it should be used"
+        correct: true
+        rationale: "The frontmatter reference: description says what the skill does and when to use it, and Claude uses it to decide when to apply the skill."
+      - id: D
+        text: "license, because it states which kinds of request the skill may handle"
+        correct: false
+        rationale: "license names the license covering the skill; Claude Code accepts the field but doesn't act on it."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D2.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your skill lives in a folder named pdf-processing, and CI validates it against the Agent Skills specification. Which name line passes?"
+    select: 1
+    options:
+      - id: A
+        text: "name: PDF_processing"
+        correct: false
+        rationale: "Uppercase is not allowed, and neither is an underscore: under the spec, name may only contain lowercase letters, digits and hyphens."
+      - id: B
+        text: "name: pdf-processing"
+        correct: true
+        rationale: "Lowercase letters and single hyphens, no leading or trailing hyphen, and it matches the parent directory name, as the spec requires."
+      - id: C
+        text: "name: pdf--processing"
+        correct: false
+        rationale: "The spec forbids consecutive hyphens, and this also no longer matches the parent directory name."
+      - id: D
+        text: "name: -pdf-processing"
+        correct: false
+        rationale: "The spec says name must not start or end with a hyphen, and it must match the parent directory name."
+    source:
+      title: "Specification"
+      url: "https://agentskills.io/specification"
+  - id: agent-skills.D2.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You are writing a skill that drafts commit messages from staged diffs. Which description follows the authoring guidance best?"
+    select: 1
+    options:
+      - id: A
+        text: "Generates commit messages from git diffs. Use when the user asks for a commit message or diff review."
+        correct: true
+        rationale: "Written in third person, it says what the skill does and when to use it, with key terms Claude can match, like the guide's Git Commit Helper example."
+      - id: B
+        text: "I can help you write clear, well-structured commit messages for your project any time that you need one."
+        correct: false
+        rationale: "The guide warns to write in third person, because the description is injected into the system prompt; this one also gives no trigger context."
+      - id: C
+        text: "Helps with git. Use for commits, branches, merges, rebases, tags, remotes and anything else repository related."
+        correct: false
+        rationale: "The guide asks for specific descriptions with key terms; a vague 'helps with' covering the whole tool doesn't tell Claude when this skill is the right one."
+      - id: D
+        text: "You can use this to write commit messages. Read every step below carefully before you run a git command."
+        correct: false
+        rationale: "Second person is on the guide's avoid list, and the second sentence is an instruction that belongs in the body, not a when-to-use trigger."
+    source:
+      title: "Skill authoring best practices"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+  - id: agent-skills.D2.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your Claude Code skill's frontmatter sets argument-hint, disable-model-invocation and context: fork. You now upload the same SKILL.md through the Skills API. What happens?"
+    select: 1
+    options:
+      - id: A
+        text: "The upload succeeds and the extra fields are skipped, just as Claude Code skips unknown fields."
+        correct: false
+        rationale: "Claude Code ignores a field it doesn't recognize, but on the upload path a field the spec doesn't allow causes a hard error instead of being ignored."
+      - id: B
+        text: "The upload succeeds and all three fields apply there, since they belong to the Agent Skills spec."
+        correct: false
+        rationale: "These are Claude Code extensions. Outside Claude Code you can use only name, description, license, compatibility, metadata and allowed-tools."
+      - id: C
+        text: "The upload fails with an unexpected-key error; that path accepts only the spec's six fields."
+        correct: true
+        rationale: "Skills API uploads accept name, description, license, compatibility, metadata and allowed-tools; any other key fails with an Unexpected key(s) error."
+      - id: D
+        text: "The upload succeeds once the fields are renamed to camelCase, the API's frontmatter convention."
+        correct: false
+        rationale: "The page gives no camelCase convention; the fix it gives is to restrict frontmatter to the spec's six fields, which Claude Code also accepts."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D2.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your team has dozens of skills. One skill's description opens with a long history of the project and ends with its trigger phrases; a when_to_use line adds more. What is the risk?"
+    select: 1
+    options:
+      - id: A
+        text: "None: Claude reads the full SKILL.md of every installed skill before it chooses one."
+        correct: false
+        rationale: "Claude Code loads a listing of names and descriptions; full skill content loads only when a skill is invoked."
+      - id: B
+        text: "The body is trimmed instead, so the listing keeps room for the long description text."
+        correct: false
+        rationale: "The listing is what gets cut: description and when_to_use are capped together, and descriptions are dropped to fit the budget."
+      - id: C
+        text: "Claude Code moves when_to_use into the body, so those triggers are seen after loading."
+        correct: false
+        rationale: "when_to_use is appended to description in the skill listing and counts toward the same character cap."
+      - id: D
+        text: "The listing caps that text and can drop descriptions, so late triggers get lost."
+        correct: true
+        rationale: "The combined description and when_to_use text is truncated in the listing, and with many skills some descriptions are dropped; the page says to put the key use case first."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"

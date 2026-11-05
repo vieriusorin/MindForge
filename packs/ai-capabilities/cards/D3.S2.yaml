@@ -1,0 +1,31 @@
+skill: D3.S2
+cards:
+  - id: ai-capabilities.D3.S2.card-trust-then-verify
+    concept: Guardrails around a capable model
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Use a model safely by deciding what "good" means before you trust it, and by building layers around it.
+      Example: a bot that summarizes inbound support emails. Write a measurable success criterion (say, an
+      agreed accuracy on a held-out set of 1,000 real emails) and an eval that checks it. Treat each email body
+      as untrusted data: deliver it in a tool result, JSON-encoded and labelled with its source, and state in the
+      system prompt that such content must not override your instructions. Give the bot no secrets or actions it
+      does not need, and have it quote the email for each claim in its summary.
+    inNature: >-
+      Reed warblers are targets of cuckoos, which lay eggs in their nests that look like the warblers' own. A
+      warbler pair defends in layers: guarding the nest, inspecting the eggs, and abandoning a clutch when
+      something is off. No single defence is perfect, so they stack.
+    whereItBreaks:
+      - "The warbler's defences are instinct. Yours are designed: screening, a stated policy, least privilege and monitoring are layers you build and test."
+      - "A warbler that misses a cuckoo egg loses one brood. An agent that follows one injected instruction with broad permissions can leak secrets or take actions, so limit what it can reach."
+      - "Birds have no success criteria. You define measurable ones and run evals, because a reply that looks right is not proof that it is."
+    contrast: >-
+      Prompt injection is someone else's instructions entering your context through content the model reads.
+      Hallucination is the model's own unsupported text. They need different fixes: structure, screening and
+      least privilege for injection; grounding, citations and validation for hallucination.
+    diagram: ai-capabilities.D3.S2.diagram-layered-guardrails
+    sources:
+      - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks
+      - https://platform.claude.com/docs/en/test-and-evaluate/define-success
+      - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations

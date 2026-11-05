@@ -133,7 +133,7 @@ never attempted, a domain with no data), a config value absent (a pack without `
 boundary of every threshold. Each row names the shown result and who decided it. A row the draft did not
 state is a Concern for the user, not a default for the builder. When the GOAL was drafted in an earlier
 session, also re-read each draft decision against the user's later answers and `CONTEXT.md` for
-contradictions. Before writing an oracle over a library's numbers (ts-fsrs, date maths, rounding), run a
+contradictions. When the GOAL drafts a check or lint rule with a named proof case (a reserved gate ticket), run the drafted rule over that proof case with a read-only probe before freezing anything, then over every shipped item it will govern; the first run of a new check is a review of existing content, so list its hits as findings in the GOAL. A rule the proof case cannot turn RED on is a Concern for the user, not a build (MF-0036: 'quantifier absent from the cited page' passed its own proof line because the page said `never` 12 times; the same probe found a shipped `flawLine` pointing at a true line). For AI-drafted pack items (questions, cards, diagrams, cuckoos) the drafter brief names four checks that no script covers, because the planned MF-0033 gate only sees tokens and quantifiers (MF-0039: 12 misleading + 1 unsupported claims were omissions, found only by the fresh verifiers): (1) for any security, safety or permission statement, quote the cited page's strictest rule first and keep its qualifier ('only from trusted sources', 'extreme caution'); never soften it to 'should audit'; (2) for any 'always', 'by default' or 'is loaded' statement, grep the page for the flag or mode that removes it, and state the exception or scope the claim; (3) in a diagram, every row of a table the page gives (name-clash order, scopes, troubleshooting steps) is a branch reachable from every node it applies to, and an ordering edge needs a page sentence that orders it; (4) a rationale gives the page's reason, not a plausible one (check the symptom against the page's own failure modes). Keep the fresh-context verifier per domain group in the plan; the brief reduces its findings, it does not replace it. The whole pack-ticket shape is in `references/templates.md` (Course-pack ticket). A reserved sibling that states the same rule (MF-0033) gets the same probe when it is picked up. Before writing an oracle over a library's numbers (ts-fsrs, date maths, rounding), run a
 one-line probe of the library and record the result in the oracle test's comment. A formula taken from the
 docs can differ from what the code does (MF-0015 retro: ts-fsrs floors elapsed days).
 
@@ -207,6 +207,15 @@ A DB acceptance test's fixture and teardown must survive the freeze too: seed on
 schema accepts (respect its constraints), delete child-first in `afterAll`, tolerate a table the
 ticket has not migrated yet. Run the file twice at freeze: a second run that fails on leftovers is
 a fixture defect, not the SC's red.
+
+A test that proves an interleaving (concurrent call, lock wait, torn read, "before COMMIT") must carry an
+ordering witness: record where the observed call was answered relative to the other side (e.g.
+`isCommittedAtResponse`) and assert it. Awaiting alone is not enough: `supabase.rpc(...)` and `.from(...)`
+return lazy builders that send nothing until `.then`/`await`, so a call started inside a transaction runs
+after COMMIT unless it is awaited there. Before FREEZE, run the case once against a variant with the
+opposite behaviour (the call moved after COMMIT, or the lock removed) and write its result in LOOP-VERIFY
+under "RED at freeze"; if it stays green, the case is vacuous. A red caused by a missing function or column
+is not that proof (MF-0032: SC-2 was frozen green-for-the-wrong-reason and found only in review).
 
 From here, frozen files are a contract:
 - edits to a frozen file **ask the user** (a guard hook, if the project has one; otherwise you ask);

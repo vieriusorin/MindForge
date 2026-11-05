@@ -92,7 +92,12 @@ export function useSeedChecks({
 
   const submit = (): void => {
     if (!check || !isSubmittable) return;
-    mutation.mutate({ packSlug, questionId: check.id, chosen });
+    mutation.mutate({
+      packSlug,
+      questionId: check.id,
+      chosen,
+      contentHash: check.contentHash,
+    });
   };
 
   const next = (): void => {

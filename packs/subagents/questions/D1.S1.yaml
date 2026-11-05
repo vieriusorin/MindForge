@@ -1,0 +1,158 @@
+skill: D1.S1
+questions:
+  - id: subagents.D1.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You ask Claude Code where parseInvoice is called across a 300-file repo, and Claude hands the search to a subagent that reads dozens of files. What arrives back in your main conversation?"
+    select: 1
+    options:
+      - id: A
+        text: "Every file the subagent opened, so that your follow-up questions can be answered without reading them again."
+        correct: false
+        rationale: "The point of the subagent is that the large file reads stay in its own context window, not yours; they are not copied back."
+      - id: B
+        text: "The subagent's summary of what it found, plus a small metadata trailer, while its file reads stay out."
+        correct: true
+        rationale: "The context window walkthrough says a subagent handles the research in its own separate context window, so the large file reads stay out of yours, and only the summary and a small metadata trailer come back."
+      - id: C
+        text: "Nothing at all, until you open the subagent's transcript yourself and copy the useful findings across."
+        correct: false
+        rationale: "The subagent returns its summary to the main conversation on its own; you do not have to copy results over from its transcript."
+      - id: D
+        text: "A compacted copy of your whole conversation, rewritten so that it now includes the subagent's findings."
+        correct: false
+        rationale: "Compaction is a separate mechanism (`/compact`) that summarizes your own conversation; a subagent returns only its summary."
+    source:
+      title: "Explore the context window"
+      url: "https://code.claude.com/docs/en/context-window"
+  - id: subagents.D1.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A junior asks: \"When Claude delegates to my custom `test-runner` subagent, what does it already know about our chat?\" Which answer is right for a subagent that is not a fork?"
+    select: 1
+    options:
+      - id: A
+        text: "Everything: it sees the full conversation history, so it can pick up exactly where the main session left off."
+        correct: false
+        rationale: "Inheriting the whole conversation is what a fork does. Any other subagent starts with a fresh, isolated context window."
+      - id: B
+        text: "Nothing: it starts completely empty, with no system prompt, no CLAUDE.md and no task to work from."
+        correct: false
+        rationale: "A fresh context is not an empty one: it holds the agent's system prompt, the task message, the CLAUDE.md files and a git status snapshot."
+      - id: C
+        text: "Your conversation history, but not CLAUDE.md, so project rules must be repeated in every message you send."
+        correct: false
+        rationale: "It is the reverse: a custom subagent loads the CLAUDE.md hierarchy but does not see your conversation history."
+      - id: D
+        text: "Only what Claude writes in the delegation message, plus its own prompt, CLAUDE.md and a git status snapshot."
+        correct: true
+        rationale: "Each subagent starts with a fresh, isolated context window and doesn't see your conversation history; Claude composes a delegation message that summarizes the task, alongside the system prompt, CLAUDE.md files and git status."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D1.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Earlier in the session you told Claude in chat, not in CLAUDE.md, to ignore the `vendor/` directory. Now you want a subagent to audit dependencies. How do you make sure the rule reaches it?"
+    select: 1
+    options:
+      - id: A
+        text: "Restate the rule in the request you give Claude, so that it goes into the subagent's delegation prompt."
+        correct: true
+        rationale: "The subagent doesn't see your conversation history. The docs say that if a rule must reach the subagent, such as \"ignore the `vendor/` directory,\" restate it in the prompt you give Claude when delegating."
+      - id: B
+        text: "Do nothing, because every subagent reads the main conversation before it starts on its task."
+        correct: false
+        rationale: "Only a fork inherits the conversation; a regular subagent starts fresh, so a rule given only in chat does not reach it."
+      - id: C
+        text: "Ask Claude to save the rule to auto memory, which every subagent loads when it starts up."
+        correct: false
+        rationale: "The main conversation's auto memory isn't loaded into a subagent; a subagent gets persistent memory only through its own `memory` field."
+      - id: D
+        text: "@-mention the subagent, which makes it share the context of the message that invoked it."
+        correct: false
+        rationale: "An @-mention controls which subagent Claude invokes, not what prompt it receives; Claude still writes the task prompt."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D1.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your integration suite prints thousands of log lines, and you only care about what broke. Which request keeps your main context clean and still gets you the answer?"
+    select: 1
+    options:
+      - id: A
+        text: "Run the suite in the main conversation, then run `/compact` afterwards to squeeze the logs into a summary."
+        correct: false
+        rationale: "The verbose output would first fill your own context window; delegating keeps it out from the start."
+      - id: B
+        text: "Use `/btw` to run the suite as a side question, so its answer is not added to the history."
+        correct: false
+        rationale: "`/btw` has no tool access, so it cannot run a test suite; it is for a question about something already in the conversation."
+      - id: C
+        text: "Have a subagent run the suite and report back only the failing tests with their error messages."
+        correct: true
+        rationale: "Isolating high-volume operations such as running tests is one of the most effective uses of subagents: the verbose output stays in the subagent's context while only the relevant summary returns."
+      - id: D
+        text: "Paste the full test output into the chat yourself, so that Claude reads every line before it answers."
+        correct: false
+        rationale: "Pasting the logs puts all of them into the main context, which is exactly what delegating the run avoids."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D1.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You are designing a lead agent that sends research subagents into a large codebase. Each subagent may use tens of thousands of tokens exploring. What should each one hand back to the lead?"
+    select: 1
+    options:
+      - id: A
+        text: "Its full trace of tool calls and results, so that the lead agent can re-check every step it took."
+        correct: false
+        rationale: "Returning the whole trace would move the detailed search context into the lead, which defeats the separation of concerns."
+      - id: B
+        text: "The raw tool results with its own reasoning stripped out, so the lead does all of the interpretation."
+        correct: false
+        rationale: "The pattern has the subagent do the deep work and distill it; the lead focuses on synthesizing results, not reading raw output."
+      - id: C
+        text: "Nothing directly; it should write its findings to a shared file that the lead reads only at the very end."
+        correct: false
+        rationale: "Note-taking is a separate technique; in the sub-agent pattern each subagent returns a condensed summary to the lead."
+      - id: D
+        text: "A condensed, distilled summary of its work, often around 1,000-2,000 tokens, for the lead to synthesize."
+        correct: true
+        rationale: "Each subagent might explore extensively, using tens of thousands of tokens or more, but returns only a condensed, distilled summary of its work (often 1,000-2,000 tokens); the detailed search context stays isolated within the sub-agents."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/research/effective-context-engineering-for-ai-agents"
+  - id: subagents.D1.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "After an hour of narrowing down a race condition, you want a side task drafted (tests for the fix) that needs all the background you and Claude built up. Which kind of subagent fits, and why?"
+    select: 1
+    options:
+      - id: A
+        text: "A fork: it inherits the whole conversation and reuses the parent's prompt cache."
+        correct: true
+        rationale: "A fork inherits the entire conversation so far, its tool calls stay out of your conversation, and because its system prompt and tools match the parent it reuses the parent's prompt cache, so it costs less than a fresh subagent for tasks that need the same context."
+      - id: B
+        text: "A fresh subagent, because a fork writes all of its tool calls back into your main conversation as it works."
+        correct: false
+        rationale: "A fork's own tool calls still stay out of your conversation; only its final result comes back."
+      - id: C
+        text: "A fresh subagent, because it already inherits your conversation history along with the parent's model."
+        correct: false
+        rationale: "A non-fork subagent starts fresh with the prompt you pass; it takes its model from its own `model` field, not from the conversation."
+      - id: D
+        text: "A fresh subagent, because it shares the main session's prompt cache and so is the cheaper option here."
+        correct: false
+        rationale: "A non-fork subagent has a separate cache. It is the fork whose identical system prompt and tools let it reuse the parent's cache."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"

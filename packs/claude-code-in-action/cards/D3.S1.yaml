@@ -1,0 +1,30 @@
+skill: D3.S1
+cards:
+  - id: claude-code-in-action.D3.S1.card-hook-reflex
+    concept: A hook as a reflex at a fixed point
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      A hook is a command you add to a `hooks` block in a settings file. Each key is an event:
+      `PreToolUse` fires before a tool call executes and can block it, `PostToolUse` fires after a
+      tool call succeeds. A `matcher` such as `Edit|Write` narrows it to certain tools. Claude Code
+      passes the event as JSON on stdin (`tool_name`, `tool_input`), and your script answers with its
+      exit code: 0 for no objection, 2 to block with the reason on stderr. The guide's
+      `protect-files.sh` reads `tool_input.file_path` and exits 2 when the path matches `.env`, so
+      Claude gets "Blocked: …" as feedback and changes its approach.
+    inNature: >-
+      A Venus flytrap's trigger hairs. The trap doesn't decide what to catch case by case: when
+      something touches the hairs, a fixed reflex runs at a fixed point, every time.
+    whereItBreaks:
+      - "A flytrap reacts only after the touch. A `PreToolUse` hook runs before the tool call and can stop it; a `PostToolUse` hook runs after and can't undo the action, since the tool has already executed."
+      - "A flytrap closes on whatever lands on it. A hook fires only for its event and matcher, and matchers are case-sensitive, so `edit` will not match the `Edit` tool."
+      - "A reflex has one outcome. A hook's outcome depends on its exit code and stdout: on `PreToolUse`, exit 0 doesn't approve a call (the normal permission flow still applies), and on most events any other exit code with plain-text output is a non-blocking error, so the action proceeds unless the hook sets `onFailure` to `\"block\"`."
+    contrast: >-
+      A CLAUDE.md instruction is context that Claude may or may not act on. A hook is run by Claude
+      Code itself, so certain actions always happen rather than relying on the LLM to choose to run
+      them.
+    diagram: claude-code-in-action.D3.S1.diagram-tool-call-hooks
+    sources:
+      - https://code.claude.com/docs/en/hooks-guide
+      - https://code.claude.com/docs/en/hooks

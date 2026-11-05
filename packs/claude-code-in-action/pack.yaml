@@ -1,0 +1,113 @@
+# Claude Code in Action (MF-0042)
+# A course pack. The course is behind a login and is never a source (CONTEXT.md Source): only its outline (the
+# section and lesson order) shaped this blueprint. Every skill is grounded in public pages only, and items follow
+# today's docs where the course has drifted (custom commands are now skills; the Claude Code SDK is now the Agent
+# SDK; see docs/plan/claude-code-in-action-validation.md). Weights are MindForge's; the course gives none.
+# Items carry a `level`: foundation (junior), practitioner (mid), expert (senior).
+slug: claude-code-in-action
+name: Claude Code in Action
+kind: course
+version: 1
+domains:
+  - code: D1
+    name: What a coding assistant is
+    weight: 8
+    skills:
+      - code: D1.S1
+        name: "The agentic loop: gather context, act, verify"
+        weight: 8
+        description: How a coding assistant works as a loop of gathering context, taking action and verifying results, why tools are what let a language model read files, run commands and edit code, and where you stay in control.
+        sources:
+          - https://code.claude.com/docs/en/how-claude-code-works
+          - https://code.claude.com/docs/en/overview
+
+  - code: D2
+    name: Getting hands on
+    weight: 54
+    skills:
+      - code: D2.S1
+        name: "Setup and project context: install, /init, CLAUDE.md, @ mentions"
+        weight: 9
+        description: Installing and starting Claude Code, generating a CLAUDE.md with /init, the CLAUDE.md locations and how they load, and pointing Claude at files with @ mentions.
+        sources:
+          - https://code.claude.com/docs/en/setup
+          - https://code.claude.com/docs/en/quickstart
+          - https://code.claude.com/docs/en/memory
+      - code: D2.S2
+        name: "Making changes: screenshots, plan mode, thinking, permission modes"
+        weight: 9
+        description: Giving Claude images and screenshots, planning before editing with plan mode, extended thinking for hard problems, and the permission modes that decide what Claude may do without asking.
+        sources:
+          - https://code.claude.com/docs/en/common-workflows
+          - https://code.claude.com/docs/en/permissions
+          - https://code.claude.com/docs/en/interactive-mode
+      - code: D2.S3
+        name: "Controlling context: interrupt, rewind, /compact, /clear"
+        weight: 9
+        description: Stopping Claude mid-task, rewinding to a checkpoint, compacting a long conversation, clearing it between unrelated tasks, and why a focused context costs less and works better.
+        sources:
+          - https://code.claude.com/docs/en/context-window
+          - https://code.claude.com/docs/en/checkpointing
+          - https://code.claude.com/docs/en/interactive-mode
+          - https://code.claude.com/docs/en/costs
+      - code: D2.S4
+        name: "Custom commands, now skills: arguments, scopes, when to write one"
+        weight: 9
+        description: Turning a prompt you repeat into a slash command, how custom commands were merged into skills, passing arguments, project versus personal scope, and when a skill beats a CLAUDE.md line.
+        sources:
+          - https://code.claude.com/docs/en/skills
+          - https://code.claude.com/docs/en/best-practices
+      - code: D2.S5
+        name: "MCP servers: adding a server, scopes, permissions"
+        weight: 9
+        description: Connecting Claude Code to external tools with the Model Context Protocol, adding a server and choosing its scope, approving its tools, and using a browser automation server as a worked example.
+        sources:
+          - https://code.claude.com/docs/en/mcp
+          - https://code.claude.com/docs/en/permissions
+      - code: D2.S6
+        name: "GitHub integration: the app, @claude mentions, PR review in Actions"
+        weight: 9
+        description: Installing the GitHub app, triggering Claude from issues and pull requests with @claude, running it in GitHub Actions for reviews, and keeping secrets and permissions in check.
+        sources:
+          - https://code.claude.com/docs/en/github-actions
+          - https://code.claude.com/docs/en/settings
+
+  - code: D3
+    name: Hooks and the SDK
+    weight: 27
+    skills:
+      - code: D3.S1
+        name: "Hook anatomy: events, matchers, input, exit codes"
+        weight: 9
+        description: What a hook is, the lifecycle events such as PreToolUse and PostToolUse, matchers, the JSON a hook receives, how exit codes and JSON output block or allow an action, and which settings file a hook lives in.
+        sources:
+          - https://code.claude.com/docs/en/hooks
+          - https://code.claude.com/docs/en/hooks-guide
+          - https://code.claude.com/docs/en/settings
+      - code: D3.S2
+        name: "Useful hooks and their gotchas"
+        weight: 9
+        description: Hooks that format after an edit, feed type-check errors back to Claude, and protect files, plus the traps around paths, security, timeouts and hooks that run with your own permissions.
+        sources:
+          - https://code.claude.com/docs/en/hooks-guide
+          - https://code.claude.com/docs/en/hooks
+      - code: D3.S3
+        name: Headless mode and the Agent SDK
+        weight: 9
+        description: Running Claude Code non-interactively with -p for scripts and CI, structured output, and building your own agents on the Agent SDK, formerly the Claude Code SDK.
+        sources:
+          - https://code.claude.com/docs/en/headless
+          - https://code.claude.com/docs/en/agent-sdk/overview
+
+  - code: D4
+    name: Putting it together
+    weight: 11
+    skills:
+      - code: D4.S1
+        name: "A working session end to end"
+        weight: 11
+        description: Explore, plan, implement, verify and commit as one loop, giving Claude a way to check its own work, and choosing between CLAUDE.md, a skill, a hook, an MCP server and a subagent for each kind of need.
+        sources:
+          - https://code.claude.com/docs/en/best-practices
+          - https://code.claude.com/docs/en/common-workflows
+          - https://code.claude.com/docs/en/sub-agents

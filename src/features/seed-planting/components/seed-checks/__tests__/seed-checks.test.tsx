@@ -20,6 +20,7 @@ const check = (id: string): PlayableQuestion => ({
     { id: "B", text: "Second" },
   ],
   source: { title: "Docs", url: "https://example.com" },
+  contentHash: `h-${id}`,
 });
 
 const graded = (correct: boolean) => ({
@@ -78,6 +79,7 @@ describe("SeedChecks", () => {
       packSlug: "p",
       questionId: "p.S1.2",
       chosen: ["B"],
+      contentHash: "h-p.S1.2",
     });
     expect(screen.getByRole("link", { name: "Back to Today" })).toHaveAttribute(
       "href",

@@ -1,0 +1,38 @@
+skill: D2.S2
+diagrams:
+  - id: agent-skills.D2.S2.diagram-progressive-loading
+    title: "Progressive disclosure: from startup to supporting files"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: START, label: "Session starts" }
+      - { id: META, label: "Skill names + descriptions in context at startup (level 1)" }
+      - { id: MATCH, label: "Request matches a description?", shape: decision }
+      - { id: NOMATCH, label: "No match: the body never loads; only the name and description cost context" }
+      - { id: BODY, label: "Full SKILL.md body loads into context (level 2)" }
+      - { id: SUPPORT, label: "Supporting files / scripts load only as needed (level 3): files are read, scripts run and only their output enters" }
+      - { id: DONE, label: "Claude completes the task with the loaded instructions" }
+      - { id: DMI, label: "Skill sets disable-model-invocation: true?", shape: decision }
+      - { id: HIDDEN, label: "Description not in context: Claude cannot match it; only you can run it with /skill-name" }
+      - { id: REQ, label: "Your message" }
+      - { id: SLASH, label: "Message starts with /skill-name?", shape: decision }
+    edges:
+      - { from: START, to: DMI }
+      - { from: DMI, to: META, label: "no (default)" }
+      - { from: DMI, to: HIDDEN, label: "yes" }
+      - { from: REQ, to: SLASH }
+      - { from: SLASH, to: BODY, label: "yes (and the skill is user-invocable): Claude Code runs it directly" }
+      - { from: SLASH, to: MATCH, label: "no" }
+      - { from: HIDDEN, to: BODY, label: "you type /skill-name: the body loads" }
+      - { from: META, to: MATCH, label: "Claude compares the request with each description" }
+      - { from: MATCH, to: BODY, label: "yes" }
+      - { from: MATCH, to: NOMATCH, label: "no" }
+      - { from: BODY, to: SUPPORT, label: "instructions point to a file the task needs" }
+      - { from: BODY, to: DONE, label: "nothing else needed" }
+      - { from: SUPPORT, to: DONE }
+    sources:
+      - https://code.claude.com/docs/en/skills
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+      - https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills

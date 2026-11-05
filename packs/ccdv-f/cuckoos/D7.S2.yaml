@@ -27,6 +27,7 @@ cuckoos:
     sources:
       - https://code.claude.com/docs/en/permissions
   - id: ccdv-f.D7.S2.cuckoo-allow-beats-deny
+    # grounded: can't — paraphrases the permissions page: "To block Claude's file tools from reading a file or directory, add a `Read` deny rule for its path"
     title: A CLAUDE.md section explaining the team's permission rules
     origin: ai
     author: sorin.vieriu@ddroidd.com

@@ -1,0 +1,31 @@
+skill: D6.S2
+cards:
+  - id: agent-skills.D6.S2.card-test-before-you-write
+    concept: Measure the gap first, then write only what closes it
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      A good skill is built from evidence, not guesses. Say Claude keeps forgetting to exclude test
+      accounts when it writes your sales queries. Before writing a skill, run Claude on a few real
+      tasks without one and note what goes wrong. Turn those failures into evaluations, measure the
+      baseline, then write just enough instructions to fix them, assuming Claude already knows SQL.
+      Run the evaluations in fresh sessions, with and without the skill, and refine until it beats
+      the baseline. Match the freedom you give to the risk: loose guidance for a code review, an exact
+      script for a migration. And test on each model you plan to use, because what works for Opus
+      may need more detail for Haiku.
+    inNature: >-
+      A spider placing its web. It strings its threads where insects actually fly, checks what gets
+      caught, and moves or rebuilds the web when the catch is poor. It doesn't spin extra silk for
+      prey that never comes.
+    whereItBreaks:
+      - "A spider learns from the catch alone. For a skill, a trigger only shows Claude found it: measure separately whether it is invoked on the right prompts and whether the output matches what you expect, against a run without the skill."
+      - "One web serves one spider. A skill's effectiveness depends on the model using it, so test with all the models you plan to use."
+      - "Extra silk only costs the spider effort. Once SKILL.md loads, every token competes with conversation history and other context, so add only what Claude doesn't already know."
+    contrast: >-
+      Evaluation-driven development starts from observed failures and adds minimal instructions.
+      Writing documentation first starts from imagined requirements, which might never come up.
+    diagram: agent-skills.D6.S2.diagram-evaluate-and-iterate
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+      - https://code.claude.com/docs/en/skills

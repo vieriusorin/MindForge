@@ -1,53 +1,67 @@
 import "server-only";
-import { isPlayable, reviewStateOf } from "@/engine/content";
+import {
+  checkQuestionAnswer,
+  type QuestionGradeError,
+  reviewStateOf,
+} from "@/engine/content";
 import type { AnswerFeedback } from "@/engine/questions";
 import type { ActionResult } from "@/lib/action-result";
+import { getItemHashes } from "@/server/content/get-item-hashes";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { getPackQuestions } from "@/server/questions/get-pack-questions";
 import { createServerSupabase } from "@/server/supabase/server";
+import { isStaleVersionError } from "./is-stale-version-error";
 
 /** Why an answer was not graded. Each caller words it for its own screen. */
-export const GRADE_ERRORS = [
-  "not-in-pack",
-  "withdrawn",
-  "not-gradable",
-] as const;
-export type GradeError = (typeof GRADE_ERRORS)[number];
+export type GradeError = QuestionGradeError | "not-gradable";
 
 export interface GradeAnswerInput {
   userId: string;
   packSlug: string;
   questionId: string;
   chosen: string[];
+  /** MF-0032: the version the learner's page showed. */
+  contentHash: string;
 }
 
 /**
  * MF-0009: the one grading path for every practice mode. Grades in the DATABASE
  * (`record_attempt`), then (and only then) reveals the key and every rationale. Callers have
- * already authenticated and parsed the input.
+ * already authenticated and parsed the input. MF-0032: `changed` = the deployed file (here) or the
+ * registry (in the DB) holds another version than the learner read.
  */
 export async function gradeAnswer({
   userId,
   packSlug,
   questionId,
   chosen,
+  contentHash,
 }: GradeAnswerInput): Promise<
   ActionResult<{ feedback: AnswerFeedback }, GradeError>
 > {
-  const question = (await getPackQuestions(packSlug)).find(
-    (q) => q.id === questionId,
-  );
+  const [questions, hashes, review] = await Promise.all([
+    getPackQuestions(packSlug),
+    getItemHashes(packSlug),
+    getReviewContext(userId, packSlug),
+  ]);
+  const question = questions.find((q) => q.id === questionId) ?? null;
+  const check = checkQuestionAnswer({
+    question,
+    // MF-0006 SC-8: a flagged or rejected item is never graded, even if a stale page still shows it.
+    reviewState: question ? reviewStateOf(review, question) : "unreviewed",
+    fileHash: hashes[questionId],
+    sentHash: contentHash,
+  });
+  if (!check.ok) return check;
   if (!question) return { ok: false, error: "not-in-pack" };
-  // MF-0006 SC-8: a flagged or rejected item is never graded, even if a stale page still shows it.
-  const review = await getReviewContext(userId, packSlug);
-  if (!isPlayable(reviewStateOf(review, question), "practice"))
-    return { ok: false, error: "withdrawn" };
 
   const supabase = await createServerSupabase();
   const { data, error } = await supabase.rpc("record_attempt", {
     p_question_id: question.id,
     p_chosen: chosen,
+    p_content_hash: contentHash,
   });
+  if (isStaleVersionError(error)) return { ok: false, error: "changed" };
   if (error || typeof data !== "boolean") {
     return { ok: false, error: "not-gradable" };
   }
