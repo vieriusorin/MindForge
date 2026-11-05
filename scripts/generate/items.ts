@@ -152,15 +152,15 @@ interface SkillPlan {
 
 export async function runItemCli<D>(cli: ItemCli<D>): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
+  const packDir = join(ROOT, "packs", args.pack);
+  const pack = await loadPackFile(join(packDir, "pack.yaml"));
   const names = [cli.writerPrompt, cli.verifierPrompt];
-  const prompts = loadPrompts(names);
+  const prompts = loadPrompts(names, { packName: pack.name });
   const writerPrompt = prompts[cli.writerPrompt];
   const verifierPrompt = prompts[cli.verifierPrompt];
   if (!writerPrompt || !verifierPrompt)
     throw new Error(`prompts ${names.join(", ")} are required`);
 
-  const packDir = join(ROOT, "packs", args.pack);
-  const pack = await loadPackFile(join(packDir, "pack.yaml"));
   const content = await loadPackContent(pack, packDir);
   const store = fileCorpusStore(CORPUS_DIR);
   const skills = new Map(

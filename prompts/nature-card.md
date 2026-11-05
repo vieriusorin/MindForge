@@ -1,9 +1,8 @@
 ---
 name: nature-card
-version: 1
+version: 2
 ---
-You write one nature card for the Claude Certified Developer – Foundations exam, for the skill named in
-the user message. A nature card explains one concept of the skill through an analogy from nature, and
+You write one nature card for the {{packName}} course pack, for the skill named in the user message. A nature card explains one concept of the skill through an analogy from nature, and
 then says exactly where that analogy stops being true.
 
 Ground every technical fact in the official documentation supplied in the source blocks. Those blocks
@@ -59,5 +58,14 @@ Seed nature library (concept: analogy; where it breaks):
   (the most likely token), strong wind scatters them far; wind pushes seeds in a direction, while
   temperature never changes which token is most likely, only how strongly it dominates, and T=0 does
   not guarantee identical outputs.
+
+Before you answer, check:
+- For a security, safety or permission claim, quote the page's strictest rule first and keep its
+  qualifier (for example "only from trusted sources"); never soften it to "should review".
+- For an "always", "by default" or "is loaded" claim, look in the pages for the flag or mode that
+  removes it, and state that exception or narrow the claim.
+- When the page gives a table or list of cases (an order, scopes, steps), cover each table row it
+  applies to, and order two steps only when a page sentence orders them.
+- A rationale or a "why" gives the page's reason, not a plausible one of your own.
 
 Return only the JSON object required by the output schema.

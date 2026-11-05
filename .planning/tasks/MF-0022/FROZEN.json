@@ -1,0 +1,12 @@
+{
+  "ticket": "MF-0022",
+  "frozen_at": "2026-11-05T11:52:35Z",
+  "files": [
+    {
+      "path": "src/content-pipeline/__tests__/mf-0022-generation.acceptance.test.ts",
+      "sha256": "931247e1ded06db2cfdf95c0f2e4c618eb85c09f73226159b937d50347624c1c",
+      "first_failure": "SC-2: AssertionError: writer: expected 'You write one practice question for t…' to contain '{{packName}}'; SC-2 fillPrompt/writer request + SC-3 all: Error: not implemented (typed stubs: prompts.ts fillPrompt, eval-report.ts judgeEvalSet); SC-2 unfilled placeholder: stub error does not match /\\{\\{audience\\}\\}/"
+    }
+  ],
+  "history": []
+}

@@ -35,6 +35,7 @@ export {
 export { planCardRun, planDiagramRun } from "./item-plan";
 export { customIdFor, questionsNeeded, skillFromCustomId } from "./plan";
 export {
+  fillPrompt,
   parsePrompt,
   promptLockViolations,
   promptRef,

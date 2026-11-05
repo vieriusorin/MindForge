@@ -4,8 +4,8 @@
     "bodyHash": "bbe2df3057b4d1ba66a9e71445052fd77893ff425e457ce5c12c87ba97fe144e"
   },
   "writer": {
-    "version": 1,
-    "bodyHash": "141e856c7f9cdc676fd32706682b9ee6a87adbc6e62248c2b1e60429259be6a4"
+    "version": 2,
+    "bodyHash": "0815a131a7d0ae1e0c822f96248a30785fc7e7255f2057975ef4e4ec02228394"
   },
   "card-verifier": {
     "version": 1,
@@ -16,11 +16,11 @@
     "bodyHash": "f68e49774f42335614f684a10b983070d3e5764389de76c1f242652e8797f11e"
   },
   "diagram": {
-    "version": 1,
-    "bodyHash": "26154bbb01334c88816bc647efc756d44dda08c5f23d2ad82ae2330f8be587c1"
+    "version": 2,
+    "bodyHash": "19bb909b85e3e165ab80fa4c8a05691224c027bddcc1fe0e6f74279d6caa4695"
   },
   "nature-card": {
-    "version": 1,
-    "bodyHash": "ba1d65bf06282a53c5f331c8d67da9c70b280f5ec47de256bd2e6d6250ed597b"
+    "version": 2,
+    "bodyHash": "1c56400a7f0acd64ce2c6b098d6790f85cbcf493cfa29e342512838827e87f18"
   }
 }
