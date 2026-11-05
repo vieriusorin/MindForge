@@ -104,6 +104,7 @@ behaviour; which gates the touched paths sit on>
 
 <which one, why, and how the proof catches it going wrong>
 For every UI predicate that gates a write (a disabled button, a canX() helper), name the SERVER refusal that holds when the UI is bypassed (stale tab, double click, direct action call, two concurrent requests) and the test that calls the service twice and expects the second refused. "Only the UI stops it" is a blocking plan defect.
+Server-owned facts (MF-0013 retro): a deadline is decided by the DB clock, never by the client's (a client at 0 only locks and refreshes), and a write that binds to content sends the hash of the version the page RENDERS, never the stored one echoed back. Counts that feed a fixture or a split come from a parsed structure (YAML/JSON), never `grep -c`. Every task's `owns` avoids the role agents' NEVER globs (`.claude/hooks/lib/agent-scopes.mjs`: `scripts/**`, `.planning/evidence/**`, …); those steps belong to the orchestrator. Builders never run `git stash`.
 
 ## Rejected options
 

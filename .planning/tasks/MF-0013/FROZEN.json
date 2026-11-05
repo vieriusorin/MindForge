@@ -1,0 +1,34 @@
+{
+  "ticket": "MF-0013",
+  "frozen_at": "2026-11-04T12:18:02Z",
+  "files": [
+    {
+      "path": "src/engine/storm/__tests__/mf-0013-storm.acceptance.test.ts",
+      "sha256": "be8c181ddbd7b22a90e3e2835e16d84133523246b943fa19c8ac3f61b057d868",
+      "first_failure": "SC-1, SC-2 x4, SC-5: Error: not implemented (composeFullStorm / composeBossStorm / scoreStorm stubs)"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0013-storms.db.acceptance.test.ts",
+      "sha256": "d774d64748e23ebe1f422615fd614e57a3ce849a5bc337f86dc514c1cd91c468",
+      "first_failure": "SC-3: public.start_storm(text,text,text,jsonb): expected false to be true (no migration yet); the 7 dependent checks stop at the STORM_ID guard; the control start returns PGRST202; identical on 2nd run"
+    }
+  ],
+  "also_refrozen": [
+    {
+      "ticket": "MF-0001",
+      "path": "src/engine/forest/__tests__/mf-0001-stage.acceptance.test.ts",
+      "reason": "SC-6 (approved 2026-11-03)"
+    },
+    {
+      "ticket": "MF-0005",
+      "path": "src/server/db/__tests__/mf-0005-grants.db.acceptance.test.ts",
+      "reason": "C-5 (approved 2026-11-04)"
+    },
+    {
+      "ticket": "MF-0011",
+      "path": "src/engine/forest/__tests__/mf-0011-group-heatmap.acceptance.test.ts",
+      "reason": "MemorySnapshot field rename (fixture only)"
+    }
+  ],
+  "history": []
+}

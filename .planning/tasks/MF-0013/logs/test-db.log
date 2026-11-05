@@ -1,0 +1,73 @@
+$ vitest run --project db
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+
+ RUN  v5.0.5 C:/Users/Vlad-StefanParvana/Desktop/ccdv-f/MindForge
+
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Stopped services: [supabase_imgproxy_mind-forge supabase_edge_runtime_mind-forge supabase_pooler_mind-forge]
+WARN: INBUCKET_URL is deprecated and will be removed in v3, use MAILPIT_URL instead.
+A new version of Supabase CLI is available: v3.0.0 (currently installed v2.122.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+
+ Test Files  11 passed (11)
+      Tests  47 passed (47)
+   Start at  15:58:20
+   Duration  17.89s (tests 95%, import 4%, transform 1%)
+

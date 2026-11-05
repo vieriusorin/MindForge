@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { isActivePath, MAX_PINNED_GROUPS, pinnedGroups } from "../utils";
+import {
+  isActivePath,
+  isStormActive,
+  MAX_PINNED_GROUPS,
+  pinnedGroups,
+} from "../utils";
 
 describe("pinnedGroups", () => {
   it("pins at most three groups, in the given order", () => {
@@ -22,5 +27,22 @@ describe("isActivePath", () => {
   it("root matches only itself", () => {
     expect(isActivePath("/today", "/")).toBe(false);
     expect(isActivePath("/", "/")).toBe(true);
+  });
+});
+
+describe("isStormActive", () => {
+  const href = "/play/ccdv-f/storm/full";
+  it("covers the Full and Boss start pages of the pack", () => {
+    expect(isStormActive("/play/ccdv-f/storm/full", href)).toBe(true);
+    expect(isStormActive("/play/ccdv-f/storm/boss/D2", href)).toBe(true);
+  });
+  it("covers every running or finished storm", () => {
+    expect(
+      isStormActive("/storms/6f1c1c1e-8a52-4a8e-9a39-1c1d2f3b4a5c", href),
+    ).toBe(true);
+  });
+  it("does not light up on other play modes or look-alike paths", () => {
+    expect(isStormActive("/play/ccdv-f/walk", href)).toBe(false);
+    expect(isStormActive("/stormsettings", href)).toBe(false);
   });
 });

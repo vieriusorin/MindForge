@@ -37,7 +37,8 @@ describe("buildForest", () => {
           stabilityDays: 4,
           retrievability: 0.8,
           feynmanPassed: false,
-          stormSurvived: false,
+          stormProven: false,
+          fullStormProven: false,
         },
       ],
     ]);

@@ -32,6 +32,7 @@ export function replayMemory(
     stabilityDays: card.stability,
     retrievability: scheduler.get_retrievability(card, at, false),
     feynmanPassed: false,
-    stormSurvived: false,
+    stormProven: false,
+    fullStormProven: false,
   };
 }

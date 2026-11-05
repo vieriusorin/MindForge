@@ -19,6 +19,7 @@ export type Database = {
           pack_slug: string;
           question_id: string;
           skill_code: string;
+          storm_id: string | null;
           user_id: string;
         };
         ComputedFields: never;
@@ -31,6 +32,7 @@ export type Database = {
           pack_slug: string;
           question_id: string;
           skill_code: string;
+          storm_id?: string | null;
           user_id?: string;
         };
         Update: {
@@ -42,9 +44,18 @@ export type Database = {
           pack_slug?: string;
           question_id?: string;
           skill_code?: string;
+          storm_id?: string | null;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "attempts_storm_id_fkey";
+            columns: ["storm_id"];
+            isOneToOne: false;
+            referencedRelation: "storms";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       group_members: {
         Row: {
@@ -123,11 +134,108 @@ export type Database = {
         };
         Relationships: [];
       };
+      storm_questions: {
+        Row: {
+          chosen: string[] | null;
+          chosen_at: string | null;
+          content_hash: string;
+          correct: boolean | null;
+          domain_code: string;
+          position: number;
+          question_id: string;
+          skill_code: string;
+          storm_id: string;
+          unreviewed: boolean;
+          user_id: string;
+          voided: boolean;
+        };
+        ComputedFields: never;
+        Insert: {
+          chosen?: string[] | null;
+          chosen_at?: string | null;
+          content_hash: string;
+          correct?: boolean | null;
+          domain_code: string;
+          position: number;
+          question_id: string;
+          skill_code: string;
+          storm_id: string;
+          unreviewed: boolean;
+          user_id: string;
+          voided?: boolean;
+        };
+        Update: {
+          chosen?: string[] | null;
+          chosen_at?: string | null;
+          content_hash?: string;
+          correct?: boolean | null;
+          domain_code?: string;
+          position?: number;
+          question_id?: string;
+          skill_code?: string;
+          storm_id?: string;
+          unreviewed?: boolean;
+          user_id?: string;
+          voided?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "storm_questions_storm_id_fkey";
+            columns: ["storm_id"];
+            isOneToOne: false;
+            referencedRelation: "storms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      storms: {
+        Row: {
+          domain_code: string | null;
+          ends_at: string;
+          finished_at: string | null;
+          id: string;
+          kind: string;
+          pack_slug: string;
+          started_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          domain_code?: string | null;
+          ends_at: string;
+          finished_at?: string | null;
+          id?: string;
+          kind: string;
+          pack_slug: string;
+          started_at: string;
+          user_id: string;
+        };
+        Update: {
+          domain_code?: string | null;
+          ends_at?: string;
+          finished_at?: string | null;
+          id?: string;
+          kind?: string;
+          pack_slug?: string;
+          started_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
+      answer_storm_question: {
+        Args: {
+          p_chosen: string[];
+          p_content_hash: string;
+          p_question_id: string;
+          p_storm_id: string;
+        };
+        Returns: undefined;
+      };
       approve_analogy: {
         Args: { p_content_hash?: string; p_item_id: string };
         Returns: undefined;
@@ -136,6 +244,11 @@ export type Database = {
         Args: { p_name: string; p_pack_slug: string };
         Returns: string;
       };
+      finalize_expired_storms: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
+      finish_storm: { Args: { p_storm_id: string }; Returns: undefined };
       group_attempts: {
         Args: { p_group_id: string; p_viewer_id: string };
         Returns: {
@@ -208,6 +321,15 @@ export type Database = {
         }[];
       };
       rotate_invite_code: { Args: { p_group_id: string }; Returns: string };
+      start_storm: {
+        Args: {
+          p_domain_code?: string;
+          p_kind: string;
+          p_pack_slug: string;
+          p_questions?: Json;
+        };
+        Returns: string;
+      };
     };
     Enums: {
       [_ in never]: never;

@@ -141,8 +141,8 @@ A **pack** is a folder of files (`packs/<slug>/pack.yaml` + seed content). It is
 | Skill never studied | 🌰 Seed |
 | First successful recall | 🌱 Sprout |
 | FSRS stability ≥ 3 days | 🌿 Sapling |
-| Stability ≥ 14 days + Feynman passed | 🌳 Tree |
-| Stability ≥ 45 days + Boss Storm survived | 🌲 Ancient tree |
+| Stability ≥ 14 days + Feynman passed or storm-proven | 🌳 Tree |
+| Stability ≥ 45 days + Full-Storm-proven | 🌲 Ancient tree |
 | Retrievability dropping below 0.85 (review due) | 🍂 Wilting leaves, *"this tree needs water"* |
 | Overdue for a long time | 🥀 Drooping, but it never dies. Coming back is always rewarded |
 | Domain readiness | Region health / weather |

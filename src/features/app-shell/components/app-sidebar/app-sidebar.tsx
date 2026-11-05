@@ -2,6 +2,7 @@
 
 import {
   Bird,
+  CloudLightning,
   Flower,
   Footprints,
   LayoutGrid,
@@ -28,7 +29,7 @@ import {
 } from "@/components/ui/sidebar";
 import { initials } from "@/lib/initials";
 import type { AppSidebarProps } from "./types";
-import { isActivePath, pinnedGroups } from "./utils";
+import { isActivePath, isStormActive, pinnedGroups } from "./utils";
 
 export function AppSidebar({
   displayName,
@@ -37,6 +38,7 @@ export function AppSidebar({
   duelHref,
   walkHref,
   cuckooHref,
+  stormHref,
   reviewHref,
   signOutAction,
 }: AppSidebarProps) {
@@ -144,6 +146,18 @@ export function AppSidebar({
                 <Link href={cuckooHref}>
                   <Bird />
                   <span>Spot the Cuckoo</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={isStormActive(pathname, stormHref)}
+                tooltip="Storm"
+              >
+                <Link href={stormHref}>
+                  <CloudLightning />
+                  <span>Storm</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

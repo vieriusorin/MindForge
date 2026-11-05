@@ -35,6 +35,7 @@ async function Sidebar() {
       duelHref={`/play/${packSlug}/duel`}
       walkHref={`/play/${packSlug}/walk`}
       cuckooHref={`/play/${packSlug}/cuckoo`}
+      stormHref={`/play/${packSlug}/storm/full`}
       reviewHref={`/review/${packSlug}`}
       signOutAction={signOut}
     />

@@ -23,7 +23,8 @@ const snap = (retrievability: number, stabilityDays = 4): MemorySnapshot => ({
   stabilityDays,
   retrievability,
   feynmanPassed: false,
-  stormSurvived: false,
+  stormProven: false,
+  fullStormProven: false,
 });
 const none = new Map<string, MemorySnapshot>();
 const only = (r: number) => new Map([["A.1", snap(r)]]);
