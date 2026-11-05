@@ -8,6 +8,7 @@ import {
   toggleChoice,
 } from "@/components/question-card";
 import type { AnswerFeedback } from "@/engine/questions";
+import { useSingleFlight } from "@/lib/use-single-flight";
 import { answerWalkQuestion } from "../../../actions";
 import type { WalkStep } from "../../../types";
 
@@ -42,7 +43,13 @@ export function useWalkSession(
   const doneRef = useRef<HTMLHeadingElement | null>(null);
   const hasAdvanced = useRef(false);
 
-  const mutation = useMutation({ mutationFn: answerWalkQuestion });
+  // MF-0026: one attempt per double click (isPending updates a render late).
+  const flight = useSingleFlight();
+
+  const mutation = useMutation({
+    mutationFn: answerWalkQuestion,
+    onSettled: flight.release,
+  });
   const result = mutation.data;
   const feedback = result?.ok ? result.feedback : null;
   let error: string | null = null;
@@ -79,7 +86,7 @@ export function useWalkSession(
     });
 
   const submit = (): void => {
-    if (!step || !isSubmittable) return;
+    if (!step || !isSubmittable || !flight.tryStart()) return;
     mutation.mutate({
       packSlug,
       questionId: step.question.id,
