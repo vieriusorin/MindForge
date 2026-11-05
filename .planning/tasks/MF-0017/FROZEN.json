@@ -10,7 +10,7 @@
     },
     {
       "path": "src/server/db/__tests__/mf-0017-expedition.db.acceptance.test.ts",
-      "sha256": "8a9d5b301a4eb3c11582f3b736076d9ef3cec2ceb64b2926396106ff81bcc42c",
+      "sha256": "49372fa5af4777c759887ca602c48689c6f5a980f168f5bc799432e1a1f297a0",
       "first_failure": "Re-freeze (review B1): SC-2 x2 expected 8 to be 7 against the unfixed SQL (pre-join recall counted)"
     },
     {
@@ -27,6 +27,14 @@
       "to": "8a9d5b301a4eb3c11582f3b736076d9ef3cec2ceb64b2926396106ff81bcc42c",
       "reason": "Review B1 (privacy): count only recalls made after joining. Fixture: group G members joined_at set (M2 mid-window), new pre-join M2 row (counts false), parity applies joined_at, SC-3 own-rows list 3 -> 4. EXPECTED_PROGRESS unchanged (7).",
       "approved_by": "user 2026-11-05"
+    },
+    {
+      "at": "2026-11-05T12:15:01.416Z",
+      "path": "src/server/db/__tests__/mf-0017-expedition.db.acceptance.test.ts",
+      "from": "8a9d5b301a4eb3c11582f3b736076d9ef3cec2ceb64b2926396106ff81bcc42c",
+      "to": "49372fa5af4777c759887ca602c48689c6f5a980f168f5bc799432e1a1f297a0",
+      "reason": "MF-0024 (option B): private.question_keys / private.items gain CHECK split_part(id,'.',1) = pack_slug. Fixture ids re-prefixed: PREFIX `mf0017-${RUN}-` -> `${PACK}.mf0017-${RUN}.` (one line). No assertion changed; 13/13 pass before the CHECK exists.",
+      "approved_by": "user 2026-11-05 (MF-0024 checkpoint, option B)"
     }
   ]
 }

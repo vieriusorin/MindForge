@@ -1,3 +1,4 @@
+export { idPrefixIssue } from "./id-prefix";
 export { loadPackFile, PackValidationError, parsePack } from "./load-pack";
 export type {
   Pack,

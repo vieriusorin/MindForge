@@ -27,7 +27,7 @@ import {
 const RUN = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
 const PACK = "ccdv-f";
 const OTHER_PACK = "team-onboarding-sample";
-const PREFIX = `mf0017-${RUN}-`; // every question id this file writes; teardown deletes by it
+const PREFIX = `${PACK}.mf0017-${RUN}.`; // every question id this file writes (MF-0024: starts with its pack); teardown deletes by it
 const HASH = "mf0017-hash";
 
 const START_FN = "public.start_expedition(uuid,text,integer)";

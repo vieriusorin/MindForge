@@ -1,0 +1,18 @@
+{
+  "ticket": "MF-0024",
+  "frozen_at": "2026-11-05T12:15:01.416Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0024-id-prefix.acceptance.test.ts",
+      "sha256": "3a85e4eea2905e8f56a16f5ee68d96b0b09efc2a183ca509f152d46b6f742a45",
+      "first_failure": "SC-1 x5, SC-2 x1: Error: expected a validation error, nothing was thrown; SC-1 unchanged-content and SC-4 regression lock frozen green (probe 2026-11-05: 0 of 504 shipped ids mismatched)"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0024-id-prefix.db.acceptance.test.ts",
+      "sha256": "640e50a78c8b7bc3917b2b2a23564c7758b7c734a7605537eada76a4d542403a",
+      "first_failure": "SC-3 x2: AssertionError: pack registry: … mf0024-folder|mf0024-thief … (sync exited 0 and wrote); SC-5 x2: expected 'ok' to be '23514'; same on 2nd run; teardown restored ccdv-f.D1.S1.q1 to ccdv-f"
+    }
+  ],
+  "history": []
+}
