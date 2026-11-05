@@ -105,6 +105,8 @@ questions:
       title: "What are projects?"
       url: "https://support.claude.com/en/articles/9517075-what-are-projects"
   - id: platform-foundations.D2.S2.q5
+    # framing: claude.ai — scenario setting only; the key rests on the guide's role-in-the-system-prompt advice (MF-0038 verifier OK)
+    # framing: Messages API — scenario setting only; the guide shows the role in the system field of a Messages request
     origin: ai
     author: sorin.vieriu@ddroidd.com
     level: expert
