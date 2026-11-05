@@ -65,6 +65,8 @@ autonomy: ready                   # optional: set by the USER after the freeze; 
 ## Iteration Log
 
 <!-- append-only -->
+- <YYYY-MM-DD> design preflight: `pnpm typecheck && pnpm lint && pnpm test` exit 0 (<n> tests); `pnpm test:db` <result>; `pnpm db:reset` not run: <reason>
+  <!-- one line naming EVERY `pnpm <script>` the Success Criteria name; `pnpm gate:planning` enforces it past DESIGN (MF-0053) -->
 ```
 
 ---

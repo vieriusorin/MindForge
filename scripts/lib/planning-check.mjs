@@ -70,3 +70,76 @@ export function checkPlanning(entries) {
     return problem === null ? [] : [problem];
   });
 }
+
+// MF-0053: shipped tickets before this one skipped the preflight line (39 of 39 past DESIGN, probe
+// 2026-11-05); the rule governs tickets picked up after it, not history.
+const PREFLIGHT_CUTOFF = "MF-0052";
+const PAST_DESIGN = new Set(["plan", "build", "test", "handoff", "watch"]);
+const PREFLIGHT_LINE = /design preflight/i;
+const PNPM_SCRIPT = /pnpm (?:run )?([a-z][\w:-]*)/g;
+
+/** @param {string} text @param {string} key */
+function frontValue(text, key) {
+  const match = text.match(new RegExp(`^${key}:[ \\t]*([^\\s#]+)`, "m"));
+  return match ? match[1] : null;
+}
+
+/** The body of `## <name>` up to the next `## ` heading, or "" when absent. */
+function sectionBody(text, name) {
+  const section = text
+    .split(/^## /m)
+    .find(
+      (part) => part.startsWith(`${name}\n`) || part.startsWith(`${name} `),
+    );
+  return section ?? "";
+}
+
+// Whole-name: `pnpm test` must not count as a mention of `pnpm test:db`, nor the reverse.
+/** @param {string} line @param {string} script */
+function mentions(line, script) {
+  const escaped = script.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`pnpm (?:run )?${escaped}(?![\\w:-])`).test(line);
+}
+
+/**
+ * MF-0053: one line per GOAL past DESIGN (and after MF-0052, not `reserved`) whose Success Criteria
+ * name a `pnpm <script>` that no Iteration Log "design preflight" line mentions, or that has no such
+ * line at all. `scriptNames` are the keys of package.json `scripts`; other `pnpm <x>` are ignored.
+ * @param {readonly TaskEntry[]} entries
+ * @param {readonly string[]} scriptNames
+ * @returns {string[]}
+ */
+export function checkDesignPreflight(entries, scriptNames) {
+  const known = new Set(scriptNames);
+  return entries.flatMap(({ dir, goalText }) => {
+    if (goalText === null || dir <= PREFLIGHT_CUTOFF) return [];
+    const text = goalText.replace(/\r\n/g, "\n");
+    const stage = frontValue(text, "stage");
+    if (frontValue(text, "goal_status") === "reserved") return [];
+    if (stage === null || !PAST_DESIGN.has(stage)) return [];
+
+    const preflight = sectionBody(text, "Iteration Log")
+      .split("\n")
+      .filter((line) => PREFLIGHT_LINE.test(line));
+    if (preflight.length === 0)
+      return [
+        `${dir}: stage ${stage} but no "design preflight" line in the Iteration Log`,
+      ];
+
+    const named = [
+      ...new Set(
+        [...sectionBody(text, "Success Criteria").matchAll(PNPM_SCRIPT)]
+          .map((m) => m[1])
+          .filter((name) => known.has(name)),
+      ),
+    ];
+    const missing = named.filter(
+      (script) => !preflight.some((line) => mentions(line, script)),
+    );
+    if (missing.length === 0) return [];
+    const list = missing.map((script) => `pnpm ${script}`).join(", ");
+    return [
+      `${dir}: design preflight does not mention ${list}, named by an SC`,
+    ];
+  });
+}

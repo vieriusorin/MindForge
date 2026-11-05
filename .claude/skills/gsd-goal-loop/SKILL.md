@@ -182,6 +182,10 @@ local stack up first; MF-0025: a `test:db` red found only in TEST forced an SC a
 and an SC's proof is "that command exits 0" or "no new failure", the baseline red is part of
 this ticket's scope question: put it in the checkpoint with the file named, as either "fix it as task T0
 (listed in the hand-off as a separate hunk)" or "park until its owner fixes it". Do not leave it for BUILD.
+Record it as ONE Iteration Log line containing `design preflight:` that names every `pnpm <script>` the Success
+Criteria name (steps too, e.g. `pnpm db:reset`), each with its result or `not run: <reason>`. `pnpm gate:planning`
+fails any ticket after MF-0052 that is past `design` without that line, or whose line omits a script an SC names
+(MF-0053; `pnpm test` does not cover `pnpm test:db`).
 (2) List every proof command that wipes or restarts shared local state (`pnpm db:reset`, `supabase stop`,
 `supabase start`, `supabase db reset`). For each, either get the user's approval at the checkpoint, or write
 the SC's proof so it does not need it (an in-place revert, a scratch schema, a separate worktree). Record
