@@ -169,6 +169,11 @@ both outcomes under "Decided by the user". Nothing here is asked mid-BUILD.
 that name before the checkpoint. If a rule lists the file as an exception, or the gate does not exist, fix or
 drop the SC text now and record it under "Decided without a question"; do not leave it to BUILD or to
 acceptance-test writing (MF-0012: SC-6 `server-only` vs `server-side.md` §2; SC-7 "component-split gate").
+(4) Read the latest `main` CI conclusion from the public API
+(`curl -s 'https://api.github.com/repos/vieriusorin/MindForge/actions/runs?branch=main&per_page=3'`). If it is
+`failure`, put it in the checkpoint: fix it as T0 (a separate hunk) or park. When `package.json`, the lockfile or
+`pnpm-workspace.yaml` changed, also run `pnpm install --frozen-lockfile` in a scratch copy: only the frozen
+install fails on an unresolved `allowBuilds` placeholder (MF-0019: 13 red runs on `main`, 6 PRs merged unverified).
 
 Then run `grill-with-docs` against the draft and fold the answers back. With `--research`, triage
 each question (`references/research.md`) before putting it to the user: facts go to the researcher
@@ -311,7 +316,8 @@ Set `goal_status: complete-pending-manual-commit`, tick the SCs, append the Iter
 then give the hand-off from the template: changed files (flag hunks in files other sessions also
 touch), suggested commit `<ID> <type>: <description>`, ordering against uncommitted sibling
 tickets, every manual step left (migrations per environment, env vars, stakeholder questions), and
-what was **not** verified. Then Stage 7.
+what was **not** verified. Quote the PR or `main` run's CI `conclusion` in the hand-off, and never
+present "merge" as a next step while it is `failure` (MF-0019). Then Stage 7.
 
 ## Stage 6 — WATCH (optional, read-only)
 
