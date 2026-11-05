@@ -44,4 +44,5 @@ Canonical terms. When code, docs or tickets disagree with this file, this file w
 - **Content maintainer**: a small fixed list of people per pack who resolve flags (fix the item in a PR, or dismiss with a comment) and who alone can reject. Not a group role.
 - **Analogy owner**: the content maintainer whose approval a nature card needs, on top of the two reviewer approvals, before it counts as approved. If the owner hasn't acted within 48 hours, any content maintainer may give it.
 - **Spoiled**: a question a learner has reviewed. Reviewing shows the key, so that learner's later attempts on it do not count toward their forest.
+- **Revealed**: a question whose key a learner was shown as feedback on their own graded attempt (every mode shows it). Unlike Spoiled, their later attempts on it still count: the key followed a retrieval (ADR 0005).
 - **Content hash**: the fingerprint of an item's content. Reviews count only for the hash they were made against, so editing an item resets its review state.
