@@ -25,7 +25,7 @@ pnpm dev:setup         # starts the local stack, applies migrations, syncs answe
 pnpm dev               # http://localhost:3001
 ```
 
-The first `pnpm dev:setup` downloads the Supabase images, which takes a few minutes. It's safe to re-run at any time: it applies only **pending** migrations and never deletes your local data. (It's `dev:setup`, not `setup`, because `pnpm setup` is a pnpm built-in.)
+The first `pnpm dev:setup` downloads the Supabase images, which takes a few minutes. It's safe to re-run at any time: it applies only **pending** migrations and never deletes your local data. (It's `dev:setup`, not `setup`, because `pnpm setup` is a pnpm built-in.) Add `--with-corpus` to also fetch every pack's public docs into `.cache/corpus/` (free and needs no key, but needs network). Without the flag, setup makes no network fetch.
 
 | Local service | URL |
 |---|---|
@@ -69,3 +69,13 @@ Then `pnpm db:reset && pnpm test:db && supabase db advisors --local`.
 One file per skill: `packs/<slug>/questions/<skill-code>.yaml` (format in `.planning/tasks/MF-0003/GOAL.md`).
 Every option needs a rationale and every question an official `source.url`. Drafts are `status: unreviewed`
 until reviewed. After editing: `pnpm test` (validates all files) and `pnpm db:sync-keys`.
+
+## Generating content
+
+`pnpm content:all --pack <slug>` runs the pipeline for one pack in order: corpus, then diagrams, then cards, then
+questions (one batch per domain). By default it is a **dry run**: it fetches the corpus, then prints each writer
+batch's upper-bound cost and the total, and needs no API key. To spend money, pass `--run --max-total-usd <usd>`.
+The run is refused before the first paid call when any batch is over `MF_MAX_BATCH_USD` (default $25; set it in the shell, because the generate CLIs do not read `.env.local`) or the
+total is over `--max-total-usd`. Verifier batches are not in the total; each is still checked against the cap when
+it is submitted. Offline, add `--no-corpus` to estimate from the cache. `prompts:lock` is never run for you, and
+setup and CI never call `content:all`.
