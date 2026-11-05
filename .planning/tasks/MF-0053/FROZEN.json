@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0053",
+  "frozen_at": "2026-11-05",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0053-design-preflight.acceptance.test.ts",
+      "sha256": "e057374cbe57dcc60870a06d43a15b16a5867ede455c0bc3eb26479ab1ee950c",
+      "first_failure": "SC-1…SC-4: Error: not implemented (13 of 13, stub checkDesignPreflight in scripts/lib/planning-check.mjs); SC-5 bad fixture: expected 0 to be 1 (CLI not wired). 14 of 15 red; 'SC-5: exits 0 on this repo' green at freeze (regression lock, same as MF-0028 SC-4)"
+    }
+  ],
+  "history": []
+}
