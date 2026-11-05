@@ -3,6 +3,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import type { CuckooFeedback, PlayableCuckoo } from "@/engine/content";
+import { useSingleFlight } from "@/lib/use-single-flight";
 import { answerCuckoo } from "../../../actions";
 import type { CuckooAnswerValues } from "../../../schemas";
 import { canCheck, verdictMessage } from "../utils";
@@ -43,8 +44,9 @@ export function useCuckooSession(
   const feedbackRef = useRef<HTMLOutputElement | null>(null);
   const doneRef = useRef<HTMLHeadingElement | null>(null);
   const hasAdvanced = useRef(false);
-  // MF-0012 SC-1: TanStack reports isPending a render late; the ref closes a double-click window.
-  const isInFlight = useRef(false);
+  // MF-0012 SC-1: TanStack reports isPending a render late; the shared guard closes a double-click
+  // window (MF-0026).
+  const flight = useSingleFlight();
 
   const mutation = useMutation({
     // TanStack passes a second (context) argument holding the QueryClient; a Server Action must
@@ -57,9 +59,7 @@ export function useCuckooSession(
         answered: t.answered + 1,
       }));
     },
-    onSettled: () => {
-      isInFlight.current = false;
-    },
+    onSettled: flight.release,
   });
   const result = mutation.data;
   const feedback = result?.ok ? result.feedback : null;
@@ -96,9 +96,8 @@ export function useCuckooSession(
   };
 
   const submit = (): void => {
-    if (!cuckoo || chosenLine === null || !isCheckable || isInFlight.current)
+    if (!cuckoo || chosenLine === null || !isCheckable || !flight.tryStart())
       return;
-    isInFlight.current = true;
     mutation.mutate({
       packSlug,
       cuckooId: cuckoo.id,

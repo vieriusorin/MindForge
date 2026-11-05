@@ -8,6 +8,7 @@ import {
   toggleChoice,
 } from "@/components/question-card";
 import type { AnswerFeedback, PlayableQuestion } from "@/engine/questions";
+import { useSingleFlight } from "@/lib/use-single-flight";
 import { answerSeedCheck } from "../../../actions";
 import type { PlantingOutcome } from "../types";
 import { plantingOutcome } from "../utils";
@@ -49,11 +50,15 @@ export function useSeedChecks({
   const doneRef = useRef<HTMLHeadingElement | null>(null);
   const hasAdvanced = useRef(false);
 
+  // MF-0026: one attempt per double click (isPending updates a render late).
+  const flight = useSingleFlight();
+
   const mutation = useMutation({
     mutationFn: answerSeedCheck,
     onSuccess: (result) => {
       if (result.ok && result.feedback.correct) setCorrectCount((c) => c + 1);
     },
+    onSettled: flight.release,
   });
   const result = mutation.data;
   const feedback = result?.ok ? result.feedback : null;
@@ -91,7 +96,7 @@ export function useSeedChecks({
     });
 
   const submit = (): void => {
-    if (!check || !isSubmittable) return;
+    if (!check || !isSubmittable || !flight.tryStart()) return;
     mutation.mutate({
       packSlug,
       questionId: check.id,
