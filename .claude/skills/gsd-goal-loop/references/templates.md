@@ -15,7 +15,7 @@ Written in INTAKE, completed in DESIGN, frozen before PLAN. The Iteration Log is
 ticket_id: <PREFIX>-0042
 tier: normal                      # spike | normal | high-risk
 stage: design                     # intake | design | plan | build | test | handoff | watch
-branch: main                      # the branch the work sits on; this loop never creates one
+branch: <PREFIX>-0042             # the branch the work sits on; Stage 0 creates `<ID>` when started on main
 builds_on: [<PREFIX>-0040]        # tickets whose uncommitted work this depends on, or []
 last_iteration: 0
 goal_status: in-progress          # reserved | in-progress | blocked-on-<owner> |

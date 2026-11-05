@@ -75,6 +75,17 @@ lifecycle and may call them as reviewers. `ticket-traceability` owns the tier ru
   tickets into one GOAL.md (MF-0022/MF-0023, 2026-11-04). After a merge, run
   `grep -c '^ticket_id:' .planning/tasks/*/GOAL.md` and fix any count above 1 before starting work.
 - `mkdir -p .planning/tasks/<ID>` **immediately**, so a parallel session sees the claim.
+- **Branch check**, once the ID is known (also on resume): `git branch --show-current`.
+  - On `main` (or the repo's default branch) → create the ticket's branch and switch to it before writing
+    anything else: `git switch <ID>` if it already exists, else `git switch -c <ID>`. Uncommitted work comes
+    along unchanged. Say which branch you are on.
+  - On another branch whose name contains the ID (`MF-0042`, `feat/MF-0042`) → stay.
+  - On another branch without the ID → don't switch on your own: the branch may hold another ticket's
+    uncommitted work. Tell the user which branch you're on and suggest `git switch -c <ID>`; continue
+    where they say. Under `--autonomous`, stay put and record the branch name under the evidence's
+    Not verified list.
+  - Creating or switching a branch is local and allowed; committing and pushing stay the developer's
+    (`no-commit.md`). Record the branch in GOAL.md's `branch:` field.
 
 **With a brief and no ID:** take the next free number the same way.
 
@@ -84,7 +95,8 @@ lifecycle and may call them as reviewers. `ticket-traceability` owns the tier ru
 
 **With no args (resume):** list `GOAL.md` files with `goal_status: in-progress` newest-first by
 mtime (some are stale), show the top few with their `stage:`, and ask which. Resume at the
-recorded `stage:`, re-reading GOAL and the last LOOP-* files — never from memory.
+recorded `stage:`, re-reading GOAL and the last LOOP-* files — never from memory. Run the branch check
+above first.
 
 ---
 
@@ -126,6 +138,8 @@ Before writing any SC that names an external API's wire format, id pattern, limi
 the matching skill (for example `claude-api`) and read the live reference. Paste the constraint into
 the SC. Before hand-off, run the real command once against real input, because mocks do not prove
 input shape (MF-0008 retro: a Batches `custom_id` with dots, and a PDF stored as text).
+
+FREEZE STOP: if the GOAL names a proof case (a merge sha, a reserved gate ticket, a bad commit), the Iteration Log must hold a line "proof-case replay: RED|GREEN" before FROZEN.json is written. Replay with a read-only probe, e.g. git archive <sha> <path> into the scratchpad and run the drafted check on it. GREEN means the rule is wrong: raise a Concern, do not freeze (MF-0028: replay passed after the freeze, costing a re-freeze and an iteration).
 
 Any SC that shows a computed figure (a percent, a rank, a flag, a weather) gets an **edge-input table** in
 the GOAL before the checkpoint. It has one row per input state: nothing at all, partially present (a skill

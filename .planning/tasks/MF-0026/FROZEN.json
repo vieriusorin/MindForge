@@ -1,0 +1,18 @@
+{
+  "ticket": "MF-0026",
+  "frozen_at": "2026-11-05T13:00:00Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/features/walk/components/walk-session/__tests__/mf-0026-walk-double-submit.acceptance.test.tsx",
+      "sha256": "16981848900dced78e710631d31cf624f37b159ad66b9538fdb75c0cda6b3c4e",
+      "first_failure": "SC-1: AssertionError: expected \"vi.fn()\" to be called 1 times, but got 2 times (SC-3 x3 green: regression locks on the release path)"
+    },
+    {
+      "path": "src/features/seed-planting/components/seed-checks/__tests__/mf-0026-seed-double-submit.acceptance.test.tsx",
+      "sha256": "e1b39b944940126eae31f8ea389fd4561ffb7df602b69599670c59c48e909a49",
+      "first_failure": "SC-2: AssertionError: expected \"vi.fn()\" to be called 1 times, but got 2 times (SC-3 x3 green: regression locks on the release path)"
+    }
+  ],
+  "history": []
+}

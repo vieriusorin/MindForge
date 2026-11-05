@@ -8,6 +8,7 @@ import {
   toggleChoice,
 } from "@/components/question-card";
 import type { AnswerFeedback, PlayableQuestion } from "@/engine/questions";
+import { useSingleFlight } from "@/lib/use-single-flight";
 import { answerQuestion } from "../../../actions";
 
 export interface UseDuelSessionReturn {
@@ -44,8 +45,8 @@ export function useDuelSession(
   const doneRef = useRef<HTMLHeadingElement | null>(null);
   const hasAdvanced = useRef(false);
   // MF-0012 SC-1: TanStack reports isPending on a later render, so a second click before it
-  // would still see `false`. The ref closes that window synchronously.
-  const isInFlight = useRef(false);
+  // would still see `false`. The shared guard closes that window synchronously (MF-0026).
+  const flight = useSingleFlight();
 
   const mutation = useMutation({
     mutationFn: answerQuestion,
@@ -56,9 +57,7 @@ export function useDuelSession(
         answered: t.answered + 1,
       }));
     },
-    onSettled: () => {
-      isInFlight.current = false;
-    },
+    onSettled: flight.release,
   });
   const result = mutation.data;
   const feedback = result?.ok ? result.feedback : null;
@@ -96,8 +95,7 @@ export function useDuelSession(
     });
 
   const submit = (): void => {
-    if (!question || !isSubmittable || isInFlight.current) return;
-    isInFlight.current = true;
+    if (!question || !isSubmittable || !flight.tryStart()) return;
     mutation.mutate({
       packSlug,
       questionId: question.id,
