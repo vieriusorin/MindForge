@@ -33,7 +33,8 @@ The first `pnpm dev:setup` downloads the Supabase images, which takes a few minu
 | Mailpit: sign-in links land here | http://127.0.0.1:54324 |
 | Supabase Studio: browse the local DB | http://127.0.0.1:54323 |
 
-Sign in with any email, then open its magic link in Mailpit. To start from a clean database, run `pnpm db:reset` (it **wipes** local data). Run `pnpm exec supabase stop` to stop the stack.
+Sign in with any email, then open its magic link in Mailpit. For demo data on every screen, run
+`MF_AUTHOR_EMAIL=<your sign-in email> pnpm dev:seed` (see `docs/runbook/dev-seed.md`). To start from a clean database, run `pnpm db:reset` (it **wipes** local data). Run `pnpm exec supabase stop` to stop the stack.
 
 ## Checks
 

@@ -45,4 +45,8 @@ describe("isStormActive", () => {
     expect(isStormActive("/play/ccdv-f/walk", href)).toBe(false);
     expect(isStormActive("/stormsettings", href)).toBe(false);
   });
+  it("is never active when the pack has no Storm (MF-0052 SC-2)", () => {
+    expect(isStormActive("/play/prod-prompting/storm/full", null)).toBe(false);
+    expect(isStormActive("/storms/abc", null)).toBe(false);
+  });
 });

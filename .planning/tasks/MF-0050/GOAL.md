@@ -4,7 +4,7 @@ tier: normal
 stage: intake
 builds_on: [MF-0013]
 last_iteration: 0
-goal_status: reserved
+goal_status: withdrawn          # superseded by MF-0052 T0b (user-approved re-freeze of the mf-0013 fixture, 2026-11-05)
 ---
 
 > Drafted 2026-11-05 by MF-0025 (user decision: SC-6 amended, baseline red split out). Not started.

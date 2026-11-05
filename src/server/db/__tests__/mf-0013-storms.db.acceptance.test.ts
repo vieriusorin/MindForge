@@ -80,8 +80,9 @@ const wrongFor = (item: Item): string[] => [
 beforeAll(async () => {
   const db = sql();
   try {
-    const rows = await db<Item[]>`
-      select k.question_id, k.skill_code, i.content_hash, k.correct_options
+    const rows = await db<(Item & { playable: boolean })[]>`
+      select k.question_id, k.skill_code, i.content_hash, k.correct_options,
+        private.item_state(i.item_id) not in ('flagged', 'rejected') as playable
       from private.question_keys k
       join private.items i on i.item_id = k.question_id
       where k.pack_slug = ${PACK}
@@ -89,8 +90,12 @@ beforeAll(async () => {
     // ccdv-f ships 53 questions (D2 has 13); the fixture needs 13 of D2
     if (rows.filter((r) => r.skill_code.startsWith("D2.")).length < 13)
       throw new Error("ccdv-f not synced: run pnpm db:sync-keys");
-    D2 = rows.filter((r) => r.skill_code.startsWith("D2.")).slice(0, 3);
-    D1 = rows.find((r) => r.skill_code.startsWith("D1."));
+    // MF-0052 re-freeze: questions the storm actually plays must be playable (start_storm refuses a
+    // flagged or rejected item), so a seeded local DB (pnpm dev:seed flags one ccdv-f question) can't
+    // turn this red. D2_13 keeps every D2 question: the 12-question cap is checked before playability.
+    const playable = rows.filter((r) => r.playable);
+    D2 = playable.filter((r) => r.skill_code.startsWith("D2.")).slice(0, 3);
+    D1 = playable.find((r) => r.skill_code.startsWith("D1."));
     D2_13 = rows
       .filter((r) => r.skill_code.startsWith("D2."))
       .slice(0, 13)

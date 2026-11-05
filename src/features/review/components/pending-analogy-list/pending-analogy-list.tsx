@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { formatReviewDate } from "../../utils/format-date";
+import { formatUtcDate } from "@/lib/format-utc-date";
 import { ApproveAnalogyButton } from "../approve-analogy-button";
 import type { PendingAnalogyListProps } from "./types";
 
@@ -47,7 +47,7 @@ export function PendingAnalogyList({
                       <span>
                         synced{" "}
                         <time dateTime={a.hashSyncedAt}>
-                          {formatReviewDate(a.hashSyncedAt)}
+                          {formatUtcDate(a.hashSyncedAt)}
                         </time>
                       </span>
                     </p>

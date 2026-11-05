@@ -2,14 +2,50 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { Pack } from "@/engine/pack";
 import { stormDurationSeconds } from "@/engine/storm";
+import {
+  RecentStorms,
+  toRecentStormRows,
+} from "@/features/storm/components/recent-storms";
 import { StormStart } from "@/features/storm/components/storm-start";
+import { StormUnavailable } from "@/features/storm/components/storm-unavailable";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getPack } from "@/server/packs/get-pack";
 import { listPacks } from "@/server/packs/list-packs";
 import { finalizeExpiredStorms } from "@/server/storm/finalize-expired-storms";
 import { getRunningStorm } from "@/server/storm/get-running-storm";
+import { listMyRecentStorms } from "@/server/storm/list-my-recent-storms";
+
+/** MF-0052 SC-11: your finished storms of this pack, streamed on their own. */
+async function RecentStormsSlot({
+  pack,
+  userId,
+}: {
+  pack: Pack;
+  userId: string;
+}) {
+  const storms = await listMyRecentStorms(userId, pack.slug);
+  return <RecentStorms rows={toRecentStormRows({ pack, storms })} />;
+}
+
+/** Sized like the list (title + rows), so nothing jumps when it streams in. */
+function RecentStormsSkeleton() {
+  return (
+    <Card aria-busy="true">
+      <CardHeader>
+        <Skeleton className="h-7 w-48" />
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+      </CardContent>
+    </Card>
+  );
+}
 
 async function FullStormSlot({
   params,
@@ -31,7 +67,14 @@ async function FullStormSlot({
     getRunningStorm(user.id),
   ]);
   if (running) redirect(`/storms/${running.id}`);
-  if (!pack.exam) notFound();
+  // MF-0052 SC-2: a known pack without an exam explains itself (200), it does not 404.
+  if (!pack.exam)
+    return (
+      <StormUnavailable
+        packName={pack.name}
+        duelHref={`/play/${packSlug}/duel`}
+      />
+    );
 
   return (
     <>
@@ -68,6 +111,9 @@ async function FullStormSlot({
             ))}
           </ul>
         </section>
+        <Suspense fallback={<RecentStormsSkeleton />}>
+          <RecentStormsSlot pack={pack} userId={user.id} />
+        </Suspense>
       </div>
     </>
   );

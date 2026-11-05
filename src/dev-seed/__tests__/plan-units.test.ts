@@ -1,7 +1,22 @@
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { planReviews } from "../plan-demo-world";
+import { FOREST_THRESHOLDS } from "@/engine/forest";
+import { memoryBySkill } from "@/engine/memory";
+import { loadSeedInputs } from "../load-seed-inputs";
+import {
+  type DemoPackInput,
+  planDemoWorld,
+  planDemoWorlds,
+  planExpedition,
+  planReviews,
+} from "../plan-demo-world";
 import { createRandom } from "../random";
-import type { PlannedAttempt, PlannedLearner, SeedItem } from "../types";
+import type {
+  DemoWorld,
+  PlannedAttempt,
+  PlannedLearner,
+  SeedItem,
+} from "../types";
 
 const NOW = new Date("2026-11-04T12:00:00.000Z");
 const AUTHOR = "author@example.com";
@@ -130,5 +145,191 @@ describe("planReviews (review_item's rules, applied by the planner)", () => {
         items: [item("off", { origin: "official", authorEmail: null })],
       }),
     ).toThrow(/approve/);
+  });
+});
+
+describe("planDemoWorlds (MF-0052 inner rules)", () => {
+  const DAY = 24 * 60 * 60 * 1000;
+  const PLAN_NOW = new Date("2026-11-05T12:00:00.000Z");
+  const YOU = "me@example.com";
+
+  async function inputOf(slug: string): Promise<DemoPackInput> {
+    const { pack, questions, items } = await loadSeedInputs(
+      join(process.cwd(), "packs", slug),
+    );
+    return { pack, groupName: `Demo ${slug}`, questions, items };
+  }
+
+  async function planAll(
+    slugs: readonly string[],
+    excludeItemIds: readonly string[] = [],
+  ): Promise<{ worlds: DemoWorld[]; inputs: DemoPackInput[] }> {
+    const inputs = await Promise.all(slugs.map(inputOf));
+    return {
+      inputs,
+      worlds: planDemoWorlds({
+        now: PLAN_NOW,
+        seed: 42,
+        youEmail: YOU,
+        demoDomain: "d.test",
+        packs: inputs,
+        excludeItemIds,
+      }),
+    };
+  }
+
+  function domainOf(input: DemoPackInput): Map<string, string> {
+    return new Map(
+      input.pack.domains.flatMap((d) =>
+        d.skills.map((s) => [s.code, d.code] as const),
+      ),
+    );
+  }
+
+  it("makes the exam pack your newest join whatever the order, with two packs without an exam", async () => {
+    for (const order of [
+      ["subagents", "ccdv-f", "prod-prompting"],
+      ["prod-prompting", "subagents", "ccdv-f"],
+    ]) {
+      const { worlds } = await planAll(order);
+      const yours = worlds
+        .map((w) => ({
+          slug: w.group.packSlug,
+          at: w.joins.find((j) => j.email === YOU)?.joinedAt.getTime() ?? 0,
+        }))
+        .sort((a, b) => b.at - a.at);
+      expect(yours[0]?.slug).toBe("ccdv-f");
+      expect(new Set(yours.map((y) => y.at)).size).toBe(3);
+    }
+  });
+
+  it("keeps every storm question off items its owner reviews, any planned flag, and excluded items", async () => {
+    const excluded = ["ccdv-f.D1.S1.q1", "ccdv-f.D3.S1.q1"];
+    const { worlds } = await planAll(["ccdv-f"], excluded);
+    const [world] = worlds;
+    if (!world) throw new Error("no world");
+    const flagged = new Set(
+      world.reviews.filter((r) => r.verdict === "flag").map((r) => r.itemId),
+    );
+    expect(world.storms.length).toBeGreaterThan(0);
+    for (const storm of world.storms)
+      for (const q of storm.questions) {
+        expect(excluded).not.toContain(q.questionId);
+        expect(flagged.has(q.questionId)).toBe(false);
+        expect(
+          world.reviews.some(
+            (r) => r.reviewerEmail === storm.email && r.itemId === q.questionId,
+          ),
+        ).toBe(false);
+      }
+  });
+
+  it("binds each storm question to its registry hash and its skill's domain", async () => {
+    const { worlds, inputs } = await planAll(["ccdv-f"]);
+    const [world] = worlds;
+    const [input] = inputs;
+    if (!world || !input) throw new Error("no world");
+    const hashes = new Map(input.items.map((i) => [i.itemId, i.contentHash]));
+    const domains = domainOf(input);
+    for (const storm of world.storms)
+      for (const q of storm.questions) {
+        expect(q.contentHash).toBe(hashes.get(q.questionId));
+        expect(q.domainCode).toBe(domains.get(q.skillCode));
+      }
+  });
+
+  it("ends every storm before the expedition window opens", async () => {
+    const { worlds } = await planAll(["ccdv-f"]);
+    const [world] = worlds;
+    if (!world?.expedition) throw new Error("no expedition");
+    for (const storm of world.storms)
+      expect(storm.endsAt.getTime()).toBeLessThanOrEqual(
+        world.expedition.startsAt.getTime(),
+      );
+  });
+
+  it("never puts a skill you never answered, or one that is wilting, in your storms", async () => {
+    const { worlds } = await planAll(["ccdv-f"]);
+    const [world] = worlds;
+    if (!world) throw new Error("no world");
+    const practice = world.attempts.filter((t) => t.email === YOU);
+    const memory = memoryBySkill(practice, PLAN_NOW);
+    for (const storm of world.storms.filter((s) => s.email === YOU))
+      for (const q of storm.questions) {
+        const m = memory.get(q.skillCode);
+        expect(m).toBeDefined();
+        expect(m?.retrievability).toBeGreaterThanOrEqual(
+          FOREST_THRESHOLDS.wiltBelowRetrievability,
+        );
+      }
+  });
+
+  it("sets each expedition's target above the correct answers it can count", async () => {
+    const { worlds, inputs } = await planAll(["ccdv-f", "prod-prompting"]);
+    for (const [i, world] of worlds.entries()) {
+      const input = inputs[i];
+      const expedition = world.expedition;
+      if (!input || !expedition) throw new Error("no expedition");
+      const domains = domainOf(input);
+      const joined = new Map(
+        world.joins.map((j) => [j.email, j.joinedAt.getTime()]),
+      );
+      const start = expedition.startsAt.getTime();
+      const counted = world.attempts.filter(
+        (t) =>
+          t.correct &&
+          domains.get(t.skillCode) === expedition.domainCode &&
+          t.answeredAt.getTime() >= start &&
+          t.answeredAt.getTime() < start + 7 * DAY &&
+          t.answeredAt.getTime() >= (joined.get(t.email) ?? Infinity),
+      ).length;
+      expect(counted).toBeGreaterThan(0);
+      expect(expedition.target).toBeGreaterThan(counted);
+      expect(expedition.target).toBeGreaterThanOrEqual(10);
+    }
+  });
+
+  it("throws when no domain has a correct answer inside the expedition window", async () => {
+    const input = await inputOf("ccdv-f");
+    const world = planDemoWorld({
+      now: PLAN_NOW,
+      seed: 42,
+      packSlug: "ccdv-f",
+      youEmail: YOU,
+      demoDomain: "d.test",
+      questions: input.questions,
+      items: input.items,
+    });
+    expect(() =>
+      planExpedition({
+        world: {
+          ...world,
+          attempts: world.attempts.map((t) => ({ ...t, correct: false })),
+        },
+        pack: input.pack,
+        now: PLAN_NOW,
+      }),
+    ).toThrow(/expedition/);
+  });
+
+  it("planDemoWorld plans no storm and no expedition, and joins everyone before the first answer", async () => {
+    const input = await inputOf("ccdv-f");
+    const world = planDemoWorld({
+      now: PLAN_NOW,
+      seed: 42,
+      packSlug: "ccdv-f",
+      youEmail: YOU,
+      demoDomain: "d.test",
+      questions: input.questions,
+      items: input.items,
+    });
+    expect(world.storms).toEqual([]);
+    expect(world.expedition).toBeNull();
+    const first = Math.min(
+      ...world.attempts.map((t) => t.answeredAt.getTime()),
+    );
+    expect(world.joins).toHaveLength(world.learners.length);
+    for (const j of world.joins)
+      expect(j.joinedAt.getTime()).toBeLessThan(first);
   });
 });

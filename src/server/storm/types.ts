@@ -1,6 +1,10 @@
 import { z } from "zod";
 import type { PlayableQuestion } from "@/engine/questions";
-import { STORM_KINDS, type StormKind } from "@/engine/storm";
+import {
+  STORM_KINDS,
+  type StormKind,
+  type StormResultQuestion,
+} from "@/engine/storm";
 
 /** A storm's header: what it is and its DB-owned clock. Carries no score and no key. */
 export interface StormSummary {
@@ -66,21 +70,48 @@ export const StormQuestionDbRows = z.array(
   }),
 );
 
+/** One graded question embedded in a finished storm row (shared by the result reads). */
+const StormResultQuestionRow = z.object({
+  position: z.number().int(),
+  question_id: z.string(),
+  skill_code: z.string(),
+  chosen: z.array(z.string()).nullable(),
+  correct: z.boolean().nullable(),
+  voided: z.boolean(),
+});
+
 export const StormResultRow = z.object({
   kind: z.enum(STORM_KINDS),
   finished_at: z.string(),
-  storm_questions: z.array(
-    z.object({
-      position: z.number().int(),
-      question_id: z.string(),
-      skill_code: z.string(),
-      chosen: z.array(z.string()).nullable(),
-      correct: z.boolean().nullable(),
-      voided: z.boolean(),
-    }),
-  ),
+  storm_questions: z.array(StormResultQuestionRow),
 });
 export type StormResultRow = z.infer<typeof StormResultRow>;
+
+/** MF-0052 SC-11: the columns `fetchRecentStorms` selects, questions ordered by position. */
+export const RECENT_STORM_COLUMNS =
+  "id, kind, domain_code, finished_at, storm_questions(position, question_id, skill_code, chosen, correct, voided)";
+
+/** MF-0052 SC-11: a finished storm row as `fetchRecentStorms` reads it. */
+export const RecentStormRow = z.object({
+  id: z.string(),
+  kind: z.enum(STORM_KINDS),
+  domain_code: z.string().nullable(),
+  finished_at: z.string(),
+  storm_questions: z.array(StormResultQuestionRow),
+});
+export type RecentStormRow = z.infer<typeof RecentStormRow>;
+
+/** MF-0052 SC-11: one of your finished storms of a pack, with what `scoreStorm` needs to judge it. */
+export interface RecentStorm {
+  readonly id: string;
+  readonly kind: StormKind;
+  /** Boss Storm only. */
+  readonly domainCode: string | null;
+  /** ISO 8601 (UTC, `toISOString` form), set by the database. */
+  readonly finishedAt: string;
+  /** In storm order (position). */
+  readonly questions: readonly StormResultQuestion[];
+}
 
 /** A uuid guard for ids that arrive from a URL: an invalid one is "not found", not a DB error. */
 export const StormId = z.uuid();

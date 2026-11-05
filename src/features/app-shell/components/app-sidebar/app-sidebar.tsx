@@ -149,18 +149,20 @@ export function AppSidebar({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={isStormActive(pathname, stormHref)}
-                tooltip="Storm"
-              >
-                <Link href={stormHref}>
-                  <CloudLightning />
-                  <span>Storm</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            {stormHref !== null && (
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isStormActive(pathname, stormHref)}
+                  tooltip="Storm"
+                >
+                  <Link href={stormHref}>
+                    <CloudLightning />
+                    <span>Storm</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
           </SidebarMenu>
         </SidebarGroup>
 

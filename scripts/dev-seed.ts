@@ -4,6 +4,10 @@
  * questions, or the ones named with --pack). Safe to re-run: it replaces the whole demo world (all
  * packs' demo groups) and your previously seeded answers, nothing else. `pnpm db:reset` removes it all.
  *
+ * MF-0052: also finished Storms (graded by the DB's own finalize_storm), an active Expedition per demo
+ * group, backdated joins with the exam pack as your newest group (the sidebar's primary pack), and the
+ * account with a non-empty review queue per pack in the closing output.
+ *
  * Usage: MF_AUTHOR_EMAIL=you@example.com pnpm dev:seed [--pack <slug>]... [--seed 42]
  * Needs the local stack (`pnpm dev:setup`). Refuses SUPABASE_DB_URL and any non-local database.
  */
@@ -12,9 +16,14 @@ import { join } from "node:path";
 import { z } from "zod";
 import { assertLocalSeedTarget } from "@/dev-seed/guard";
 import { loadSeedInputs } from "@/dev-seed/load-seed-inputs";
-import { demoGroupName, planDemoWorld } from "@/dev-seed/plan-demo-world";
+import { toSeedManifest } from "@/dev-seed/manifest";
+import { demoGroupName, planDemoWorlds } from "@/dev-seed/plan-demo-world";
 import { resolveSeedPacks } from "@/dev-seed/resolve-seed-packs";
-import { listResolvedItems, seedDemoWorlds } from "@/dev-seed/seed-demo-world";
+import { reviewQueueOwners } from "@/dev-seed/review-queue-owners";
+import {
+  listSeedExcludedItems,
+  seedDemoWorlds,
+} from "@/dev-seed/seed-demo-world";
 import type { SeedManifest } from "@/dev-seed/types";
 import { adminClient, sql, stackEnv } from "@/test/local-stack";
 
@@ -22,18 +31,9 @@ const ROOT = process.cwd();
 const DEMO_DOMAIN = "mindforge-demo.test";
 const PACKS_DIR = join(ROOT, "packs");
 const MANIFEST = join(ROOT, ".cache", "dev-seed", "manifest.json");
-const Manifest = z.strictObject({
-  youEmail: z.string(),
-  youId: z.string(),
-  youAttemptIds: z.array(z.number().int()),
-});
-
 function readManifest(youEmail: string): SeedManifest | null {
   try {
-    const parsed = Manifest.parse(JSON.parse(readFileSync(MANIFEST, "utf8")));
-    return parsed.youEmail === youEmail
-      ? { youId: parsed.youId, youAttemptIds: parsed.youAttemptIds }
-      : null;
+    return toSeedManifest(JSON.parse(readFileSync(MANIFEST, "utf8")), youEmail);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
     // An unreadable or older manifest only means no previously seeded rows are replaced.
@@ -100,25 +100,26 @@ async function main(): Promise<void> {
   });
 
   const db = sql();
-  // Resolutions are yours and survive a re-run: keep the demo reviews off resolved items.
-  const excludeItemIds = await listResolvedItems(db);
-  const now = new Date();
-  const worlds = selected.map((slug) => {
-    const inputs = inputsOf.get(slug);
-    if (!inputs) throw new Error(`dev:seed: pack "${slug}" was not loaded`);
-    return planDemoWorld({
-      now,
-      seed,
-      packSlug: inputs.pack.slug,
-      groupName: demoGroupName(inputs.pack.name),
-      youEmail,
-      demoDomain: DEMO_DOMAIN,
-      questions: inputs.questions,
-      items: inputs.items,
-      excludeItemIds,
-    });
+  // Your resolutions, your reviews and real users' flags survive a re-run: no demo review or seeded
+  // storm question lands on those items.
+  const excludeItemIds = await listSeedExcludedItems(db, {
+    demoDomain: DEMO_DOMAIN,
+    youEmail,
+  });
+  const worlds = planDemoWorlds({
+    now: new Date(),
+    seed,
+    youEmail,
+    demoDomain: DEMO_DOMAIN,
+    excludeItemIds,
+    packs: selected.map((slug) => {
+      const inputs = inputsOf.get(slug);
+      if (!inputs) throw new Error(`dev:seed: pack "${slug}" was not loaded`);
+      return { ...inputs, groupName: demoGroupName(inputs.pack.name) };
+    }),
   });
 
+  let owners: Awaited<ReturnType<typeof reviewQueueOwners>> = [];
   try {
     const manifest = await seedDemoWorlds({
       sql: db,
@@ -133,14 +134,28 @@ async function main(): Promise<void> {
       MANIFEST,
       `${JSON.stringify({ youEmail, ...manifest }, null, 2)}\n`,
     );
+    owners = await reviewQueueOwners(db, {
+      packSlugs: worlds.map((w) => w.group.packSlug),
+      // you first: your queue is the one the closing line should name when it has anything in it
+      emails: [...(worlds[0]?.learners ?? [])]
+        .sort(
+          (x, y) => Number(y.persona === "you") - Number(x.persona === "you"),
+        )
+        .map((l) => l.email),
+    });
   } finally {
     await db.end();
   }
 
   for (const world of worlds)
     console.log(
-      `Seeded "${world.group.name}" (${world.group.packSlug}): ${world.attempts.length} answers, ${world.reviews.length} reviews.`,
+      `Seeded "${world.group.name}" (${world.group.packSlug}): ${world.attempts.length} answers, ${world.reviews.length} reviews, ${world.storms.length} finished storms, ${world.expedition ? "1 active expedition" : "no expedition"}.`,
     );
+  console.log(
+    "Review queue (your own items never appear in it; sign in as this account to review):",
+  );
+  for (const o of owners)
+    console.log(`  ${o.packSlug}: ${o.email ?? "nothing left to review"}`);
   if (requested.length > 0) {
     const others = slugs.filter((slug) => !selected.includes(slug)).sort();
     if (others.length > 0)
