@@ -35,7 +35,8 @@ async function Sidebar() {
       duelHref={`/play/${packSlug}/duel`}
       walkHref={`/play/${packSlug}/walk`}
       cuckooHref={`/play/${packSlug}/cuckoo`}
-      stormHref={`/play/${packSlug}/storm/full`}
+      // MF-0052 SC-2: Storm is a mock exam, so a pack without an `exam:` block offers none.
+      stormHref={pack.exam ? `/play/${packSlug}/storm/full` : null}
       reviewHref={`/review/${packSlug}`}
       signOutAction={signOut}
     />

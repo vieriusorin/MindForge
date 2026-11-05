@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BOSS_STORM_SIZE, stormDurationSeconds } from "@/engine/storm";
 import { StormStart } from "@/features/storm/components/storm-start";
+import { StormUnavailable } from "@/features/storm/components/storm-unavailable";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getPack } from "@/server/packs/get-pack";
 import { listPacks } from "@/server/packs/list-packs";
@@ -30,8 +31,16 @@ async function BossStormSlot({
     getRunningStorm(user.id),
   ]);
   if (running) redirect(`/storms/${running.id}`);
+  // MF-0052 SC-2: a known pack without an exam explains itself (200), it does not 404.
+  if (!pack.exam)
+    return (
+      <StormUnavailable
+        packName={pack.name}
+        duelHref={`/play/${packSlug}/duel`}
+      />
+    );
   const domain = pack.domains.find((d) => d.code === domainCode);
-  if (!domain || !pack.exam) notFound();
+  if (!domain) notFound();
 
   return (
     <>

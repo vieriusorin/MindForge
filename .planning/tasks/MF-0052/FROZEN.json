@@ -1,0 +1,32 @@
+{
+  "ticket": "MF-0052",
+  "frozen_at": "2026-11-05T14:27:05Z",
+  "files": [
+    {
+      "path": "src/dev-seed/__tests__/mf-0052-plan.acceptance.test.ts",
+      "sha256": "828659ead99ea4ac573ce57a459705a5dd85a33d6d1a8de587fb04f91d161ba4",
+      "first_failure": "SC-1, SC-3, SC-5, SC-7: Error: not implemented (typed stub planDemoWorlds)"
+    },
+    {
+      "path": "src/dev-seed/__tests__/mf-0052-seed.db.acceptance.test.ts",
+      "sha256": "600b19790d653aca48422b61d90d301c359ca517d752e2d98983050a728eadca",
+      "first_failure": "SC-1, SC-3, SC-4, SC-5, SC-6: Error: not implemented (planDemoWorlds stub, in beforeAll); identical on a 2nd run (fixture + teardown survive)"
+    },
+    {
+      "path": "src/dev-seed/__tests__/mf-0052-regressions.db.acceptance.test.ts",
+      "sha256": "5eeae8f2e356f618caca0efb84f654448f8709a1aaa445fa67b54b94eb62df24",
+      "first_failure": "SC-8 (a)-(d): Error: not implemented (planDemoWorlds stub, in beforeAll); identical on a 2nd run"
+    },
+    {
+      "path": "src/features/app-shell/components/app-sidebar/__tests__/mf-0052-storm-link.acceptance.test.tsx",
+      "sha256": "ca2544ed6577bc9fef4e57fe294ab8f0fd36bd60adafcbc13f81f1fdac1cbfeb",
+      "first_failure": "SC-2: AssertionError: expected <span></span> to be null (the Storm item still renders with stormHref null)"
+    },
+    {
+      "path": "src/features/storm/components/recent-storms/__tests__/mf-0052-recent-storms.acceptance.test.ts",
+      "sha256": "6f2b299853295dba27f4db1e652f818b11880eab40494f3ade8b41c9a4164351",
+      "first_failure": "SC-11: Error: not implemented (typed stub toRecentStormRows)"
+    }
+  ],
+  "history": []
+}

@@ -14,6 +14,7 @@ export {
   type StormShortfallInput,
   stormShortfall,
 } from "./storm-shortfall";
+export { stormSurvived } from "./storm-survived";
 export type {
   SerializedStormDomainScore,
   SkillStormProof,

@@ -1,10 +1,27 @@
+import {
+  buildForest,
+  FOREST_THRESHOLDS,
+  summarizeForest,
+} from "@/engine/forest";
+import { type Attempt, memoryBySkill } from "@/engine/memory";
+import type { Pack } from "@/engine/pack";
+import {
+  BOSS_STORM_SIZE,
+  type StormResult,
+  stormDurationSeconds,
+  stormProof,
+} from "@/engine/storm";
 import { createRandom, type Random } from "./random";
 import type {
   DemoWorld,
   Persona,
   PlannedAttempt,
+  PlannedExpedition,
+  PlannedJoin,
   PlannedLearner,
   PlannedReview,
+  PlannedStorm,
+  PlannedStormQuestion,
   SeedItem,
   SeedQuestion,
 } from "./types";
@@ -352,6 +369,10 @@ export function planDemoWorld({
   );
   const steady = learners[0];
   if (!steady) throw new Error("planDemoWorld: no demo learner");
+  // MF-0052 SC-1: a day before the world's first answer, so tenure-scoped counts (expeditions) see every answer.
+  const firstAnswer = Math.min(...attempts.map((t) => t.answeredAt.getTime()));
+  if (!Number.isFinite(firstAnswer))
+    throw new Error("planDemoWorld: no planned answer");
   return {
     learners,
     group: { name: groupName, packSlug, createdByEmail: steady.email },
@@ -364,5 +385,487 @@ export function planDemoWorld({
       items,
       excludeItemIds,
     }),
+    joins: learners.map((l) => ({
+      email: l.email,
+      joinedAt: new Date(firstAnswer - DAY_MS),
+    })),
+    // MF-0052: storms and expeditions are planned only by planDemoWorlds (MF-0029/MF-0034 tests count rows).
+    storms: [],
+    expedition: null,
   };
+}
+
+/** MF-0052: one pack's inputs to `planDemoWorlds`. */
+export interface DemoPackInput {
+  pack: Pack;
+  groupName: string;
+  questions: SeedQuestion[];
+  items: SeedItem[];
+}
+
+/** MF-0052 SC-5: `expeditions_ends_at_check` (ends_at = starts_at + 7 days). */
+const EXPEDITION_DAYS = 7;
+/** Storms lie in [now − 10 d, now − 3 d − 1 h], so none enters the expedition window (starts now − 3 d). */
+const STORM_FIRST_DAY = 10;
+const EXPEDITION_START_DAY = 3;
+const FULL_STORM_PROVEN_SKILLS = 4;
+const MIN_FULL_STORM_PROVEN_SKILLS = 3;
+
+function domainBySkill(pack: Pack): Map<string, string> {
+  return new Map(
+    pack.domains.flatMap((d) => d.skills.map((s) => [s.code, d.code] as const)),
+  );
+}
+
+function isKey(question: SeedQuestion, chosen: readonly string[]): boolean {
+  const a = new Set(chosen);
+  const b = new Set(question.correctOptions);
+  return a.size === b.size && [...a].every((x) => b.has(x));
+}
+
+/**
+ * `start_storm`'s rule as the planner can see it: a question of this pack whose skill maps to a
+ * domain, with a registry hash, not excluded, not flagged by any planned review, and not reviewed by
+ * the storm's owner (a review spoils their answers). Grouped by skill, in pack-file order.
+ */
+function stormPool({
+  world,
+  input,
+  email,
+  excluded,
+}: {
+  world: DemoWorld;
+  input: DemoPackInput;
+  email: string;
+  excluded: ReadonlySet<string>;
+}): Map<string, SeedQuestion[]> {
+  const domains = domainBySkill(input.pack);
+  const hashes = new Map(
+    input.items
+      .filter((i) => i.itemType === "question")
+      .map((i) => [i.itemId, i.contentHash]),
+  );
+  const flagged = new Set(
+    world.reviews.filter((r) => r.verdict === "flag").map((r) => r.itemId),
+  );
+  const reviewedByOwner = new Set(
+    world.reviews.filter((r) => r.reviewerEmail === email).map((r) => r.itemId),
+  );
+  const out = new Map<string, SeedQuestion[]>();
+  for (const q of input.questions) {
+    if (q.packSlug !== input.pack.slug) continue;
+    if (!domains.has(q.skillCode) || !hashes.has(q.questionId)) continue;
+    if (excluded.has(q.questionId) || flagged.has(q.questionId)) continue;
+    if (reviewedByOwner.has(q.questionId)) continue;
+    out.set(q.skillCode, [...(out.get(q.skillCode) ?? []), q]);
+  }
+  return out;
+}
+
+function plannedStorm({
+  input,
+  email,
+  kind,
+  domainCode,
+  startedAt,
+  answers,
+}: {
+  input: DemoPackInput;
+  email: string;
+  kind: PlannedStorm["kind"];
+  domainCode: string | null;
+  startedAt: Date;
+  answers: readonly { question: SeedQuestion; chosen: string[] }[];
+}): PlannedStorm {
+  const { exam } = input.pack;
+  if (!exam) throw new Error(`planDemoWorlds: ${input.pack.slug} has no exam`);
+  const domains = domainBySkill(input.pack);
+  const hashes = new Map(input.items.map((i) => [i.itemId, i.contentHash]));
+  const durationMs = stormDurationSeconds(exam, answers.length) * 1000;
+  // Answers spread inside the storm, the last one still before ends_at.
+  const step = Math.floor(durationMs / (answers.length + 1));
+  const questions: PlannedStormQuestion[] = answers.map(
+    ({ question, chosen }, i) => ({
+      questionId: question.questionId,
+      skillCode: question.skillCode,
+      domainCode: domains.get(question.skillCode) ?? "",
+      contentHash: hashes.get(question.questionId) ?? "",
+      chosen,
+      chosenAt: new Date(startedAt.getTime() + (i + 1) * step),
+    }),
+  );
+  return {
+    email,
+    kind,
+    domainCode,
+    startedAt,
+    endsAt: new Date(startedAt.getTime() + durationMs),
+    questions,
+  };
+}
+
+/**
+ * Your two storms. The Boss Storm proves every skill of one domain that already has stability
+ * >= 14 d (a Boss proof alone never makes an Ancient, so they show as Trees, SC-4). The Full Storm
+ * proves other skills and holds one wrong answer (SC-3). Only practised, non-wilting skills, so the
+ * Walk keeps its water item and its never-answered skill (SC-7).
+ */
+function planYourStorms({
+  world,
+  input,
+  youEmail,
+  now,
+  excluded,
+}: {
+  world: DemoWorld;
+  input: DemoPackInput;
+  youEmail: string;
+  now: Date;
+  excluded: ReadonlySet<string>;
+}): PlannedStorm[] {
+  const pool = stormPool({ world, input, email: youEmail, excluded });
+  const memory = memoryBySkill(
+    world.attempts.filter((t) => t.email === youEmail),
+    now,
+  );
+  const t = FOREST_THRESHOLDS;
+  const mine = input.pack.domains.flatMap((d) =>
+    d.skills
+      .map((s) => s.code)
+      .filter((code) => {
+        const m = memory.get(code);
+        return (
+          m !== undefined &&
+          m.retrievability >= t.wiltBelowRetrievability &&
+          (pool.get(code)?.length ?? 0) >= 2
+        );
+      })
+      .map((code) => ({ code, domainCode: d.code })),
+  );
+  const stability = (code: string): number =>
+    memory.get(code)?.stabilityDays ?? 0;
+
+  let boss: { domainCode: string; skills: string[] } | null = null;
+  for (const d of input.pack.domains) {
+    const skills = mine
+      .filter(
+        (s) =>
+          s.domainCode === d.code && stability(s.code) >= t.treeStabilityDays,
+      )
+      .map((s) => s.code);
+    if (skills.length > 0 && skills.length > (boss?.skills.length ?? 0))
+      boss = { domainCode: d.code, skills };
+  }
+  if (!boss)
+    throw new Error(
+      `planDemoWorlds: no domain of ${input.pack.slug} for your Boss Storm`,
+    );
+  const bossAnswers: { question: SeedQuestion; chosen: string[] }[] = [];
+  for (const code of boss.skills) {
+    const questions = pool.get(code) ?? [];
+    if (bossAnswers.length + questions.length > BOSS_STORM_SIZE) continue;
+    for (const question of questions)
+      bossAnswers.push({ question, chosen: [...question.correctOptions] });
+  }
+
+  const bossSkills = new Set(boss.skills);
+  const inBand = (code: string): boolean =>
+    stability(code) >= t.treeStabilityDays &&
+    stability(code) < t.ancientStabilityDays;
+  const others = mine.filter((s) => !bossSkills.has(s.code));
+  const proven = [
+    ...others.filter((s) => inBand(s.code)),
+    ...others.filter((s) => !inBand(s.code)),
+  ].slice(0, FULL_STORM_PROVEN_SKILLS);
+  if (proven.length < MIN_FULL_STORM_PROVEN_SKILLS)
+    throw new Error(
+      `planDemoWorlds: too few skills of ${input.pack.slug} for your Full Storm`,
+    );
+  const fullAnswers = proven.flatMap((s) =>
+    (pool.get(s.code) ?? []).map((question) => ({
+      question,
+      chosen: [...question.correctOptions],
+    })),
+  );
+  const used = new Set([...bossSkills, ...proven.map((s) => s.code)]);
+  const wrong = others
+    .filter((s) => !used.has(s.code))
+    .flatMap((s) => pool.get(s.code) ?? [])
+    .find((q) => q.optionIds.some((id) => !q.correctOptions.includes(id)));
+  if (!wrong)
+    throw new Error(
+      `planDemoWorlds: no question of ${input.pack.slug} for your wrong answer`,
+    );
+  const wrongOption = wrong.optionIds.find(
+    (id) => !wrong.correctOptions.includes(id),
+  );
+  fullAnswers.push({
+    question: wrong,
+    chosen: wrongOption ? [wrongOption] : [],
+  });
+
+  return [
+    plannedStorm({
+      input,
+      email: youEmail,
+      kind: "boss",
+      domainCode: boss.domainCode,
+      startedAt: new Date(now.getTime() - 5 * DAY_MS),
+      answers: bossAnswers,
+    }),
+    plannedStorm({
+      input,
+      email: youEmail,
+      kind: "full",
+      domainCode: null,
+      startedAt: new Date(now.getTime() - 4 * DAY_MS),
+      answers: fullAnswers,
+    }),
+  ];
+}
+
+/** One Full Storm per demo learner: 10–15 of their eligible questions, answered at the persona's accuracy. */
+function planDemoStorms({
+  world,
+  input,
+  now,
+  random,
+  excluded,
+}: {
+  world: DemoWorld;
+  input: DemoPackInput;
+  now: Date;
+  random: Random;
+  excluded: ReadonlySet<string>;
+}): PlannedStorm[] {
+  const demo = world.learners.filter((l) => l.persona !== "you");
+  return demo.map((learner, k) => {
+    const pool = [
+      ...stormPool({ world, input, email: learner.email, excluded }).values(),
+    ]
+      .flat()
+      .sort((a, b) => (a.questionId < b.questionId ? -1 : 1));
+    const picked = shuffled(pool, random).slice(0, random.int(10, 15));
+    if (picked.length === 0)
+      throw new Error(
+        `planDemoWorlds: no storm question of ${input.pack.slug} for ${learner.email}`,
+      );
+    const accuracy =
+      learner.persona === "you" ? 1 : PERSONA_HABITS[learner.persona].accuracy;
+    return plannedStorm({
+      input,
+      email: learner.email,
+      kind: "full",
+      domainCode: null,
+      startedAt: new Date(
+        now.getTime() - STORM_FIRST_DAY * DAY_MS + k * 6 * HOUR_MS,
+      ),
+      answers: picked.map((question) => ({
+        question,
+        chosen: answer(question, random, accuracy).chosen,
+      })),
+    });
+  });
+}
+
+/**
+ * MF-0052 SC-5: the group's active expedition, started 3 days before `now`, on the domain with the most
+ * correct answers `expedition_progress` will count (members, inside the window, after joining; first
+ * in pack order on a tie), with a target above that count so progress shows between 0 and the target.
+ * Throws when no domain has a counted answer.
+ */
+export function planExpedition({
+  world,
+  pack,
+  now,
+}: {
+  world: DemoWorld;
+  pack: Pack;
+  now: Date;
+}): PlannedExpedition {
+  const startsAt = new Date(now.getTime() - EXPEDITION_START_DAY * DAY_MS);
+  const endsAt = startsAt.getTime() + EXPEDITION_DAYS * DAY_MS;
+  const domains = domainBySkill(pack);
+  const joined = new Map(
+    world.joins.map((j) => [j.email, j.joinedAt.getTime()]),
+  );
+  const counts = new Map<string, number>();
+  for (const t of world.attempts) {
+    const at = t.answeredAt.getTime();
+    const domain = domains.get(t.skillCode);
+    if (!t.correct || !domain || at < startsAt.getTime() || at >= endsAt)
+      continue;
+    if (at < (joined.get(t.email) ?? Number.POSITIVE_INFINITY)) continue;
+    counts.set(domain, (counts.get(domain) ?? 0) + 1);
+  }
+  let best: { domainCode: string; count: number } | null = null;
+  for (const d of pack.domains) {
+    const count = counts.get(d.code) ?? 0;
+    if (count > (best?.count ?? 0)) best = { domainCode: d.code, count };
+  }
+  if (!best)
+    throw new Error(
+      `planExpedition: no correct answer of ${pack.slug} inside the expedition window`,
+    );
+  const c = best.count;
+  if (c >= 1000)
+    throw new Error(`planExpedition: ${c} answers exceed the target range`);
+  return {
+    domainCode: best.domainCode,
+    target: Math.min(1000, Math.max(10, c + Math.ceil(c / 2) + 1)),
+    startsAt,
+    createdByEmail: world.group.createdByEmail,
+  };
+}
+
+/** Fail loud before any DB write: your seeded answers must grow at least one Tree (SC-4). */
+function assertYouGrowATree({
+  world,
+  input,
+  youEmail,
+  now,
+}: {
+  world: DemoWorld;
+  input: DemoPackInput;
+  youEmail: string;
+  now: Date;
+}): void {
+  const key = new Map(input.questions.map((q) => [q.questionId, q]));
+  const graded = (q: PlannedStormQuestion): boolean => {
+    const question = key.get(q.questionId);
+    return (
+      question !== undefined && q.chosen !== null && isKey(question, q.chosen)
+    );
+  };
+  const yours = world.storms.filter((s) => s.email === youEmail);
+  const attempts: Attempt[] = [
+    ...world.attempts.filter((t) => t.email === youEmail),
+    ...yours.flatMap((s) =>
+      s.questions.flatMap((q) =>
+        q.chosenAt
+          ? [
+              {
+                questionId: q.questionId,
+                skillCode: q.skillCode,
+                correct: graded(q),
+                answeredAt: q.chosenAt,
+              },
+            ]
+          : [],
+      ),
+    ),
+  ].sort((a, b) => a.answeredAt.getTime() - b.answeredAt.getTime());
+  const results: StormResult[] = yours.map((s) => ({
+    kind: s.kind,
+    finishedAt: s.endsAt,
+    questions: s.questions.map((q) => ({
+      id: q.questionId,
+      skillCode: q.skillCode,
+      chosen: q.chosen,
+      correct: q.chosen === null ? null : graded(q),
+      voided: false,
+    })),
+  }));
+  const summary = summarizeForest(
+    buildForest(
+      input.pack,
+      memoryBySkill(attempts, now, stormProof(results, new Set())),
+    ),
+  );
+  if (summary.stageCounts.tree < 1)
+    throw new Error(
+      `planDemoWorlds: your ${input.pack.slug} storms grow no Tree`,
+    );
+}
+
+/**
+ * MF-0052 SC-1, SC-3, SC-5, SC-7: the demo worlds of several packs planned together: each world as
+ * `planDemoWorld`, plus backdated joins (an exam pack's group your newest), finished storms for exam
+ * packs and one active expedition per group. Pure: same inputs, same worlds. Throws when a pack
+ * cannot give the storms or the expedition, before anything is written.
+ */
+export function planDemoWorlds({
+  now,
+  seed,
+  youEmail,
+  demoDomain,
+  packs,
+  excludeItemIds = [],
+}: {
+  now: Date;
+  seed: number;
+  youEmail: string;
+  demoDomain: string;
+  packs: readonly DemoPackInput[];
+  excludeItemIds?: readonly string[];
+}): DemoWorld[] {
+  const you = youEmail.toLowerCase();
+  const excluded = new Set(excludeItemIds);
+  const bases = packs.map((input) =>
+    planDemoWorld({
+      now,
+      seed,
+      packSlug: input.pack.slug,
+      groupName: input.groupName,
+      youEmail,
+      demoDomain,
+      questions: input.questions,
+      items: input.items,
+      excludeItemIds,
+    }),
+  );
+  const firstAnswer = Math.min(
+    ...bases.flatMap((w) => w.attempts.map((t) => t.answeredAt.getTime())),
+  );
+  const base = firstAnswer - DAY_MS;
+  // Exam packs rank last, so your newest group (the dashboard's primary pack) is an exam pack.
+  const ranked = packs
+    .map((p) => p.pack)
+    .sort(
+      (a, b) =>
+        Number(a.exam !== undefined && a.exam !== null) -
+          Number(b.exam !== undefined && b.exam !== null) ||
+        (a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0),
+    )
+    .map((p) => p.slug);
+
+  return bases.map((world, i) => {
+    const input = packs[i];
+    if (!input) throw new Error("planDemoWorlds: pack input missing");
+    const joins: PlannedJoin[] = world.learners.map((l) => ({
+      email: l.email,
+      joinedAt: new Date(
+        l.persona === "you"
+          ? base + ranked.indexOf(input.pack.slug) * MINUTE_MS
+          : base - HOUR_MS,
+      ),
+    }));
+    const joined: DemoWorld = { ...world, joins };
+    const storms = input.pack.exam
+      ? [
+          ...planDemoStorms({
+            world: joined,
+            input,
+            now,
+            random: createRandom((seed ^ 0x0052) >>> 0),
+            excluded,
+          }),
+          ...planYourStorms({
+            world: joined,
+            input,
+            youEmail: you,
+            now,
+            excluded,
+          }),
+        ]
+      : [];
+    const planned: DemoWorld = {
+      ...joined,
+      storms,
+      expedition: planExpedition({ world: joined, pack: input.pack, now }),
+    };
+    if (storms.length > 0)
+      assertYouGrowATree({ world: planned, input, youEmail: you, now });
+    return planned;
+  });
 }

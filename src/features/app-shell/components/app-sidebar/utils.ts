@@ -7,8 +7,13 @@ export function isActivePath(pathname: string, href: string): boolean {
 /**
  * MF-0013: the Storm item covers its whole section (Full and Boss start pages, which share the
  * parent of `stormHref`) and every storm page under /storms.
+ * MF-0052 SC-2: a pack without an exam has no Storm item (`stormHref` null), so nothing is active.
  */
-export function isStormActive(pathname: string, stormHref: string): boolean {
+export function isStormActive(
+  pathname: string,
+  stormHref: string | null,
+): boolean {
+  if (stormHref === null) return false;
   const section = stormHref.slice(0, stormHref.lastIndexOf("/"));
   return isActivePath(pathname, section) || isActivePath(pathname, "/storms");
 }
