@@ -24,7 +24,8 @@
     "generate:diagrams": "tsx scripts/generate/diagrams.ts",
     "generate:eval": "tsx scripts/generate/eval.ts",
     "prompts:lock": "tsx scripts/generate/lock-prompts.ts",
-    "check:packs": "node scripts/check-pack-grounding.mjs"
+    "check:packs": "node scripts/check-pack-grounding.mjs",
+    "gate:planning": "node scripts/check-planning.mjs"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.1.3",

@@ -1,0 +1,20 @@
+{
+  "ticket": "MF-0028",
+  "frozen_at": "2026-11-05",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0028-planning-check.acceptance.test.ts",
+      "sha256": "a4fac27d75750642ef0a85d0f415c323fde219092fe1d76e7ac58d5286567e4b",
+      "first_failure": "SC-1 (71ac090 seam): AssertionError: expected [] to have a length of 1 but got +0 (against the iteration-0 checker, which counts ticket_id lines only)"
+    }
+  ],
+  "history": [
+    {
+      "date": "2026-11-05",
+      "sha256": "c1319be6c26f54b4d056a8a83b0bb26d1aea9b4257360890c4595f4bf52bf8d4",
+      "first_failure": "SC-1…SC-3: Error: not implemented (8 of 8, stub scripts/lib/planning-check.mjs); SC-4: expected '' to contain 'MF-0002: ' / repo run exit 1; SC-5: gate:planning undefined. 11 of 12 red; 'exits 0 when the tasks folder does not exist' green at freeze (CLI path, regression lock)",
+      "reason": "C-3, approved by the user 2026-11-05: replaying the gate on `git archive 71ac090 .planning/tasks` passed, because the merge kept one ticket_id line. Added two SC-1 cases over the verbatim 71ac090 seam (repeated tier/stage/goal_status); no existing assertion changed, only a fixture comment corrected."
+    }
+  ]
+}

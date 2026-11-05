@@ -8,7 +8,7 @@ tracked as MF-0019.
 
 | Job (= required check name) | Steps | Typical cause of a red |
 |---|---|---|
-| `checks` | `pnpm install --frozen-lockfile` → `pnpm typecheck` → `pnpm lint` → `pnpm test` → `node scripts/check-hooks.mjs` → `pnpm build`, then (PRs only) the answer-key reminder | lockfile out of date, missing `<Suspense>` (build), a hook that fails to load |
+| `checks` | `pnpm install --frozen-lockfile` → `pnpm typecheck` → `pnpm lint` → `pnpm test` → `node scripts/check-hooks.mjs` → `pnpm gate:planning` → `pnpm build`, then (PRs only) the answer-key reminder | lockfile out of date, missing `<Suspense>` (build), a hook that fails to load, two tickets in one GOAL.md (planning check) |
 | `db` | `pnpm install --frozen-lockfile` → `pnpm exec supabase start -x …` (pinned CLI, unused services excluded) → `pnpm db:reset` → `pnpm test:db` | an RLS test, or **the grants gate** |
 
 **The grants gate** (`src/server/db/__tests__/mf-0005-grants.db.acceptance.test.ts`) fails whenever the
@@ -17,6 +17,11 @@ allow-list. A new table that skipped `revoke all … from anon, authenticated` s
 `TRUNCATE` / `REFERENCES` / `TRIGGER` / `MAINTAIN` lines (Supabase's default privileges). To fix
 it, add the `revoke all` to the migration. When a grant is intended, add its line to the
 allow-list in the same PR. That test file is frozen, so the reviewer sees the contract change.
+
+**The planning check** (`pnpm gate:planning`, MF-0028) fails when a `.planning/tasks/<ID>/GOAL.md` has more
+than one `ticket_id:` line, none, or one that is not its folder name. It usually means two branches reserved
+the same ticket number and the merge concatenated them: renumber one ticket into a free folder (check every
+branch with `git grep`) and split the file. The Stop gate runs it too, like every `gate:*` script.
 
 **Answer-key reminder:** when a PR changes `packs/**/questions/**`, the `checks` job prints a
 warning annotation. After merge, run the key sync for each environment (`docs/runbook/deploy.md`, B3).
@@ -54,6 +59,6 @@ than ~10 minutes, open a ticket to cache the images (e.g. `docker save` keyed on
 
 ```sh
 pnpm install --frozen-lockfile && pnpm typecheck && pnpm lint && pnpm test \
-  && node scripts/check-hooks.mjs && pnpm build
+  && node scripts/check-hooks.mjs && pnpm gate:planning && pnpm build
 pnpm exec supabase start && pnpm db:reset && pnpm test:db   # db:reset wipes LOCAL data
 ```
