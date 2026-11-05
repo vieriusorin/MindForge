@@ -11,7 +11,7 @@ diagrams:
       - { id: B, label: "Bee decides: the model thinks" }
       - { id: C, label: "Need a flower? A tool call", shape: decision }
       - { id: D, label: "Fly and collect: execute the tool" }
-      - { id: E, label: "Return nectar: the tool_result" }
+      - { id: E, label: "Return nectar: the tool call results" }
       - { id: F, label: "Bring honey home: the final answer" }
     edges:
       - { from: A, to: B }

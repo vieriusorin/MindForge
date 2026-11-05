@@ -37,7 +37,7 @@ append "## Applied", set `applied: <YYYY-MM-DD>` in RETRO.md's front matter
 | `memory-add` | apply, only if the agent named the entries it checked | defer |
 | `skill-edit` that adds or sharpens a rule | apply — it is in the diff the developer commits | defer |
 | `skill-edit` that removes or loosens a rule | **hold** — list it under "## Applied" as held | defer |
-| `gate` | draft a new ticket: claim the number, `GOAL.md` with `goal_status: reserved` and the pattern + the file it would have caught. Never build it here | defer |
+| `gate` | draft a new ticket: claim the number, `GOAL.md` with `goal_status: reserved` and the pattern + the file it would have caught. Never build it here; state the measured hit count and the number of real defects from a read-only run over shipped content in the reserved GOAL, or write `yield: unmeasured` and list the unmeasured figure as the first thing the pickup session checks. Never put a predicted yield in the Objective (MF-0033) | defer |
 | anything touching a frozen test, a gate script, a hook, settings, CLAUDE.md | **hold** | defer |
 
 "Defer" = write RETRO.md, set `applied: deferred`, change nothing else: a sandboxed lane cannot

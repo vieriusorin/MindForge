@@ -1,6 +1,7 @@
 skill: D1.S2
 questions:
   - id: ccdv-f.D1.S2.q1
+    # framing: Messages API — distractor A names the API the Client SDK calls; its rationale refutes it with the page's Client SDK row
     origin: ai
     author: vlad.parvana@ddroidd.com
     stem: "A team wants to embed an agent inside their own Python service that runs on their infrastructure. The agent needs Claude Code's built-in file and shell tools, permissions, sessions it can resume, and hooks. They do not want to write and maintain the tool-use loop themselves. Which option best fits?"

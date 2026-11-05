@@ -27,6 +27,7 @@ questions:
       title: "Effective context engineering for AI agents"
       url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
   - id: prod-prompting.D3.S2.q2
+    # framing: Messages API — names the request type; every part counted in the options comes from the context-windows page
     origin: ai
     author: sorin.vieriu@ddroidd.com
     level: foundation

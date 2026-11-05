@@ -38,7 +38,7 @@ questions:
       - id: B
         text: "Lower temperature to 0 so the model generates fewer tokens."
         correct: false
-        rationale: "Sampling parameters do not control how many tokens Claude spends, and temperature, top_p and top_k are removed in newer API versions."
+        rationale: "Temperature is not how you control token use; the effort parameter controls how many tokens Claude uses and applies to every output token."
       - id: C
         text: "Set output_config.effort to low and confirm on the evals that quality holds."
         correct: true

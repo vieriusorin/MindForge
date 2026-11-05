@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0033",
+  "frozen_at": "2026-11-05",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0033-item-grounding.acceptance.test.ts",
+      "sha256": "1be05327b40b174c71780e0655fe0225226bb3039092f1eecc30ede1292d031a",
+      "first_failure": "SC-1…SC-3: Error: not implemented (7 of 7, stub scripts/lib/item-grounding.mjs)"
+    }
+  ],
+  "history": []
+}
