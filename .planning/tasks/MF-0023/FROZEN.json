@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0023",
+  "frozen_at": "2026-11-05T12:00:00Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0023-spawn-spec.acceptance.test.ts",
+      "sha256": "65c6a207d9eff8263ddbbb0f1e36c86721adf89d69e151339f7669c198241c2c",
+      "first_failure": "SC-3 x12: Error: not implemented"
+    }
+  ],
+  "history": []
+}

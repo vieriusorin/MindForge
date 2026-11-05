@@ -10,6 +10,30 @@
  * module is that "green" in a hand-off is produced by the toolchain, not asserted by the agent.
  */
 
+/** cmd.exe splits or interprets these; an argument containing one is quoted. */
+const WIN_QUOTE_RE = /[\s"&()<>^|]/;
+const quoteWin = (a) => (WIN_QUOTE_RE.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a);
+
+/**
+ * MF-0023: how the Stop gate spawns a tool on each platform. Node will not spawn the `.cmd` shims
+ * (pnpm, biome, vitest) on Windows without a shell, and a shell joins args unquoted, so win32 gets
+ * one quoted command line. POSIX keeps the direct spawn in its own process group, so a timeout can
+ * kill the whole tree with `kill(-pid)`.
+ * @param {{ cmd: string, args: string[], platform: string }} input
+ * @returns {{ command: string, args: string[], shell: boolean, detached: boolean }}
+ */
+export function spawnSpec({ cmd, args, platform }) {
+  if (platform === "win32") {
+    return {
+      command: [cmd, ...args].map(quoteWin).join(" "),
+      args: [],
+      shell: true,
+      detached: false,
+    };
+  }
+  return { command: cmd, args: [...args], shell: false, detached: true };
+}
+
 /** Files whose change can affect typecheck, a gate, lint or a test. Docs and planning cannot. */
 const SOURCE_RE = /\.(ts|tsx|mts|cts|mjs|cjs|js|jsx|json|sql|css)$/;
 const NEVER_SOURCE_RE = /^(\.planning|node_modules|\.next|public|drizzle\/meta)\//;
