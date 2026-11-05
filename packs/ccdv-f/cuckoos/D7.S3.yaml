@@ -1,0 +1,54 @@
+# MF-0016 Spot the Cuckoo: one planted flaw per snippet. Drafted by Claude (origin: ai) in a
+# hand session; unreviewed until two non-authors approve (CONTEXT.md Reviewer).
+skill: D7.S3
+cuckoos:
+  - id: ccdv-f.D7.S3.cuckoo-exit-one
+    title: A PreToolUse hook script meant to stop destructive commands
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: hook
+    lines:
+      - "#!/usr/bin/env bash"
+      - "# PreToolUse hook (matcher: Bash): refuse destructive shell commands"
+      - cmd=$(jq -r '.tool_input.command')
+      - if echo "$cmd" | grep -qE 'rm -rf|git push --force'; then
+      - '  echo "Blocked: destructive command" >&2'
+      - "  exit 1"
+      - fi
+      - exit 0
+    flawLine: 6
+    flawKind: unsafe-setting
+    explanation: "In Claude Code hooks, only exit code 2 is a blocking error: the tool call is stopped
+      and stderr goes back to Claude. Exit code 1 is a non-blocking error, so the command still
+      runs. This guard prints a warning and blocks nothing."
+    sources:
+      - https://code.claude.com/docs/en/hooks
+  - id: ccdv-f.D7.S3.cuckoo-post-tool-guard
+    title: The hooks section of .claude/settings.json for a command guard
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: config
+    lines:
+      - "{"
+      - '  "hooks": {'
+      - '    "PostToolUse": ['
+      - "      {"
+      - '        "matcher": "Bash",'
+      - '        "hooks": [{ "type": "command", "command": ".claude/hooks/block-destructive.sh" }]'
+      - "      }"
+      - "    ]"
+      - "  }"
+      - "}"
+    flawLine: 3
+    flawKind: unsafe-setting
+    explanation: PostToolUse runs after the tool has already run, so a guard registered there can only
+      report the damage. A hook that must stop a command belongs on PreToolUse, which runs before
+      the call and can block it.
+    sources:
+      - https://code.claude.com/docs/en/hooks

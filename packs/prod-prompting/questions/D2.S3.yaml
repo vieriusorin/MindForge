@@ -1,0 +1,158 @@
+skill: D2.S3
+questions:
+  - id: prod-prompting.D2.S3.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "VS Code, acting as an MCP host, connects to the Sentry MCP server and to a local filesystem MCP server. How many MCP clients does the host create?"
+    select: 1
+    options:
+      - id: A
+        text: "Two: the host creates one MCP client per server, each holding a dedicated connection."
+        correct: true
+        rationale: "The host creates one MCP client for each MCP server, and each client keeps a dedicated connection to its server; VS Code creates an additional client object for the second server."
+      - id: B
+        text: "One: a single shared MCP client multiplexes requests to every connected server."
+        correct: false
+        rationale: "MCP pairs one client with one server; a second server gets a second client."
+      - id: C
+        text: "None on the host: each MCP server creates its own client inside the AI application."
+        correct: false
+        rationale: "The host (the AI application) instantiates the clients; servers only provide context to them."
+      - id: D
+        text: "Zero: the host talks to the servers directly, and clients exist only in the SDKs."
+        correct: false
+        rationale: "The client is a defined participant that maintains each connection on the host's behalf."
+    source:
+      title: "MCP architecture overview"
+      url: "https://modelcontextprotocol.io/docs/learn/architecture"
+  - id: prod-prompting.D2.S3.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "MCP servers expose three building blocks. Which pairing of building block to who controls it matches the MCP documentation?"
+    select: 1
+    options:
+      - id: A
+        text: "Tools, resources and prompts are all model-controlled: the model decides when each one is used."
+        correct: false
+        rationale: "Only tools are model-controlled; resources are application-driven and prompts are user-controlled."
+      - id: B
+        text: "Tools are user-controlled, resources are model-controlled and prompts are application-controlled."
+        correct: false
+        rationale: "This shuffles the roles: the model calls tools, the application picks resources, the user invokes prompts."
+      - id: C
+        text: "Tools are model-controlled, resources are application-controlled and prompts are user-controlled."
+        correct: true
+        rationale: "MCP's server features table assigns tools to the model, resources to the application and prompts to the user."
+      - id: D
+        text: "Tools are application-controlled, resources are user-controlled and prompts are model-controlled."
+        correct: false
+        rationale: "This reverses the documented roles for all three primitives."
+    source:
+      title: "Understanding MCP servers"
+      url: "https://modelcontextprotocol.io/docs/learn/server-concepts"
+  - id: prod-prompting.D2.S3.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You are building an MCP server for a database. The AI application should be able to read the database's schema as context, without the model performing any action. Which primitive fits?"
+    select: 1
+    options:
+      - id: A
+        text: "A tool named `get_schema` that the model calls whenever it decides that it needs the schema."
+        correct: false
+        rationale: "Tools are executable functions for performing actions; read-only context such as a schema fits a resource."
+      - id: B
+        text: "A resource that contains the schema, which the application retrieves and passes to the model as context."
+        correct: true
+        rationale: "Resources are data sources that provide contextual information to AI applications; MCP's own database example exposes the schema as a resource and querying as tools."
+      - id: C
+        text: "A prompt template whose arguments contain the full schema text for the model to read."
+        correct: false
+        rationale: "Prompts are reusable templates that help structure interactions with the model, not a channel for serving data."
+      - id: D
+        text: "An elicitation request that asks the user to paste the schema whenever it is needed."
+        correct: false
+        rationale: "Elicitation asks the user for input; it is not how a server exposes data that it already holds."
+    source:
+      title: "MCP architecture overview"
+      url: "https://modelcontextprotocol.io/docs/learn/architecture"
+  - id: prod-prompting.D2.S3.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A team wants their MCP server to offer a `/plan-vacation` slash command that takes a destination, duration and budget, and runs the same structured workflow each time. Which primitive should they expose?"
+    select: 1
+    options:
+      - id: A
+        text: "A tool, because the model should decide on its own when vacation planning is needed."
+        correct: false
+        rationale: "Tools are model-controlled; a slash command is an explicit user invocation."
+      - id: B
+        text: "A resource template with `{destination}` in its URI, so the application can fill it in."
+        correct: false
+        rationale: "Resource templates parameterise data queries; they do not define a user-triggered workflow."
+      - id: C
+        text: "A change notification that announces the workflow to clients when the user starts typing."
+        correct: false
+        rationale: "Notifications report changes such as an updated tool list; they do not provide a command."
+      - id: D
+        text: "A prompt: a user-controlled template, invoked explicitly, that apps often surface as slash commands."
+        correct: true
+        rationale: "Prompts are user-controlled, need explicit invocation, take structured arguments, and are commonly surfaced as slash commands such as /plan-vacation."
+    source:
+      title: "Understanding MCP servers"
+      url: "https://modelcontextprotocol.io/docs/learn/server-concepts"
+  - id: prod-prompting.D2.S3.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You ship two MCP servers: a filesystem server that runs on each developer's laptop, and a hosted ticketing server shared by hundreds of users that needs authentication. Which transport choice fits each one?"
+    select: 1
+    options:
+      - id: A
+        text: "Stdio for the laptop server; Streamable HTTP for the hosted one, with HTTP auth and ideally OAuth tokens."
+        correct: true
+        rationale: "Stdio connects local processes with no network overhead and typically serves one client; Streamable HTTP enables remote servers that serve many clients and supports HTTP authentication, with OAuth recommended."
+      - id: B
+        text: "Stdio for both servers, since the JSON-RPC messages are the same and stdio is the fastest option."
+        correct: false
+        rationale: "Stdio is for processes on the same machine; a shared hosted server needs a network transport."
+      - id: C
+        text: "Streamable HTTP for the laptop server and stdio for the hosted one, so that the remote traffic stays private."
+        correct: false
+        rationale: "This inverts the transports: stdio cannot reach a remote server."
+      - id: D
+        text: "Pick per server, but expect the message format to differ between transports and handle both."
+        correct: false
+        rationale: "The transport layer is abstracted from the data layer: the same JSON-RPC 2.0 format is used over every transport."
+    source:
+      title: "MCP architecture overview"
+      url: "https://modelcontextprotocol.io/docs/learn/architecture"
+  - id: prod-prompting.D2.S3.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "An MCP server adds new tools at runtime after a user connects another account. How does a well-built MCP client keep the model's tool set current without reconnecting?"
+    select: 1
+    options:
+      - id: A
+        text: "It restarts the connection on a timer, because a tool list can only be read once per session."
+        correct: false
+        rationale: "Listings are dynamic by design: `tools/list` can be sent again at any time, and notifications signal when to do so."
+      - id: B
+        text: "It listens with the `toolsListChanged` filter, gets `notifications/tools/list_changed`, then re-sends `tools/list`."
+        correct: true
+        rationale: "A server with `tools.listChanged` honours that filter in `subscriptions/listen`; on a list-changed notification the client typically requests the updated list and refreshes its registry. Notifications are best effort, so a client should also poll `tools/list` to stay fresh."
+      - id: C
+        text: "It waits for the server to attach the new tool schemas to the next `tools/call` result."
+        correct: false
+        rationale: "Tool results carry the output of a call, not updated definitions; discovery happens through `tools/list`."
+      - id: D
+        text: "It polls `resources/read` on a special URI that the server updates with the latest tool list."
+        correct: false
+        rationale: "Resources serve context data; tool discovery uses `tools/list` and list-changed notifications."
+    source:
+      title: "MCP architecture overview"
+      url: "https://modelcontextprotocol.io/docs/learn/architecture"

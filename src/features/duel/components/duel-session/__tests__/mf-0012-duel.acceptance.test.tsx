@@ -22,6 +22,7 @@ const question = (id: string): PlayableQuestion => ({
     { id: "B", text: "Second" },
   ],
   source: { title: "Docs", url: "https://example.com" },
+  contentHash: `h-${id}`,
 });
 
 const QUESTIONS = [question("p.S1.1"), question("p.S1.2")];

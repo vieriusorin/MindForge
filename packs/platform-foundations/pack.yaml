@@ -1,0 +1,109 @@
+# Claude Platform & Model Foundations (MF-0038)
+# A course pack. The course (Anthropic Academy, Claude Associate path, Module 1) is behind a login and is never a
+# source (CONTEXT.md Source): its lesson order shapes the domains below, and every skill is grounded in public
+# pages only. Where the course and today's docs disagree, the docs win and no item tests the disputed point
+# (MF-0038 C-1; drift list in docs/plan/platform-foundations-validation.md).
+# Weights are MindForge's. Items carry a `level`: foundation (junior: what it is, when to reach for it),
+# practitioner (mid: pick the configuration for a scenario), expert (senior/developer: trade-offs, failure modes
+# and the platform/API counterpart of the claude.ai feature).
+slug: platform-foundations
+name: Claude Platform & Model Foundations
+kind: course
+version: 1
+domains:
+  - code: D1
+    name: How Claude behaves
+    weight: 10
+    skills:
+      - code: D1.S1
+        name: "What to expect: variation, fluency vs accuracy, knowledge cutoff"
+        weight: 10
+        description: Why the same prompt gives different answers, why a confident tone is not evidence, and why recent facts need a connected source such as web search.
+        sources:
+          - https://support.claude.com/en/articles/8525154-claude-is-providing-incorrect-or-misleading-responses-what-s-going-on
+          - https://support.claude.com/en/articles/10684626-enable-and-use-web-search
+          - https://platform.claude.com/docs/en/models/overview
+          - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency
+
+  - code: D2
+    name: Entry points
+    weight: 22
+    skills:
+      - code: D2.S1
+        name: Chat, Projects, Artifacts and Research
+        weight: 12
+        description: Choosing where the work happens before writing the prompt, from a one-off chat to a persistent project, a deliverable artifact or multi-source research, and how this choice leads the other three decisions.
+        sources:
+          - https://support.claude.com/en/articles/9517075-what-are-projects
+          - https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them
+          - https://support.claude.com/en/articles/11088861-use-research-on-claude
+          - https://support.claude.com/en/articles/10684626-enable-and-use-web-search
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+      - code: D2.S2
+        name: "Projects: instructions, knowledge, and when one pays off"
+        weight: 10
+        description: What a project holds (instructions, knowledge base, its own chats), when recurring work earns one, and the developer equivalent of standing instructions in a system prompt.
+        sources:
+          - https://support.claude.com/en/articles/9517075-what-are-projects
+          - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+
+  - code: D3
+    name: Capability layer
+    weight: 30
+    skills:
+      - code: D3.S1
+        name: Skills
+        weight: 10
+        description: Reusable procedures Claude loads when relevant, the trust check before enabling a third-party skill, and Agent Skills on the platform.
+        sources:
+          - https://support.claude.com/en/articles/12512176-what-are-skills
+          - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+      - code: D3.S2
+        name: Code execution and file creation
+        weight: 10
+        description: Running code instead of predicting numbers, creating real files, and the code execution tool on the platform.
+        sources:
+          - https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool
+      - code: D3.S3
+        name: Memory, project scope and incognito
+        weight: 10
+        description: What memory carries across chats, how projects keep memory separate, when to use incognito chats, and the memory tool on the platform.
+        sources:
+          - https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context
+          - https://support.claude.com/en/articles/12260368-use-incognito-chats
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool
+
+  - code: D4
+    name: Choosing a model
+    weight: 16
+    skills:
+      - code: D4.S1
+        name: "Model tiers: quality, speed, volume and cost"
+        weight: 16
+        description: Matching the model tier to the task's need for judgment, speed and volume, and how price per token turns that choice into a cost decision on the API.
+        sources:
+          - https://platform.claude.com/docs/en/models/overview
+          - https://platform.claude.com/docs/en/about-claude/models/choosing-a-model
+          - https://platform.claude.com/docs/en/about-claude/pricing
+
+  - code: D5
+    name: Context and usage
+    weight: 22
+    skills:
+      - code: D5.S1
+        name: "Context budget: restart, summarize, persist"
+        weight: 12
+        description: Why long sessions drift, the three responses (restart, summarize, persist), and context windows and compaction on the platform.
+        sources:
+          - https://platform.claude.com/docs/en/build-with-claude/context-windows
+          - https://platform.claude.com/docs/en/build-with-claude/compaction
+          - https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context
+      - code: D5.S2
+        name: Usage limits and planning long work
+        weight: 10
+        description: How usage and length limits work, planning long work around them, and API rate limits as the developer equivalent.
+        sources:
+          - https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work
+          - https://support.claude.com/en/articles/9797557-usage-limit-best-practices
+          - https://platform.claude.com/docs/en/api/rate-limits

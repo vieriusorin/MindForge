@@ -2,11 +2,12 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { isPlayable, reviewStateOf } from "@/engine/content";
 import { countableAttempts, pickSessionQuestions } from "@/engine/memory";
-import { toPlayableQuestion } from "@/engine/questions";
+import { toPlayableQuestions } from "@/engine/questions";
 import { DuelSession } from "@/features/duel/components/duel-session";
 import { loadDuelParams } from "@/features/duel/search-params";
 import { duelBackLink } from "@/features/duel/utils/back-link";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getItemHashes } from "@/server/content/get-item-hashes";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
@@ -26,9 +27,10 @@ async function DuelSlot({
     redirect(`/sign-in?next=${encodeURIComponent(`/play/${packSlug}/duel`)}`);
   if (!(await listPacks()).some((p) => p.slug === packSlug)) notFound();
 
-  const [pack, questions, attempts, review] = await Promise.all([
+  const [pack, questions, hashes, attempts, review] = await Promise.all([
     getPack(packSlug),
     getPackQuestions(packSlug),
+    getItemHashes(packSlug),
     listMyAttempts(user.id, packSlug),
     getReviewContext(user.id, packSlug),
   ]);
@@ -55,7 +57,8 @@ async function DuelSlot({
       </header>
       <DuelSession
         packSlug={packSlug}
-        questions={session.map(toPlayableQuestion)}
+        // MF-0032: each question carries the version this page shows; the answer sends it back.
+        questions={toPlayableQuestions(session, hashes)}
         skillNames={skillNames}
         back={duelBackLink(from)}
       />

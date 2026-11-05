@@ -1,0 +1,158 @@
+skill: D4.S2
+questions:
+  - id: subagents.D4.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your team has a reusable checklist of code conventions that Claude should apply while it edits code with you in the session. Which does the subagents page point you to?"
+    select: 1
+    options:
+      - id: A
+        text: "A custom subagent, so the conventions live in an isolated context instead of your conversation."
+        correct: false
+        rationale: "A subagent works in isolated context and returns a summary; the conventions would not shape the edits you make together in the main conversation."
+      - id: B
+        text: "A fork of the conversation, so the conventions can see everything you have discussed so far."
+        correct: false
+        rationale: "A fork's own tool calls stay out of your conversation and only its final result comes back; it is a side task, not a way to guide your ongoing edits."
+      - id: C
+        text: "A /btw question at the start of each edit, so the conventions stay out of the history."
+        correct: false
+        rationale: "/btw answers a question about something already in your conversation, has no tool access, and its answer isn't added to history, so it cannot carry reusable instructions."
+      - id: D
+        text: "A skill: a reusable prompt or workflow that runs in the main conversation context."
+        correct: true
+        rationale: "The page says to consider Skills instead of a subagent when you want reusable prompts or workflows that run in the main conversation context rather than isolated subagent context."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D4.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You are debugging with competing hypotheses and want the workers to share findings, challenge each other and coordinate on their own. Which option fits, according to the agent teams page?"
+    select: 1
+    options:
+      - id: A
+        text: "Subagents, because agent teammates cannot message each other directly."
+        correct: false
+        rationale: "It is the reverse: in agent teams, teammates message each other directly, while subagents return a result to the caller."
+      - id: B
+        text: "A single session, because agent teams cost fewer tokens than one session."
+        correct: false
+        rationale: "Agent teams use significantly more tokens than a single session; each teammate is a separate Claude instance."
+      - id: C
+        text: "An agent team: teammates share findings, challenge each other and coordinate on their own."
+        correct: true
+        rationale: "The page says to use agent teams when teammates need to share findings, challenge each other and coordinate on their own, and lists debugging with competing hypotheses as a strong use case."
+      - id: D
+        text: "Subagents, because they are built for complex work that requires discussion and collaboration."
+        correct: false
+        rationale: "The comparison table gives subagents 'focused tasks where only the result matters'; complex work requiring discussion and collaboration is what agent teams are best for."
+    source:
+      title: "Run agent teams"
+      url: "https://code.claude.com/docs/en/agent-teams"
+  - id: subagents.D4.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "After an hour of design discussion you invoke a skill whose frontmatter sets `context: fork`, expecting it to build on that discussion. It behaves as if it knows nothing about it. Why?"
+    select: 1
+    options:
+      - id: A
+        text: "The skill also needs `background: false`, which lets the subagent read the conversation history."
+        correct: false
+        rationale: "`background: false` only makes the turn wait for the forked subagent's result instead of running it in the background; it does not pass your history."
+      - id: B
+        text: "`context: fork` starts a new subagent without your history; fork the conversation instead."
+        correct: true
+        rationale: "The skills page says the subagent doesn't see your conversation history, so the skill's instructions must stand on their own; when the task depends on that history, fork the conversation instead of using `context: fork`."
+      - id: C
+        text: "`context: fork` copies the conversation but removes earlier tool results to save context."
+        correct: false
+        rationale: "Despite the name, `context: fork` does not run in a fork of the current conversation at all; it starts a new subagent with the skill content as its prompt."
+      - id: D
+        text: "Skills cannot run in a subagent, so Claude Code ignored the field and ran the skill inline."
+        correct: false
+        rationale: "Skills can run in a subagent: `context: fork` makes Claude Code start a new subagent of the type set in the `agent` field."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: subagents.D4.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A refactor of one large file has to happen in steps, each depending on the last. A colleague proposes an agent team of four teammates. What does the agent teams page advise?"
+    select: 1
+    options:
+      - id: A
+        text: "Use a single session or subagents: they are more effective for sequential tasks and same-file edits."
+        correct: true
+        rationale: "The page says agent teams work best when teammates can operate independently, and that for sequential tasks, same-file edits or work with many dependencies, a single session or subagents are more effective."
+      - id: B
+        text: "Use the team, since each teammate can own a separate piece of the file without stepping on the others."
+        correct: false
+        rationale: "Owning separate pieces fits new modules or features; same-file edits are named as a case where a single session or subagents work better."
+      - id: C
+        text: "Use the team with more teammates, because extra teammates lower the total token cost."
+        correct: false
+        rationale: "Token costs scale linearly: each teammate has its own context window and consumes tokens independently."
+      - id: D
+        text: "Use the team, since its shared task list removes the coordination overhead of a single session."
+        correct: false
+        rationale: "Agent teams add coordination overhead, and more teammates mean more communication, task coordination and potential for conflicts."
+    source:
+      title: "Run agent teams"
+      url: "https://code.claude.com/docs/en/agent-teams"
+  - id: subagents.D4.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A team wants to wrap a single text-classification step in an orchestrator that delegates to subagents. What does Anthropic's 'Building effective agents' advise?"
+    select: 1
+    options:
+      - id: A
+        text: "Start with the most autonomous architecture available and remove parts once the evals stabilize."
+        correct: false
+        rationale: "The post recommends the reverse order: start with simple prompts and add multi-step agentic systems only when simpler solutions fall short."
+      - id: B
+        text: "Adopt an agent framework first, because its abstractions make prompts and responses easier to debug."
+        correct: false
+        rationale: "The post warns that frameworks often add layers of abstraction that obscure the underlying prompts and responses, making them harder to debug."
+      - id: C
+        text: "Start with the simplest solution; agentic systems trade latency and cost for performance."
+        correct: true
+        rationale: "The post recommends finding the simplest solution possible and only increasing complexity when needed, notes that agentic systems trade latency and cost for better task performance, and says optimizing single LLM calls is usually enough for many applications."
+      - id: D
+        text: "Prefer autonomous agents over workflows here, since agents have lower costs on well-defined tasks."
+        correct: false
+        rationale: "The post says workflows offer predictability and consistency for well-defined tasks, and that the autonomous nature of agents means higher costs."
+    source:
+      title: "Building effective agents"
+      url: "https://www.anthropic.com/research/building-effective-agents"
+  - id: subagents.D4.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Deep into a long session you want three approaches to the same refactor tried in parallel, each needing all the background you have built up. Which option does the subagents page favour, and why?"
+    select: 1
+    options:
+      - id: A
+        text: "Three fresh subagents, because a separate prompt cache makes each one cheaper than a fork."
+        correct: false
+        rationale: "The page says the opposite: a fork's first request reuses the parent's prompt cache, so a fork costs less than a fresh subagent for tasks that need the same context."
+      - id: B
+        text: "An agent team, because forks run one at a time and cannot try approaches in parallel."
+        correct: false
+        rationale: "The page names trying several approaches in parallel from the same starting point as a reason to use a fork."
+      - id: C
+        text: "Fresh subagents with the background pasted into each prompt, since a fork cannot edit files."
+        correct: false
+        rationale: "A fork can edit files; when Claude spawns it through the Agent tool it can pass `isolation: \"worktree\"` so the edits go to a separate git worktree."
+      - id: D
+        text: "Forks: they inherit the whole conversation and reuse the parent's prompt cache."
+        correct: true
+        rationale: "A fork inherits the entire conversation, suits work where another subagent would need too much background or where you try several approaches in parallel, and costs less than a fresh subagent for tasks that need the same context."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"

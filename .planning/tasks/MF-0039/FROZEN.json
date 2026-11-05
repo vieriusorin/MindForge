@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0039",
+  "frozen_at": "2026-11-04T14:45:15.900Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0039-agent-skills.acceptance.test.ts",
+      "sha256": "00fa081eedfa0cb8c8595eb2193ef0c3b12ceda24aa07b6518527110bac56a58",
+      "first_failure": "SC-1..SC-7 all red: ENOENT packs/agent-skills/pack.yaml (SC-1, SC-2); ENOENT packs/agent-skills/questions (SC-3, SC-4); ENOENT packs/agent-skills/diagrams (SC-5..SC-7). Same on 2nd run. Typecheck red at freeze is MF-0032 work in src/app/(app)/play/** (other session), not this file."
+    }
+  ],
+  "history": []
+}

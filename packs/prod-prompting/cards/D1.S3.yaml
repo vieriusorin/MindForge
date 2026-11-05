@@ -1,0 +1,29 @@
+skill: D1.S3
+cards:
+  - id: prod-prompting.D1.S3.card-honeycomb
+    concept: Structured outputs (schema-constrained responses)
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      You give the API a JSON schema in output_config.format, and Claude's answer is constrained to
+      fit it: valid JSON, required fields present, the right types. You no longer retry for schema
+      violations, but your code should still check stop_reason for a refusal or a max_tokens
+      cut-off before parsing. Whether the values are right is a separate question that only success
+      criteria and evals can answer.
+    inNature: >-
+      A honeycomb. The bees store honey only in cells of one fixed hexagonal shape, so anyone who
+      knows the comb knows where to find it. The schema is the comb; Claude fills the cells.
+    whereItBreaks:
+      - "The comb guarantees the shape, not the honey: schema-valid JSON can still hold a wrong value. Evals measure that."
+      - "A comb never fails to form, but a response can miss the schema when Claude refuses (stop_reason refusal) or runs out of max_tokens."
+      - "Enum and const values can come back with different capitalization; compare them case-insensitively."
+      - "Optional properties are written after required ones, so the order you see is not always the schema's order."
+    contrast: >-
+      JSON outputs control what Claude says (the response format). Strict tool use (strict true)
+      controls how Claude calls your tools. Success criteria and evals check whether the content
+      is actually good.
+    diagram: prod-prompting.D1.S3.diagram-criteria-to-ship
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/structured-outputs
+      - https://platform.claude.com/docs/en/test-and-evaluate/define-success

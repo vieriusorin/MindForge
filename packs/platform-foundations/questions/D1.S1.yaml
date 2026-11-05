@@ -1,0 +1,158 @@
+skill: D1.S1
+questions:
+  - id: platform-foundations.D1.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A developer asks Claude for the flags of an internal deploy CLI. The answer is fluent and quotes a line from 'the official docs', but that line exists nowhere. What does the Help Center call this, and what causes it?"
+    select: 1
+    options:
+      - id: A
+        text: "A usage-limit effect: near the limit, Claude shortens its research and fills gaps with guesses."
+        correct: false
+        rationale: "The page does not link wrong answers to usage limits; it names hallucination as a byproduct of current limitations of frontier generative AI models."
+      - id: B
+        text: "Hallucinating: a byproduct of model limits; a quote can sound convincing yet not be grounded in fact."
+        correct: true
+        rationale: "The page calls incorrect or misleading output 'hallucinating' and says Claude can display quotes that look authoritative or sound convincing but are not grounded in fact."
+      - id: C
+        text: "A display bug in the chat window that swaps real quotations for placeholder text."
+        correct: false
+        rationale: "The page treats this as a limitation of the model itself, not of the interface; Claude can write things that look correct but are very mistaken."
+      - id: D
+        text: "Evidence that the CLI changed; Claude is quoting an older version of the docs it memorised."
+        correct: false
+        rationale: "A convincing quote is not evidence that the source existed: the page warns that authoritative-looking quotes may not be grounded in fact."
+    source:
+      title: "Claude is providing incorrect or misleading responses. What's going on?"
+      url: "https://support.claude.com/en/articles/8525154-claude-is-providing-incorrect-or-misleading-responses-what-s-going-on"
+  - id: platform-foundations.D1.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "On a Monday stand-up a team lead asks Claude in a chat what changed in a cloud SDK release that shipped last Friday. What does the Help Center describe as the way to get an answer based on current information?"
+    select: 1
+    options:
+      - id: A
+        text: "Ask for a longer answer, since a longer reply draws on more of Claude's stored knowledge."
+        correct: false
+        rationale: "Length does not add current data; the page describes web search as what expands Claude's knowledge with real-time data."
+      - id: B
+        text: "Tell Claude to answer from memory and add a note that the facts may be dated."
+        correct: false
+        rationale: "A disclaimer leaves the answer without current data; the page points to web search for topics that benefit from current information."
+      - id: C
+        text: "Rephrase the question as a hypothetical so Claude can reason about the release."
+        correct: false
+        rationale: "Reasoning about a hypothetical brings in no live content; the page describes a search tool that grounds responses in content from the live web."
+      - id: D
+        text: "Use web search, or write 'Search the web' in the prompt, so the answer cites live sources."
+        correct: true
+        rationale: "The page says Claude invokes a search tool for topics that benefit from current information, every response includes citations, and writing 'Search the web' makes sure it searches."
+    source:
+      title: "Enable and use web search"
+      url: "https://support.claude.com/en/articles/10684626-enable-and-use-web-search"
+  - id: platform-foundations.D1.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "An on-call engineer uses Claude with web search to summarise a vendor security advisory before deciding whether to patch production tonight. What does the Help Center advise before acting on the summary?"
+    select: 1
+    options:
+      - id: A
+        text: "Open the cited sources and read the originals, since they may hold context the summary left out."
+        correct: true
+        rationale: "The page asks users to review Claude's cited sources, because original websites may contain important context missing from the synthesis, and to scrutinise high-stakes advice."
+      - id: B
+        text: "Trust the summary once it shows citations, because cited answers are checked before display."
+        correct: false
+        rationale: "The page says the response quality depends on the underlying sources, and asks users to check original content; citations are a starting point for review, not proof."
+      - id: C
+        text: "Ask Claude how confident it is and act if it reports high confidence in the summary."
+        correct: false
+        rationale: "A confident answer is not a correct one: the page warns that Claude can write things that look correct but are very mistaken."
+      - id: D
+        text: "Regenerate until two answers agree, then treat that answer as the source of truth."
+        correct: false
+        rationale: "The page says users should not rely on Claude as a singular source of truth and should scrutinise high-stakes advice."
+    source:
+      title: "Claude is providing incorrect or misleading responses. What's going on?"
+      url: "https://support.claude.com/en/articles/8525154-claude-is-providing-incorrect-or-misleading-responses-what-s-going-on"
+  - id: platform-foundations.D1.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A team runs the same release-notes request through Claude every sprint and gets differently shaped answers each time, which breaks the script that parses them. Per Anthropic's guide on increasing output consistency, which change targets this?"
+    select: 1
+    options:
+      - id: A
+        text: "Send the request twice each sprint and keep whichever answer the parser accepts."
+        correct: false
+        rationale: "The guide lists ways to make responses consistent (format, examples, retrieval, chained prompts, keeping Claude in character); re-running and picking a winner is not one of them."
+      - id: B
+        text: "Write the request in capital letters so Claude treats the format as mandatory."
+        correct: false
+        rationale: "The guide's first technique is to define the output format precisely with JSON, XML or a template; emphasis by capitals is not a technique it lists."
+      - id: C
+        text: "Define the exact output format (JSON, XML or a template) and give an example of the output wanted."
+        correct: true
+        rationale: "The guide says to precisely define the output format using JSON, XML or custom templates, and to constrain with examples, which it calls more effective than abstract instructions."
+      - id: D
+        text: "Remove all formatting instructions so the model falls back to one standard shape."
+        correct: false
+        rationale: "The guide does the opposite: it makes output consistent by specifying the format you want, not by leaving it out."
+    source:
+      title: "Increase output consistency"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency"
+  - id: platform-foundations.D1.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A developer reads the models overview table and sees two rows for each model: 'Reliable knowledge cutoff' and 'Training data cutoff'. Which reading matches the page?"
+    select: 1
+    options:
+      - id: A
+        text: "Training data cutoff is when a dateless model ID stops being updated and the alias moves on."
+        correct: false
+        rationale: "The page says every Claude model ID is a pinned snapshot, including the dateless IDs; the cutoff rows describe training data, not ID updates."
+      - id: B
+        text: "Reliable knowledge cutoff is the date after which the model switches to web search by default."
+        correct: false
+        rationale: "The page defines it as the date through which the model's knowledge is most extensive and reliable; it says nothing about switching to search."
+      - id: C
+        text: "Reliable cutoff: knowledge is most dependable up to it. Training cutoff: the broader data range used."
+        correct: true
+        rationale: "The page defines reliable knowledge cutoff as the date through which knowledge is most extensive and reliable, and training data cutoff as the broader range of data used."
+      - id: D
+        text: "The two rows bound the model's support window: reliable until the first date, retired at the second."
+        correct: false
+        rationale: "Retirement is a separate row in the table ('Not sooner than' a date); the cutoff rows describe what the model learned from."
+    source:
+      title: "Models overview"
+      url: "https://platform.claude.com/docs/en/models/overview"
+  - id: platform-foundations.D1.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "An API app should cover facts newer than the model's knowledge cutoff by giving Claude the web search tool, but only when the chosen model accepts it. Per the models overview, how should the app decide?"
+    select: 1
+    options:
+      - id: A
+        text: "Read `server_tools.web_search.supported` from the Models API, and still handle a failed request."
+        correct: true
+        rationale: "The page says server_tools reports whether a model accepts the web search tool, and that organization settings can still make a request fail, for example when an administrator disables web search."
+      - id: B
+        text: "Infer it from the model ID: IDs that contain `opus` accept web search and the others do not."
+        correct: false
+        rationale: "The page reports web search support per model in the server_tools capability of the Models API, and advises reading fields such as line instead of inferring from the id."
+      - id: C
+        text: "If `server_tools.web_search.supported` is `true`, every tool version works and the call cannot fail."
+        correct: false
+        rationale: "The page says the field is true when the model accepts at least one version of the tool, not necessarily every version, and organization settings can still cause a failure."
+      - id: D
+        text: "Check the top-level `code_execution` capability, which reports whether the model can search the web."
+        correct: false
+        rationale: "The page calls top-level code_execution a different check: whether code run in the code execution tool can call the request's other tools."
+    source:
+      title: "Models overview"
+      url: "https://platform.claude.com/docs/en/models/overview"

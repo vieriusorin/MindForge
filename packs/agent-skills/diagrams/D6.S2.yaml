@@ -1,0 +1,33 @@
+skill: D6.S2
+diagrams:
+  - id: agent-skills.D6.S2.diagram-evaluate-and-iterate
+    title: "Evaluate and iterate on a skill"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: GAP, label: "Identify gaps: run Claude on representative tasks without a skill and note the failures" }
+      - { id: EVAL, label: "Create evaluations: three scenarios that test those gaps" }
+      - { id: BASE, label: "Establish a baseline: measure performance without the skill" }
+      - { id: WRITE, label: "Write minimal instructions: just enough to address the gaps and pass the evaluations" }
+      - { id: RUN, label: "Run the evaluations in fresh sessions, with and without the skill" }
+      - { id: PASS, label: "Passes the evaluations and beats the baseline?", shape: decision }
+      - { id: REFINE, label: "Refine: observe where the testing instance struggles and bring specifics back to the authoring instance" }
+      - { id: MODELS, label: "Separate principle: test the skill with every model you plan to use it with" }
+      - { id: SHARE, label: "Share it, watch real usage and fold in team feedback" }
+    edges:
+      - { from: GAP, to: EVAL }
+      - { from: EVAL, to: BASE }
+      - { from: BASE, to: WRITE }
+      - { from: WRITE, to: RUN }
+      - { from: RUN, to: PASS }
+      - { from: PASS, to: REFINE, label: "no" }
+      - { from: REFINE, to: RUN, label: "test again" }
+      - { from: PASS, to: SHARE, label: "yes" }
+      - { from: RUN, to: MODELS, label: "also on each planned model" }
+      - { from: MODELS, to: REFINE, label: "a model struggles" }
+      - { from: SHARE, to: REFINE, label: "new gaps found" }
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+      - https://code.claude.com/docs/en/skills

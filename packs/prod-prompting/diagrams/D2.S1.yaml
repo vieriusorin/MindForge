@@ -1,0 +1,30 @@
+skill: D2.S1
+diagrams:
+  - id: prod-prompting.D2.S1.diagram-tool-choice
+    title: "From tool definition to Claude's choice"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: DEF, label: "Tool definition: name, description, input_schema" }
+      - { id: PROMPT, label: "API builds a tool-use system prompt from the definitions" }
+      - { id: CHOICE, label: "tool_choice?", shape: decision }
+      - { id: AUTO, label: "Claude decides: call a tool or answer directly" }
+      - { id: MUST, label: "Claude must call a tool (prefilled, no preamble, no thinking)" }
+      - { id: NONE, label: "Claude answers in text, no tool calls" }
+      - { id: CALL, label: "tool_use block with input matching the schema" }
+      - { id: ERR, label: "400 error: use auto + strict: true, or structured outputs" }
+    edges:
+      - { from: DEF, to: PROMPT }
+      - { from: PROMPT, to: CHOICE }
+      - { from: CHOICE, to: AUTO, label: "auto (default)" }
+      - { from: CHOICE, to: MUST, label: "any / tool (where supported)" }
+      - { from: CHOICE, to: ERR, label: "any / tool where unsupported (some models, manual extended thinking)" }
+      - { from: CHOICE, to: NONE, label: none }
+      - { from: AUTO, to: CALL, label: "request maps to a tool's described capability" }
+      - { from: AUTO, to: NONE, label: "stable knowledge, creative or conversational turn, or answer in context" }
+      - { from: MUST, to: CALL }
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview

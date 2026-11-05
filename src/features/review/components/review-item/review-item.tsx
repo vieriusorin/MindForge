@@ -14,6 +14,7 @@ const KIND_LABEL = {
   question: "Question",
   card: "Nature card",
   diagram: "Diagram",
+  cuckoo: "Spot the Cuckoo",
 } as const satisfies Record<ReviewItemProps["packItem"]["kind"], string>;
 
 const ORIGIN_LABEL = {

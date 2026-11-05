@@ -1,0 +1,38 @@
+skill: D4.S1
+cards:
+  - id: agent-skills.D4.S1.card-five-extension-points
+    concept: CLAUDE.md, skills, subagents, hooks and MCP each do one job
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Claude Code has several ways to extend it, and each answers a different need. In one repo:
+      the build command and folder layout go in CLAUDE.md, which Claude reads at the start of every
+      session. The weekly release procedure becomes a skill, whose body loads only when it is used.
+      Running the whole test suite goes to a subagent, which works in its own context window and
+      hands back a summary instead of thousands of log lines. "Format every file after an edit"
+      becomes a hook, which Claude Code runs at that lifecycle event every time. And the
+      issue tracker is connected as an MCP server, so Claude reads tickets directly instead of you
+      pasting them in.
+    inNature: >-
+      A kitchen garden runs on several systems at once. Compost is worked into every bed and feeds
+      whatever grows there. A seed packet is opened only when you sow that crop. Seedlings are raised
+      in a separate cold frame, and only the strong ones are brought back to the bed. A drip timer
+      waters at dawn whether or not the gardener remembers. A rain barrel piped from the roof brings
+      in water from outside the garden.
+    whereItBreaks:
+      - "Compost costs nothing to keep in the soil. CLAUDE.md is loaded into every session and uses context: the memory page suggests under 200 lines per file, because longer files consume more context and reduce adherence."
+      - "A drip timer runs on the clock. A hook runs at a point in Claude Code's lifecycle, such as before a tool call executes, and a `PreToolUse` hook can block that call."
+      - "A cold frame shares the garden's sun and rain. A subagent runs in its own context window with its own system prompt, tool access and permissions, and only its result returns to the main conversation."
+    contrast: >-
+      CLAUDE.md and skills are both instructions: Claude treats CLAUDE.md as context, not enforced
+      configuration, and a skill is guidance Claude follows once it is loaded. A hook is the
+      deterministic option: certain actions always happen rather than relying on the model to
+      choose to run them.
+    diagram: agent-skills.D4.S1.diagram-which-extension
+    sources:
+      - https://code.claude.com/docs/en/memory
+      - https://code.claude.com/docs/en/skills
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/hooks-guide
+      - https://code.claude.com/docs/en/mcp

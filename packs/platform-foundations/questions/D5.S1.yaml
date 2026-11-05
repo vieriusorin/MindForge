@@ -1,0 +1,158 @@
+skill: D5.S1
+questions:
+  - id: platform-foundations.D5.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A developer has spent a whole afternoon in one conversation debugging a service. The conversation still fits in the context window, yet Claude now overlooks details agreed hours ago. Which explanation does the context windows page give?"
+    select: 1
+    options:
+      - id: A
+        text: "The long conversation has overwritten part of the model's training data."
+        correct: false
+        rationale: "The page separates the context window, a working memory for the request, from the corpus the model was trained on; a conversation does not change training data."
+      - id: B
+        text: "The API keeps the newest message in the window and drops earlier turns on its own."
+        correct: false
+        rationale: "In the standard API behavior the page describes, previous turns are preserved completely as the conversation advances."
+      - id: C
+        text: "Larger windows run slower, so the model skips reading the earlier turns."
+        correct: false
+        rationale: "The page gives no such mechanism; it explains the slip through context rot, where accuracy and recall degrade as tokens grow."
+      - id: D
+        text: "As token count grows, accuracy and recall degrade, a phenomenon called context rot."
+        correct: true
+        rationale: "The page says more context isn't automatically better: as token count grows, accuracy and recall degrade (context rot), so curating what is in context matters as much as the space available."
+    source:
+      title: "Context windows"
+      url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"
+  - id: platform-foundations.D5.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You leave a long, drifting chat to start fresh, but you want Claude to keep knowing your team's stack and coding style in new chats. Which claude.ai feature is built to carry that kind of context forward?"
+    select: 1
+    options:
+      - id: A
+        text: "An incognito chat, which loads your saved context into a clean conversation."
+        correct: false
+        rationale: "The Help Center says incognito chats are not saved to Claude's memory or your chat history; they keep a chat out of memory rather than carrying context in."
+      - id: B
+        text: "Memory, which saves topics such as technical preferences as you chat."
+        correct: true
+        rationale: "Claude saves memory as individual topics as you chat and carries it into new conversations; technical preferences and coding style are among the things it remembers."
+      - id: C
+        text: "Turning memory off for the new chat from the \"+\" menu before the first message."
+        correct: false
+        rationale: "A chat started with memory off does not use memory, does not search past chats, and saves nothing to memory."
+      - id: D
+        text: "The context window, which copies the old chat's turns into each new chat."
+        correct: false
+        rationale: "The page describes Claude without memory as a stateless chat interface; carrying context into new chats is what memory and chat search are for."
+    source:
+      title: "Use Claude's chat search and memory to build on previous context"
+      url: "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context"
+  - id: platform-foundations.D5.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A tech lead's long architecture chat (outside any project) has drifted. She opens a new chat and wants the decisions from the old one without pasting them in again. What does the Help Center describe for this?"
+    select: 1
+    options:
+      - id: A
+        text: "Ask Claude in the new chat to find the earlier discussion and pick up from it."
+        correct: true
+        rationale: "The page says you can prompt Claude to search previous conversations and reference them in new chats, with prompts like \"Let's continue where we left off with [project]\"; the search shows as a tool call."
+      - id: B
+        text: "Start the new chat with memory turned off in the \"+\" menu so the search runs deeper."
+        correct: false
+        rationale: "A chat with memory turned off in the \"+\" menu doesn't search your past chats from it, so this blocks the lookup she wants."
+      - id: C
+        text: "Stay in the old chat; Claude turns it into memory once the conversation ends."
+        correct: false
+        rationale: "Claude saves memory as individual topics as you chat, rather than summarizing conversations after they end; staying also keeps her in the drifting chat."
+      - id: D
+        text: "Ask from inside a project, because project chats search across every project."
+        correct: false
+        rationale: "Search inside a project is limited to that specific project's conversations; her old chat sits outside any project."
+    source:
+      title: "Use Claude's chat search and memory to build on previous context"
+      url: "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context"
+  - id: platform-foundations.D5.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A developer estimated an app's context use by counting only the user messages, yet requests approach the window far sooner than expected. Per the context windows page, what did the estimate leave out?"
+    select: 1
+    options:
+      - id: A
+        text: "Cached prompt prefixes, which the estimate should subtract because they leave the window."
+        correct: false
+        rationale: "The page says cached prompt prefixes still occupy the context window; caching changes what you pay for those tokens, not whether they count."
+      - id: B
+        text: "Nothing; thinking and tool output sit outside the window, so the gap is a bug."
+        correct: false
+        rationale: "The page counts the output Claude generates for the turn, including its extended thinking, and tool results toward the window."
+      - id: C
+        text: "The system prompt, tool definitions, tool results and the output, including thinking."
+        correct: true
+        rationale: "Everything in the request counts: the system prompt, every message including tool results, images and documents, the tool definitions, and the output with its thinking; the token counting API estimates it before sending."
+      - id: D
+        text: "Only the images, since text messages are measured separately from attachments."
+        correct: false
+        rationale: "Images count, but so do the system prompt, tool definitions, tool results and output; the page lists them together as counting toward the window."
+    source:
+      title: "Context windows"
+      url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"
+  - id: platform-foundations.D5.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your agent app is the API version of summarizing a long chat into a fresh one. It must keep the last few turns word for word, and it cannot pause while a summary is written. Which option does the compaction overview point to?"
+    select: 1
+    options:
+      - id: A
+        text: "Compaction at a token threshold, because it runs in the background by default."
+        correct: false
+        rationale: "The overview's table says threshold compaction does not run in the background: it runs inside the request that reaches the threshold."
+      - id: B
+        text: "Compaction on demand, keeping recent turns and running it in the background."
+        correct: true
+        rationale: "The overview says to choose on-demand compaction when the app can't pause while a summary is written or must keep recent turns, and lists both keep-recent-turns and background variants for it."
+      - id: C
+        text: "Context editing, whose tool result clearing writes a summary of the older turns."
+        correct: false
+        rationale: "The overview describes context editing as clearing old tool results or thinking blocks by rule instead of summarizing them."
+      - id: D
+        text: "Your own client summarizer, as it is the one option that keeps recent turns."
+        correct: false
+        rationale: "The overview's table marks recent turns as kept word for word for on-demand, threshold and client-side compaction alike, so this is not what sets it apart."
+    source:
+      title: "Compaction overview"
+      url: "https://platform.claude.com/docs/en/build-with-claude/compaction"
+  - id: platform-foundations.D5.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A long-running API agent keeps appending history with no context management. Eventually the input alone is larger than the model's context window. What happens on the next request, per the context windows page?"
+    select: 1
+    options:
+      - id: A
+        text: "The API drops the oldest turns first-in, first-out, as a chat interface might."
+        correct: false
+        rationale: "The page notes that chat interfaces such as claude.ai can manage the window first in, first out; in standard API behavior, previous turns are preserved completely."
+      - id: B
+        text: "It is accepted and stops with stop_reason model_context_window_exceeded."
+        correct: false
+        rationale: "That stop reason applies on Claude 4.5 models and newer when input plus max_tokens exceeds the window and generation reaches the limit, not when the input alone is too large."
+      - id: C
+        text: "It succeeds if the history is prompt-cached, since cached tokens sit outside the window."
+        correct: false
+        rationale: "The page says cached prompt prefixes still occupy the context window."
+      - id: D
+        text: "The API returns a 400 invalid_request_error (prompt is too long) on every model."
+        correct: true
+        rationale: "If the input alone already exceeds the model's context window, the API returns a 400 invalid_request_error (\"prompt is too long\") on every model; the page points to server-side compaction for conversations that approach the limit."
+    source:
+      title: "Context windows"
+      url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"

@@ -1,0 +1,30 @@
+skill: D2.S4
+cards:
+  - id: claude-code-in-action.D2.S4.card-skill-on-demand
+    concept: "A skill: a saved procedure that loads when it is used"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      When you keep pasting the same instructions, checklist or multi-step procedure into chat, save
+      it as a skill: a SKILL.md file in .claude/skills/<name>/. You run it with /name, or Claude uses
+      it when relevant. Custom commands have been merged into skills, so an older file in
+      .claude/commands/ still creates the same slash command. Arguments arrive through $ARGUMENTS, so
+      /fix-issue 123 turns "Fix GitHub issue $ARGUMENTS" into "Fix GitHub issue 123". Unlike CLAUDE.md
+      content, a skill's body loads only when it's used, so a long release procedure costs almost
+      nothing until you need it.
+    inNature: >-
+      A beehive's honeycomb. The capped cells show what is stored, and the hive reads that at a glance;
+      a cell is opened only when the colony needs what is inside.
+    whereItBreaks:
+      - "Any bee can open a capped cell. A skill with disable-model-invocation: true can be started only by you, which suits side effects like /deploy."
+      - "Honey is eaten once. A skill's rendered content enters the conversation as one message and stays across later turns, and Claude Code does not re-read the file, so write standing instructions rather than one-time steps."
+      - "A cell keeps all its honey. After compaction, Claude Code re-attaches the first 5,000 tokens of each invoked skill within a shared 25,000-token budget, so older skills can be dropped."
+    contrast: >-
+      CLAUDE.md holds facts Claude needs in every session; a skill holds a procedure Claude needs
+      sometimes. Both are read by the model, which decides what to do with them; a hook is configured
+      and Claude Code has to execute it.
+    diagram: claude-code-in-action.D2.S4.diagram-prompt-to-skill
+    sources:
+      - https://code.claude.com/docs/en/skills
+      - https://code.claude.com/docs/en/best-practices

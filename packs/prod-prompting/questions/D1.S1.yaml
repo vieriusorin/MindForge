@@ -1,0 +1,158 @@
+skill: D1.S1
+questions:
+  - id: prod-prompting.D1.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Before shipping a new system prompt, a junior developer wants a quick check that the instructions are clear enough. Which check does Anthropic's prompting guide suggest?"
+    select: 1
+    options:
+      - id: A
+        text: "Count the prompt's tokens and keep it under a fixed size, since shorter prompts are always clearer."
+        correct: false
+        rationale: "The guide never equates clarity with length; it asks for more precision and context, which often makes a prompt longer."
+      - id: B
+        text: "Show the prompt to a colleague with little context on the task; if they would be confused, Claude will be too."
+        correct: true
+        rationale: "This is the guide's key test: treat Claude like a brilliant new employee who lacks context on your norms, and explain precisely what you want."
+      - id: C
+        text: "Send the same prompt three times and check that the answers match word for word."
+        correct: false
+        rationale: "Identical outputs measure consistency, not whether the instructions say what you want; a vague prompt can be answered the same wrong way every time."
+      - id: D
+        text: "Rewrite every rule in capital letters so the model cannot miss the important parts."
+        correct: false
+        rationale: "The guide recommends being explicit and giving the reason behind a rule; shouting rules is not the clarity check it describes."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: prod-prompting.D1.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A prompt mixes task instructions, a pasted contract and two worked examples. Why does the prompting guide recommend wrapping each part in its own XML tag, such as <instructions>, <contract> and <example>?"
+    select: 1
+    options:
+      - id: A
+        text: "Claude only reads text that sits inside XML tags, so untagged text is ignored."
+        correct: false
+        rationale: "Untagged text is still read; tags help Claude tell the parts apart, they are not a filter."
+      - id: B
+        text: "The API rejects prompts over 20k tokens unless every section is wrapped in a tag."
+        correct: false
+        rationale: "No such API rule exists; tags are a prompting technique, not a request requirement."
+      - id: C
+        text: "Tagged sections are cached automatically, which lowers the cost of every request."
+        correct: false
+        rationale: "Caching is controlled by prompt caching settings, not by XML tags in the prompt text."
+      - id: D
+        text: "Tags let Claude tell instructions apart from context and inputs, which reduces misinterpretation; use consistent, descriptive tag names."
+        correct: true
+        rationale: "The guide says XML tags help Claude parse complex prompts that mix instructions, context, examples and variable inputs, and advises consistent, descriptive names, nested where content has a hierarchy."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: prod-prompting.D1.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A voice assistant's responses are read aloud by a text-to-speech engine. Its system prompt says only \"NEVER use ellipses\". Which rewrite does the prompting guide present as more effective?"
+    select: 1
+    options:
+      - id: A
+        text: "Explain the reason: the response is read aloud by a text-to-speech engine that cannot pronounce ellipses, so never use them."
+        correct: true
+        rationale: "The guide's own example: giving the motivation behind an instruction helps Claude understand the goal, and Claude generalizes from the explanation."
+      - id: B
+        text: "Repeat \"NEVER use ellipses\" three times in different parts of the prompt."
+        correct: false
+        rationale: "Repetition adds no information about why the rule exists, so Claude has nothing to generalize from."
+      - id: C
+        text: "Remove the rule and strip ellipses in post-processing, since prompts cannot control punctuation."
+        correct: false
+        rationale: "Post-processing can be a fallback, but the guide shows that adding context to the instruction itself is the more effective prompt."
+      - id: D
+        text: "Move the rule out of the system prompt and into a single example of a correct answer."
+        correct: false
+        rationale: "Examples steer format, but one example without the reason is a weaker signal than stating the rule with its motivation."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: prod-prompting.D1.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "An analyst sends about 60k tokens of annual reports plus a short question and instructions. Where should the reports go in the prompt?"
+    select: 1
+    options:
+      - id: A
+        text: "After the question, so Claude reads what it is looking for before it sees the data."
+        correct: false
+        rationale: "The guide recommends the opposite order: long data first, the query at the end."
+      - id: B
+        text: "In a separate request, with a second request asking the question about the first answer."
+        correct: false
+        rationale: "Splitting loses the documents from the context of the question; the guide's advice is about ordering within one prompt."
+      - id: C
+        text: "At the top, above the instructions and the question, each report in its own <document> tag with a <source>."
+        correct: true
+        rationale: "For 20k+ token inputs the guide says to put long documents near the top and the query at the end, which improved response quality by up to 30 percent in tests, and to wrap each document with its metadata in tags."
+      - id: D
+        text: "Anywhere, because position inside the prompt has no effect on response quality."
+        correct: false
+        rationale: "The guide reports a measurable effect of placement on long, multi-document inputs."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: prod-prompting.D1.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A team forces JSON output by prefilling the last assistant turn with \"{\". After moving to a Claude 4.6 or later model, these requests fail. What is happening, and what does the guide suggest instead?"
+    select: 1
+    options:
+      - id: A
+        text: "Prefill still works but is slower on new models; raise the request timeout."
+        correct: false
+        rationale: "The guide says requests with a prefilled last assistant turn return a 400 error on these models, so a timeout change cannot help."
+      - id: B
+        text: "The prefill is silently ignored, so add a stronger instruction to start with a brace."
+        correct: false
+        rationale: "It is not ignored: the request is rejected with a 400 error."
+      - id: C
+        text: "The prefill must move into the system prompt, where assistant text is still allowed."
+        correct: false
+        rationale: "The system prompt does not continue an assistant message; the guide's migration for formatting is structured outputs or direct instructions."
+      - id: D
+        text: "Prefilling the last assistant turn is no longer supported and returns a 400 error; use structured outputs or a direct format instruction."
+        correct: true
+        rationale: "From Claude 4.6 models on, prefill on the last assistant turn returns 400; for forcing JSON or classification the guide points to structured outputs or tools with an enum."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: prod-prompting.D1.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A report generator's system prompt is written in heavy markdown, with headings and bullets, and ends with \"Do not use markdown\". The reports still come back full of bullets. Which fix follows the guide?"
+    select: 1
+    options:
+      - id: A
+        text: "Say what you want instead (for example, flowing prose paragraphs) and remove markdown from the prompt itself, because prompt style influences output style."
+        correct: true
+        rationale: "The guide recommends telling Claude what to do rather than what not to do, and matching the prompt's style to the output you want; removing markdown from the prompt can reduce markdown in the output."
+      - id: B
+        text: "Write \"DO NOT USE MARKDOWN\" in capitals at the very start and the very end of the prompt."
+        correct: false
+        rationale: "It is still a negative instruction, and the markdown-heavy prompt keeps signalling the opposite style."
+      - id: C
+        text: "Raise effort so Claude spends more tokens obeying formatting rules."
+        correct: false
+        rationale: "Effort controls how much work Claude puts into a response; the guide's fix for format is the wording and style of the prompt."
+      - id: D
+        text: "Lower max_tokens so there is no room left for list formatting."
+        correct: false
+        rationale: "max_tokens only caps output length; it truncates answers instead of changing their format."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"

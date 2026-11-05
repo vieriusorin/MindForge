@@ -1,0 +1,51 @@
+skill: D4.S1
+diagrams:
+  - id: subagents.D4.S1.diagram-should-i-delegate
+    title: "Should this task go to a subagent?"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: T, label: "A task in your session" }
+      - { id: Q0, label: "A question about something already in the conversation?", shape: decision }
+      - { id: BTW, label: "/btw: no tool access, answer not added to history" }
+      - { id: Q1, label: "Needs frequent back-and-forth or iterative refinement?", shape: decision }
+      - { id: Q2, label: "Phases share significant context (plan, implement, test)?", shape: decision }
+      - { id: Q3, label: "Quick, targeted change, or latency matters (a non-fork subagent starts fresh)?", shape: decision }
+      - { id: MAIN, label: "Main conversation" }
+      - { id: Q4, label: "Verbose output you don't need in the main context?", shape: decision }
+      - { id: Q5, label: "Need specific tool restrictions or permissions?", shape: decision }
+      - { id: Q6, label: "Self-contained and can return a summary?", shape: decision }
+      - { id: Q7, label: "A reusable prompt or workflow for the main context?", shape: decision }
+      - { id: SKILL, label: "Skill: runs in the main conversation context" }
+      - { id: SUB, label: "Subagent: works in its own context, returns a summary" }
+      - { id: PAR, label: "Independent paths: parallel subagents, Claude synthesizes" }
+      - { id: CHAIN, label: "Multi-step: chain subagents, Claude passes context on" }
+      - { id: SESS, label: "Must keep running in parallel or won't fit one context window: separate sessions" }
+      - { id: COST, label: "Cost: each subagent spends its own tokens; detailed results still fill context" }
+    edges:
+      - { from: T, to: Q0 }
+      - { from: Q0, to: BTW, label: "yes" }
+      - { from: Q0, to: Q1, label: "no" }
+      - { from: Q1, to: MAIN, label: "yes" }
+      - { from: Q1, to: Q2, label: "no" }
+      - { from: Q2, to: MAIN, label: "yes" }
+      - { from: Q2, to: Q3, label: "no" }
+      - { from: Q3, to: MAIN, label: "yes" }
+      - { from: Q3, to: Q4, label: "no" }
+      - { from: Q4, to: SUB, label: "yes" }
+      - { from: Q4, to: Q5, label: "no" }
+      - { from: Q5, to: SUB, label: "yes" }
+      - { from: Q5, to: Q6, label: "no" }
+      - { from: Q6, to: SUB, label: "yes" }
+      - { from: Q6, to: Q7, label: "no" }
+      - { from: Q7, to: SKILL, label: "yes" }
+      - { from: Q7, to: MAIN, label: "no" }
+      - { from: SUB, to: PAR, label: "investigations independent" }
+      - { from: SUB, to: CHAIN, label: "each step needs the last" }
+      - { from: SUB, to: COST, label: "weigh" }
+      - { from: PAR, to: SESS, label: "too big for one context window" }
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/costs

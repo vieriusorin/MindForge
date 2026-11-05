@@ -1,0 +1,12 @@
+{
+  "ticket": "MF-0038",
+  "frozen_at": "2026-11-04T14:43:24Z",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0038-platform-foundations.acceptance.test.ts",
+      "sha256": "893b0db73326abbf914d14a3a48f246d00a1f931022fa6d7e7c3da66da4ef144",
+      "first_failure": "SC-1, SC-2: ENOENT packs/platform-foundations/pack.yaml; SC-3, SC-4, SC-7: ENOENT packs/platform-foundations/questions; SC-5, SC-6: ENOENT packs/platform-foundations/diagrams"
+    }
+  ],
+  "history": []
+}

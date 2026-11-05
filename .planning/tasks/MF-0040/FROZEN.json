@@ -1,0 +1,12 @@
+{
+  "ticket": "MF-0040",
+  "frozen_at": "2026-11-04T15:05:00Z",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0040-subagents.acceptance.test.ts",
+      "sha256": "3bc1a19d8c2a8ce0d6b4fbd59056184f7582090da1ced31b702d91f24d562cd1",
+      "first_failure": "SC-1, SC-2: ENOENT packs/subagents/pack.yaml; SC-3, SC-4, SC-7: ENOENT packs/subagents/questions; SC-5, SC-6: ENOENT packs/subagents/diagrams"
+    }
+  ],
+  "history": []
+}

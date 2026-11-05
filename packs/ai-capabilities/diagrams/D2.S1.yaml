@@ -1,0 +1,30 @@
+skill: D2.S1
+diagrams:
+  - id: ai-capabilities.D2.S1.diagram-generation-loop
+    title: "Generating a response, token by token"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: PROMPT, label: "Prompt (the context so far)" }
+      - { id: THINK, label: "Thinking on (set by you, or adaptive)?", shape: decision }
+      - { id: REASON, label: "Thinking tokens first (budget is a target, not a cap)" }
+      - { id: PRED, label: "Score likely next tokens from the context" }
+      - { id: PICK, label: "Pick one: low temperature = most probable, high = more varied" }
+      - { id: APPEND, label: "Append the token to the output" }
+      - { id: END, label: "Answer complete or max_tokens reached?", shape: decision }
+      - { id: DONE, label: "Return the response" }
+    edges:
+      - { from: PROMPT, to: THINK }
+      - { from: THINK, to: REASON, label: "yes" }
+      - { from: THINK, to: PRED, label: "no" }
+      - { from: REASON, to: PRED }
+      - { from: PRED, to: PICK }
+      - { from: PICK, to: APPEND }
+      - { from: APPEND, to: END }
+      - { from: END, to: PRED, label: "no, next token" }
+      - { from: END, to: DONE, label: "yes" }
+    sources:
+      - https://platform.claude.com/docs/en/about-claude/glossary
+      - https://platform.claude.com/docs/en/build-with-claude/extended-thinking

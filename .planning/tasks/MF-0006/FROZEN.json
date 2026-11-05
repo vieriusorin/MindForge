@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "src/engine/content/__tests__/mf-0006-content.acceptance.test.ts",
-      "sha256": "a0aad0e757cb53d97080dc9f57093449b56194274200fe97b7b7e7cc30703563",
+      "sha256": "447501a38a959dcf1d137c772f711bdc4e0a44178673a5b6563438b7f675a410",
       "first_failure": "SC-1..6, SC-8 (8/8): Error: not implemented (load-content.ts / hash.ts / review.ts stubs); same on 2nd run"
     }
   ],
@@ -22,6 +22,13 @@
       "previous": {
         "src/engine/content/__tests__/mf-0006-content.acceptance.test.ts": "b41e4f294c90621656fca73a3a344209e35facab8563588f3eba89b654eed347",
         "src/engine/content/__tests__/mf-0006-mermaid.acceptance.test.ts": "f4fe4fe812028e5f3861e5b1757ac4461fc0cdb7506eb4c9d22b7cf158005277"
+      }
+    },
+    {
+      "at": "2026-11-04T14:06:08Z",
+      "reason": "User decision 2026-11-04 (MF-0016 BUILD): the loader now returns a fourth kind, cuckoos. SC-6 sample-pack literal gains `cuckoos: []`; intent (the sample pack loads, empty) unchanged. No assertion added, removed or weakened.",
+      "files": {
+        "src/engine/content/__tests__/mf-0006-content.acceptance.test.ts": "447501a38a959dcf1d137c772f711bdc4e0a44178673a5b6563438b7f675a410"
       }
     }
   ]

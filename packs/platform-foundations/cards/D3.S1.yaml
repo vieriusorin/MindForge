@@ -1,0 +1,28 @@
+skill: D3.S1
+cards:
+  - id: platform-foundations.D3.S1.card-field-guide
+    concept: Skill loaded by progressive disclosure
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      A skill is a folder (a SKILL.md file plus optional scripts and reference files) that
+      teaches Claude a repeatable procedure. Claude keeps each skill's name and description in
+      view, reads the full instructions when a request matches, and opens extra files or runs
+      scripts as the task needs them.
+    inNature: >-
+      A ranger's pack of field guides. The ranger knows each guide's cover by heart, opens the
+      one for the bird in front of them, and turns to the appendix on nests once a nest
+      turns up. The rest of the guides stay shut in the pack and weigh nothing on the walk.
+    whereItBreaks:
+      - "A field guide describes; a skill can also bundle scripts that Claude runs, with the output coming back while the script's code stays out of context."
+      - "A guide from any shop is harmless paper; a skill from an unknown source can direct Claude to run code or call tools in ways its description doesn't mention, so audit it first."
+      - "A guide in the pack goes wherever the ranger goes; custom skills do not sync across surfaces, so one uploaded to claude.ai has to be uploaded separately to the API."
+    contrast: >-
+      A skill is a procedure that loads when a task matches. A project (D2.S2) gives static
+      background knowledge loaded whenever you start a chat in it; carrying context from one chat
+      to the next is memory (D3.S3).
+    diagram: platform-foundations.D3.S1.diagram-progressive-disclosure
+    sources:
+      - https://support.claude.com/en/articles/12512176-what-are-skills
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview

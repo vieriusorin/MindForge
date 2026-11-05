@@ -1,0 +1,110 @@
+# Introduction to Agent Skills (MF-0039)
+# A course pack. The course is behind a login and is never a source (CONTEXT.md Source): only its outline (the
+# six lesson titles) shaped this blueprint. Every skill is grounded in public pages only, and items follow today's
+# docs where the course has drifted (custom commands are now merged into skills; see the validation guide).
+# Weights are MindForge's; the course gives none. Items carry a `level`: foundation (junior), practitioner (mid),
+# expert (senior).
+slug: agent-skills
+name: Introduction to Agent Skills
+kind: course
+version: 1
+domains:
+  - code: D1
+    name: What skills are
+    weight: 12
+    skills:
+      - code: D1.S1
+        name: What a skill is, where it lives, when to write one
+        weight: 12
+        description: A skill as a folder with a SKILL.md that Claude uses when relevant or you invoke with /name; personal, project, plugin and enterprise locations; the signal that a skill is worth writing (instructions you keep repeating).
+        sources:
+          - https://code.claude.com/docs/en/skills
+          - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+          - https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills
+
+  - code: D2
+    name: Creating your first skill
+    weight: 22
+    skills:
+      - code: D2.S1
+        name: "Anatomy of SKILL.md: frontmatter, description, instructions"
+        weight: 11
+        description: The YAML frontmatter (name, description) and the markdown body, naming rules, and writing a description that says what the skill does and when to use it.
+        sources:
+          - https://code.claude.com/docs/en/skills
+          - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+          - https://agentskills.io/specification
+      - code: D2.S2
+        name: "Discovery and loading: metadata, match, body, files"
+        weight: 11
+        description: Progressive disclosure in three levels; only names and descriptions sit in context until a request matches, then the body loads, then supporting files only as needed.
+        sources:
+          - https://code.claude.com/docs/en/skills
+          - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+          - https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills
+
+  - code: D3
+    name: Configuration and multi-file skills
+    weight: 22
+    skills:
+      - code: D3.S1
+        name: "Frontmatter controls: invocation, tools, arguments, subagent"
+        weight: 11
+        description: disable-model-invocation and user-invocable, allowed-tools pre-approval, arguments and string substitutions, dynamic context injection, and running a skill in a subagent.
+        sources:
+          - https://code.claude.com/docs/en/skills
+      - code: D3.S2
+        name: "Multi-file skills: supporting files, scripts, progressive disclosure"
+        weight: 11
+        description: Keeping SKILL.md short and pointing to reference files and scripts, references one level deep, scripts executed rather than read, and the context cost of each choice.
+        sources:
+          - https://code.claude.com/docs/en/skills
+          - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+          - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+
+  - code: D4
+    name: Skills vs other Claude Code features
+    weight: 16
+    skills:
+      - code: D4.S1
+        name: "Choosing: CLAUDE.md, skills, subagents, hooks, MCP"
+        weight: 16
+        description: What each customization is for and when it loads or runs; always-on facts in CLAUDE.md, on-demand procedures in skills, isolated context in subagents, guaranteed actions in hooks, external tools and data through MCP.
+        sources:
+          - https://code.claude.com/docs/en/skills
+          - https://code.claude.com/docs/en/memory
+          - https://code.claude.com/docs/en/sub-agents
+          - https://code.claude.com/docs/en/hooks-guide
+          - https://code.claude.com/docs/en/mcp
+
+  - code: D5
+    name: Sharing skills
+    weight: 10
+    skills:
+      - code: D5.S1
+        name: "Scopes and distribution: project, plugin, managed; trusting others' skills"
+        weight: 10
+        description: Committing project skills, packaging skills in a plugin, deploying through managed settings, which location wins on a name clash, and auditing a third-party skill before using it.
+        sources:
+          - https://code.claude.com/docs/en/skills
+          - https://code.claude.com/docs/en/plugins
+          - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+
+  - code: D6
+    name: Troubleshooting skills
+    weight: 18
+    skills:
+      - code: D6.S1
+        name: "Not triggering, over-triggering, ignored, truncated"
+        weight: 9
+        description: Diagnosing a skill that never fires, fires too often, stops being followed, or has its description cut short, and the fix for each.
+        sources:
+          - https://code.claude.com/docs/en/skills
+          - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+      - code: D6.S2
+        name: "Evaluate and iterate: evals, conciseness, degrees of freedom"
+        weight: 9
+        description: Building evaluations before writing extensive documentation, keeping a skill concise, matching the degree of freedom to how fragile the task is, and testing across models.
+        sources:
+          - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+          - https://code.claude.com/docs/en/skills

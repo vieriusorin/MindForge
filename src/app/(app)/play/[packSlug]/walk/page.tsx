@@ -6,6 +6,7 @@ import { toPlayableQuestion } from "@/engine/questions";
 import { SeedPrimer } from "@/features/seed-planting/components/seed-primer";
 import { WalkSession } from "@/features/walk/components/walk-session";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getItemHashes } from "@/server/content/get-item-hashes";
 import { getPackContent } from "@/server/content/get-pack-content";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
@@ -24,13 +25,15 @@ async function WalkSlot({
     redirect(`/sign-in?next=${encodeURIComponent(`/play/${packSlug}/walk`)}`);
   if (!(await listPacks()).some((p) => p.slug === packSlug)) notFound();
 
-  const [pack, questions, attempts, review, content] = await Promise.all([
-    getPack(packSlug),
-    getPackQuestions(packSlug),
-    listMyAttempts(user.id, packSlug),
-    getReviewContext(user.id, packSlug),
-    getPackContent(packSlug),
-  ]);
+  const [pack, questions, hashes, attempts, review, content] =
+    await Promise.all([
+      getPack(packSlug),
+      getPackQuestions(packSlug),
+      getItemHashes(packSlug),
+      listMyAttempts(user.id, packSlug),
+      getReviewContext(user.id, packSlug),
+      getPackContent(packSlug),
+    ]);
   // MF-0007: memory replays the same countable attempts as the forest and the Today plan,
   // so the walk matches the count on the Today button.
   const plan = planWalk({
@@ -59,10 +62,18 @@ async function WalkSlot({
       </header>
       <WalkSession
         packSlug={packSlug}
-        steps={plan.items.map((item) => ({
-          question: toPlayableQuestion(item.question),
-          reason: item.reason,
-        }))}
+        // MF-0032: each question carries the version this page shows; the answer sends it back.
+        steps={plan.items.flatMap((item) => {
+          const hash = hashes[item.question.id];
+          return hash
+            ? [
+                {
+                  question: toPlayableQuestion(item.question, hash),
+                  reason: item.reason,
+                },
+              ]
+            : [];
+        })}
         skillNames={skillNames}
         todayHref="/today"
         duelHref={`/play/${packSlug}/duel`}

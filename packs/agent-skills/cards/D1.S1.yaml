@@ -1,0 +1,33 @@
+skill: D1.S1
+cards:
+  - id: agent-skills.D1.S1.card-cached-know-how
+    concept: A skill is a folder of know-how that Claude opens when the job calls for it
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      A skill is a folder with a SKILL.md file inside: a short description of when it applies, then
+      the instructions. Say you keep asking Claude to summarize your uncommitted changes and flag
+      risks. Save those instructions once in ~/.claude/skills/summarize-changes/SKILL.md, with a
+      description such as "Use when the user asks what changed". Now "What did I change?" lets Claude
+      load the skill by itself, and typing /summarize-changes runs it directly. Saved under your home
+      directory it follows you into every project on this machine; committed to a repository's
+      .claude/skills/ it reaches everyone who works there. The signal to write one: you keep pasting
+      the same instructions, checklist or procedure into chat.
+    inNature: >-
+      A squirrel's food caches. Instead of carrying every nut it owns, the squirrel buries them in
+      known spots around its territory and digs one up when it is hungry. The store stays out of the
+      way until the moment calls for it.
+    whereItBreaks:
+      - "A squirrel digs up a cache only when it decides to. A skill can be loaded by Claude when it is relevant, or by you, directly, by typing /skill-name."
+      - "A cache serves one squirrel. A project skill committed to the repository is shared with everyone who works there, and a plugin or managed settings can reach a whole team."
+      - "Buried nuts cost the squirrel nothing to keep. Every skill in the skill listing adds to Claude's context on every turn, whether or not Claude ever uses it."
+    contrast: >-
+      CLAUDE.md holds facts; a skill holds a procedure. The skills page draws the line this way:
+      when a section of CLAUDE.md has grown into a procedure rather than a fact, make it a skill,
+      because unlike CLAUDE.md content, a skill's body loads only when it is used.
+      Custom commands are not a separate mechanism any more: a file in .claude/commands/ and a skill
+      folder both create the same /name.
+    diagram: agent-skills.D1.S1.diagram-where-skills-load
+    sources:
+      - https://code.claude.com/docs/en/skills

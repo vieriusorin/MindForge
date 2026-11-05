@@ -1,0 +1,158 @@
+skill: D6.S1
+questions:
+  - id: agent-skills.D6.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You wrote a skill for summarizing pull requests, but when you ask \"what changed in this PR?\" Claude never uses it. What does the troubleshooting guide tell you to check first?"
+    select: 1
+    options:
+      - id: A
+        text: "Add disable-model-invocation: true so Claude is told to load the skill on its own."
+        correct: false
+        rationale: "That field does the opposite: with `disable-model-invocation: true` Claude can't invoke the skill on its own. It is the fix for a skill that triggers too often."
+      - id: B
+        text: "Whether the description holds the words people would naturally use in a request."
+        correct: true
+        rationale: "The first step for a skill that isn't triggering is to check that the description includes keywords users would naturally say. Claude matches requests against the description."
+      - id: C
+        text: "Move the skill's instructions into a hook so they run whatever Claude decides."
+        correct: false
+        rationale: "Moving a rule into a hook is the fix when Claude skips a rule that must hold every time, after it has already followed the skill. It doesn't help Claude find the skill."
+      - id: D
+        text: "Invoke the skill again after the conversation compacts, to restore its content."
+        correct: false
+        rationale: "Re-invoking restores a skill's content after compaction. Here the skill never loaded in the first place."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D6.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your skill \"Helps with code\" loads on almost every request, even ones that have nothing to do with what it is for. What is the documented fix?"
+    select: 1
+    options:
+      - id: A
+        text: "Add more keywords to the description so it covers more kinds of request."
+        correct: false
+        rationale: "More keywords widen the match. For a skill that triggers too often, the page says to make the description more specific."
+      - id: B
+        text: "Set user-invocable: false so that only Claude can decide when to load it."
+        correct: false
+        rationale: "`user-invocable: false` stops you from invoking the skill, not Claude. Its description stays in context, so the over-matching continues."
+      - id: C
+        text: "Rename the skill's folder so its command name is harder for Claude to guess."
+        correct: false
+        rationale: "The page says the description helps Claude decide when to load the skill, and its first fix is to check that the description includes keywords users would naturally say. Renaming the folder adds none of them."
+      - id: D
+        text: "Make the description more specific about what it does and when it applies."
+        correct: true
+        rationale: "The first fix listed for a skill that triggers too often is to make the description more specific. If you only want manual invocation, add `disable-model-invocation: true`."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D6.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A teammate's skill says \"Run the tests.\" Claude runs them after its first edit, then skips them on later edits in the same session. The skill is still loaded. Which change fixes this?"
+    select: 1
+    options:
+      - id: A
+        text: "Reword it as a standing rule for the task: \"Run the tests after every edit.\""
+        correct: true
+        rationale: "Claude Code adds the skill's content to the conversation when it is invoked and doesn't re-read the file on later turns. Guidance applied with judgment should be worded for the whole task."
+      - id: B
+        text: "Set user-invocable: false so that Claude treats the skill as background knowledge."
+        correct: false
+        rationale: "`user-invocable: false` only stops users from invoking the skill. It doesn't change how Claude applies the instructions once they're loaded."
+      - id: C
+        text: "Raise skillListingBudgetFraction so the skill's description is no longer cut."
+        correct: false
+        rationale: "`skillListingBudgetFraction` raises the budget for the listing of descriptions. That fixes skills that fail to match, not one that was invoked and then dropped."
+      - id: D
+        text: "Run claude plugin validate on the skills directory to find a broken frontmatter."
+        correct: false
+        rationale: "`claude plugin validate` finds `SKILL.md` files whose frontmatter doesn't parse. Malformed frontmatter still loads the body, so `/skill-name` works but Claude can't match the `description`. That is a different symptom: here the skill was matched and followed, then dropped on later turns."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D6.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "In a long session the conversation was compacted. Since then Claude follows the opening steps of your long skill but ignores the steps near the end. What should you do?"
+    select: 1
+    options:
+      - id: A
+        text: "Set the skill to \"name-only\" in skillOverrides so it takes up less of the context."
+        correct: false
+        rationale: "`\"name-only\"` lists a skill without its description to free listing budget. It doesn't bring back skill content lost in compaction."
+      - id: B
+        text: "Delete the skill folder and create it again so Claude Code reloads it from disk."
+        correct: false
+        rationale: "Deleting a personal or project skill's folder removes it. The documented fix after compaction is to invoke the skill again."
+      - id: C
+        text: "Invoke the skill again, and move its most important instructions near the top."
+        correct: true
+        rationale: "After compaction Claude Code can keep only the start of an invoked skill. Invoking it again restores the full content, and the key instructions belong near the top of `SKILL.md`."
+      - id: D
+        text: "Add disable-model-invocation: true so only you can load the skill from now on."
+        correct: false
+        rationale: "That field stops Claude invoking the skill on its own. It doesn't change how much of an invoked skill survives compaction."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D6.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your team now has many skills, several from plugins. Skills with good descriptions have started failing to match, and /doctor shows a large skill listing. Which response treats the cause?"
+    select: 1
+    options:
+      - id: A
+        text: "Lengthen the descriptions of the skills that fail, so each one carries more keywords."
+        correct: false
+        rationale: "Longer text makes the listing overflow sooner, and each entry's combined text is capped at 1,536 characters regardless of budget. The page says to trim and put the key use case first."
+      - id: B
+        text: "Add disable-model-invocation: true to the failing skills to take them out of the listing."
+        correct: false
+        rationale: "With `disable-model-invocation: true` the description isn't in context and Claude can't invoke the skill on its own, so they would stop matching entirely."
+      - id: C
+        text: "Move each description into the SKILL.md body, which only loads once the skill matches."
+        correct: false
+        rationale: "Claude matches requests against the listing of names and descriptions. Text in the body isn't seen until the skill is invoked, so it can't help it match."
+      - id: D
+        text: "Put the key use case first, list rare skills as name-only, or raise the listing budget."
+        correct: true
+        rationale: "Over budget, Claude Code drops descriptions, starting with the least-invoked skills. The fixes: key use case first, `\"name-only\"` in `skillOverrides`, or a higher `skillListingBudgetFraction`; `/skill-doctor` finds skills to turn off."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D6.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your release skill includes a rule that must hold every time: format the code before any file is edited. Claude follows it most of the time but occasionally skips it late in a session. What is the most reliable fix?"
+    select: 1
+    options:
+      - id: A
+        text: "Rewrite the rule in capitals with MUST, so that Claude weighs it more heavily."
+        correct: false
+        rationale: "Stronger wording still depends on Claude choosing to follow the text. For a rule that must hold every time, the page says to move it into a hook."
+      - id: B
+        text: "Define it as a hook in the skill's hooks frontmatter, so it runs on the event."
+        correct: true
+        rationale: "Claude Code runs a hook every time its event occurs, whether or not Claude is following the skill. Defined in the skill's `hooks` frontmatter, it applies from invocation until the session ends."
+      - id: C
+        text: "Copy the rule into the description so it stays in Claude's context on every turn."
+        correct: false
+        rationale: "The description helps Claude decide when to load the skill. Putting the rule there still leaves it to Claude's judgment rather than guaranteeing it."
+      - id: D
+        text: "Ask Claude to invoke the skill again on each turn, to refresh the rule in context."
+        correct: false
+        rationale: "When Claude re-invokes a skill with identical rendered content, Claude Code adds only a short note that it is already loaded, so nothing new reaches the context."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"

@@ -1,0 +1,34 @@
+skill: D3.S2
+diagrams:
+  - id: agent-skills.D3.S2.diagram-what-loads-when
+    title: "What a multi-file skill puts in context, and when"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: START, label: "Session starts" }
+      - { id: L1, label: "Level 1: name and description of every skill loaded into the system prompt" }
+      - { id: Q, label: "Does the request match a skill's description?", shape: decision }
+      - { id: NONE, label: "No match: body and bundled files stay on the filesystem, using no context" }
+      - { id: L2, label: "Level 2: Claude reads SKILL.md with bash; its body enters context" }
+      - { id: Q2, label: "What does this task need from the files SKILL.md points to?", shape: decision }
+      - { id: REF, label: "Reference file (e.g. reference/sales.md): read into context" }
+      - { id: SCR, label: "Script (e.g. scripts/validate.py): run through bash; only its output enters context" }
+      - { id: SKIP, label: "Files the task doesn't need: never read, zero tokens" }
+      - { id: DONE, label: "Claude completes the task" }
+    edges:
+      - { from: START, to: L1 }
+      - { from: L1, to: Q }
+      - { from: Q, to: NONE, label: "no" }
+      - { from: Q, to: L2, label: "yes" }
+      - { from: L2, to: Q2 }
+      - { from: Q2, to: REF, label: "detail to look up" }
+      - { from: Q2, to: SCR, label: "an operation to run" }
+      - { from: Q2, to: SKIP, label: "not relevant" }
+      - { from: REF, to: DONE }
+      - { from: SCR, to: DONE, label: "output only" }
+      - { from: SKIP, to: DONE, label: "left on disk" }
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices

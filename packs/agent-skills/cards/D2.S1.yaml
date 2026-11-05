@@ -1,0 +1,33 @@
+skill: D2.S1
+cards:
+  - id: agent-skills.D2.S1.card-petals-and-nectar
+    concept: "SKILL.md: frontmatter that says when, a body that says how"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      A SKILL.md has two parts. At the top, YAML frontmatter between --- markers: a name (the
+      command you type) and a description of what the skill does and when to use it. Below it, the
+      markdown body: the steps Claude follows once the skill runs. For a commit-message skill the
+      frontmatter might read "name: commit-helper" and "description: Generates commit messages from
+      git diffs. Use when the user asks for a commit message." The body then says how to read the
+      diff and what format to write. The description decides whether the skill is picked; the body
+      decides what happens next.
+    inNature: >-
+      A flower. Its petals advertise to passing bees what it has to offer; the nectar sits deeper
+      inside and is reached only once a bee has chosen to land. Bright, clear petals bring the right
+      visitors; dull ones are flown past.
+    whereItBreaks:
+      - "A flower's petals are fixed by its species. A description is text you write, and the guide asks for it in third person, because it is injected into the system prompt."
+      - "A flower needs no name. Under the Agent Skills spec, name is required, uses lowercase letters, numbers and hyphens, and must match the parent directory name."
+      - "Petals draw any insect that sees them. A description works by matching: the guide asks for specific key terms, since Claude may be choosing among 100+ available skills."
+    contrast: >-
+      The description is not the instructions. The guide puts it this way: the description gives
+      Claude enough to decide when to select the skill, while the rest of SKILL.md provides the
+      implementation details. Keep the description to what the skill does and when to use it, with the key use case first;
+      the steps belong in the body.
+    diagram: agent-skills.D2.S1.diagram-anatomy
+    sources:
+      - https://code.claude.com/docs/en/skills
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+      - https://agentskills.io/specification

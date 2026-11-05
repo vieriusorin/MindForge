@@ -1,4 +1,4 @@
-import type { GeneratedBy, Origin } from "../content/types";
+import type { GeneratedBy, ItemLevel, Origin } from "../content/types";
 
 export interface QuestionOption {
   id: string;
@@ -15,6 +15,7 @@ export interface Question {
   author?: string;
   /** MF-0008: model + prompt version of an `ai` item, written by the pipeline. Never sent to the browser. */
   generatedBy?: GeneratedBy;
+  level?: ItemLevel;
   stem: string;
   select: number;
   options: QuestionOption[];
@@ -30,6 +31,8 @@ export interface PlayableQuestion {
   select: number;
   options: { id: string; text: string }[];
   source: { title: string; url: string };
+  /** MF-0032: the deployed file's hash of this question; the answer sends it back (version read). */
+  contentHash: string;
 }
 
 /** Revealed only after the database graded the answer: the key and every option's rationale. */

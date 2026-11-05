@@ -1,0 +1,31 @@
+skill: D2.S2
+diagrams:
+  - id: claude-code-in-action.D2.S2.diagram-permission-modes
+    title: "Shift+Tab: cycling the permission modes"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: LR
+    nodes:
+      - { id: START, label: "Session starts in a mode: defaultMode setting or --permission-mode" }
+      - { id: MANUAL, label: "default (Manual): asks on first use of each tool" }
+      - { id: ACCEPT, label: "acceptEdits: file edits and mkdir, mv without asking" }
+      - { id: PLAN, label: "plan: reads and proposes, no edits to source files" }
+      - { id: AVAIL, label: "bypassPermissions or auto available?", shape: decision }
+      - { id: BYPASS, label: "bypassPermissions: skips prompts (isolated containers or VMs only)" }
+      - { id: AUTO, label: "auto: a background classifier checks actions" }
+    edges:
+      - { from: START, to: MANUAL, label: "defaultMode: default" }
+      - { from: START, to: PLAN, label: "--permission-mode plan" }
+      - { from: MANUAL, to: ACCEPT, label: "Shift+Tab" }
+      - { from: ACCEPT, to: PLAN, label: "Shift+Tab" }
+      - { from: PLAN, to: AVAIL, label: "Shift+Tab" }
+      - { from: AVAIL, to: BYPASS, label: "bypassPermissions available" }
+      - { from: AVAIL, to: AUTO, label: "only auto available" }
+      - { from: AVAIL, to: MANUAL, label: "neither" }
+      - { from: BYPASS, to: AUTO, label: "Shift+Tab, when auto is available" }
+      - { from: BYPASS, to: MANUAL, label: "Shift+Tab, when auto is not available" }
+      - { from: AUTO, to: MANUAL, label: "Shift+Tab: from auto, back to default" }
+    sources:
+      - https://code.claude.com/docs/en/interactive-mode
+      - https://code.claude.com/docs/en/permissions

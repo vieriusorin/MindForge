@@ -282,6 +282,19 @@ export function planReviews({
   return out;
 }
 
+/** MF-0034: how many of a pack's skills "you" practise (at most the MF-0029 cap), so a fifth stay seeds on Today. */
+export function youSkillLimit(skillCount: number): number {
+  return Math.min(
+    PERSONA_HABITS.you.skillLimit,
+    skillCount - Math.ceil(skillCount / 5),
+  );
+}
+
+/** MF-0034: one demo group per pack, told apart by the pack's name. */
+export function demoGroupName(packName: string): string {
+  return `Demo study group · ${packName}`;
+}
+
 /**
  * MF-0029 SC-2, SC-3: the deterministic demo world for `now` and `seed`: five demo learners and you,
  * their answers over the last three weeks, the demo group and a few reviews. Pure: same inputs, same world.
@@ -290,6 +303,7 @@ export function planDemoWorld({
   now,
   seed,
   packSlug,
+  groupName = "Demo study group",
   youEmail,
   demoDomain,
   questions,
@@ -299,6 +313,8 @@ export function planDemoWorld({
   now: Date;
   seed: number;
   packSlug: string;
+  /** MF-0034: absent = "Demo study group" (MF-0029). */
+  groupName?: string;
   youEmail: string;
   demoDomain: string;
   questions: SeedQuestion[];
@@ -323,7 +339,10 @@ export function planDemoWorld({
   const attempts = learners.flatMap((learner) =>
     planAttempts({
       learner,
-      habit: PERSONA_HABITS[learner.persona],
+      habit:
+        learner.persona === "you"
+          ? { ...PERSONA_HABITS.you, skillLimit: youSkillLimit(skills.length) }
+          : PERSONA_HABITS[learner.persona],
       now,
       random,
       bySkill,
@@ -335,7 +354,7 @@ export function planDemoWorld({
   if (!steady) throw new Error("planDemoWorld: no demo learner");
   return {
     learners,
-    group: { name: "Demo study group", packSlug, createdByEmail: steady.email },
+    group: { name: groupName, packSlug, createdByEmail: steady.email },
     attempts,
     reviews: planReviews({
       now,

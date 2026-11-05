@@ -1,0 +1,158 @@
+skill: D4.S1
+questions:
+  - id: platform-foundations.D4.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A support team wants to sort incoming tickets by product area and route each one to the right queue, at high volume and with the lowest latency it can get. In the models overview table, which model is described for exactly this kind of work?"
+    select: 1
+    options:
+      - id: A
+        text: "Claude Fable 5.1, described for demanding reasoning and long-horizon agentic work."
+        correct: false
+        rationale: "The overview describes Fable 5.1 for demanding reasoning and long-horizon agentic work and rates its comparative latency as Slower, the opposite of a fast routing job."
+      - id: B
+        text: "Claude Haiku 5.5, described for high-volume, latency-sensitive classification and routing."
+        correct: true
+        rationale: "The overview's description row says Haiku 5.5 is for high-volume, latency-sensitive tasks such as classification, extraction, and routing, and rates its latency Fastest."
+      - id: C
+        text: "Claude Opus 5.5, described for long-running agentic coding and knowledge work."
+        correct: false
+        rationale: "Opus 5.5 is described for long-running agentic coding and knowledge work, with Moderate latency; ticket routing is not the workload the table names for it."
+      - id: D
+        text: "Claude Sonnet 5.5, described as the fastest model in the lineup for high-volume routing."
+        correct: false
+        rationale: "The overview calls Sonnet 5.5 the best combination of speed and intelligence and rates it Fast, not Fastest; Fastest is Haiku 5.5."
+    source:
+      title: "Models overview"
+      url: "https://platform.claude.com/docs/en/models/overview"
+  - id: platform-foundations.D4.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Before comparing models for a new feature, a junior developer asks what to pin down first. Which set of key criteria does Anthropic's choosing-a-model guide list?"
+    select: 1
+    options:
+      - id: A
+        text: "Release date, parameter count and the size of the training data."
+        correct: false
+        rationale: "The guide's key criteria do not mention release dates, parameter counts or training-data size; it asks what the application needs."
+      - id: B
+        text: "Benchmark leaderboard rank, the model's popularity and its name."
+        correct: false
+        rationale: "The guide asks you to build benchmark tests for your own use case, not to rank models by public leaderboards or popularity."
+      - id: C
+        text: "Context window size alone, because a bigger window means better answers."
+        correct: false
+        rationale: "Context window size is not one of the guide's criteria; the criteria are capabilities, speed, cost and effort."
+      - id: D
+        text: "Capabilities, speed, cost, and effort, which trades intelligence for latency and cost."
+        correct: true
+        rationale: "The guide's key criteria are capabilities, speed, cost and effort, where the effort parameter trades intelligence for latency and cost within a single model."
+    source:
+      title: "Choosing the right model"
+      url: "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model"
+  - id: platform-foundations.D4.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A two-person team is prototyping an internal tool that tags commit messages. It must answer quickly and the budget is tight. Which starting approach does the choosing-a-model guide describe as best for this case?"
+    select: 1
+    options:
+      - id: A
+        text: "Start efficiency-first with Claude Haiku 5.5, test it, and upgrade if needed."
+        correct: true
+        rationale: "The guide's efficiency-first option starts with Haiku 5.5, tests the use case and upgrades only if necessary; it lists prototyping, tight latency and cost-sensitive work as its best fit."
+      - id: B
+        text: "Start capability-first with Claude Opus 5.5 because prototypes need the most care."
+        correct: false
+        rationale: "The guide reserves capability-first for complex tasks where intelligence is paramount, such as complex reasoning; prototyping and tight latency are listed under efficiency-first."
+      - id: C
+        text: "Start with whichever model has the largest context window, then tune prompts."
+        correct: false
+        rationale: "Context window size is not how the guide picks a starting model; it starts from the efficiency-first or capability-first approach."
+      - id: D
+        text: "Ship the cheapest model with no tests, since prototypes are thrown away."
+        correct: false
+        rationale: "Efficiency-first still says to test the use case thoroughly and check performance against your requirements before going further."
+    source:
+      title: "Choosing the right model"
+      url: "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model"
+  - id: platform-foundations.D4.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A code-review agent on Claude Opus 5.5 gives answers the team is happy with, but each review is slower and costs more than they planned. What does the choosing-a-model guide suggest trying first?"
+    select: 1
+    options:
+      - id: A
+        text: "Switch to Claude Haiku 5.5 at once and skip evals, since cheaper models match."
+        correct: false
+        rationale: "The guide's step for changing models is to compare them on your own benchmark tests first; it calls a good evaluation set the most important step."
+      - id: B
+        text: "Move up to Claude Fable 5.1, because a more capable model finishes reviews faster."
+        correct: false
+        rationale: "The guide points to Fable 5.1 when evals at xhigh or max effort still fall short on demanding reasoning; this team's problem is speed and cost, not capability."
+      - id: C
+        text: "Lower the effort parameter on the same model and re-check the results with evals."
+        correct: true
+        rationale: "The guide says effort trades intelligence for latency and cost within a single model, that tuning effort is often a better lever than switching models, and to adjust it based on your evals."
+      - id: D
+        text: "Turn on fast mode, which the guide describes as a lower-priced setting."
+        correct: false
+        rationale: "The guide says fast mode delivers higher output speed at premium pricing, so it raises cost rather than lowering it."
+    source:
+      title: "Choosing the right model"
+      url: "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model"
+  - id: platform-foundations.D4.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A nightly API job summarizes tens of thousands of release notes. Results are needed by morning, and every request repeats the same long system prompt. Which plan does the pricing page support?"
+    select: 1
+    options:
+      - id: A
+        text: "Run it in fast mode through the Batch API so the whole batch finishes well before morning."
+        correct: false
+        rationale: "The pricing page states that fast mode is not available with the Batch API."
+      - id: B
+        text: "Pick either batching or prompt caching, because the two discounts cannot stack."
+        correct: false
+        rationale: "The pricing FAQ says Batch API and prompt caching discounts can be combined, and the caching multipliers stack with the Batch API discount."
+      - id: C
+        text: "Send it through the Batch API at a 50 percent discount and cache the repeated prompt."
+        correct: true
+        rationale: "The Batch API gives a 50 percent discount on input and output tokens for asynchronous work, and the page says batch and prompt caching discounts can be combined."
+      - id: D
+        text: "Pack all notes into one Haiku 5.5 prompt, since long prompts cost the same per token."
+        correct: false
+        rationale: "Haiku 5.5 is priced by prompt length: a request whose prompt is over 100,000 tokens pays higher prices."
+    source:
+      title: "Pricing"
+      url: "https://platform.claude.com/docs/en/about-claude/pricing"
+  - id: platform-foundations.D4.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A coding agent spends most of its tokens on routine file reads and small edits, but now and then must make a hard design call. Moving it to the API, the team wants to keep cost down without losing quality on those calls. Which pattern does the choosing-a-model guide describe?"
+    select: 1
+    options:
+      - id: A
+        text: "A lower-cost executor that escalates hard decisions to a frontier advisor model."
+        correct: true
+        rationale: "The guide's multi-model strategies pair a lower-cost model with a frontier model so most tokens are billed at the lower rate; one pattern is an executor that escalates hard decisions to an advisor."
+      - id: B
+        text: "Run everything on the frontier model, since one request cannot mix model tiers."
+        correct: false
+        rationale: "The guide describes combining models precisely so that most tokens are billed at the lower rate instead of the frontier rate."
+      - id: C
+        text: "Let the lower-cost model take the hard calls and the frontier model do bulk work."
+        correct: false
+        rationale: "This inverts the guide's patterns: the frontier model advises on hard decisions or orchestrates, and the lower-cost workers take the bulk work."
+      - id: D
+        text: "Alternate the two models on each request so the average price lands in between."
+        correct: false
+        rationale: "The guide's two patterns route work by difficulty (escalate to an advisor, delegate to workers), not by alternating requests."
+    source:
+      title: "Choosing the right model"
+      url: "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model"

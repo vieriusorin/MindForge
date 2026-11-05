@@ -1,0 +1,158 @@
+skill: D3.S2
+questions:
+  - id: subagents.D3.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You want a `code-reviewer` subagent that reads code and runs `git diff` but cannot edit or write files. Which frontmatter line does that?"
+    select: 1
+    options:
+      - id: A
+        text: "`model: inherit`, so the reviewer runs on the same model as the main conversation."
+        correct: false
+        rationale: "`model` chooses the model the subagent runs on; it has no effect on which tools the subagent can use."
+      - id: B
+        text: "`permissionMode` set to `acceptEdits`, so every edit the reviewer makes is checked first."
+        correct: false
+        rationale: "`acceptEdits` auto-accepts file edits; it is the opposite of a reviewer that cannot edit."
+      - id: C
+        text: "`tools: Read, Grep, Glob, Bash`, an allowlist that leaves out Edit and Write."
+        correct: true
+        rationale: "The page's code reviewer example uses `tools: Read, Grep, Glob, Bash`, a focused subagent with limited tool access that excludes Edit and Write."
+      - id: D
+        text: "A `description` that says \"Reviews code and does not edit files\", so it knows not to edit."
+        correct: false
+        rationale: "The description tells Claude when to delegate to the subagent; restricting tools is done with the `tools` or `disallowedTools` field."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D3.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your subagent file has neither a `tools` nor a `disallowedTools` field. Which tools does the subagent get?"
+    select: 1
+    options:
+      - id: A
+        text: "No tools at all, until you list each tool it is allowed to use in the `tools` field."
+        correct: false
+        rationale: "Subagents inherit the built-in and MCP tools of the main conversation; `tools` narrows that set, it is not required to grant it."
+      - id: B
+        text: "Only Read, Grep and Glob, the read-only set that Claude Code gives every subagent by default."
+        correct: false
+        rationale: "Read, Grep and Glob is an allowlist you can choose; by default the subagent inherits the main conversation's tools, narrowed by two filters."
+      - id: C
+        text: "Exactly the main conversation's tools, including AskUserQuestion and EnterPlanMode."
+        correct: false
+        rationale: "The first filter removes a short list of tools from every subagent, and that list includes `AskUserQuestion` and `EnterPlanMode`."
+      - id: D
+        text: "The main conversation's built-in and MCP tools, narrowed by the subagent tool filters."
+        correct: true
+        rationale: "Subagents inherit the built-in tools and MCP tools available in the main conversation, narrowed by two filters: one removes a short list of tools from every subagent, the other reduces built-in tools for background subagents."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D3.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A teammate's subagent file sets `tools` to Read, Grep, Bash and `disallowedTools` to Bash. Which tools does the subagent end up with?"
+    select: 1
+    options:
+      - id: A
+        text: "Read and Grep: `disallowedTools` is applied first; a tool in both fields is removed."
+        correct: true
+        rationale: "If both are set, `disallowedTools` is applied first, then `tools` is resolved against the remaining pool; a tool listed in both is removed."
+      - id: B
+        text: "Read, Grep and Bash: the `tools` allowlist wins whenever the two fields name the same tool."
+        correct: false
+        rationale: "The order is the other way round: `disallowedTools` is applied first, so Bash is no longer in the pool when `tools` is resolved."
+      - id: C
+        text: "None: Claude Code refuses to load a file in which the two fields contradict each other."
+        correct: false
+        rationale: "The page gives a rule for both fields set at once (`disallowedTools` first, then `tools`), so the file loads; Read and Grep remain."
+      - id: D
+        text: "Every inherited tool except Bash, because a denylist overrides the allowlist completely."
+        correct: false
+        rationale: "After `disallowedTools` removes Bash, `tools` still limits the result to the tools it lists, so only Read and Grep remain."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D3.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your release-helper subagent needs Bash to run the test suite, but it must not run `git push`. What does the subagents page recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Add `Bash(git push *)` to the subagent's `disallowedTools`, so only that one command is taken away."
+        correct: false
+        rationale: "A `disallowedTools` entry with a specifier such as `Bash(git push *)` still removes the whole tool from the subagent, so it could not run the tests either."
+      - id: B
+        text: "Add a Bash deny rule such as `Bash(git push *)` to `permissions.deny` in your settings."
+        correct: true
+        rationale: "To keep Bash and block specific commands, the page says to add a Bash deny rule such as `Bash(git push *)` to `permissions.deny`; the rule applies to the main conversation and to subagents."
+      - id: C
+        text: "Set `permissionMode` to `plan`, so the subagent can still run tests but cannot change the remote."
+        correct: false
+        rationale: "`plan` is plan mode (read-only exploration); it is not a rule that blocks one command while letting the subagent work normally."
+      - id: D
+        text: "Write \"do not push\" in the `description`, which Claude Code reads before every Bash call."
+        correct: false
+        rationale: "The description is what Claude uses to decide when to delegate; it does not block any tool call."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D3.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You need a `db-reader` subagent that runs SQL through Bash but may only execute SELECT statements. A tool list cannot tell a SELECT from an UPDATE. Which design does the subagents page show?"
+    select: 1
+    options:
+      - id: A
+        text: "`disallowedTools` entries for each write statement, such as Bash with an UPDATE or DELETE specifier."
+        correct: false
+        rationale: "A `disallowedTools` entry with a specifier removes the whole Bash tool, so the subagent could not run SELECT queries either."
+      - id: B
+        text: "`permissionMode` set to `dontAsk`, so any statement that would need approval is denied without asking."
+        correct: false
+        rationale: "`dontAsk` auto-denies calls that would prompt, while explicitly allowed tools still work; it does not inspect the SQL a Bash command runs."
+      - id: C
+        text: "A `Stop` hook in the frontmatter that undoes any write statement once the subagent finishes."
+        correct: false
+        rationale: "`Stop` fires when the subagent finishes (converted to `SubagentStop`), after the commands have run; the page validates before each command with `PreToolUse`."
+      - id: D
+        text: "`tools: Bash` plus a `PreToolUse` hook on Bash whose script exits with code 2 to block write statements."
+        correct: true
+        rationale: "The page's `db-reader` example sets `tools: Bash` and a `PreToolUse` hook matched on Bash; the validation script exits with code 2 to block write operations, finer control than the `tools` field provides."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D3.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "With the Agent SDK you define a `doc-reviewer` subagent that must examine files but neither modify them nor execute commands. What do you put in the `tools` field of its `AgentDefinition`?"
+    select: 1
+    options:
+      - id: A
+        text: "Leave `tools` out: an SDK subagent starts with read access only until you grant more."
+        correct: false
+        rationale: "If `tools` is omitted, the subagent inherits every tool available to subagents, which is the \"Full access\" row of the SDK page's table."
+      - id: B
+        text: "`Read`, `Grep` and `Glob`: the SDK page's read-only analysis combination."
+        correct: true
+        rationale: "The SDK page's common tool combinations list Read-only analysis as `Read`, `Grep`, `Glob`: can examine code but not modify or execute."
+      - id: C
+        text: "`Bash`, `Read` and `Grep`: Bash is only used to list files, so this is read-only."
+        correct: false
+        rationale: "`Bash`, `Read`, `Grep` is the Test execution combination: it can run commands, which this subagent must not do."
+      - id: D
+        text: "`Read`, `Edit`, `Write`, `Grep` and `Glob`, with a prompt that tells it not to edit."
+        correct: false
+        rationale: "That is the Code modification combination, full read/write access; the SDK page uses `tools` to restrict what a subagent can do, rather than relying on its prompt."
+    source:
+      title: "Subagents in the SDK"
+      url: "https://code.claude.com/docs/en/agent-sdk/subagents"

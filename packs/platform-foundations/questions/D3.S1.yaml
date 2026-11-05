@@ -1,0 +1,158 @@
+skill: D3.S1
+questions:
+  - id: platform-foundations.D3.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A new teammate asks what a \"skill\" actually is in Claude. Which description matches the Help Center's definition?"
+    select: 1
+    options:
+      - id: A
+        text: "A connection to an outside service, such as a ticket tracker, that gives Claude new tools and data to reach."
+        correct: false
+        rationale: "That describes MCP, which the page says connects Claude to external services and data sources; skills provide procedural knowledge instead."
+      - id: B
+        text: "A folder of instructions, scripts and resources that Claude loads when relevant, so a task is done one way."
+        correct: true
+        rationale: "The page defines skills as folders of instructions, scripts, and resources that Claude loads dynamically, teaching it to complete specific tasks in a repeatable way."
+      - id: C
+        text: "Background knowledge that is loaded at the start of each chat in a workspace, whether or not the task needs it."
+        correct: false
+        rationale: "That is how the page describes projects: static background knowledge loaded when you start chats in them. Skills activate dynamically when needed."
+      - id: D
+        text: "A personal preference, such as tone or language, that Claude applies broadly to your conversations."
+        correct: false
+        rationale: "The page contrasts this with custom instructions, which apply broadly to your conversations; skills are task-specific and load when relevant."
+    source:
+      title: "What are skills?"
+      url: "https://support.claude.com/en/articles/12512176-what-are-skills"
+  - id: platform-foundations.D3.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your team has enabled a dozen skills. A colleague worries that they will crowd Claude's context window on an unrelated request. What does the Help Center say about how skills are loaded?"
+    select: 1
+    options:
+      - id: A
+        text: "Skills run when you type the skill's name in your prompt, so the ones you don't name are not read."
+        correct: false
+        rationale: "The page says Claude reviews available skills and loads relevant ones when you ask for a task, and invokes Anthropic skills automatically when relevant; naming them is not the trigger."
+      - id: B
+        text: "Each skill is loaded in full into each chat, and Claude ignores whichever parts the request does not need."
+        correct: false
+        rationale: "The page says skills load dynamically, through progressive disclosure, precisely to help prevent context window overload."
+      - id: C
+        text: "Skills sit in a project's knowledge base, so they load inside that project and stay out of other chats."
+        correct: false
+        rationale: "The page contrasts skills with projects: skills activate dynamically when needed and work everywhere across Claude, not inside one project."
+      - id: D
+        text: "Claude works out which skills are relevant and loads just the information it needs for the task at hand."
+        correct: true
+        rationale: "This is progressive disclosure as the page describes it: Claude determines which skills are relevant and loads the information it needs, helping to prevent context window overload."
+    source:
+      title: "What are skills?"
+      url: "https://support.claude.com/en/articles/12512176-what-are-skills"
+  - id: platform-foundations.D3.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A team has connected Claude to Linear through an MCP connector. Claude can now create issues, but they ignore the team's label scheme and title format. What should the team add?"
+    select: 1
+    options:
+      - id: A
+        text: "A custom skill on creating issues the team's way: the connector gives access, the skill gives the procedure."
+        correct: true
+        rationale: "The page says MCP connections give Claude access to tools while skills teach Claude how to use those tools effectively, and lists creating tasks in tools like Linear following team conventions as a custom-skill workflow."
+      - id: B
+        text: "A second MCP connector to Linear, since team conventions are configured through the connection itself."
+        correct: false
+        rationale: "Per the page, MCP connects Claude to external services and data; procedural knowledge such as conventions is what skills provide."
+      - id: C
+        text: "Nothing that works alongside the connector: a skill and an MCP connection cannot be active together."
+        correct: false
+        rationale: "The page says you can use both together: MCP for access to tools, skills for how to use them."
+      - id: D
+        text: "Custom instructions holding the conventions, which the page recommends over skills for specialized team workflows."
+        correct: false
+        rationale: "The page says the opposite: custom instructions apply broadly, while skills are task-specific and better for specialized workflows."
+    source:
+      title: "What are skills?"
+      url: "https://support.claude.com/en/articles/12512176-what-are-skills"
+  - id: platform-foundations.D3.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A developer finds a free \"invoice-parser\" skill on a forum and wants to use it in a workflow that touches customer billing data. Following the Agent Skills security guidance, what should they do first?"
+    select: 1
+    options:
+      - id: A
+        text: "Enable it straight away: skills are Markdown instructions, so they have no way to run code or call tools."
+        correct: false
+        rationale: "The docs say skills give Claude capabilities through instructions and code, and a malicious skill can direct Claude to call tools or run code."
+      - id: B
+        text: "Read the SKILL.md description; if what it claims matches the need, the rest of the bundle is safe."
+        correct: false
+        rationale: "The docs say to review all bundled files, scripts included, and look for operations that don't match the skill's stated purpose; the description alone can't show that."
+      - id: C
+        text: "Audit each bundled file, scripts included, for network calls or actions beyond its stated purpose."
+        correct: true
+        rationale: "The docs advise using skills from trusted sources and, for an unknown one, auditing all bundled files for unusual patterns such as unexpected network calls, treating it like installing software."
+      - id: D
+        text: "Prefer it if it fetches its parsing rules from an external URL, since that keeps the rules current and reviewed."
+        correct: false
+        rationale: "The docs flag skills that fetch data from external URLs as a particular risk, because fetched content might contain malicious instructions."
+    source:
+      title: "Agent Skills"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"
+  - id: platform-foundations.D3.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A developer built a custom skill in claude.ai and now wants the same skill in a backend that calls the Messages API. What does the request need?"
+    select: 1
+    options:
+      - id: A
+        text: "Nothing new: the skill uploaded in claude.ai settings syncs to the API, so Claude can find it by name."
+        correct: false
+        rationale: "The docs say custom skills do not sync across surfaces: skills uploaded to claude.ai must be separately uploaded to the API."
+      - id: B
+        text: "The skill declared as an ordinary tool with its own input schema, with no other tool needed beside it."
+        correct: false
+        rationale: "The docs say using skills through the API requires the code execution tool, whose container the skills run in; a skill is not declared as a tool schema."
+      - id: C
+        text: "The skill uploaded via the Skills API, its id in `container`, plus the code execution tool."
+        correct: true
+        rationale: "The docs say to upload custom skills through the Skills API, list `skill_ids` in the `container` parameter, and include the code execution tool, whose container the skills run in."
+      - id: D
+        text: "The SKILL.md body pasted into the system prompt, since the API has no way of attaching a skill."
+        correct: false
+        rationale: "The API does attach skills: the docs describe the `/v1/skills` endpoints and the `container` parameter for this."
+    source:
+      title: "Agent Skills"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"
+  - id: platform-foundations.D3.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A developer ships a skill whose SKILL.md frontmatter has the name report-builder and the description \"Helpful utilities.\" Claude does not pick it up for report requests. What is the likely cause, according to the Agent Skills docs?"
+    select: 1
+    options:
+      - id: A
+        text: "Claude matches requests against the description, which must say what the skill does and when to use it."
+        correct: true
+        rationale: "The docs say the `description` is what Claude matches your request against when deciding whether to trigger the skill, so it must say both what the skill does and when to use it."
+      - id: B
+        text: "The skill's scripts were not loaded into context at startup, so Claude could not see what they offer."
+        correct: false
+        rationale: "Scripts are not meant to enter context: the docs say Claude runs them through bash and receives their output, while the script code stays out of the context window."
+      - id: C
+        text: "The SKILL.md body is longer than the startup budget, so the whole skill was dropped when the session began."
+        correct: false
+        rationale: "The SKILL.md body is not loaded at startup; per the docs, at startup Claude loads the name and description, and reads the body when the skill is triggered."
+      - id: D
+        text: "Skills trigger when the user types the skill's name, so the description plays no part in discovery."
+        correct: false
+        rationale: "The docs say Claude uses a skill automatically when relevant, matching the request against the `description`; the name is not a typed command."
+    source:
+      title: "Agent Skills"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"

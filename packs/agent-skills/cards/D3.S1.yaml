@@ -1,0 +1,35 @@
+skill: D3.S1
+cards:
+  - id: agent-skills.D3.S1.card-who-may-invoke
+    concept: Frontmatter decides who may run a skill, and with which permissions
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      The YAML between the two --- lines at the top of SKILL.md configures the skill. Take a commit
+      skill whose frontmatter has four lines: `name: commit`, `description: Stage and commit the current changes`,
+      `disable-model-invocation: true`, and `allowed-tools: Bash(git add *) Bash(git commit *)`.
+      The name gives you /commit. The description says what it does. The third line means Claude
+      can't invoke it on its own, so a commit only happens when you type /commit. The last line lets
+      Claude run those git commands without asking, but only during the turn that invokes the skill.
+      The body can take arguments (the `$ARGUMENTS` placeholder becomes what you type after the name)
+      and where the skill runs (`context: fork` hands it to a new subagent).
+    inNature: >-
+      Flowers get pollinated in different ways. Wind-pollinated grasses release pollen whenever
+      conditions are right, with nobody deciding. Vanilla grown on a farm sets fruit only when a
+      grower pollinates each flower by hand. Some violets self-pollinate inside flowers that never
+      open, out of every visitor's sight. A skill is the same choice: by default both you and Claude
+      can start it, `disable-model-invocation: true` makes it hand-pollinated (only you), and
+      `user-invocable: false` makes it a closed flower (only Claude, hidden from the / menu).
+    whereItBreaks:
+      - "A flower's pollination is fixed by its biology. A skill's is one frontmatter line, and Claude Code picks up an edit to a skill under .claude/skills/ within the current session, without a restart."
+      - "Grass pollen drifts on its own. With `disable-model-invocation: true`, the skill's description is not even in Claude's context, and if Claude tries to run it anyway, Claude Code blocks the call."
+      - "A closed violet is closed to every visitor. `user-invocable: false` closes the skill to you, since it is hidden from the / menu and typing /name does not run it, but Claude still can invoke it. To keep Claude from invoking it through the Skill tool you need `disable-model-invocation: true`."
+    contrast: >-
+      Invocation fields decide who starts a skill. `allowed-tools` is a different question: it
+      pre-approves the listed tools during the invoking turn and does not restrict which tools are
+      available, and the grant clears when you send your next message. `context: fork` changes where
+      the skill runs: in a new subagent that doesn't see your conversation history.
+    diagram: agent-skills.D3.S1.diagram-who-invokes
+    sources:
+      - https://code.claude.com/docs/en/skills

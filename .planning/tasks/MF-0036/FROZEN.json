@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0036",
+  "frozen_at": "2026-11-04",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0036-cuckoo-grounding.acceptance.test.ts",
+      "sha256": "6fc565c98690657034cb16274ecf96fc36c67bbc3826c4decde5c6e5ce084f79",
+      "first_failure": "SC-1…SC-5 + edge: Error: not implemented (20 of 20, stub scripts/lib/cuckoo-grounding.mjs)"
+    }
+  ],
+  "history": []
+}

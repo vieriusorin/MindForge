@@ -1,0 +1,32 @@
+skill: D2.S2
+diagrams:
+  - id: ai-capabilities.D2.S2.diagram-where-facts-come-from
+    title: "Where should the facts in an answer come from?"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: Q, label: "Factual question" }
+      - { id: CUR, label: "Current, changing or outside the training data?", shape: decision }
+      - { id: WEB, label: "Web search tool: current content with cited sources" }
+      - { id: DOCS, label: "Must the answer come from your documents?", shape: decision }
+      - { id: CITE, label: "Send the documents with citations enabled" }
+      - { id: QUOTES, label: "Long documents: extract word-for-word quotes first" }
+      - { id: STABLE, label: "Stable knowledge: answer directly, allow 'I don't know'" }
+      - { id: CHECK, label: "Validate critical claims before high-stakes use" }
+    edges:
+      - { from: Q, to: DOCS }
+      - { from: DOCS, to: CITE, label: "yes" }
+      - { from: DOCS, to: CUR, label: "no" }
+      - { from: CUR, to: WEB, label: "yes" }
+      - { from: CUR, to: STABLE, label: "no" }
+      - { from: CITE, to: QUOTES, label: "over 20k tokens" }
+      - { from: WEB, to: CHECK }
+      - { from: CITE, to: CHECK, label: "20k tokens or fewer" }
+      - { from: QUOTES, to: CHECK }
+      - { from: STABLE, to: CHECK }
+    sources:
+      - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool
+      - https://platform.claude.com/docs/en/build-with-claude/citations

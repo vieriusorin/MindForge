@@ -1,0 +1,158 @@
+skill: D2.S4
+questions:
+  - id: claude-code-in-action.D2.S4.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You paste the same six-step release checklist into chat every week. What do the docs suggest you do with it?"
+    select: 1
+    options:
+      - id: A
+        text: "Add the checklist to CLAUDE.md, so it loads into every session whether or not you are releasing."
+        correct: false
+        rationale: "A procedure belongs in a skill: unlike CLAUDE.md content, a skill's body loads only when it's used."
+      - id: B
+        text: "Create a skill: a `SKILL.md` file with the checklist, which you run with `/skill-name` or Claude uses when relevant."
+        correct: true
+        rationale: "\"Create a skill when you keep pasting the same instructions, checklist, or multi-step procedure into chat.\" Claude uses skills when relevant, or you invoke one with `/skill-name`."
+      - id: C
+        text: "Save it as a plain text file at the repository root, since Claude Code reads every file there at startup."
+        correct: false
+        rationale: "Claude Code does not load arbitrary files at startup; a reusable procedure goes in a `SKILL.md`."
+      - id: D
+        text: "Keep pasting it, because Claude Code has no way to save a prompt and replay it as a command."
+        correct: false
+        rationale: "A skill is exactly that: a saved set of instructions you can invoke directly with `/skill-name`."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: claude-code-in-action.D2.S4.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "The course shows custom slash commands saved in `.claude/commands/`. What do today's docs say about them?"
+    select: 1
+    options:
+      - id: A
+        text: "They were merged into skills: a file in `.claude/commands/` still creates its slash command."
+        correct: true
+        rationale: "The skills page: \"Custom commands have been merged into skills.\" Both files create `/deploy` and work the same way, and existing `.claude/commands/` files keep working."
+      - id: B
+        text: "They were removed, so files in `.claude/commands/` no longer load and have to be rewritten as skills."
+        correct: false
+        rationale: "Your existing `.claude/commands/` files keep working; skills are the newer format with extra features."
+      - id: C
+        text: "They still exist separately from skills, and only commands can take arguments from the slash line."
+        correct: false
+        rationale: "They are merged, and skills take arguments through the `$ARGUMENTS` placeholder."
+      - id: D
+        text: "They became MCP prompts, so each one now has to be served by an MCP server you connect."
+        correct: false
+        rationale: "Custom commands were merged into skills, not into MCP; a command file and a skill file both create a slash command."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: claude-code-in-action.D2.S4.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A skill's body says `Migrate the $0 component from $1 to $2.` What does Claude receive when you run `/migrate-component SearchBar JavaScript TypeScript`?"
+    select: 1
+    options:
+      - id: A
+        text: "\"Migrate the migrate-component component from SearchBar to JavaScript\", since `$0` is the skill's own name."
+        correct: false
+        rationale: "Arguments are indexed from 0, so `$0` is the first argument after the skill name, not the name."
+      - id: B
+        text: "The placeholders unchanged, with an `ARGUMENTS:` line holding all three words appended at the end."
+        correct: false
+        rationale: "Claude Code appends `ARGUMENTS: <your input>` only when no placeholder in the skill receives an argument; here all three do."
+      - id: C
+        text: "An error, because positional placeholders like `$1` work in hooks but not in skills."
+        correct: false
+        rationale: "Skills support `$ARGUMENTS[N]` and its shorthand `$N` for positional arguments."
+      - id: D
+        text: "\"Migrate the SearchBar component from JavaScript to TypeScript.\""
+        correct: true
+        rationale: "`$N` is shorthand for `$ARGUMENTS[N]`, 0-based, so `$0` is SearchBar, `$1` JavaScript and `$2` TypeScript."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: claude-code-in-action.D2.S4.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your `/deploy` skill pushes to production. You don't want Claude deciding to deploy because the code looks ready. What do you add to the skill's frontmatter?"
+    select: 1
+    options:
+      - id: A
+        text: "`user-invocable: false`, so the skill can only be started when you type `/deploy`."
+        correct: false
+        rationale: "This is the opposite: with `user-invocable: false` only Claude can invoke the skill, for background knowledge."
+      - id: B
+        text: "A line in the description asking Claude to wait until you say so before it deploys."
+        correct: false
+        rationale: "A description is read by the model, which decides what to do with it; the frontmatter field is what stops Claude starting the skill."
+      - id: C
+        text: "`disable-model-invocation: true`, so Claude can't invoke the skill on its own and you decide when it runs."
+        correct: true
+        rationale: "\"`disable-model-invocation: true`: Claude can't invoke the skill on its own. Use this for workflows with side effects or that you want to control timing, like `/commit`, `/deploy`\"."
+      - id: D
+        text: "An `allowed-tools` list without `Bash`, so Claude can't run the deploy commands in the skill."
+        correct: false
+        rationale: "`allowed-tools` pre-approves the listed tools; it does not restrict which tools are available."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: claude-code-in-action.D2.S4.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A repository you just cloned ships a project skill whose `allowed-tools` grants broad Bash access. What does the skills page say about the risk and the organisation-wide control?"
+    select: 1
+    options:
+      - id: A
+        text: "Trust doesn't gate `allowed-tools`; review it, or set `allowManagedPermissionRulesOnly` in managed settings."
+        correct: true
+        rationale: "\"Workspace trust doesn't gate this field.\" It applies even in a `-p` run in an untrusted folder, so review checked-in skills; with `allowManagedPermissionRulesOnly` in managed settings, Claude Code ignores `allowed-tools` in project and personal skills."
+      - id: B
+        text: "No risk: `allowed-tools` limits Claude to the listed tools, so a broad list only means fewer restrictions inside the skill."
+        correct: false
+        rationale: "`allowed-tools` grants permission without prompting for the turn that invokes the skill; it does not restrict which tools are available."
+      - id: C
+        text: "Workspace trust blocks every project skill until you accept the trust dialog, so the grant never applies to a clone."
+        correct: false
+        rationale: "The page says workspace trust doesn't gate `allowed-tools`; a project skill's grant applies even in a folder you've never trusted."
+      - id: D
+        text: "The grant lasts the whole session once the skill runs, so you start a new session straight after invoking it."
+        correct: false
+        rationale: "The grant clears when you send your next message; invoking the skill again re-applies it for that turn."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: claude-code-in-action.D2.S4.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your CLAUDE.md has grown a long release runbook. A senior moves it into `.claude/skills/release/SKILL.md` with `disable-model-invocation: true`. What does that change?"
+    select: 1
+    options:
+      - id: A
+        text: "Nothing for context: skills and CLAUDE.md are both read in full at the start of every session."
+        correct: false
+        rationale: "Skills are lighter on context than CLAUDE.md: a long release procedure in a skill doesn't weigh on your unrelated bug fix the way it would in `CLAUDE.md`."
+      - id: B
+        text: "Claude is now guaranteed to carry out every step exactly, because skills are deterministic."
+        correct: false
+        rationale: "A skill is read by the model, and there is no guarantee it follows instructions; the flag makes who starts the skill deterministic, not how the steps are carried out."
+      - id: C
+        text: "It stops weighing on unrelated work, and it runs only when you type `/release`."
+        correct: true
+        rationale: "A long procedure in a skill \"doesn't weigh on your unrelated bug fix the way it would in `CLAUDE.md`\", and with `disable-model-invocation: true` Claude can't start the skill on its own; it runs when you type `/release`."
+      - id: D
+        text: "Claude starts the release by itself whenever the tests pass, since the runbook is now a skill."
+        correct: false
+        rationale: "With `disable-model-invocation: true` Claude can't start the skill on its own."
+    source:
+      title: "Best practices for Claude Code"
+      url: "https://code.claude.com/docs/en/best-practices"

@@ -1,0 +1,158 @@
+skill: D1.S1
+questions:
+  - id: agent-skills.D1.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "On your first day with Claude Code, a teammate says \"just write a skill for that.\" What is a skill in Claude Code?"
+    select: 1
+    options:
+      - id: A
+        text: "A compiled extension that Claude Code downloads from a store and runs as a background service."
+        correct: false
+        rationale: "A skill is not compiled code: you create a SKILL.md file with instructions, and Claude adds it to its toolkit."
+      - id: B
+        text: "A SKILL.md file of instructions that Claude uses when relevant, or that you run with /skill-name."
+        correct: true
+        rationale: "The skills page: create a SKILL.md file with instructions; Claude uses skills when relevant, or you invoke one directly with /skill-name."
+      - id: C
+        text: "A saved chat transcript that Claude replays at the start of each session to recall earlier work."
+        correct: false
+        rationale: "A skill holds instructions you write, not a transcript. Its body loads when the skill is used, not replayed at every session start."
+      - id: D
+        text: "A settings entry that grants Claude extra tool permissions for the rest of the project's sessions."
+        correct: false
+        rationale: "A skill is instructions. Its optional allowed-tools field pre-approves tools only for the turn that invokes it; session-wide approval belongs in your permission settings."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D1.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You wrote a skill that formats your stand-up notes. You want it in every project on your laptop, without committing it to any repository. Where do you save it?"
+    select: 1
+    options:
+      - id: A
+        text: ".claude/skills/<name>/SKILL.md at the root of the repository you are working in"
+        correct: false
+        rationale: "That is the project location: it loads in sessions in that repository, and you commit it so your team gets it too."
+      - id: B
+        text: "<subdir>/.claude/skills/<name>/SKILL.md inside one folder of the current repository"
+        correct: false
+        rationale: "That is a nested skill: it loads for sessions started in or below that subdirectory, not across your projects."
+      - id: C
+        text: "<plugin>/skills/<name>/SKILL.md inside a plugin that you publish to a marketplace"
+        correct: false
+        rationale: "A plugin skill loads wherever the plugin is enabled, as /plugin-name:skill-name; that is a way to distribute, not a private location."
+      - id: D
+        text: "~/.claude/skills/<name>/SKILL.md under the home directory of your own user account"
+        correct: true
+        rationale: "The personal location, ~/.claude/skills/<skill-name>/SKILL.md, loads in all your projects on this machine."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D1.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Before each release you paste the same twelve-step checklist into Claude Code. A colleague suggests adding it to CLAUDE.md instead. What does the skills page recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Turn it into a skill: a repeated procedure fits one, and its body loads only when it is used."
+        correct: true
+        rationale: "The page says to create a skill when you keep pasting the same checklist or procedure, and that unlike CLAUDE.md content a skill's body loads only when it's used."
+      - id: B
+        text: "Move it into CLAUDE.md: procedures belong there, since that file is read only when it is relevant."
+        correct: false
+        rationale: "This reverses the page: it names a CLAUDE.md section that has grown into a procedure as a signal to create a skill, because a skill's body loads only when used."
+      - id: C
+        text: "Keep pasting it: skills are reserved for the bundled ones that ship inside Claude Code itself."
+        correct: false
+        rationale: "You create your own skills by writing a SKILL.md; bundled skills such as /code-review are one kind among personal, project, plugin and enterprise skills."
+      - id: D
+        text: "Put it in a hook: hooks are where Claude reads multi-step instructions and follows them with care."
+        correct: false
+        rationale: "A hook runs every time its event occurs, which suits a rule that must hold every time; a checklist Claude reads and works through is skill content."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D1.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your repo already has .claude/commands/deploy.md. A teammate adds .claude/skills/deploy/SKILL.md with new steps. What happens when you type /deploy?"
+    select: 1
+    options:
+      - id: A
+        text: "Claude Code refuses to start until one of the two files is renamed or deleted."
+        correct: false
+        rationale: "The page documents no such refusal: it resolves the clash, and the skill wins over the file in .claude/commands/."
+      - id: B
+        text: "The command file runs, because .claude/commands/ is checked before skills."
+        correct: false
+        rationale: "The name-clash table says the opposite: for a skill and a file in .claude/commands/, the skill runs."
+      - id: C
+        text: "The skill runs: when a skill and a command file share a name, the skill wins."
+        correct: true
+        rationale: "Custom commands have been merged into skills; both files would create /deploy, and the name-clash table says the skill runs."
+      - id: D
+        text: "Both run in sequence on /deploy, first the command file and then the skill."
+        correct: false
+        rationale: "Only one of them runs: per the name-clash table, a skill and a file in .claude/commands/ resolve to the skill."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D1.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You have forty personal skills installed and most sessions use none of them. Your lead says unused skills cost nothing. What is the accurate trade-off?"
+    select: 1
+    options:
+      - id: A
+        text: "Bodies wait until used, yet each skill's listing entry adds context on every turn, under a budget."
+        correct: true
+        rationale: "Every skill in the skill listing adds to your context on every turn whether or not Claude uses it; the listing has a character budget, and /skill-doctor shows what each skill costs."
+      - id: B
+        text: "They cost nothing: Claude Code reads no text from any skill until you type that skill's /skill-name."
+        correct: false
+        rationale: "By default a skill's description is always in context so Claude knows what's available; only the full content waits until the skill is invoked."
+      - id: C
+        text: "Each skill's full SKILL.md body is loaded at startup, so forty skills crowd out the conversation."
+        correct: false
+        rationale: "In a regular session, descriptions are loaded but full skill content only loads when invoked."
+      - id: D
+        text: "Only skills marked disable-model-invocation: true cost context, since Claude must watch for them."
+        correct: false
+        rationale: "It's the reverse: with disable-model-invocation: true the description is not in context; default skills keep their description in context."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D1.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your team's code-review skill lives in .claude/skills/ and works in Claude Code. You now want the same skill in a backend service that calls the Claude API. What does moving it involve?"
+    select: 1
+    options:
+      - id: A
+        text: "Nothing: skills in .claude/skills/ sync to your API workspace once you sign in to Claude Code."
+        correct: false
+        rationale: "Custom Skills do not sync across surfaces; Claude Code Skills are filesystem-based and separate from both claude.ai and the API."
+      - id: B
+        text: "Upload it via the Skills API; requests need the code execution tool, whose container runs it."
+        correct: true
+        rationale: "Custom Skills are uploaded through the Skills API (/v1/skills endpoints), and using Skills through the API requires the code execution tool, whose container Skills run in."
+      - id: C
+        text: "The API reads it from your repository on each request, with the network access it had locally."
+        correct: false
+        rationale: "Skills are managed separately for each surface, and Skills on the API run in a sandboxed container with no network access."
+      - id: D
+        text: "You can't: the API runs only the four pre-built document skills, not skills you have written."
+        correct: false
+        rationale: "The Claude API supports both pre-built Agent Skills and custom Skills, and both work identically."
+    source:
+      title: "Agent Skills"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"

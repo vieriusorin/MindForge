@@ -1,0 +1,29 @@
+skill: D3.S2
+diagrams:
+  - id: prod-prompting.D3.S2.diagram-long-horizon
+    title: "Keeping a long-running agent's context small"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: Turn, label: "Agent turn: tools return more tokens" }
+      - { id: Full, label: "Is the context window filling up?", shape: decision }
+      - { id: JIT, label: "Just in time: keep references, load slices with tools" }
+      - { id: Kind, label: "What kind of task is it?", shape: decision }
+      - { id: Compact, label: "Compaction: summarize history, keep decisions and open bugs" }
+      - { id: Notes, label: "Structured notes: persist progress outside the window" }
+      - { id: Sub, label: "Sub-agents: clean windows return short summaries" }
+    edges:
+      - { from: Turn, to: Full }
+      - { from: Full, to: JIT, label: "no: keep loading just in time" }
+      - { from: JIT, to: Turn, label: "next step" }
+      - { from: Full, to: Kind, label: "yes" }
+      - { from: Kind, to: Compact, label: "long back-and-forth" }
+      - { from: Kind, to: Notes, label: "milestones" }
+      - { from: Kind, to: Sub, label: "parallel research" }
+      - { from: Compact, to: Turn }
+      - { from: Notes, to: Turn }
+      - { from: Sub, to: Turn }
+    sources:
+      - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents

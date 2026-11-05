@@ -1,0 +1,158 @@
+skill: D1.S2
+questions:
+  - id: ai-capabilities.D1.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Which step turns a pretrained text predictor into an assistant that answers questions and follows instructions?"
+    select: 1
+    options:
+      - id: A
+        text: "More pretraining on a larger unlabeled corpus of text, until instructions are followed."
+        correct: false
+        rationale: "Pretrained models are not inherently good at answering questions or following instructions; the glossary names fine-tuning and RLHF as the refinement."
+      - id: B
+        text: "A larger context window, so the model can hold the whole instruction while it answers."
+        correct: false
+        rationale: "The context window is the model's working memory for a request. It does not change how the model was trained to behave."
+      - id: C
+        text: "Fine-tuning after pretraining, including RLHF, to refine the model toward preferred behaviour."
+        correct: true
+        rationale: "The glossary says fine-tuning and RLHF are used to refine pretrained models, and that Claude has already been fine-tuned to be a helpful assistant."
+      - id: D
+        text: "A higher temperature at generation time, so the model explores answers instead of repeating text."
+        correct: false
+        rationale: "Temperature controls the randomness of predictions during generation; it does not teach the model to follow instructions."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"
+  - id: ai-capabilities.D1.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "In reinforcement learning from human feedback (RLHF), what does the human feedback consist of?"
+    select: 1
+    options:
+      - id: A
+        text: "People ranking two or more example texts, so the model learns to prefer outputs like the top ones."
+        correct: true
+        rationale: "The glossary says human feedback in RLHF consists of ranking a set of two or more example texts, and reinforcement learning encourages outputs similar to the higher-ranked ones."
+      - id: B
+        text: "People writing the single correct answer for every prompt the model could ever be asked in production."
+        correct: false
+        rationale: "RLHF uses rankings of example texts, not a written answer key for every prompt."
+      - id: C
+        text: "People editing the model's parameters by hand until its answers match what the team wants to see."
+        correct: false
+        rationale: "The model's behaviour is changed by a reinforcement learning process driven by rankings, not by hand-editing parameters."
+      - id: D
+        text: "People labelling every document in the pretraining corpus before pretraining starts on that data."
+        correct: false
+        rationale: "Pretraining uses a large unlabeled corpus of text; RLHF comes afterwards, on a pretrained model."
+    source:
+      title: "Glossary"
+      url: "https://platform.claude.com/docs/en/about-claude/glossary"
+  - id: ai-capabilities.D1.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A colleague says Claude's harmlessness came from crowdworkers rating thousands of disturbing outputs. What does Anthropic's post on Claude's constitution describe instead?"
+    select: 1
+    options:
+      - id: A
+        text: "A hard-coded filter that blocks any output containing a word from a list of banned terms."
+        correct: false
+        rationale: "The post describes training with principles, not a word filter. The values are learned during training through critique, revision and AI feedback."
+      - id: B
+        text: "Human contractors comparing pairs of responses and picking the more harmless one, at a larger scale."
+        correct: false
+        rationale: "That is the earlier approach whose shortcomings Constitutional AI responds to; the CAI model received no human data on harmlessness."
+      - id: C
+        text: "Fine-tuning on a curated dataset of refusals that were written and checked by a legal team."
+        correct: false
+        rationale: "The post describes a written set of principles applied through AI feedback; it does not describe a refusal dataset written by lawyers."
+      - id: D
+        text: "AI feedback guided by a written set of principles, used to critique, revise and choose outputs."
+        correct: true
+        rationale: "Constitutional AI uses a set of principles: first the model critiques and revises its own responses, then reinforcement learning uses AI-generated feedback based on the principles."
+    source:
+      title: "Claude's constitution"
+      url: "https://www.anthropic.com/news/claudes-constitution"
+  - id: ai-capabilities.D1.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A user states something factually mistaken in a chat with Claude, and Claude politely disagrees instead of going along with it. According to Anthropic's post on Claude's character, where does this behaviour come from?"
+    select: 1
+    options:
+      - id: A
+        text: "A check in the API that rejects messages containing false statements before the model reads them."
+        correct: false
+        rationale: "The post describes traits trained into the model, not an API check on incoming messages."
+      - id: B
+        text: "Character training toward traits such as truthfulness, instead of saying what people want to hear."
+        correct: true
+        rationale: "Among Claude's trained traits: it does not just say what people want to hear, and is willing to express disagreement with views it thinks are factually mistaken."
+      - id: C
+        text: "RLHF raters who were told to reward any answer that disagrees with the user, whatever the topic."
+        correct: false
+        rationale: "The post warns against both pandering and overconfidence; the aim is honesty and open-mindedness, not disagreement for its own sake."
+      - id: D
+        text: "Pretraining data that happened to contain more corrections than agreements, which the model copies."
+        correct: false
+        rationale: "The post attributes this to deliberately trained character traits; it does not explain it by the balance of the pretraining data."
+    source:
+      title: "Claude's character"
+      url: "https://www.anthropic.com/research/claude-character"
+  - id: ai-capabilities.D1.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A team wants to copy Anthropic's character training and plans to pay raters to score thousands of conversations for personality. According to Anthropic's post on Claude's character, what did Anthropic's pipeline use instead?"
+    select: 1
+    options:
+      - id: A
+        text: "Human raters scored many conversations for personality, and RLHF then optimised the model for those personality scores."
+        correct: false
+        rationale: "The post says the traits are internalised without the need for human interaction or feedback; humans check how each trait changes behaviour, but do not rate conversations."
+      - id: B
+        text: "With a character variant of Constitutional AI: Claude writes messages and responses, then ranks its own responses."
+        correct: true
+        rationale: "Claude generates messages relevant to a trait, produces responses in line with its character, and ranks them; a preference model is trained on the resulting data."
+      - id: C
+        text: "With a system prompt that lists every trait, which the API prepends to each request before Claude sees the user message."
+        correct: false
+        rationale: "The traits are trained into the model with a Constitutional AI variant; they are not a prompt added to each request."
+      - id: D
+        text: "As hard rules written into the model, so that its behaviour follows each trait the same way in every conversation."
+        correct: false
+        rationale: "The post says Anthropic does not want Claude to treat its traits like rules from which it never deviates; the aim is to nudge general behaviour."
+    source:
+      title: "Claude's character"
+      url: "https://www.anthropic.com/research/claude-character"
+  - id: ai-capabilities.D1.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A stakeholder wants the model trained to say it has no opinions on any question of values, to keep it out of controversy. What risk does Anthropic's post on Claude's character name for that approach?"
+    select: 1
+    options:
+      - id: A
+        text: "It makes the model adopt the views of whoever it talks to, which the post calls pandering."
+        correct: false
+        rationale: "Adopting the user's views is a different option the post rejects. The risk of claiming no opinions is a different one."
+      - id: B
+        text: "It makes the model impossible to train with Constitutional AI, because it has no principles left."
+        correct: false
+        rationale: "The post does not say this. Constitutional AI is about training with principles, and nothing in the post ties the no-opinion option to it."
+      - id: C
+        text: "Models pick up biases in training, so claiming none implies more objectivity than they have."
+        correct: true
+        rationale: "Language models acquire biases and opinions throughout training, so training them to say they have no opinions implies they are more objective and unbiased than they are."
+      - id: D
+        text: "It lowers engagement, which the post treats as the main goal of character training for Claude."
+        correct: false
+        rationale: "The post says engagement was not the core goal of character training, and that an excessive desire to be engaging is an undesirable trait."
+    source:
+      title: "Claude's character"
+      url: "https://www.anthropic.com/research/claude-character"

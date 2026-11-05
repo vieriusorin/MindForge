@@ -5,6 +5,7 @@
 import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { loadPackContent } from "@/engine/content";
 import { loadPackFile } from "@/engine/pack/load-pack";
 import { loadPackQuestions } from "@/engine/questions/load-questions";
 import {
@@ -44,6 +45,9 @@ describe("MF-0003 graded attempts", () => {
       pack,
       join(ROOT, "packs/ccdv-f/questions"),
     );
+    // MF-0016 K-3: cuckoo keys share question_keys (key = the flawed line's number).
+    const { cuckoos } = await loadPackContent(pack, join(ROOT, "packs/ccdv-f"));
+    const keyCount = questions.length + cuckoos.length;
     const db = sql();
     try {
       const rows =
@@ -54,7 +58,7 @@ describe("MF-0003 graded attempts", () => {
           [...(r.correct_options as string[])].sort(),
         ]),
       );
-      expect(inDb.size).toBe(questions.length);
+      expect(inDb.size).toBe(keyCount);
       for (const q of questions) {
         expect([q.id, inDb.get(q.id)]).toEqual([
           q.id,
@@ -67,7 +71,7 @@ describe("MF-0003 graded attempts", () => {
       sync();
       const [{ n }] =
         await db`select count(*)::int as n from private.question_keys where pack_slug = 'ccdv-f'`;
-      expect(n).toBe(questions.length);
+      expect(n).toBe(keyCount);
       const [priv] = await db`
         select has_table_privilege('authenticated', 'private.question_keys', 'select') as auth,
                has_table_privilege('anon', 'private.question_keys', 'select') as anon`;

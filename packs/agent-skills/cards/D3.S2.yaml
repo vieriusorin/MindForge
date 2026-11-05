@@ -1,0 +1,32 @@
+skill: D3.S2
+cards:
+  - id: agent-skills.D3.S2.card-load-what-the-task-needs
+    concept: A multi-file skill loads one file at a time, only when the task needs it
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      A skill is a folder, and SKILL.md can act as a table of contents for the rest of it. Picture a
+      data-warehouse skill: SKILL.md lists the datasets and links `reference/finance.md`,
+      `reference/sales.md` and `reference/product.md`, plus a script that checks a query. Asked about
+      the sales pipeline, Claude reads SKILL.md, follows the link to the sales file and reads only
+      that one; the finance and product files stay on disk and cost nothing. When SKILL.md says
+      "Run this script", Claude runs it through bash and only the script's output enters context,
+      never its code.
+    inNature: >-
+      A grey squirrel scatter-hoards: in autumn it buries nuts in many separate spots and remembers
+      roughly where each cache is. In winter it digs up one cache at a time, when it needs food,
+      instead of carrying the whole hoard around. The memory of where things are is cheap; the
+      food is fetched on demand.
+    whereItBreaks:
+      - "A squirrel stumbles on caches it forgot. Claude reaches a file through the links in SKILL.md, and nested links are risky: it may only preview a file referenced from another reference file, so keep every reference one level deep from SKILL.md."
+      - "A dug-up nut is eaten. A script is not consumed: Claude runs it through bash and only its output takes up context, while the code stays out of it."
+      - "All nuts serve one purpose. Skill files have different jobs, so the instructions must say whether to run a script or read it as reference."
+    contrast: >-
+      A single long SKILL.md: once Claude loads it, every token competes with the conversation and
+      other context. The guide's rule of thumb is to keep the SKILL.md body under 500 lines and split
+      detail into separate files, which consume no context tokens until they are read.
+    diagram: agent-skills.D3.S2.diagram-what-loads-when
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview

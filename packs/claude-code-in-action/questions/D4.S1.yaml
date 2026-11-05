@@ -1,0 +1,158 @@
+skill: D4.S1
+questions:
+  - id: claude-code-in-action.D4.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Claude keeps saying a task is done when it isn't quite. What do the best practices say is usually missing?"
+    select: 1
+    options:
+      - id: A
+        text: "A check Claude can run that comes back pass or fail, such as a test file or a build."
+        correct: true
+        rationale: "Claude stops when the work looks done. Given something that comes back pass or fail, it makes the change, runs the check and fixes what broke before running it again."
+      - id: B
+        text: "Stronger wording in the prompt, such as telling Claude to keep going and not be lazy."
+        correct: false
+        rationale: "The page lists 'loop until done, don't be lazy' as advice you can stop giving: such lines are more likely to cause over-work than fix a stall. A check to pass is different."
+      - id: C
+        text: "A longer CLAUDE.md that describes the architecture and the layout of every folder."
+        correct: false
+        rationale: "Claude reads the repo itself; describing the architecture in `CLAUDE.md` is on the list of things you can stop doing. What helps is the command that runs your check."
+      - id: D
+        text: "A larger model, because a smaller model cannot tell when its own work is finished."
+        correct: false
+        rationale: "The page puts the cause in what Claude has to go on: with nothing to run, 'looks done' is all it has, whatever the model."
+    source:
+      title: "Best practices for Claude Code"
+      url: "https://code.claude.com/docs/en/best-practices"
+  - id: claude-code-in-action.D4.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Before a risky change, you want Claude to read the relevant files and propose an approach, with no edits until you agree. What do you use?"
+    select: 1
+    options:
+      - id: A
+        text: "`claude --continue`, so Claude resumes the last session and asks before each edit."
+        correct: false
+        rationale: "`claude --continue` resumes the most recent session in the current directory; it does not hold edits back. Reviewing before anything touches disk is what plan mode is for."
+      - id: B
+        text: "A subagent, because subagents can read files but are not allowed to edit them."
+        correct: false
+        rationale: "A subagent reads files in its own context window and reports a summary; custom agents get their own tools and prompts, so read-only is not a given. Propose-then-approve is plan mode."
+      - id: C
+        text: "Plan mode: Claude reads files and proposes a plan but makes no edits until you approve."
+        correct: true
+        rationale: "The page says to switch to plan mode for changes you want to review before they touch disk, with `claude --permission-mode plan` or `Shift+Tab` mid-session."
+      - id: D
+        text: "Piping the files into `claude -p`, so the run can read them but has no way to edit."
+        correct: false
+        rationale: "Piping into `claude -p` is the page's pattern for scripts, CI and batch processing; it is not a review step. For changes you want to review before they touch disk, the page says to switch to plan mode."
+    source:
+      title: "Common workflows"
+      url: "https://code.claude.com/docs/en/common-workflows"
+  - id: claude-code-in-action.D4.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your CLAUDE.md says \"Don't touch the migrations folder\". Claude follows it almost every time, but its file edits there must be blocked with zero exceptions. What do you do?"
+    select: 1
+    options:
+      - id: A
+        text: "Add IMPORTANT and capitals to the line so Claude gives it more weight on every task."
+        correct: false
+        rationale: "The page says adding IMPORTANT probably won't fix it; emphasis mostly makes Claude over-apply rules. A rule that can't bend becomes a hook or a deny rule."
+      - id: B
+        text: "Move it into a `PreToolUse` hook that exits with code 2 for any path under `migrations/`."
+        correct: true
+        rationale: "If something has to happen every time, make it a hook, a deny rule or a managed setting. The page turns the migrations rule into a `PreToolUse` hook that exits with code 2 for paths under `migrations/`."
+      - id: C
+        text: "Move it into a skill, so the rule loads only when Claude works on database code."
+        correct: false
+        rationale: "A skill is read by the model, so following it is still Claude's call. Deterministic enforcement comes from the harness: hooks, deny rules, managed settings."
+      - id: D
+        text: "Ask a subagent to review every diff for migration edits before Claude may finish."
+        correct: false
+        rationale: "A reviewer is a model judging the diff, which helps but is not a guarantee. A command hook is applied by Claude Code every time."
+    source:
+      title: "Best practices for Claude Code"
+      url: "https://code.claude.com/docs/en/best-practices"
+  - id: claude-code-in-action.D4.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your team's release takes six steps, tags a version and pushes it. Where does the procedure go so Claude knows it without starting a release on its own?"
+    select: 1
+    options:
+      - id: A
+        text: "In `CLAUDE.md`, so the six steps are in context for every task Claude works on."
+        correct: false
+        rationale: "Every line of `CLAUDE.md` takes some of Claude's attention on every task. A long procedure in a skill is read in full only when the task calls for it."
+      - id: B
+        text: "In an MCP server that exposes one tool per release step for Claude to call in order."
+        correct: false
+        rationale: "MCP connects systems that have no CLI. A team procedure is knowledge Claude follows, which the page puts in a skill."
+      - id: C
+        text: "In a subagent definition, so the release runs in its own context window each time."
+        correct: false
+        rationale: "A subagent changes where work runs, not who may start it. The page's answer for a procedure with side effects is a skill only you can invoke."
+      - id: D
+        text: "In a skill with `disable-model-invocation: true`, run only when you type `/release`."
+        correct: true
+        rationale: "Team procedures go in skills at `.claude/skills/<name>/SKILL.md`. For a workflow with side effects, `disable-model-invocation: true` means Claude can't start it on its own; it runs when you type `/release`."
+    source:
+      title: "Best practices for Claude Code"
+      url: "https://code.claude.com/docs/en/best-practices"
+  - id: claude-code-in-action.D4.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Claude ran a Bash script that rewrote twenty files, and the result is wrong. You open `/rewind` and roll back the code. What should you expect?"
+    select: 1
+    options:
+      - id: A
+        text: "All twenty files come back, because checkpoints snapshot the whole working tree."
+        correct: false
+        rationale: "Checkpoints cover only the files Claude edited with its own file tools in the main conversation."
+      - id: B
+        text: "Nothing comes back, because `/rewind` only rolls back the conversation, never code."
+        correct: false
+        rationale: "The rewind menu rolls back the code, the conversation, or both, to an earlier prompt."
+      - id: C
+        text: "Files touched only by the Bash command aren't restored; use git for those changes."
+        correct: true
+        rationale: "The page warns that a file that only a Bash command touched isn't restored: checkpoints work alongside git rather than replacing it."
+      - id: D
+        text: "The files come back only if the session ran in plan mode when the script executed."
+        correct: false
+        rationale: "Plan mode has no bearing on what checkpoints restore. What decides restoration is whether Claude's own file tools made the edit; a file only a Bash command touched isn't restored."
+    source:
+      title: "Best practices for Claude Code"
+      url: "https://code.claude.com/docs/en/best-practices"
+  - id: claude-code-in-action.D4.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A lead wants every hard bug sent to a subagent \"to get a better answer\". What do the best practices say?"
+    select: 1
+    options:
+      - id: A
+        text: "Agree: a subagent starts with no context, so it reasons more clearly than the main session."
+        correct: false
+        rationale: "A fresh subagent first has to gather context your conversation already had, so it can even be slower; it is the same model, or a smaller one, on the same task."
+      - id: B
+        text: "No smarter answer: use subagents for parallel work, noisy output, fresh review or fewer tools."
+        correct: true
+        rationale: "Handing the same task to a subagent doesn't make the answer better. Subagents pay off for independent parallel work, keeping long output out of the main conversation, a reviewer that hasn't seen the reasoning, or a task with fewer tools, and each costs tokens."
+      - id: C
+        text: "Agree, because subagents always run on a larger model than the main conversation."
+        correct: false
+        rationale: "By default a subagent runs on the same model or a smaller one; `model: haiku` is the page's tip for simple subagent work."
+      - id: D
+        text: "Never use subagents; Claude Code no longer starts them and they waste the context window."
+        correct: false
+        rationale: "Claude delegates on its own, for example broad codebase searches go to the built-in Explore agent. Subagents still help for parallel work and independent review."
+    source:
+      title: "Best practices for Claude Code"
+      url: "https://code.claude.com/docs/en/best-practices"

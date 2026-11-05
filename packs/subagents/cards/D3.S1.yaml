@@ -1,0 +1,33 @@
+skill: D3.S1
+cards:
+  - id: subagents.D3.S1.card-brief-in-report-out
+    concept: A subagent is only as good as its brief and its report format
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      Delegation has two contracts. The way in: a `description` that tells Claude when to use the
+      subagent, and a task that gives it an objective, an output format, guidance on the tools and
+      sources to use, and clear task boundaries. The way out: a summary. Example: a `code-reviewer`
+      whose prompt says what to check and to report findings by priority (critical issues, warnings,
+      suggestions). Set `maxTurns` so it stops: at the limit its output comes back marked as partial,
+      and Claude can resume it. Give it a vague one-liner instead and parallel subagents duplicate
+      work, leave gaps, or misread the task.
+    inNature: >-
+      A honeybee scout (analogy). A scout flies out alone, finds food the rest of the colony has not
+      found, and comes back with a short waggle dance that tells foragers the direction and distance
+      of the food, not a replay of every flower it visited.
+    whereItBreaks:
+      - "A scout picks its own search area. A subagent gets its objective and boundaries from the brief it is given, and a vague brief makes parallel subagents duplicate each other's work."
+      - "A scout's dance language is inherited, not taught. A subagent's report has the format you ask for in its prompt, such as feedback organized by priority."
+      - "A scout that finds nothing worth reporting simply does not dance. A subagent stopped by `maxTurns` still returns its output, marked as partial, and Claude can resume it."
+    contrast: >-
+      Compaction summarizes the same conversation when it nears the context window limit and
+      continues in a new window. A subagent's summary comes from a separate context window: it may
+      explore with tens of thousands of tokens and return a condensed summary, often 1,000 to 2,000
+      tokens, while the detailed search context stays with it.
+    diagram: subagents.D3.S1.diagram-brief-to-report
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://www.anthropic.com/research/multi-agent-research-system
+      - https://www.anthropic.com/research/effective-context-engineering-for-ai-agents

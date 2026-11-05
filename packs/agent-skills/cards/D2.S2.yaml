@@ -1,0 +1,36 @@
+skill: D2.S2
+cards:
+  - id: agent-skills.D2.S2.card-seed-bank
+    concept: "Progressive disclosure: description first, body on a match, files only as needed"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      A skill loads in three levels. At startup Claude has only each skill's name and description.
+      When your request matches a description, Claude reads the full SKILL.md body. Files the body
+      points to are read, and scripts are run, only if the task needs them. Take a pdf-processing
+      skill with SKILL.md, FORMS.md and scripts/fill_form.py. Ask "extract the text from this PDF and
+      summarize it": Claude reads SKILL.md, sees that no form is involved, and never opens FORMS.md.
+      Ask for a form to be filled and it reads FORMS.md too, and if it runs the bundled utility script, only the script's
+      output enters context, not its code. In Claude Code you can also skip the match and load the
+      body yourself by typing /pdf-processing.
+    inNature: >-
+      The soil seed bank. Thousands of dormant seeds lie in the forest floor, each costing almost
+      nothing while it waits. When a tree falls and light reaches the ground, only the species that
+      fit those conditions germinate, and each seedling draws on its stored food, sending roots deeper
+      only as it needs water.
+    whereItBreaks:
+      - "A dormant seed costs the forest next to nothing. Each skill's name and description sits in the system prompt from startup, so every skill Claude can invoke on its own takes some context before it is used."
+      - "Seeds wake on light and warmth. Claude matches your request against the description text, so a vague description can leave the right skill unloaded."
+      - "A seedling grows by consuming its reserves. A bundled script is run through bash and only its output enters context; the script's code never does."
+      - "Nobody can order one seed to sprout. In Claude Code you can load a skill directly by typing /skill-name at the start of your message."
+    contrast: >-
+      Progressive disclosure is not the same as "skills are free." The body and bundled files cost
+      nothing until they are read, but the metadata of every skill Claude may invoke on its own is loaded at startup, and once a body is
+      loaded it stays in the conversation across turns, so every line of SKILL.md is a recurring
+      cost. Keep the body lean and push detail into files Claude reads only when needed.
+    diagram: agent-skills.D2.S2.diagram-progressive-loading
+    sources:
+      - https://code.claude.com/docs/en/skills
+      - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+      - https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills

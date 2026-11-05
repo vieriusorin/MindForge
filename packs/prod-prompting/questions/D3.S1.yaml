@@ -1,0 +1,158 @@
+skill: D3.S1
+questions:
+  - id: prod-prompting.D3.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "In Anthropic's vocabulary for agentic systems, what separates a workflow from an agent?"
+    select: 1
+    options:
+      - id: A
+        text: "A workflow uses tools, while an agent only produces text for a human to act on."
+        correct: false
+        rationale: "Both can use tools; the augmented LLM with retrieval, tools and memory is the building block of every agentic system."
+      - id: B
+        text: "In a workflow your code fixes the path; in an agent the model directs its own steps and tool use."
+        correct: true
+        rationale: "Workflows orchestrate LLMs and tools through predefined code paths, while agents let the LLM dynamically direct its own process and tool usage."
+      - id: C
+        text: "A workflow runs on one model call, while an agent always chains several different models."
+        correct: false
+        rationale: "Workflows such as prompt chaining use many LLM calls; the distinction is who decides the path, not how many calls or models."
+      - id: D
+        text: "A workflow is built with a framework, while an agent is built directly on the raw API."
+        correct: false
+        rationale: "The distinction is architectural, not about tooling; the article even suggests starting on the raw API for both."
+    source:
+      title: "Building effective agents"
+      url: "https://www.anthropic.com/engineering/building-effective-agents"
+  - id: prod-prompting.D3.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A team is about to start an LLM feature. According to Anthropic's guidance, what should they try first?"
+    select: 1
+    options:
+      - id: A
+        text: "An autonomous agent, because it can adapt to any request the users bring."
+        correct: false
+        rationale: "Agents trade latency and cost for performance and add compounding-error risk; they come last, when simpler options fall short."
+      - id: B
+        text: "An orchestrator-workers setup, so new subtasks can be added later without a rewrite."
+        correct: false
+        rationale: "Building for hypothetical flexibility is the complexity the article warns against; add it only when it demonstrably improves outcomes."
+      - id: C
+        text: "A popular agent framework, so the tool parsing and chaining are already written."
+        correct: false
+        rationale: "Frameworks can obscure prompts and responses; the advice is to start with the LLM API directly and understand any framework you use."
+      - id: D
+        text: "A single well-optimized LLM call with retrieval and in-context examples, measured with evals."
+        correct: true
+        rationale: "The article recommends the simplest solution first; for many applications, optimizing single LLM calls with retrieval and in-context examples is enough."
+    source:
+      title: "Building effective agents"
+      url: "https://www.anthropic.com/engineering/building-effective-agents"
+  - id: prod-prompting.D3.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A support inbox gets refund requests, technical questions and general questions. One prompt tuned for refunds now handles technical questions badly. Which pattern fits best?"
+    select: 1
+    options:
+      - id: A
+        text: "Routing: classify each message, then send it to a prompt and tools built for that category."
+        correct: true
+        rationale: "Routing suits distinct categories that are better handled separately; without it, optimizing for one kind of input can hurt the others."
+      - id: B
+        text: "Prompt chaining: run every message through refund, technical and general steps in order."
+        correct: false
+        rationale: "Chaining fits a task that decomposes into fixed sequential subtasks, not inputs that belong to one of several categories."
+      - id: C
+        text: "Voting: answer every message three times and keep the most common reply."
+        correct: false
+        rationale: "Voting buys confidence on one task; it does not separate categories that need different prompts and tools."
+      - id: D
+        text: "Evaluator-optimizer: let a second call critique each reply until it improves."
+        correct: false
+        rationale: "Iterative critique helps when clear evaluation criteria exist, but it does not stop one prompt from serving every category poorly."
+    source:
+      title: "Building effective agents"
+      url: "https://www.anthropic.com/engineering/building-effective-agents"
+  - id: prod-prompting.D3.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A coding assistant receives change requests where the number of files to edit, and what each edit is, depends on the request. Which pattern matches this shape?"
+    select: 1
+    options:
+      - id: A
+        text: "Parallelization with sectioning, splitting the work into a fixed set of file groups."
+        correct: false
+        rationale: "Sectioning runs predefined independent subtasks; here the subtasks cannot be known before reading the request."
+      - id: B
+        text: "Routing, sending each request to the one prompt that matches its programming language."
+        correct: false
+        rationale: "Routing picks one downstream path per input; it does not break a task into a variable number of subtasks."
+      - id: C
+        text: "Orchestrator-workers: a central model decides the subtasks, delegates them and merges results."
+        correct: true
+        rationale: "Orchestrator-workers fits tasks where you cannot predict the subtasks, such as coding changes across a varying number of files."
+      - id: D
+        text: "Prompt chaining, with one fixed step per file in a hard-coded order."
+        correct: false
+        rationale: "Chaining needs a task that cleanly decomposes into fixed steps known in advance."
+    source:
+      title: "Building effective agents"
+      url: "https://www.anthropic.com/engineering/building-effective-agents"
+  - id: prod-prompting.D3.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "An autonomous agent runs many turns in a loop. Besides finishing the task, which design choice does the guidance call out to keep it under control?"
+    select: 1
+    options:
+      - id: A
+        text: "Hiding the agent's planning steps so users are not distracted by intermediate reasoning."
+        correct: false
+        rationale: "The guidance asks for the opposite: prioritize transparency by explicitly showing the agent's planning steps."
+      - id: B
+        text: "Letting it run until the model says it is done, since stopping early wastes the work so far."
+        correct: false
+        rationale: "Relying only on the model's own completion signal leaves no control when errors compound."
+      - id: C
+        text: "Skipping environment feedback between steps to cut latency, and checking only the final result."
+        correct: false
+        rationale: "Agents need ground truth from the environment at each step, such as tool results or code execution, to assess progress."
+      - id: D
+        text: "Stopping conditions such as a maximum number of iterations, plus sandboxed testing and guardrails."
+        correct: true
+        rationale: "The article mentions stopping conditions like a maximum iteration count, and recommends extensive sandboxed testing with guardrails because autonomy brings higher cost and compounding errors."
+    source:
+      title: "Building effective agents"
+      url: "https://www.anthropic.com/engineering/building-effective-agents"
+  - id: prod-prompting.D3.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "While building a SWE-bench agent, Anthropic saw the model misuse a file tool after it moved out of the root directory. What fixed it, and what principle does that show?"
+    select: 1
+    options:
+      - id: A
+        text: "Requiring absolute file paths in the tool, an example of making tool mistakes harder (poka-yoke)."
+        correct: true
+        rationale: "They changed the tool to always require absolute filepaths and the model then used it flawlessly; the appendix calls this poka-yoke for tools."
+      - id: B
+        text: "Adding a paragraph to the system prompt about relative paths, since prompts outrank tool definitions."
+        correct: false
+        rationale: "The fix was in the tool, not the prompt; the team reports spending more time optimizing tools than the overall prompt."
+      - id: C
+        text: "Switching to a larger model, because path errors come from weak reasoning."
+        correct: false
+        rationale: "Nothing in the account changes the model; the tool's interface was redesigned so the mistake could not easily happen."
+      - id: D
+        text: "Returning the whole file tree after every call, so the model always knows where it is."
+        correct: false
+        rationale: "The fix removed the ambiguity in the argument itself rather than adding more context after each call."
+    source:
+      title: "Building effective agents"
+      url: "https://www.anthropic.com/engineering/building-effective-agents"

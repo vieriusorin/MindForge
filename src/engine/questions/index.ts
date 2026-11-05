@@ -3,7 +3,7 @@ export {
   parseQuestionFiles,
   QuestionValidationError,
 } from "./load-questions";
-export { toPlayableQuestion } from "./playable";
+export { toPlayableQuestion, toPlayableQuestions } from "./playable";
 export type {
   AnswerFeedback,
   PlayableQuestion,

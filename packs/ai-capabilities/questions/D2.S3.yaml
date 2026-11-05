@@ -1,0 +1,158 @@
+skill: D2.S3
+questions:
+  - id: ai-capabilities.D2.S3.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "In a Claude API request, what counts toward the context window?"
+    select: 1
+    options:
+      - id: A
+        text: "The latest user message; the system prompt and the tool definitions are held separately."
+        correct: false
+        rationale: "The system prompt and your tool definitions count toward the window, together with every message in the request."
+      - id: B
+        text: "System prompt, every message (tool results too), tool definitions, and Claude's output."
+        correct: true
+        rationale: "Everything in the request counts: system prompt, every message (tool results, images, documents) and tool definitions. The output for the turn, including extended thinking, counts too."
+      - id: C
+        text: "The documents the model was trained on, which is why the context window is so large."
+        correct: false
+        rationale: "The context window is different from the large corpus the model was trained on; it is the model's working memory for the request."
+      - id: D
+        text: "The new input tokens; cached prefixes and the output Claude generates are both left out."
+        correct: false
+        rationale: "Cached prompt prefixes still occupy the window (caching changes the price, not whether they count), and the generated output counts as well."
+    source:
+      title: "Context windows"
+      url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"
+  - id: ai-capabilities.D2.S3.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your agent's model has a 1M-token context window, so a teammate pastes the whole repository into every request. What risk do the docs name?"
+    select: 1
+    options:
+      - id: A
+        text: "Context rot: as the token count grows, accuracy and recall degrade, so curate what goes in."
+        correct: true
+        rationale: "The docs say more context isn't automatically better: as token count grows, accuracy and recall degrade (context rot), so curating what is in context matters as much as the space available."
+      - id: B
+        text: "None: a larger window means the model attends equally well to every single token it is given."
+        correct: false
+        rationale: "A larger window handles longer prompts, but recall degrades as the token count grows."
+      - id: C
+        text: "The API quietly drops the oldest files once the window is half full, losing code."
+        correct: false
+        rationale: "The API does not trim input for you; if the input alone exceeds the window it returns a 400 error ('prompt is too long')."
+      - id: D
+        text: "The model keeps the repository from the first request and reuses it in later ones."
+        correct: false
+        rationale: "The window holds what is in the request. Prompt caching changes what you pay for a repeated prefix, not whether those tokens count."
+    source:
+      title: "Context windows"
+      url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"
+  - id: ai-capabilities.D2.S3.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Before a batch job sends 10,000 long prompts, you want to know whether each fits the context window and what it will cost. What should you use?"
+    select: 1
+    options:
+      - id: A
+        text: "Divide each prompt's character count by four, since every Claude model uses the same tokenizer."
+        correct: false
+        rationale: "Newer models use a tokenizer that counts roughly 30 percent higher than models before Claude Opus 4.7. Count with the model you plan to use."
+      - id: B
+        text: "Send each prompt and read the usage afterwards, because tokens cannot be counted in advance."
+        correct: false
+        rationale: "Token counting exists to determine the number of tokens in a message before you send it."
+      - id: C
+        text: "The token counting endpoint, which costs the same as sending each message for real."
+        correct: false
+        rationale: "Token counting is free to use; it is subject to its own requests-per-minute rate limits."
+      - id: D
+        text: "The token counting endpoint with your target model: free, rate limited, and an estimate."
+        correct: true
+        rationale: "The endpoint counts under the tokenizer of the model you pass, is free to use but rate limited, and returns an estimate that can differ by a small amount from actual usage."
+    source:
+      title: "Token counting"
+      url: "https://platform.claude.com/docs/en/build-with-claude/token-counting"
+  - id: ai-capabilities.D2.S3.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A research agent explores dozens of sources in parallel, and its context fills with raw search results. Which technique fits best, according to Anthropic's context engineering guidance?"
+    select: 1
+    options:
+      - id: A
+        text: "Compaction, since it is built for tasks that need extensive back-and-forth conversation."
+        correct: false
+        rationale: "Compaction suits conversational flow. The article matches complex research with parallel exploration to multi-agent architectures."
+      - id: B
+        text: "Wait for a larger context window, because a bigger window removes context pollution."
+        correct: false
+        rationale: "The article expects context windows of all sizes to be subject to context pollution and relevance concerns."
+      - id: C
+        text: "Sub-agents with clean context windows, each returning a condensed summary to a lead agent."
+        correct: true
+        rationale: "Sub-agents explore with their own clean windows and return a distilled summary (often 1,000-2,000 tokens); the article says multi-agent architectures handle complex research where parallel exploration pays dividends."
+      - id: D
+        text: "Load every source into the lead agent up front, so that nothing has to be retrieved later."
+        correct: false
+        rationale: "Context is a finite resource with diminishing returns. The article favours the smallest set of high-signal tokens and just-in-time retrieval."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  - id: ai-capabilities.D2.S3.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Why does a model's recall degrade gradually as its context grows, rather than failing at one fixed size?"
+    select: 1
+    options:
+      - id: A
+        text: "Every token attends to every other, so n tokens form n² pairwise links that stretch thin."
+        correct: true
+        rationale: "The transformer lets every token attend to every other token, giving n² pairwise relationships; models also saw fewer long sequences in training. The result is a performance gradient rather than a hard cliff."
+      - id: B
+        text: "The model deletes the tokens it rates as unimportant once the window passes half capacity."
+        correct: false
+        rationale: "Nothing is deleted by the model. The article explains the loss as attention being stretched across more pairwise relationships."
+      - id: C
+        text: "Recall drops off a hard cliff at a model-specific limit, and nothing past it is read."
+        correct: false
+        rationale: "The article describes the opposite: a performance gradient rather than a hard cliff, with models still highly capable at longer contexts."
+      - id: D
+        text: "Long prompts are read in chunks one at a time, and earlier chunks are forgotten."
+        correct: false
+        rationale: "The transformer architecture lets every token attend to every other token across the entire context; the limit is how thin that attention stretches."
+    source:
+      title: "Effective context engineering for AI agents"
+      url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  - id: ai-capabilities.D2.S3.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "On a Claude 4.5 or newer model, your input fits the context window, but input tokens plus `max_tokens` exceed it (no compaction configured). What happens?"
+    select: 1
+    options:
+      - id: A
+        text: "The API rejects the request with a 400 'prompt is too long' error before generating anything."
+        correct: false
+        rationale: "That error is for input that alone exceeds the window. Here the input fits."
+      - id: B
+        text: "The API lowers `max_tokens` quietly to fit and returns a complete answer as usual."
+        correct: false
+        rationale: "The API accepts the request as sent; it does not rewrite your `max_tokens`."
+      - id: C
+        text: "It is accepted; if generation hits the limit it stops with `model_context_window_exceeded`."
+        correct: true
+        rationale: "On Claude 4.5 models and newer the API accepts the request, and if generation reaches the context window limit it stops with `stop_reason: \"model_context_window_exceeded\"`."
+      - id: D
+        text: "The API compacts the earlier turns automatically to make room for the full output."
+        correct: false
+        rationale: "Compaction is a feature you use when conversations approach the limit; the overflow behaviour described here is a stop reason, not automatic compaction."
+    source:
+      title: "Context windows"
+      url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"

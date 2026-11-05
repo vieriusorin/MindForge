@@ -1,0 +1,30 @@
+skill: D2.S3
+cards:
+  - id: prod-prompting.D2.S3.card-mcp
+    concept: Model Context Protocol (MCP)
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      MCP is a standard way to plug tools and data into an AI application. The application is the
+      host. For each MCP server it connects to, it creates one client with its own connection.
+      Servers offer three things: tools the model calls, resources the application reads as
+      context, and prompts the user invokes. A server can run locally over stdio or remotely over
+      Streamable HTTP, and the JSON-RPC messages are the same either way.
+    inNature: >-
+      A mycorrhizal fungal network. Fungal threads link many trees in a forest, so one tree can
+      draw water and nutrients from sources far beyond its own roots, through one shared kind of
+      connection.
+    whereItBreaks:
+      - "The fungus trades on its own initiative, constantly. An MCP server mostly answers client requests; it decides when to send change notifications, but only to clients that opted in through a `subscriptions/listen` stream, and delivery is best effort, so clients should also poll."
+      - "In a forest every tree can reach every other one. In MCP each client holds a dedicated connection to exactly one server; the host coordinates them."
+      - "The fungus has one way of trading. MCP separates who is in control: the model calls tools, the application picks resources, the user invokes prompts."
+    contrast: >-
+      Plain tool use defines tools inside each API request. MCP packages tools, resources and
+      prompts in a reusable server that any MCP host can discover (`tools/list`) and call
+      (`tools/call`). MCP standardises the context exchange; it does not dictate how the
+      application uses the LLM.
+    diagram: prod-prompting.D2.S3.diagram-mcp-participants
+    sources:
+      - https://modelcontextprotocol.io/docs/learn/architecture
+      - https://modelcontextprotocol.io/docs/learn/server-concepts

@@ -1,0 +1,33 @@
+skill: D3.S2
+diagrams:
+  - id: platform-foundations.D3.S2.diagram-code-execution-request
+    title: "A Messages API request with the code execution tool"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    direction: TB
+    nodes:
+      - { id: R, label: "Request includes the code execution tool (new container unless you pass a container id)" }
+      - { id: W, label: "Would code help? Non-trivial math, data analysis, simulation, or an explicit \"run\"", shape: decision }
+      - { id: A, label: "Claude answers directly" }
+      - { id: S, label: "Claude runs Bash and file operations in a sandboxed container with no internet access" }
+      - { id: P, label: "Did the API pause a long turn (pause_turn)?", shape: decision }
+      - { id: K, label: "Send the response back with the container id so Claude continues" }
+      - { id: C, label: "Did Claude also call one of your client tools?", shape: decision }
+      - { id: T, label: "You send tool_result blocks for your client tools; the code result arrives in a later response" }
+      - { id: O, label: "Files at the top level of the output directory come back as file_id entries" }
+      - { id: F, label: "Download the files with the Files API; reuse the container id to keep working with its files" }
+    edges:
+      - { from: R, to: W }
+      - { from: W, to: A, label: "no" }
+      - { from: W, to: S, label: "yes" }
+      - { from: S, to: P }
+      - { from: P, to: K, label: "yes" }
+      - { from: K, to: S }
+      - { from: P, to: C, label: "no" }
+      - { from: C, to: T, label: "yes" }
+      - { from: C, to: O, label: "no" }
+      - { from: T, to: O }
+      - { from: O, to: F }
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool

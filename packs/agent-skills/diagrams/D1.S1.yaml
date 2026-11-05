@@ -1,0 +1,45 @@
+skill: D1.S1
+diagrams:
+  - id: agent-skills.D1.S1.diagram-where-skills-load
+    title: "From repeated instructions to a skill: where it lives, how it runs"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    direction: TB
+    nodes:
+      - { id: START, label: "You keep pasting the same instructions, or a CLAUDE.md section grew into a procedure" }
+      - { id: WRITE, label: "Write a SKILL.md: a description, then the instructions" }
+      - { id: WHO, label: "Which sessions should load it?", shape: decision }
+      - { id: ENT, label: "Enterprise: managed settings directory (all users where your organization deploys it)" }
+      - { id: PERS, label: "Personal: ~/.claude/skills/<skill-name>/SKILL.md (all your projects on this machine, not Cowork or cloud sessions)" }
+      - { id: PROJ, label: "Project: .claude/skills/<skill-name>/SKILL.md (this repository; commit it for the team)" }
+      - { id: NEST, label: "Nested: <subdir>/.claude/skills/<skill-name>/SKILL.md (sessions in or below that folder, or once Claude works on files there)" }
+      - { id: ADD, label: "Additional directory passed with --add-dir (that session)" }
+      - { id: PLUG, label: "Plugin: <plugin>/skills/<skill-name>/SKILL.md (where the plugin is enabled, as /plugin-name:skill-name)" }
+      - { id: ACCT, label: "claude.ai account: skills enabled there (Cowork, cloud, and signed-in terminal sessions)" }
+      - { id: AVAIL, label: "Skill available in the session" }
+      - { id: HOW, label: "How does it run?", shape: decision }
+      - { id: AUTO, label: "Claude loads it when your request is relevant to its description" }
+      - { id: MANUAL, label: "You type /skill-name to invoke it directly" }
+    edges:
+      - { from: START, to: WRITE }
+      - { from: WRITE, to: WHO }
+      - { from: WHO, to: ENT, label: "the organization" }
+      - { from: WHO, to: PERS, label: "just me, everywhere" }
+      - { from: WHO, to: PROJ, label: "everyone in this repo" }
+      - { from: WHO, to: NEST, label: "one part of a monorepo" }
+      - { from: WHO, to: ADD, label: "a directory outside the project" }
+      - { from: WHO, to: PLUG, label: "teams that install a plugin" }
+      - { from: WHO, to: ACCT, label: "cloud and Cowork sessions" }
+      - { from: ENT, to: AVAIL }
+      - { from: PERS, to: AVAIL }
+      - { from: PROJ, to: AVAIL }
+      - { from: NEST, to: AVAIL }
+      - { from: ADD, to: AVAIL }
+      - { from: PLUG, to: AVAIL }
+      - { from: ACCT, to: AVAIL }
+      - { from: AVAIL, to: HOW }
+      - { from: HOW, to: AUTO, label: "Claude decides (unless disable-model-invocation: true)" }
+      - { from: HOW, to: MANUAL, label: "you decide (unless user-invocable: false)" }
+    sources:
+      - https://code.claude.com/docs/en/skills

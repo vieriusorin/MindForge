@@ -1,0 +1,26 @@
+skill: D3.S2
+cards:
+  - id: platform-foundations.D3.S2.card-tape-measure
+    concept: Code execution and file creation
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Instead of predicting a number or describing a file, Claude writes and runs code in a
+      sandboxed container, then hands back the computed result or a real file (an Excel
+      spreadsheet, a slide deck, a Word document or a PDF) to download.
+    inNature: >-
+      A forester who measures each trunk in a plot with a tape and adds up the timber, rather
+      than eyeballing the stand and calling out a guess. The total comes from the measurements,
+      not from how confident the forester sounds.
+    whereItBreaks:
+      - "A forester can walk into any wood; the sandbox's network access depends on settings in claude.ai, and on the API the container has no internet access, so it can't install new packages at runtime."
+      - "A tape measure can't be talked into anything; instructions hidden in an external file or website can trick Claude into running untrusted code or leaking data, so monitor it and stop it if it touches data unexpectedly."
+      - "The forester's notebook comes home; on the API, a file returns to you when Claude saves it at the top level of the output directory, and files written elsewhere stay in the container."
+    contrast: >-
+      This skill is about computing results and producing files. Defining a reusable procedure
+      is Skills (D3.S1); carrying context from one chat to the next is memory (D3.S3).
+    diagram: platform-foundations.D3.S2.diagram-code-execution-request
+    sources:
+      - https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool

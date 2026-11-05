@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "src/features/duel/components/duel-session/__tests__/mf-0012-duel.acceptance.test.tsx",
-      "sha256": "b4557b6616ba77b7eb79e1b2c139de41eed59fe07aea951a7975446f6f42190f",
+      "sha256": "0a8667c8be07ec13d0fb1f7cab2add7d9f7c5fe845299816f445770420b6fb3e",
       "first_failure": "SC-1: expected \"vi.fn()\" to be called 1 times, but got 2 times; SC-2: Unable to find an accessible element with the role \"status\"; SC-3: Unable to find role \"group\" and name \"Stem of p.S1.1\"; same on 2nd run"
     },
     {
@@ -18,5 +18,13 @@
       "first_failure": "SC-5: exit status 0 (script synced the broken pack: \"pack registry: ccdv-f, mf0012-broken, team-onboarding-sample\"); same on 2nd run; teardown leaves 0 fixture rows"
     }
   ],
-  "history": []
+  "history": [
+    {
+      "at": "2026-11-04T14:48:21.033Z",
+      "reason": "MF-0032 C-2, user-approved 2026-11-04: the PlayableQuestion fixture adds contentHash: `h-${id}` (PlayableQuestion gained a required field). No assertion changed.",
+      "previous": {
+        "src/features/duel/components/duel-session/__tests__/mf-0012-duel.acceptance.test.tsx": "b4557b6616ba77b7eb79e1b2c139de41eed59fe07aea951a7975446f6f42190f"
+      }
+    }
+  ]
 }

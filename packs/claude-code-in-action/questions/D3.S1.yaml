@@ -1,0 +1,158 @@
+skill: D3.S1
+questions:
+  - id: claude-code-in-action.D3.S1.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your CLAUDE.md says \"run the formatter after editing\", and Claude sometimes forgets. What does a hook give you that the instruction does not?"
+    select: 1
+    options:
+      - id: A
+        text: "A stronger instruction: hooks are loaded into Claude's context with a higher priority than CLAUDE.md."
+        correct: false
+        rationale: "A hook is not an instruction to Claude. It is a command Claude Code itself runs at a lifecycle point."
+      - id: B
+        text: "A reusable prompt that Claude can choose to call with a slash command when it decides one is needed."
+        correct: false
+        rationale: "That describes a skill. A hook runs whether or not Claude chooses to run anything."
+      - id: C
+        text: "A connection to an external tool that Claude can call, such as a formatter exposed as a server."
+        correct: false
+        rationale: "That describes an MCP server. A hook is a user-defined command that Claude Code runs at specific points in its lifecycle."
+      - id: D
+        text: "Deterministic control: Claude Code runs your command at a set lifecycle point, every time."
+        correct: true
+        rationale: "Hooks are user-defined shell commands that Claude Code runs at specific points in its lifecycle, which gives deterministic control: certain actions always happen rather than relying on the LLM to choose to run them."
+    source:
+      title: "Automate actions with hooks"
+      url: "https://code.claude.com/docs/en/hooks-guide"
+  - id: claude-code-in-action.D3.S1.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You want Prettier to run on every file Claude edits, and on nothing else. Which event and matcher do you configure?"
+    select: 1
+    options:
+      - id: A
+        text: "`PreToolUse` with the matcher `Bash`, so the formatter runs before each shell command Claude starts."
+        correct: false
+        rationale: "`PreToolUse` fires before a tool call, so the edit doesn't exist yet, and `Bash` matches shell commands rather than file edits."
+      - id: B
+        text: "`Stop` with the matcher `Edit|Write`, so the formatter runs once when Claude finishes responding."
+        correct: false
+        rationale: "`Stop` has no matcher support and always fires on every occurrence, so the matcher would not narrow it to edits."
+      - id: C
+        text: "`PostToolUse` with the matcher `Edit|Write`, so it runs only after the file-editing tools."
+        correct: true
+        rationale: "The docs' auto-format hook uses the `PostToolUse` event with an `Edit|Write` matcher, so it runs only after file-editing tools, and passes the edited path from `tool_input.file_path` to Prettier."
+      - id: D
+        text: "`SessionStart` with the matcher `compact`, so files are formatted whenever the context is compacted."
+        correct: false
+        rationale: "`SessionStart` with `compact` re-injects context after compaction. It doesn't fire after edits."
+    source:
+      title: "Automate actions with hooks"
+      url: "https://code.claude.com/docs/en/hooks-guide"
+  - id: claude-code-in-action.D3.S1.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A `PreToolUse` hook on `Bash` must stop any command containing \"drop table\" and tell Claude why. What does the script do?"
+    select: 1
+    options:
+      - id: A
+        text: "Print the reason to stdout and exit 1, which Claude Code treats as a refusal of the tool call."
+        correct: false
+        rationale: "Exit codes other than 0 and 2, with plain-text stdout, are a non-blocking error: the action proceeds and the transcript shows a hook error notice."
+      - id: B
+        text: "Write the reason to stderr and exit 2; the call is blocked and stderr becomes Claude's feedback."
+        correct: true
+        rationale: "Exit 2 blocks the action on `PreToolUse`, and the reason written to stderr becomes Claude's feedback, as in the guide's `drop table` example."
+      - id: C
+        text: "Exit 0 and print the word \"deny\" as plain text, so the normal permission flow reads the decision."
+        correct: false
+        rationale: "Exit 0 reports no objection, and the tool call goes through the normal permission flow. A decision needs exit 2 or JSON in `hookSpecificOutput`."
+      - id: D
+        text: "Print the reason to stdout and exit 0, so the message is added to Claude's context before it runs."
+        correct: false
+        rationale: "Exit 0 doesn't block. The command would still run, through the normal permission flow."
+    source:
+      title: "Automate actions with hooks"
+      url: "https://code.claude.com/docs/en/hooks-guide"
+  - id: claude-code-in-action.D3.S1.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You wrote a hook that every teammate should get when they clone the repository. Which settings file do you put it in?"
+    select: 1
+    options:
+      - id: A
+        text: "`.claude/settings.json` in the project, committed so teammates get its hooks and permissions."
+        correct: true
+        rationale: "The shared project file `.claude/settings.json` affects everyone working in the folder; commit it so teammates get it. The docs list team permissions, hooks and plugins as what it is for."
+      - id: B
+        text: "`~/.claude/settings.json`, which every project on your machine and every teammate's clone reads."
+        correct: false
+        rationale: "The user file applies to you in every project on your machine, and to nothing on a teammate's machine."
+      - id: C
+        text: "`.claude/settings.local.json`, which Claude Code keeps in the repository for the whole team."
+        correct: false
+        rationale: "The project local file is for you in one project only. Claude Code keeps it out of git when it creates the file; if you create it by hand, you add it to `.gitignore` yourself."
+      - id: D
+        text: "`CLAUDE.md` at the repository root, under a hooks heading that Claude Code parses at startup."
+        correct: false
+        rationale: "Hooks go in a `hooks` block of a settings file. CLAUDE.md holds instructions, not hook configuration."
+    source:
+      title: "Settings files and precedence"
+      url: "https://code.claude.com/docs/en/settings"
+  - id: claude-code-in-action.D3.S1.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A `PreToolUse` hook exits 0 and prints JSON with `permissionDecision` set to deny at the top level of the object. The tool call still runs and no error appears. Why?"
+    select: 1
+    options:
+      - id: A
+        text: "JSON output is only read when the hook exits 2, so on exit 0 Claude Code discards it."
+        correct: false
+        rationale: "Exit 0 is the intended exit code when you print JSON for structured control. The problem is where the field sits."
+      - id: B
+        text: "`PreToolUse` can't deny a call with JSON; only a `PermissionRequest` hook can return a decision."
+        correct: false
+        rationale: "A `PreToolUse` hook can deny a tool call through `permissionDecision` inside `hookSpecificOutput`, and Claude Code feeds the reason back to Claude."
+      - id: C
+        text: "`permissionDecision` belongs inside `hookSpecificOutput`; misplaced fields are ignored silently."
+        correct: true
+        rationale: "When a hook returns `permissionDecision` at the top level instead of inside `hookSpecificOutput`, the JSON still parses, and Claude Code ignores the misplaced field without reporting an error. `claude --debug` shows the unrecognized keys."
+      - id: D
+        text: "Hooks run after the permission flow, so by then the tool call was already approved and running."
+        correct: false
+        rationale: "`PreToolUse` hooks fire before any permission-mode check, so a correctly placed deny would have blocked the call."
+    source:
+      title: "Automate actions with hooks"
+      url: "https://code.claude.com/docs/en/hooks-guide"
+  - id: claude-code-in-action.D3.S1.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Two `PreToolUse` hooks match `Bash`: one appends each command to a log and exits 0, the other exits 2 on `rm -rf`. Claude runs `rm -rf /tmp/build`. What happens?"
+    select: 1
+    options:
+      - id: A
+        text: "The first hook's exit 0 approves the call, so the second hook's exit 2 is ignored and it runs."
+        correct: false
+        rationale: "Exit 0 reports no decision; it doesn't approve. When decisions differ, the most restrictive answer applies."
+      - id: B
+        text: "Hooks run in the order listed, and the guardrail never runs because the logger already answered."
+        correct: false
+        rationale: "Matching hooks run in parallel, and every hook's command runs to completion before Claude Code merges the results."
+      - id: C
+        text: "Claude Code shows the user both outcomes and asks which hook should decide for this tool call."
+        correct: false
+        rationale: "Claude Code merges the results itself: for `PreToolUse` decisions the most restrictive answer applies, in the order deny, defer, ask, allow."
+      - id: D
+        text: "Both run in parallel; the deny wins, the command is blocked, and the log entry is still written."
+        correct: true
+        rationale: "Both hooks execute in parallel. The deny takes precedence, so Claude Code blocks the command and shows Claude the guardrail's stderr, and the log entry is still written because the logging hook already ran."
+    source:
+      title: "Automate actions with hooks"
+      url: "https://code.claude.com/docs/en/hooks-guide"

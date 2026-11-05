@@ -1,0 +1,17 @@
+{
+  "ticket": "MF-0034",
+  "frozen_at": "2026-11-04T14:14:59Z",
+  "files": [
+    {
+      "path": "src/dev-seed/__tests__/mf-0034-packs.acceptance.test.ts",
+      "sha256": "6b7a7602eccf5d608bac819155830f8d7c421c31fc521ba9fa2727fa79804d27",
+      "first_failure": "SC-1, SC-2, SC-3: Error: not implemented (typed stubs resolveSeedPacks, youSkillLimit, demoGroupName)"
+    },
+    {
+      "path": "src/dev-seed/__tests__/mf-0034-seed.db.acceptance.test.ts",
+      "sha256": "2929e454f84b0774efdd109fc50e99a371d4015908e9ff4e74e48ce6484c1a2c",
+      "first_failure": "SC-4, SC-5: Error: not implemented (seedDemoWorlds stub); identical on a 2nd run (fixture + teardown survive)"
+    }
+  ],
+  "history": []
+}

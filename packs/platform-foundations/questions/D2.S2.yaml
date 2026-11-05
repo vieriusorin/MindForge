@@ -1,0 +1,158 @@
+skill: D2.S2
+questions:
+  - id: platform-foundations.D2.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A junior developer hears 'put it in a project' for the first time. In the current version of projects described by the Help Center, what does a project give you?"
+    select: 1
+    options:
+      - id: A
+        text: "A copy of Claude's training data narrowed to your topic, which it reads instead of its general knowledge."
+        correct: false
+        rationale: "The page describes context you provide (uploaded documents and instructions), not a filtered copy of training data."
+      - id: B
+        text: "A folder of finished artifacts; documents and code cannot be uploaded into a project."
+        correct: false
+        rationale: "The page says you can upload documents, text, code or other files to a project's knowledge base."
+      - id: C
+        text: "Account-wide settings that change how Claude answers in your chats outside the project too."
+        correct: false
+        rationale: "The page calls projects self-contained workspaces with their own chat histories and knowledge bases."
+      - id: D
+        text: "A self-contained workspace with its own chats, a knowledge base, and instructions for those chats."
+        correct: true
+        rationale: "The page says projects are self-contained workspaces with their own chat histories and knowledge bases, and that you can define project instructions to tailor Claude's responses."
+    source:
+      title: "What are projects?"
+      url: "https://support.claude.com/en/articles/9517075-what-are-projects"
+  - id: platform-foundations.D2.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Every sprint, a developer on a free Claude account drafts release notes from the same changelog template and the team's writing rules. She wants to stop re-pasting them. What does the Help Center support?"
+    select: 1
+    options:
+      - id: A
+        text: "Nothing yet: projects need a paid plan, so a free account keeps re-pasting into chats."
+        correct: false
+        rationale: "The page says projects are available to all users, including free accounts, which can create up to five projects."
+      - id: B
+        text: "A project: the template in its knowledge base, the writing rules and tone in its instructions."
+        correct: true
+        rationale: "The page says free users can create projects, that uploaded files form a knowledge base Claude uses in the project's chats, and that instructions tailor responses, for example the tone."
+      - id: C
+        text: "A project, but with the template and writing rules pasted at the start of each chat in it."
+        correct: false
+        rationale: "The page says Claude uses the knowledge base in each chat of the project and that instructions are set for the project, so nothing needs pasting again in each chat."
+      - id: D
+        text: "A project shared with the organization, since project knowledge works in shared projects."
+        correct: false
+        rationale: "The page describes the knowledge base as a project feature with no plan condition, and lists sharing separately, as a Team and Enterprise collaboration feature."
+    source:
+      title: "What are projects?"
+      url: "https://support.claude.com/en/articles/9517075-what-are-projects"
+  - id: platform-foundations.D2.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "On the current version of projects, a Pro-plan developer keeps adding long API specs to a project's knowledge until it nears the context limit. What does the Help Center say happens?"
+    select: 1
+    options:
+      - id: A
+        text: "New uploads are refused once the knowledge reaches the context window, so the project must be split."
+        correct: false
+        rationale: "The page says that on paid plans projects scale through RAG instead of stopping at the context limit."
+      - id: B
+        text: "Claude quietly drops the oldest files from the knowledge base to make room for the newer ones."
+        correct: false
+        rationale: "The page describes RAG mode expanding capacity, not files being removed from the knowledge base."
+      - id: C
+        text: "Claude switches the project to RAG mode, which expands capacity by up to 10x while keeping quality."
+        correct: true
+        rationale: "The page says that on paid plans, when project knowledge approaches context limits, Claude enables RAG mode to expand capacity by up to 10x while maintaining response quality."
+      - id: D
+        text: "Nothing changes on Pro: RAG mode for project knowledge is reserved for Team and Enterprise plans."
+        correct: false
+        rationale: "The page lists Pro, Max, Ultra, Team and Enterprise as the paid plans with enhanced project knowledge with RAG."
+    source:
+      title: "What are projects?"
+      url: "https://support.claude.com/en/articles/9517075-what-are-projects"
+  - id: platform-foundations.D2.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "On a Team plan, a tech lead built a project for incident write-ups. Teammates should read its knowledge and instructions and chat in it, but not change them. Which sharing setting fits?"
+    select: 1
+    options:
+      - id: A
+        text: "Share it with them as 'Can view': they see the contents and chat in it, but cannot edit."
+        correct: true
+        rationale: "The page says 'Can view' members can see project contents, knowledge and instructions, and chat within the project, but cannot edit it."
+      - id: B
+        text: "Share it with them as 'Can edit', which lets them chat but blocks changes to instructions."
+        correct: false
+        rationale: "The page says 'Can edit' members can modify project instructions and knowledge and add or remove members."
+      - id: C
+        text: "Share it as 'Can view', which hides the instructions and knowledge from teammates."
+        correct: false
+        rationale: "The page says 'Can view' members can see the project's contents, knowledge and instructions."
+      - id: D
+        text: "Export the knowledge files and email them, because projects cannot be shared on Team."
+        correct: false
+        rationale: "The page says projects on Team and Enterprise plans can be shared with other members of the organization."
+    source:
+      title: "What are projects?"
+      url: "https://support.claude.com/en/articles/9517075-what-are-projects"
+  - id: platform-foundations.D2.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A team moves a claude.ai project for drafting support replies into its own app on the Messages API. The project's instructions set a role and a tone. Where does Anthropic's prompting guide put that standing role?"
+    select: 1
+    options:
+      - id: A
+        text: "In the `system` parameter: a role in the system prompt focuses behaviour and tone."
+        correct: true
+        rationale: "The guide says setting a role in the system prompt focuses Claude's behavior and tone for your use case, and shows it in the system field of a Messages request."
+      - id: B
+        text: "In each user message, since a role in the system prompt has no effect on the replies."
+        correct: false
+        rationale: "The guide recommends the system prompt for the role and says it focuses behavior and tone."
+      - id: C
+        text: "Nowhere: current models ignore roles, so describe the output format and leave it there."
+        correct: false
+        rationale: "The guide has a section on giving Claude a role and says even a single sentence makes a difference."
+      - id: D
+        text: "In a role description of many pages, because a one-sentence role changes nothing."
+        correct: false
+        rationale: "The guide says that even a single sentence of role in the system prompt makes a difference."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: platform-foundations.D2.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Instead of project knowledge, an API app now sends about 30k tokens of design specs with each question. Per Anthropic's prompting guide, how should the prompt be laid out?"
+    select: 1
+    options:
+      - id: A
+        text: "Question first, documents after it, so Claude knows what to look for while it reads."
+        correct: false
+        rationale: "The guide says to put long documents near the top, above the query, and that queries at the end can improve response quality by up to 30 percent."
+      - id: B
+        text: "All specs merged into one untagged block, since tags confuse Claude when there are many."
+        correct: false
+        rationale: "The guide recommends wrapping each document in its own document tags with content and source subtags for clarity."
+      - id: C
+        text: "Specs at the top, each in `<document>` with `<source>` and `<document_content>`, and the query last."
+        correct: true
+        rationale: "For 20k+ token inputs the guide says to put long documents at the top, wrap each in document tags with document_content and source subtags, and place the query at the end."
+      - id: D
+        text: "Specs without their source metadata, to save tokens, since Claude does not use metadata."
+        correct: false
+        rationale: "The guide recommends structuring document content and metadata, such as the source, with XML subtags."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"

@@ -1,0 +1,158 @@
+skill: D5.S2
+questions:
+  - id: platform-foundations.D5.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A new team member hits a wall in claude.ai and asks whether it was a usage limit or a length limit. How does the Help Center tell the two apart?"
+    select: 1
+    options:
+      - id: A
+        text: "They are one limit with two names; both reset when you open a new chat."
+        correct: false
+        rationale: "The Help Center calls them two different types of limits that work in distinct ways; a new chat answers a length limit, not a usage limit."
+      - id: B
+        text: "Length limits reset weekly, while usage limits cap how long one message can be."
+        correct: false
+        rationale: "Weekly resets belong to usage limits; length limits relate to the context window of a single chat."
+      - id: C
+        text: "Usage limits cover claude.ai only; Claude Code draws on a separate allowance."
+        correct: false
+        rationale: "The page says usage of claude.ai, Claude Code and Claude Desktop counts towards the same usage limit."
+      - id: D
+        text: "Usage limits cap use across chats over time; length limits cap how long one chat grows."
+        correct: true
+        rationale: "Usage limits control how much you can use Claude across all your conversations over a period, while length limits come from the context window and control how long any single conversation can become."
+    source:
+      title: "How do usage and length limits work?"
+      url: "https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work"
+  - id: platform-foundations.D5.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A developer has several related questions about one failing test suite and wants to spend as little of her plan's usage as she can. What does the usage limit best practices article recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Send each question as its own short message, since short messages cost less in total."
+        correct: false
+        rationale: "The article recommends grouping related tasks in a single message; planning is meant to reduce the number of back-and-forth messages."
+      - id: B
+        text: "Group the related questions in one message, with the background context up front."
+        correct: true
+        rationale: "The article says to plan the conversation, combine related questions into a single message and provide background information upfront, because this reduces back-and-forth."
+      - id: C
+        text: "Open a separate new chat for each question so each one starts from an empty context."
+        correct: false
+        rationale: "The article advises building on earlier parts of the same conversation instead of repeating information, and batching similar requests together."
+      - id: D
+        text: "Re-attach the full code with every message so Claude does not lose track of it."
+        correct: false
+        rationale: "The article says to refer back to previous information instead of repeating it, since Claude remembers context from earlier in the conversation."
+    source:
+      title: "Usage limit best practices"
+      url: "https://support.claude.com/en/articles/9797557-usage-limit-best-practices"
+  - id: platform-foundations.D5.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Over the next week a team will ask many questions about the same long API specification in claude.ai. Which setup does the best practices article describe as easiest on their usage limits?"
+    select: 1
+    options:
+      - id: A
+        text: "Paste the spec into each new chat, because pasted text is cached across chats."
+        correct: false
+        rationale: "The article ties the caching benefit to documents uploaded to a project, and contrasts it with uploading the materials each time."
+      - id: B
+        text: "Upload it to a project once; project caches stay valid however long the break."
+        correct: false
+        rationale: "The article says caches expire after a period of inactivity, and after a long break your first message counts that content in full again."
+      - id: C
+        text: "Upload it to a project's knowledge, where reused cached content counts less."
+        correct: true
+        rationale: "Documents uploaded to a project are cached, and cached portions count less against your limits than new content when you reference them again while still cached."
+      - id: D
+        text: "Ask each question through Research, because tool use does not count toward limits."
+        correct: false
+        rationale: "The article lists tool usage, such as Research and web search, among the factors that affect your usage limits."
+    source:
+      title: "Usage limit best practices"
+      url: "https://support.claude.com/en/articles/9797557-usage-limit-best-practices"
+  - id: platform-foundations.D5.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A developer is deep in a very long chat about routine refactors. Claude has started \"organizing its thoughts\", and her usage meter is close to the limit. What does the Help Center suggest?"
+    select: 1
+    options:
+      - id: A
+        text: "Start a new conversation; long chats that trigger context management use more usage."
+        correct: true
+        rationale: "The page says longer conversations that trigger automatic context management consume more of your usage limit, and suggests starting a new conversation when you are approaching the limit in a longer chat."
+      - id: B
+        text: "Turn extended thinking on so Claude needs fewer turns to finish the refactors."
+        correct: false
+        rationale: "The page suggests turning extended thinking off when you don't need its enhanced reasoning for a particular task."
+      - id: C
+        text: "Connect more tools so Claude can look things up instead of rereading the chat."
+        correct: false
+        rationale: "The page says tools and connectors are token-intensive and suggests turning off the ones a conversation doesn't need."
+      - id: D
+        text: "Raise the effort level so that each routine answer comes out complete on the very first try."
+        correct: false
+        rationale: "The page suggests a lower effort level for routine tasks, noting that higher effort uses more tokens."
+    source:
+      title: "How do usage and length limits work?"
+      url: "https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work"
+  - id: platform-foundations.D5.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "An API service sends the same long system prompt and reference document with every request and keeps hitting input-tokens-per-minute (ITPM) 429 errors. What does the rate limits page suggest?"
+    select: 1
+    options:
+      - id: A
+        text: "Cache the repeated prefix, since cache reads don't count toward ITPM on most models."
+        correct: true
+        rationale: "For most Claude models, only uncached input tokens count toward ITPM; `cache_read_input_tokens` do not, so prompt caching raises effective throughput without raising the limit."
+      - id: B
+        text: "Lower max_tokens, because it is reserved against the output limit before generation."
+        correct: false
+        rationale: "The page says the `max_tokens` parameter does not factor into OTPM rate limit calculations, and in any case the errors here are on input tokens."
+      - id: C
+        text: "Wait for the counter to reset at the start of the next minute, then resend everything."
+        correct: false
+        rationale: "The API uses the token bucket algorithm: capacity is continuously replenished up to your maximum rather than reset at fixed intervals."
+      - id: D
+        text: "Send the requests in a burst at the start of each minute to use the full allowance."
+        correct: false
+        rationale: "The page warns that limits can be enforced over shorter intervals, and short bursts of requests can exceed the limit and trigger rate limit errors."
+    source:
+      title: "Rate limits"
+      url: "https://platform.claude.com/docs/en/api/rate-limits"
+  - id: platform-foundations.D5.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Mid-month, every request from an API integration returns HTTP 429 with error type rate_limit_error, no retry-after header, and error.details.error_code set to enforced_spend_limit_reached. What does the rate limits page say is happening?"
+    select: 1
+    options:
+      - id: A
+        text: "A per-minute rate limit was hit; retrying with backoff will soon get through."
+        correct: false
+        rationale: "The page says this response has no `retry-after` header and that retrying, including the SDK's automatic retries, fails until access resumes."
+      - id: B
+        text: "The team's own workspace spend limit was reached, which returns this same 429."
+        correct: false
+        rationale: "A spend limit you set yourself returns HTTP 400 with error type `invalid_request_error`, not a 429."
+      - id: C
+        text: "The organization reached its tier's monthly spend cap; usage pauses until next month."
+        correct: true
+        rationale: "At the tier's spend cap, usage pauses until 00:00 UTC on the first day of the next month and requests return 429 `rate_limit_error` with error code `enforced_spend_limit_reached`; moving to a higher tier restores access."
+      - id: D
+        text: "An acceleration limit tripped; ramping traffic up more gradually will clear it."
+        correct: false
+        rationale: "Acceleration limits produce rate-limit 429s; the page says the error code `enforced_spend_limit_reached` is how you tell the spend-cap response apart from a rate limit."
+    source:
+      title: "Rate limits"
+      url: "https://platform.claude.com/docs/en/api/rate-limits"

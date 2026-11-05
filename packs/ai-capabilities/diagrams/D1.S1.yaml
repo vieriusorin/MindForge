@@ -1,0 +1,28 @@
+skill: D1.S1
+diagrams:
+  - id: ai-capabilities.D1.S1.diagram-prompt-to-text
+    title: "From prompt to generated text"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: P, label: "Your prompt" }
+      - { id: Q, label: "Needs facts beyond the training data?", shape: decision }
+      - { id: R, label: "Add the facts to the context: paste them into the prompt, or retrieve them at runtime (RAG, optionally via tool use)" }
+      - { id: T, label: "Text encoded into tokens" }
+      - { id: CW, label: "Context window (working memory)" }
+      - { id: M, label: "LLM: patterns learned from vast text in training" }
+      - { id: TEMP, label: "Temperature: lower = conservative, higher = diverse" }
+      - { id: G, label: "Generated text (not fully deterministic, even at temperature 0)" }
+    edges:
+      - { from: P, to: Q }
+      - { from: Q, to: R, label: "yes" }
+      - { from: Q, to: T, label: "no" }
+      - { from: R, to: T, label: "passed in with the query" }
+      - { from: T, to: CW }
+      - { from: CW, to: G, label: "what the model reads now" }
+      - { from: M, to: G, label: "what the model learned" }
+      - { from: TEMP, to: G, label: "shapes the randomness" }
+    sources:
+      - https://platform.claude.com/docs/en/about-claude/glossary

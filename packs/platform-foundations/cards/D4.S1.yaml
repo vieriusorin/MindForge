@@ -1,0 +1,29 @@
+skill: D4.S1
+cards:
+  - id: platform-foundations.D4.S1.card-forest-crews
+    concept: Matching the model tier to the task
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      Pick the model from what the task needs: capabilities, speed, cost and effort. Fast,
+      high-volume work such as classification and routing suits the fastest, lowest-priced
+      model; complex reasoning where accuracy outweighs cost suits a stronger one. Start from
+      one end, test on your own prompts and data, and move when the evals show a gap. On the
+      API the choice is also a price per million tokens.
+    inNature: >-
+      A forester staffing jobs in a woodland. Planting seedlings across a whole hillside goes to
+      a quick, low-cost crew that covers ground; grafting a rare old tree goes to the most
+      experienced hand, who works slowly and charges more. Sending the master grafter to plant
+      the hillside wastes money; sending the planting crew to graft wastes the tree.
+    whereItBreaks:
+      - "A crew's skill is fixed, but a model has an effort parameter that trades intelligence for latency and cost within the same model; the guide says tuning effort is often a better lever than switching models."
+      - "A forester rarely splits one job between crews token by token; on the API, multi-model strategies pair a lower-cost model with a frontier model so most tokens are billed at the lower rate."
+      - "You can watch a crew work before hiring it again; with models the guide says a good evaluation set built from your own use case is the most important step in deciding whether to change."
+    contrast: >-
+      This skill sets the price and speed of each token. D5.S1 (context budget) decides how many
+      tokens each turn carries, and D5.S2 (usage limits) decides how many you can spend over time.
+    diagram: platform-foundations.D4.S1.diagram-pick-a-model
+    sources:
+      - https://platform.claude.com/docs/en/about-claude/models/choosing-a-model
+      - https://platform.claude.com/docs/en/models/overview

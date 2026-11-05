@@ -1,0 +1,35 @@
+skill: D3.S1
+diagrams:
+  - id: agent-skills.D3.S1.diagram-who-invokes
+    title: "Who may invoke a skill, and what loads into context"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: S, label: "Skill with a SKILL.md" }
+      - { id: Q, label: "Which invocation field is set?", shape: decision }
+      - { id: DEF, label: "Default: you and Claude can both invoke it" }
+      - { id: DMI, label: "disable-model-invocation: true: only you, by typing /name" }
+      - { id: UI, label: "user-invocable: false: only Claude; hidden from the / menu" }
+      - { id: BLK, label: "Claude tries anyway: Claude Code blocks the call" }
+      - { id: CTX1, label: "Description always in context; full skill loads when invoked" }
+      - { id: CTX2, label: "Description not in context; full skill loads when you invoke it" }
+      - { id: F, label: "context: fork set?", shape: decision }
+      - { id: MAIN, label: "Rendered SKILL.md enters the conversation and stays across turns" }
+      - { id: SUB, label: "New subagent gets SKILL.md as its prompt, without your conversation history, and returns its result" }
+    edges:
+      - { from: S, to: Q }
+      - { from: Q, to: DEF, label: "neither" }
+      - { from: Q, to: DMI, label: "only you" }
+      - { from: Q, to: UI, label: "only Claude" }
+      - { from: DEF, to: CTX1 }
+      - { from: UI, to: CTX1 }
+      - { from: DMI, to: CTX2 }
+      - { from: DMI, to: BLK, label: "Claude attempts it" }
+      - { from: CTX1, to: F, label: "invoked" }
+      - { from: CTX2, to: F, label: "you type /name" }
+      - { from: F, to: MAIN, label: "no" }
+      - { from: F, to: SUB, label: "yes" }
+    sources:
+      - https://code.claude.com/docs/en/skills

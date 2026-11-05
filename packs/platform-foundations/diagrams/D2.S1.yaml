@@ -1,0 +1,62 @@
+skill: D2.S1
+diagrams:
+  - id: platform-foundations.D2.S1.diagram-entry-points
+    title: "Where does this piece of work belong?"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    direction: TB
+    nodes:
+      - { id: START, label: "A new piece of work" }
+      - { id: RECUR, label: "Recurring, with the same documents and instructions?", shape: decision }
+      - { id: PROJ, label: "Project: knowledge base and project instructions shape its chats" }
+      - { id: DELIV, label: "Something to edit, reuse or share (significant, self-contained)?", shape: decision }
+      - { id: ART, label: "Artifact: opens beside the chat, saved to the Artifacts tab" }
+      - { id: DEEP, label: "Needs many searches that build on each other?", shape: decision }
+      - { id: RES, label: "Research: web search on; reads the web and connected tools" }
+      - { id: MOB, label: "Started in Claude Mobile: searches the web, connectors skipped" }
+      - { id: NOW, label: "Needs current information?", shape: decision }
+      - { id: WEB, label: "Chat with web search: answer with citations" }
+      - { id: CHAT, label: "Plain chat" }
+    edges:
+      - { from: START, to: RECUR }
+      - { from: RECUR, to: PROJ, label: "yes" }
+      - { from: RECUR, to: DELIV, label: "no" }
+      - { from: DELIV, to: ART, label: "yes" }
+      - { from: DELIV, to: DEEP, label: "no" }
+      - { from: DEEP, to: RES, label: "yes" }
+      - { from: RES, to: MOB, label: "on mobile" }
+      - { from: DEEP, to: NOW, label: "no" }
+      - { from: NOW, to: WEB, label: "yes" }
+      - { from: NOW, to: CHAT, label: "no" }
+    sources:
+      - https://support.claude.com/en/articles/9517075-what-are-projects
+      - https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them
+      - https://support.claude.com/en/articles/11088861-use-research-on-claude
+      - https://support.claude.com/en/articles/10684626-enable-and-use-web-search
+  - id: platform-foundations.D2.S1.diagram-four-decisions
+    title: "Four decisions before the prompt"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: LR
+    nodes:
+      - { id: TASK, label: "A task arrives" }
+      - { id: ENTRY, label: "1. Entry point: chat, project, artifact or research" }
+      - { id: CAP, label: "2. Capability layer: project knowledge, web search, connectors, file creation" }
+      - { id: MODEL, label: "3. Model: check the one you pick accepts the tools (research runs on its own)" }
+      - { id: CTX, label: "4. Context strategy: watch what fills the window, such as fetched pages and project knowledge" }
+      - { id: WORK, label: "Do the work, with room left in the window" }
+    edges:
+      - { from: TASK, to: ENTRY }
+      - { from: ENTRY, to: CAP }
+      - { from: CAP, to: MODEL }
+      - { from: MODEL, to: CTX }
+      - { from: CTX, to: WORK, label: "room left" }
+      - { from: CTX, to: ENTRY, label: "window filling: restart, re-choose entry point" }
+      - { from: CTX, to: CAP, label: "persist: move it into project knowledge" }
+    sources:
+      - https://support.claude.com/en/articles/9517075-what-are-projects
+      - https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them
+      - https://support.claude.com/en/articles/11088861-use-research-on-claude
+      - https://support.claude.com/en/articles/10684626-enable-and-use-web-search

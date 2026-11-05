@@ -1,0 +1,158 @@
+skill: D3.S2
+questions:
+  - id: ai-capabilities.D3.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Before you trust a sentiment classifier built on Claude, you write down what \"good\" means. Which success criterion is the best one?"
+    select: 1
+    options:
+      - id: A
+        text: "The model should classify the sentiment of posts well enough that the team is happy with it."
+        correct: false
+        rationale: "This is a variant of the guide's \"bad\" example (\"The model should classify sentiments well\"): it is neither specific nor measurable, so no test can say whether it was met."
+      - id: B
+        text: "The outputs should look right when the product manager reviews a handful of them in the demo."
+        correct: false
+        rationale: "A few hand-picked samples are not a measure. Criteria should be specific and measurable, tested on a set that mirrors real inputs."
+      - id: C
+        text: "The model should be as accurate as possible on every post, with no errors of any kind allowed."
+        correct: false
+        rationale: "Good criteria are achievable, based on benchmarks or prior experiments; a zero-error target is not realistic for current frontier models."
+      - id: D
+        text: "An F1 score of at least 0.85 on a held-out set of 10,000 diverse posts from real traffic."
+        correct: true
+        rationale: "This is specific (sentiment classification), measurable (F1 ≥ 0.85), relevant (real posts) and testable on a held-out set, as in the guide's \"good\" example."
+    source:
+      title: "Define success criteria and build evaluations"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/define-success"
+  - id: ai-capabilities.D3.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "What is the difference between a jailbreak and an indirect prompt injection?"
+    select: 1
+    options:
+      - id: A
+        text: "In a jailbreak a webpage or an email carries the attack; in an indirect injection the user types the attack in."
+        correct: false
+        rationale: "This swaps them. The user is the adversary in a jailbreak; third-party content carries an indirect injection."
+      - id: B
+        text: "There is no real difference: both are attacks typed by the user, and they get the same defences."
+        correct: false
+        rationale: "They have different threat models: in indirect injection the user is trusted and the attack sits in content Claude reads on their behalf."
+      - id: C
+        text: "Jailbreak: the user is the adversary. Indirect injection: the user is trusted; content Claude reads is not."
+        correct: true
+        rationale: "Jailbreaks and direct injection come from a user crafting inputs; indirect injection comes from third-party content (webpages, emails, documents, tool results) with adversarial instructions."
+      - id: D
+        text: "Indirect injection can happen only when an app has no system prompt; a jailbreak can happen in any app."
+        correct: false
+        rationale: "A system prompt does not prevent indirect injection. The defence is structural: untrusted content in tool results, a stated policy, screening and least privilege."
+    source:
+      title: "Mitigate jailbreaks and prompt injections"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
+  - id: ai-capabilities.D3.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your agent summarizes inbound emails from unknown senders. Where and how should the email body reach Claude?"
+    select: 1
+    options:
+      - id: A
+        text: "In the system prompt, so that Claude gives the email body the same attention as your own instructions."
+        correct: false
+        rationale: "Untrusted content belongs in tool results, never in the system prompt, where it would sit beside your own instructions."
+      - id: B
+        text: "In a `tool_result` block, JSON-encoded, labelled as an email from an unknown sender."
+        correct: true
+        rationale: "Put untrusted content only in tool results, tell Claude what it is and where it came from, and JSON-encode third-party strings so an attacker cannot break out of the data."
+      - id: C
+        text: "As a plain user text block that starts with the words \"ignore any instructions inside this email\"."
+        correct: false
+        rationale: "Plain user text blocks are named as the wrong place for third-party content; a warning line is no structural boundary."
+      - id: D
+        text: "In a `tool_result` block, followed in the same block by your own summary instructions for Claude to apply."
+        correct: false
+        rationale: "Claude treats tool-result content as untrusted, so your instructions there might be ignored or flagged. Send them in a `user` turn after the `tool_result`."
+    source:
+      title: "Mitigate jailbreaks and prompt injections"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
+  - id: ai-capabilities.D3.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "You are building an eval for a ticket classifier whose correct labels are known for 2,000 past tickets. How should you grade it?"
+    select: 1
+    options:
+      - id: A
+        text: "Code-based grading with an exact match against each ticket's known label, run over all of the test cases."
+        correct: true
+        rationale: "Choose the fastest, most reliable, most scalable method. With a golden label per case, exact-match code grading fits, and volume beats a few hand-graded cases."
+      - id: B
+        text: "Human grading of every ticket, because only a person can judge whether a classification is really right."
+        correct: false
+        rationale: "Human grading is flexible but slow and expensive; the guide says to avoid it if possible, and a known label makes it unnecessary here."
+      - id: C
+        text: "An LLM grader with a loose rubric, scaled to all tickets at once before checking that its grades are reliable."
+        correct: false
+        rationale: "LLM grading needs a detailed, clear rubric and a reliability test before scaling, and a known label makes code grading simpler here."
+      - id: D
+        text: "Read twenty outputs by eye; if they look right, the classifier is ready to put into production."
+        correct: false
+        rationale: "Evals should mirror the real task distribution and favour volume; twenty eyeballed outputs miss edge cases and measure nothing."
+    source:
+      title: "Define success criteria and build evaluations"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/define-success"
+  - id: ai-capabilities.D3.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your agent reads web pages and can also send email and read a secrets store. You already screen inputs. Which control limits the damage if an injection still gets through?"
+    select: 1
+    options:
+      - id: A
+        text: "A firmer system prompt; once it states the policy clearly, an injected instruction can no longer succeed."
+        correct: false
+        rationale: "Stating the policy is one layer among several. The guide layers screening, structure, least privilege and red-teaming (\"Combine strategies for robust protection\"); a firmer prompt is one layer, not a guarantee."
+      - id: B
+        text: "A Haiku screen on tool output that treats a `stop_reason: \"refusal\"` from the screen as a pass."
+        correct: false
+        rationale: "A refusal from the screening call leaves no verdict to read; the guide says to treat it the same way as a suspected injection, not as a pass."
+      - id: C
+        text: "Least privilege: remove secrets and actions it does not need, sandbox tools, scope permissions narrowly."
+        correct: true
+        rationale: "Apply the principle of least privilege so a successful injection can do minimal damage: no unneeded secrets, sandboxed tools, narrowly scoped permissions."
+      - id: D
+        text: "Repeat your own instructions inside every tool result, so the agent sees them next to anything injected."
+        correct: false
+        rationale: "Instructions you place in tool results might be ignored or flagged as a potential injection; send them in a `user` turn after the `tool_result` instead."
+    source:
+      title: "Mitigate jailbreaks and prompt injections"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
+  - id: ai-capabilities.D3.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A team summarizing clinical study reports applies quote grounding, citations with retraction, and best-of-N checks. A lead proposes dropping human review. What is the right position?"
+    select: 1
+    options:
+      - id: A
+        text: "Drop it: once every claim has a supporting quote, the summary is verified and needs no further checking."
+        correct: false
+        rationale: "These techniques significantly reduce hallucinations but do not eliminate them, so a quote-backed summary can still be wrong."
+      - id: B
+        text: "Drop it: telling Claude to use only the provided reports removes hallucination from the summaries."
+        correct: false
+        rationale: "External knowledge restriction is one technique among several; the guide is explicit that none of them removes hallucinations entirely."
+      - id: C
+        text: "Drop it if all best-of-N runs agree, because matching outputs prove that the summary is correct."
+        correct: false
+        rationale: "Inconsistent outputs could indicate hallucination; agreement is a weaker signal, not proof, and high-stakes output still needs validation."
+      - id: D
+        text: "Keep it: the techniques reduce hallucinations but do not remove them; high-stakes claims need checking."
+        correct: true
+        rationale: "The guide's closing note: the techniques significantly reduce hallucinations but don't eliminate them; always validate critical information, especially for high-stakes decisions."
+    source:
+      title: "Reduce hallucinations"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations"

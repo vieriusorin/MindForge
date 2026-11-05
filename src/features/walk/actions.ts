@@ -10,6 +10,8 @@ const MESSAGE = {
   "not-in-pack": "This question doesn't belong to this pack.",
   withdrawn:
     "This question was withdrawn for review. Go back to Today to start a fresh walk.",
+  changed:
+    "This question changed since you opened it. Go back to Today to start a fresh walk.",
   "not-gradable":
     "This question isn't available for grading yet. Ask an admin to sync the answer keys.",
 } as const satisfies Record<GradeError, string>;

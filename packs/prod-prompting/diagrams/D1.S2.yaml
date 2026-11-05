@@ -1,0 +1,29 @@
+skill: D1.S2
+diagrams:
+  - id: prod-prompting.D1.S2.diagram-choose-effort
+    title: "Choosing an effort level for a workload"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: LR
+    nodes:
+      - { id: W, label: "A new workload" }
+      - { id: Q1, label: "Simple, short task at high volume?", shape: decision }
+      - { id: LOW, label: "low: most efficient (subagents, simple high-volume requests)" }
+      - { id: START, label: "Start at the model's recommended level (it differs by model)" }
+      - { id: EV, label: "Run your evals at that level" }
+      - { id: Q3, label: "Does quality hold?", shape: decision }
+      - { id: UP, label: "Raise effort one level" }
+      - { id: SHIP, label: "Ship; hold top-level effort constant within a cached conversation" }
+    edges:
+      - { from: W, to: Q1 }
+      - { from: Q1, to: LOW, label: "yes" }
+      - { from: Q1, to: START, label: "no" }
+      - { from: LOW, to: EV }
+      - { from: START, to: EV }
+      - { from: EV, to: Q3 }
+      - { from: Q3, to: SHIP, label: "yes" }
+      - { from: Q3, to: UP, label: "no" }
+      - { from: UP, to: EV }
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/effort

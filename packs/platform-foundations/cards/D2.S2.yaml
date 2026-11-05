@@ -1,0 +1,26 @@
+skill: D2.S2
+cards:
+  - id: platform-foundations.D2.S2.card-greenhouse
+    concept: A project is standing context
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      A project is a self-contained workspace with its own chats, a knowledge base of the documents,
+      text and code you upload, and instructions that set tone or role for its chats. It pays off when
+      the same material and the same rules come back again and again. On the API, the same idea is a
+      role in the system prompt plus the long documents placed at the top of the prompt.
+    inNature: >-
+      A greenhouse. You prepare the soil, hang the labels and set the climate once, and each seedling you
+      bring in grows under those conditions without you rebuilding them for each pot.
+    whereItBreaks:
+      - "A greenhouse has a fixed floor; on paid plans, when project knowledge approaches context limits, Claude enables RAG mode and expands capacity by up to 10x."
+      - "On the API there is no greenhouse that remembers for you: the role goes in the system prompt and the documents go into the prompt you send, near the top and in document tags."
+      - "The picture fits the current version of projects; a new version in beta runs a project as one conversation that Claude splits into parallel threads."
+    contrast: >-
+      D2.S1 decides whether a project is the right entry point. D3.S3 covers memory and how
+      projects keep it separate from your other chats.
+    diagram: platform-foundations.D2.S2.diagram-project-anatomy
+    sources:
+      - https://support.claude.com/en/articles/9517075-what-are-projects
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices

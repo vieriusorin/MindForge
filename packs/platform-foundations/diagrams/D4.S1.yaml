@@ -1,0 +1,34 @@
+skill: D4.S1
+diagrams:
+  - id: platform-foundations.D4.S1.diagram-pick-a-model
+    title: "Picking a starting model and testing the choice"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: C, label: "Establish criteria: capabilities, speed, cost, effort" }
+      - { id: Q1, label: "Complex task where intelligence is paramount?", shape: decision }
+      - { id: H, label: "Efficiency-first: start with Claude Haiku 5.5" }
+      - { id: O, label: "Capability-first: start with Claude Opus 5.5 and optimize prompts for it" }
+      - { id: T, label: "Test with your own prompts, data and benchmark tests" }
+      - { id: Q2, label: "Does performance meet your requirements?", shape: decision }
+      - { id: K, label: "Keep the efficient model" }
+      - { id: U, label: "Upgrade for the specific capability gap" }
+      - { id: L, label: "Consider lowering effort or downgrading over time" }
+      - { id: F, label: "Still short at xhigh or max effort on demanding reasoning: move to Claude Fable 5.1" }
+    edges:
+      - { from: C, to: Q1 }
+      - { from: Q1, to: H, label: "no" }
+      - { from: Q1, to: O, label: "yes" }
+      - { from: H, to: T }
+      - { from: O, to: T }
+      - { from: T, to: Q2 }
+      - { from: Q2, to: K, label: "yes, started efficiency-first" }
+      - { from: Q2, to: L, label: "yes, started capability-first" }
+      - { from: Q2, to: U, label: "no, started efficiency-first" }
+      - { from: Q2, to: F, label: "no, started capability-first" }
+      - { from: U, to: T, label: "re-test" }
+      - { from: F, to: T, label: "re-test" }
+    sources:
+      - https://platform.claude.com/docs/en/about-claude/models/choosing-a-model

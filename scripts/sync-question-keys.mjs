@@ -12,6 +12,9 @@
  * deadline and checks a Boss Storm's domain from these, never from the client.
  * MF-0012: first loads every pack with the app's own validator and exits 1, writing nothing, on any
  * problem.
+ * MF-0016: cuckoos (packs/<slug>/cuckoos/*.yaml) are keyed like questions, with the flawed line's
+ * number as the only correct option, and registered with item_type 'cuckoo'.
+ * MF-0032: a pack's keys and items are written in ONE transaction (record_attempt binds the two).
  *
  * DB: $SUPABASE_DB_URL, else the LOCAL stack from `supabase status`.
  * Usage: node scripts/sync-question-keys.mjs
@@ -64,19 +67,46 @@ function readFiles(packSlug, kind) {
 }
 
 function readKeys(packSlug) {
-  return readFiles(packSlug, "questions").flatMap(({ name, file }) => {
-    return file.questions.map((q) => {
-      const correct = q.options.filter((o) => o.correct).map((o) => o.id);
-      if (correct.length === 0)
-        throw new Error(`${packSlug}/${name}: ${q.id} has no correct option`);
-      return {
-        question_id: q.id,
-        pack_slug: packSlug,
-        skill_code: file.skill,
-        correct_options: correct,
-      };
-    });
-  });
+  const questions = readFiles(packSlug, "questions").flatMap(
+    ({ name, file }) => {
+      return file.questions.map((q) => {
+        const correct = q.options.filter((o) => o.correct).map((o) => o.id);
+        if (correct.length === 0)
+          throw new Error(`${packSlug}/${name}: ${q.id} has no correct option`);
+        return {
+          question_id: q.id,
+          pack_slug: packSlug,
+          skill_code: file.skill,
+          correct_options: correct,
+        };
+      });
+    },
+  );
+  // MF-0016: record_attempt grades a cuckoo answer (a line number) by the same set equality.
+  const cuckoos = readFiles(packSlug, "cuckoos").flatMap(({ file }) =>
+    file.cuckoos.map((c) => ({
+      question_id: c.id,
+      pack_slug: packSlug,
+      skill_code: file.skill,
+      correct_options: [String(c.flawLine)],
+    })),
+  );
+  return [...questions, ...cuckoos];
+}
+
+/** MF-0013: exam timing and skill -> domain map from packs/<slug>/pack.yaml. */
+function readPackMeta(packSlug) {
+  const pack = YAML.parse(
+    readFileSync(join(ROOT, "packs", packSlug, "pack.yaml"), "utf8"),
+  );
+  const skills = (pack.domains ?? []).flatMap((d) =>
+    (d.skills ?? []).map((s) => ({ skill_code: s.code, domain_code: d.code })),
+  );
+  return {
+    exam_questions: pack.exam?.questions ?? null,
+    exam_minutes: pack.exam?.minutes ?? null,
+    skills,
+  };
 }
 
 /** MF-0013: exam timing and skill -> domain map from packs/<slug>/pack.yaml. */
@@ -98,6 +128,7 @@ const ITEM_KINDS = [
   { kind: "questions", type: "question" },
   { kind: "cards", type: "card" },
   { kind: "diagrams", type: "diagram" },
+  { kind: "cuckoos", type: "cuckoo" },
 ];
 const ORIGINS = ["official", "human", "ai"];
 
@@ -189,6 +220,9 @@ try {
     console.log(`${pack}: ${skills.length} skill(s) mapped`);
 
     const keys = readKeys(pack);
+    const items = readItems(pack);
+    // MF-0032: keys and items commit together. record_attempt checks the answer's hash against
+    // private.items and grades with private.question_keys in one snapshot, so both must be one version.
     await sql.begin(async (tx) => {
       for (const k of keys) {
         await tx`
@@ -200,15 +234,11 @@ try {
                 correct_options = excluded.correct_options,
                 updated_at = now()`;
       }
-      const ids = keys.map((k) => k.question_id);
-      await tx`delete from private.question_keys where pack_slug = ${pack} and not (question_id = any(${ids}))`;
-    });
-    console.log(`${pack}: ${keys.length} key(s) synced`);
+      const keyIds = keys.map((k) => k.question_id);
+      await tx`delete from private.question_keys where pack_slug = ${pack} and not (question_id = any(${keyIds}))`;
 
-    // MF-0007: hash_synced_at moves only when the hash changes (C-3: the 48 h analogy clock).
-    // Only this pack's rows are deleted, so packs without a folder here are never touched.
-    const items = readItems(pack);
-    await sql.begin(async (tx) => {
+      // MF-0007: hash_synced_at moves only when the hash changes (C-3: the 48 h analogy clock).
+      // Only this pack's rows are deleted, so packs without a folder here are never touched.
       for (const i of items) {
         await tx`
           insert into private.items as cur
@@ -226,9 +256,10 @@ try {
                 content_hash = excluded.content_hash,
                 updated_at = now()`;
       }
-      const ids = items.map((i) => i.item_id);
-      await tx`delete from private.items where pack_slug = ${pack} and not (item_id = any(${ids}))`;
+      const itemIds = items.map((i) => i.item_id);
+      await tx`delete from private.items where pack_slug = ${pack} and not (item_id = any(${itemIds}))`;
     });
+    console.log(`${pack}: ${keys.length} key(s) synced`);
     console.log(`${pack}: ${items.length} item(s) registered`);
   }
 } finally {

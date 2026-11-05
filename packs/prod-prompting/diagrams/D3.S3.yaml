@@ -1,0 +1,30 @@
+skill: D3.S3
+diagrams:
+  - id: prod-prompting.D3.S3.diagram-error-retry
+    title: "An API error: retry, wait, or fix the request?"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: Err, label: "The Claude API returns an error (log its request_id)" }
+      - { id: Status, label: "Which status and error type?", shape: decision }
+      - { id: Fix, label: "400, 401, 403, 404, 413: fix the request, key or permissions; retrying unchanged will not help" }
+      - { id: Billing, label: "402 billing_error: fix payment details in the Console" }
+      - { id: Header, label: "Is error.details.error_code enforced_spend_limit_reached?", shape: decision }
+      - { id: Cap, label: "Spend cap: no retry-after, retries fail until access resumes or a higher tier is granted" }
+      - { id: Wait, label: "Rate or acceleration limit: wait retry-after seconds if given, then retry; ramp traffic gradually" }
+      - { id: Timeout, label: "504 or timeout_error: use streaming for long requests" }
+      - { id: Backoff, label: "500 api_error or 529 overloaded_error: retry with exponential backoff; if a 500 persists, contact support with the request_id" }
+    edges:
+      - { from: Err, to: Status }
+      - { from: Status, to: Fix, label: "400, 401, 403, 404, 413" }
+      - { from: Status, to: Billing, label: "402" }
+      - { from: Status, to: Header, label: "429" }
+      - { from: Header, to: Cap, label: "yes" }
+      - { from: Header, to: Wait, label: "no" }
+      - { from: Status, to: Timeout, label: "504 / timeout_error" }
+      - { from: Status, to: Backoff, label: "500, 529" }
+    sources:
+      - https://platform.claude.com/docs/en/api/errors
+      - https://platform.claude.com/docs/en/api/rate-limits

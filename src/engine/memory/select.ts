@@ -14,17 +14,32 @@ export interface SessionInput {
 
 export const DEFAULT_SESSION_SIZE = 5;
 
+/** MF-0016: any item a session can be picked from (questions, cuckoos). */
+export interface SessionItem {
+  id: string;
+  skillCode: string;
+}
+
+export interface SessionItemsInput<T extends SessionItem> {
+  pack: Pack;
+  items: readonly T[];
+  attempts: readonly Attempt[];
+  now: Date;
+  size?: number;
+}
+
 /**
  * Pick a session: skills ranked by weight × (1 − R) (R = 0 when unseen), highest first, ties in
- * pack order; one question per skill, the one this learner saw least recently (never seen first).
+ * pack order; one item per skill, the one this learner saw least recently (never seen first).
+ * MF-0016: shared by every mode that serves one item per skill (Duel, Spot the Cuckoo).
  */
-export function pickSessionQuestions({
+export function pickSessionItems<T extends SessionItem>({
   pack,
-  questions,
+  items,
   attempts,
   now,
   size = DEFAULT_SESSION_SIZE,
-}: SessionInput): Question[] {
+}: SessionItemsInput<T>): T[] {
   const memory = memoryBySkill(attempts, now);
   const lastSeen = lastSeenByQuestion(attempts);
 
@@ -33,13 +48,21 @@ export function pickSessionQuestions({
     .map((skill, order) => ({
       order,
       score: skill.weight * (1 - (memory.get(skill.code)?.retrievability ?? 0)),
-      candidates: questions.filter((q) => q.skillCode === skill.code),
+      candidates: items.filter((item) => item.skillCode === skill.code),
     }))
     .filter(
-      (s): s is typeof s & { candidates: [Question, ...Question[]] } =>
+      (s): s is typeof s & { candidates: [T, ...T[]] } =>
         s.candidates.length > 0,
     )
     .sort((a, b) => b.score - a.score || a.order - b.order)
     .slice(0, size)
     .map(({ candidates }) => leastRecentlySeen(candidates, lastSeen));
+}
+
+/** The Duel's session: `pickSessionItems` over questions. */
+export function pickSessionQuestions({
+  questions,
+  ...rest
+}: SessionInput): Question[] {
+  return pickSessionItems({ ...rest, items: questions });
 }

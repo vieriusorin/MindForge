@@ -1,0 +1,34 @@
+skill: D5.S2
+diagrams:
+  - id: platform-foundations.D5.S2.diagram-hit-a-limit
+    title: "You hit a limit: which one, and what next"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: H, label: "Work stops: a limit was reached" }
+      - { id: Q, label: "Where, and which limit?", shape: decision }
+      - { id: U, label: "claude.ai usage limit (session or weekly)" }
+      - { id: U1, label: "Wait for the reset, upgrade the plan, or continue on usage credits" }
+      - { id: L, label: "claude.ai length limit: the chat outgrew the context window" }
+      - { id: L1, label: "Start a new conversation, or use projects for larger material" }
+      - { id: A, label: "API returns HTTP 429 rate_limit_error" }
+      - { id: Q2, label: "error_code enforced_spend_limit_reached?", shape: decision }
+      - { id: S, label: "Monthly spend cap: paused until next month unless you request a higher limit" }
+      - { id: R, label: "Rate limit: wait the retry-after seconds; cache repeated input; ramp traffic gradually" }
+      - { id: B, label: "API returns HTTP 400 invalid_request_error: your own spend limit; raise or remove it" }
+    edges:
+      - { from: H, to: Q }
+      - { from: Q, to: U, label: "claude.ai, over time" }
+      - { from: Q, to: L, label: "claude.ai, one chat" }
+      - { from: Q, to: A, label: "API, 429" }
+      - { from: Q, to: B, label: "API, 400 'You have reached your specified API usage limits'" }
+      - { from: U, to: U1 }
+      - { from: L, to: L1 }
+      - { from: A, to: Q2 }
+      - { from: Q2, to: S, label: "yes" }
+      - { from: Q2, to: R, label: "no" }
+    sources:
+      - https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work
+      - https://platform.claude.com/docs/en/api/rate-limits

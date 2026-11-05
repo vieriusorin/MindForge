@@ -67,7 +67,7 @@ describe("MF-0008 question provenance and pack sources", () => {
     expect(bad({ ...official, origin: "official", generatedBy })).toThrow();
 
     if (!q) throw new Error("the generatedBy question did not load");
-    const playable = toPlayableQuestion(q);
+    const playable = toPlayableQuestion(q, "h");
     expect(Object.keys(playable)).not.toContain("generatedBy");
     expect(Object.keys(playable)).not.toContain("author");
 

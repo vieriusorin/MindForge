@@ -1,0 +1,87 @@
+# Production-Grade Prompting, Agents & Tool use (MF-0031)
+# A course pack. The course itself is behind a login and is never a source (CONTEXT.md Source): the blueprint
+# follows the course's three themes, and every skill is grounded in public documentation only.
+# Weights are MindForge's (GOAL.md Blueprint); re-map them when the course outline is added (MF-0031 C-1).
+# Items carry a `level`: foundation (junior), practitioner (mid), expert (senior).
+slug: prod-prompting
+name: Production-Grade Prompting, Agents & Tool use
+kind: course
+version: 1
+domains:
+  - code: D1
+    name: Prompting for production
+    weight: 34
+    skills:
+      - code: D1.S1
+        name: Clear, direct, structured prompts
+        weight: 12
+        description: Being explicit, giving context and motivation, system prompts and roles, XML tags to separate instructions from data, long-context ordering.
+        sources:
+          - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+      - code: D1.S2
+        name: Examples, reasoning and effort
+        weight: 11
+        description: Multishot examples, letting Claude think (extended and adaptive thinking), and the effort parameter as the cost/quality dial.
+        sources:
+          - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+          - https://platform.claude.com/docs/en/build-with-claude/effort
+      - code: D1.S3
+        name: Structured outputs and success criteria
+        weight: 11
+        description: JSON outputs and strict tool use with schemas, and defining measurable success criteria and evals before tuning a prompt.
+        sources:
+          - https://platform.claude.com/docs/en/build-with-claude/structured-outputs
+          - https://platform.claude.com/docs/en/test-and-evaluate/define-success
+
+  - code: D2
+    name: Tool use
+    weight: 36
+    skills:
+      - code: D2.S1
+        name: Defining tools
+        weight: 12
+        description: Tool names, descriptions and input schemas, client vs server tools, tool_choice, and why descriptions matter most.
+        sources:
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
+      - code: D2.S2
+        name: The tool-use loop
+        weight: 12
+        description: stop_reason tool_use, returning tool_result blocks, parallel tool calls, reporting errors with is_error, and ending the loop.
+        sources:
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+          - https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls
+      - code: D2.S3
+        name: Tools at scale with MCP
+        weight: 12
+        description: Model Context Protocol hosts, clients and servers, transports, and the server primitives (tools, resources, prompts) with who controls each.
+        sources:
+          - https://modelcontextprotocol.io/docs/learn/architecture
+          - https://modelcontextprotocol.io/docs/learn/server-concepts
+
+  - code: D3
+    name: Agents in production
+    weight: 30
+    skills:
+      - code: D3.S1
+        name: Workflows vs agents
+        weight: 10
+        description: Augmented LLM, prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer, autonomous agents, and when not to build an agent.
+        sources:
+          - https://www.anthropic.com/engineering/building-effective-agents
+      - code: D3.S2
+        name: Context engineering
+        weight: 10
+        description: Context as a finite resource, just-in-time retrieval, compaction, structured notes, sub-agents, context-window limits and prompt caching.
+        sources:
+          - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+          - https://platform.claude.com/docs/en/build-with-claude/context-windows
+          - https://platform.claude.com/docs/en/build-with-claude/prompt-caching
+      - code: D3.S3
+        name: Production hardening
+        weight: 10
+        description: API errors and retries, rate limits and backoff, and guarding against jailbreaks and prompt injection.
+        sources:
+          - https://platform.claude.com/docs/en/api/errors
+          - https://platform.claude.com/docs/en/api/rate-limits
+          - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks

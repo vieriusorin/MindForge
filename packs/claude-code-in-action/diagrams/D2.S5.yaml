@@ -1,0 +1,48 @@
+skill: D2.S5
+diagrams:
+  - id: claude-code-in-action.D2.S5.diagram-connect-server
+    title: "Connecting an MCP server, from need to tool call"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: NEED, label: "You keep copying data from another tool into chat" }
+      - { id: TRUST, label: "Do you trust the server?", shape: decision }
+      - { id: DONT, label: "Don't connect: prompt injection risk" }
+      - { id: TRANSPORT, label: "How does it run?", shape: decision }
+      - { id: HTTP, label: "Remote HTTP: claude mcp add --transport http" }
+      - { id: SSE, label: "Remote SSE" }
+      - { id: STDIO, label: "Local stdio: claude mcp add … -- <command>" }
+      - { id: WS, label: "Remote WebSocket" }
+      - { id: SCOPE, label: "Which scope?", shape: decision }
+      - { id: LOCAL, label: "Local (default): ~/.claude.json, this project, private" }
+      - { id: PROJECT, label: "Project: .mcp.json at the root, shared via git" }
+      - { id: USER, label: "User: ~/.claude.json, all your projects" }
+      - { id: APPROVE, label: "Interactive session: approve the project server" }
+      - { id: RULES, label: "Permission rules: allow mcp__<server>__* or get prompted" }
+      - { id: USE, label: "Claude calls the server's tools; check status with /mcp" }
+    edges:
+      - { from: NEED, to: TRUST }
+      - { from: TRUST, to: DONT, label: "no" }
+      - { from: TRUST, to: TRANSPORT, label: "yes" }
+      - { from: TRANSPORT, to: HTTP, label: "remote" }
+      - { from: TRANSPORT, to: SSE, label: "remote, SSE" }
+      - { from: TRANSPORT, to: STDIO, label: "local process" }
+      - { from: TRANSPORT, to: WS, label: "remote, WebSocket" }
+      - { from: HTTP, to: SCOPE }
+      - { from: SSE, to: SCOPE }
+      - { from: STDIO, to: SCOPE }
+      - { from: WS, to: SCOPE }
+      - { from: SCOPE, to: LOCAL, label: "just me, here" }
+      - { from: SCOPE, to: PROJECT, label: "the team" }
+      - { from: SCOPE, to: USER, label: "me, everywhere" }
+      - { from: PROJECT, to: APPROVE, label: "interactive session" }
+      - { from: PROJECT, to: RULES, label: "claude -p run: loads without asking" }
+      - { from: LOCAL, to: RULES }
+      - { from: USER, to: RULES }
+      - { from: APPROVE, to: RULES }
+      - { from: RULES, to: USE }
+    sources:
+      - https://code.claude.com/docs/en/mcp
+      - https://code.claude.com/docs/en/permissions

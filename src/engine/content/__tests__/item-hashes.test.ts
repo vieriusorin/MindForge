@@ -61,3 +61,21 @@ describe("itemHashes", () => {
     ).toEqual({});
   });
 });
+
+describe("itemHashes, MF-0016 cuckoos", () => {
+  it("hashes raw cuckoo items like every other kind", () => {
+    const cuckoo = { id: "p.S1.cuckoo-1", title: "A hook", flawLine: 2 };
+    const hashes = itemHashes({
+      questions: [],
+      cards: [],
+      diagrams: [],
+      cuckoos: [
+        {
+          name: "cuckoos/S1.yaml",
+          text: YAML.stringify({ skill: "S1", cuckoos: [cuckoo] }),
+        },
+      ],
+    });
+    expect(hashes).toEqual({ "p.S1.cuckoo-1": contentHash(cuckoo) });
+  });
+});

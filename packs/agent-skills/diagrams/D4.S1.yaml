@@ -1,0 +1,37 @@
+skill: D4.S1
+diagrams:
+  - id: agent-skills.D4.S1.diagram-which-extension
+    title: "Which Claude Code feature fits the need"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: LR
+    nodes:
+      - { id: Q, label: "What do you need?", shape: decision }
+      - { id: FACTS, label: "Facts for every session: build commands, conventions, project layout" }
+      - { id: CM, label: "CLAUDE.md: read at the start of every session" }
+      - { id: PROC, label: "A multi-step procedure or reference needed only sometimes" }
+      - { id: SK, label: "A skill: description listed, body loads only when invoked or relevant" }
+      - { id: SIDE, label: "A side task whose output would flood the main conversation" }
+      - { id: SA, label: "A subagent: works in its own context window and returns a summary" }
+      - { id: MUST, label: "An action that must happen every time at a set point, such as after each file edit" }
+      - { id: HK, label: "A hook: runs at that lifecycle event (command, HTTP, prompt or agent), whatever Claude decides" }
+      - { id: EXT, label: "Data or actions in another tool: issue tracker, database, API" }
+      - { id: MC, label: "An MCP server: Claude reads and acts on that system directly" }
+    edges:
+      - { from: Q, to: FACTS }
+      - { from: Q, to: PROC }
+      - { from: Q, to: SIDE }
+      - { from: Q, to: MUST }
+      - { from: Q, to: EXT }
+      - { from: FACTS, to: CM, label: "always on" }
+      - { from: PROC, to: SK, label: "on demand" }
+      - { from: SIDE, to: SA, label: "isolated context" }
+      - { from: MUST, to: HK, label: "deterministic" }
+      - { from: EXT, to: MC, label: "connect" }
+    sources:
+      - https://code.claude.com/docs/en/memory
+      - https://code.claude.com/docs/en/skills
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/hooks-guide
+      - https://code.claude.com/docs/en/mcp

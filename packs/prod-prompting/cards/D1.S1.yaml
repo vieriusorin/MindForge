@@ -1,0 +1,26 @@
+skill: D1.S1
+cards:
+  - id: prod-prompting.D1.S1.card-trail-blazes
+    concept: Clear, structured prompt
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Treat Claude like a brilliant new colleague who knows nothing about your project. Say exactly
+      what you want, explain why it matters, put long documents first and the question last, and
+      wrap each kind of content (instructions, documents, examples) in its own XML tag so nothing
+      gets mixed up.
+    inNature: >-
+      Trail blazes painted on trees for a hiker who has never walked this forest. A local finds
+      the way without them; a newcomer needs a clear mark at every fork. A good prompt is the
+      blazed trail; a vague prompt is a forest with no marks.
+    whereItBreaks:
+      - "A blaze only points; a prompt can also give the reason, and Claude generalizes from that reason to forks you never marked."
+      - "Blazes look the same whatever the hiker carries; a prompt's own style rubs off on the answer (a markdown-heavy prompt tends to get markdown back)."
+      - "More blazes never hurt a hiker; over-prompting (\"if in doubt, use the tool\") can make newer models overtrigger."
+    contrast: >-
+      This skill is about what you ask and how you lay it out. Examples (D1.S2) show the shape of
+      a good answer; structured outputs (D1.S3) enforce that shape.
+    diagram: prod-prompting.D1.S1.diagram-prompt-anatomy
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices

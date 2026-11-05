@@ -1,0 +1,29 @@
+skill: D2.S1
+cards:
+  - id: ai-capabilities.D2.S1.card-next-token
+    concept: Next token prediction
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      A language model writes by predicting what comes next. Its underlying model was pretrained to
+      predict the next word from the text before it, and it generates a response one token at a
+      time. Ask for a changelog entry and, after "Fixed a bug in the", it scores likely
+      continuations and picks one; temperature sets how adventurous that pick is. Text that reads
+      well was chosen because it is probable, not because it was checked.
+    inNature: >-
+      A river finding its way downhill. At every point the water follows the most likely slope from
+      where it is now, and the channel is carved one stretch at a time. A stone in the bed can send
+      it down a different branch, and from there it keeps flowing just as smoothly.
+    whereItBreaks:
+      - "Water has no plan. Anthropic's tracing found Claude can plan ahead: it chose a rhyming word before writing the line, then wrote toward it."
+      - "A river cannot be wrong about the terrain. A model's likely continuation can be fluent and untrue: once it decides it knows an answer, it can confabulate a plausible but untrue response."
+      - "The analogy suggests the same bed always carves the same channel. A model makes no such promise: even with temperature set to 0, identical inputs might produce different outputs across API calls."
+    contrast: >-
+      A search engine returns documents that already exist; a language model generates new text from
+      what it learned. To tie its output to real documents, retrieval augmented generation passes
+      them into the context window so the model can ground its answer in evidence.
+    diagram: ai-capabilities.D2.S1.diagram-generation-loop
+    sources:
+      - https://platform.claude.com/docs/en/about-claude/glossary
+      - https://www.anthropic.com/research/tracing-thoughts-language-model

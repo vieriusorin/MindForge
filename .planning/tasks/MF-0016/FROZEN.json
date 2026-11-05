@@ -1,0 +1,41 @@
+{
+  "ticket": "MF-0016",
+  "frozen_at": "2026-11-04T13:58:27.378Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0016-cuckoo.acceptance.test.ts",
+      "sha256": "a9c7045d50e387615e2a73848ff990887fc279b0bc52e95670cf363e4d12d0a6",
+      "first_failure": "SC-1: AssertionError: expected [] to deeply equal [ { …(12) } ] (cuckoos not loaded); SC-1 rejects: expected a ContentValidationError, nothing was thrown; SC-3/SC-4: Error: not implemented; SC-9: expected null to deeply equal { kind: \"cuckoo\", … }"
+    },
+    {
+      "path": "src/engine/content/__tests__/mf-0016-cuckoo-content.acceptance.test.ts",
+      "sha256": "dd4d0e61628d5e8b645f70f3ceeb8b472cc02e4f97626c18c2207400c2462676",
+      "first_failure": "SC-8: AssertionError: expected [ \"D6.S1\", false ] to deeply equal [ \"D6.S1\", true ]"
+    },
+    {
+      "path": "src/engine/memory/__tests__/mf-0016-session.acceptance.test.ts",
+      "sha256": "254d594a25dbbee0ce746d475771f0ad9b55d05163e3cd27f51a0fea84e2d2f2",
+      "first_failure": "SC-5: Error: not implemented (pickSessionItems stub)"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0016-cuckoo-keys.db.acceptance.test.ts",
+      "sha256": "c7a7f7eee9b628c576cfa923e7b8eaca53179784e633d4adfe23528bbe4bd7d5",
+      "first_failure": "SC-2: AssertionError: expected [] to deeply equal [ { …(4) } ]; record_attempt: expected [ null, null ] to deeply equal [ true, false ]; removal: replaced +0 vs 1 (same on 2nd run)"
+    },
+    {
+      "path": "src/features/cuckoo/components/cuckoo-session/__tests__/mf-0016-cuckoo-session.acceptance.test.tsx",
+      "sha256": "01a6347caf10637810428ea69986ef6938ae7a8cfa572aa8695fa7c4cf04f2f3",
+      "first_failure": "SC-6: Error: not implemented (CuckooSession stub)"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-04T14:06:08Z",
+      "reason": "User decision 2026-11-04 (MF-0016 BUILD): fixture defect in SC-5 \"within a skill, least recently seen\": the attempt 1 minute before NOW made D6.S2 R~1, dropping the skill from the top 5, so the test could never pass. Attempt re-dated to 2026-01-01 so D6.S2 still ranks first; expected values unchanged.",
+      "files": {
+        "src/engine/memory/__tests__/mf-0016-session.acceptance.test.ts": "254d594a25dbbee0ce746d475771f0ad9b55d05163e3cd27f51a0fea84e2d2f2"
+      }
+    }
+  ]
+}

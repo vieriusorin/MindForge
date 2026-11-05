@@ -1,11 +1,18 @@
 import type { Question } from "../questions/types";
-import type { Diagram, ItemType, NatureCard, PackContent } from "./types";
+import type {
+  Cuckoo,
+  Diagram,
+  ItemType,
+  NatureCard,
+  PackContent,
+} from "./types";
 
 /** MF-0007: one reviewable item, tagged with its kind. */
 export type PackItem =
   | { kind: "question"; item: Question }
   | { kind: "card"; item: NatureCard }
-  | { kind: "diagram"; item: Diagram };
+  | { kind: "diagram"; item: Diagram }
+  | { kind: "cuckoo"; item: Cuckoo };
 
 /** The item with this id and type in a pack's content, or null (e.g. the registry is ahead of the files). */
 export function findPackItem(
@@ -21,8 +28,12 @@ export function findPackItem(
     const item = content.cards.find((c) => c.id === itemId);
     return item ? { kind: "card", item } : null;
   }
-  const item = content.diagrams.find((d) => d.id === itemId);
-  return item ? { kind: "diagram", item } : null;
+  if (type === "diagram") {
+    const item = content.diagrams.find((d) => d.id === itemId);
+    return item ? { kind: "diagram", item } : null;
+  }
+  const item = (content.cuckoos ?? []).find((c) => c.id === itemId);
+  return item ? { kind: "cuckoo", item } : null;
 }
 
 /** The one-line name a reviewer recognises an item by. */
@@ -38,6 +49,7 @@ export function itemTitles(content: PackContent): Record<string, string> {
     ...content.questions.map((item) => [item.id, item.stem]),
     ...content.cards.map((item) => [item.id, item.concept]),
     ...content.diagrams.map((item) => [item.id, item.title]),
+    ...(content.cuckoos ?? []).map((item) => [item.id, item.title]),
   ]);
 }
 

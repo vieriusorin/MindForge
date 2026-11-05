@@ -1,0 +1,158 @@
+skill: D3.S3
+questions:
+  - id: prod-prompting.D3.S3.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your app receives HTTP 529 with error type overloaded_error from the Claude API. What does it mean?"
+    select: 1
+    options:
+      - id: A
+        text: "The API is temporarily overloaded, which can happen under high traffic across all users."
+        correct: true
+        rationale: "529 overloaded_error means the API is temporarily overloaded and can occur when the API sees high traffic across all users."
+      - id: B
+        text: "Your organization has used up its rate limit for the current minute."
+        correct: false
+        rationale: "Hitting a rate limit returns 429 rate_limit_error, not 529."
+      - id: C
+        text: "Your request body is larger than the maximum allowed size for the endpoint."
+        correct: false
+        rationale: "An oversized request returns 413 request_too_large."
+      - id: D
+        text: "Your API key is malformed, revoked or expired."
+        correct: false
+        rationale: "Key problems return 401 authentication_error."
+    source:
+      title: "Claude API errors"
+      url: "https://platform.claude.com/docs/en/api/errors"
+  - id: prod-prompting.D3.S3.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A request is rejected with HTTP 429. The response carries a retry-after header. What should the client do?"
+    select: 1
+    options:
+      - id: A
+        text: "Retry immediately in a tight loop until a request succeeds."
+        correct: false
+        rationale: "The retry-after header gives the seconds to wait; earlier retries will fail."
+      - id: B
+        text: "Treat it as a permanent failure and show the user an error."
+        correct: false
+        rationale: "A rate-limit 429 is transient: capacity is replenished continuously, so waiting and retrying works."
+      - id: C
+        text: "Wait the number of seconds given in retry-after, then retry the request."
+        correct: true
+        rationale: "When the response has a retry-after header, wait that many seconds before retrying; earlier retries will fail."
+      - id: D
+        text: "Rotate to a new API key so the retry counts against a fresh limit."
+        correct: false
+        rationale: "Limits are set at the organization level, so another key in the same organization does not reset them."
+    source:
+      title: "Rate limits"
+      url: "https://platform.claude.com/docs/en/api/rate-limits"
+  - id: prod-prompting.D3.S3.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "An email-triage agent reads inbound emails from unknown senders. Where should the email body go in the API request to best resist indirect prompt injection?"
+    select: 1
+    options:
+      - id: A
+        text: "In the system prompt, so the model gives it the highest priority and reads it carefully."
+        correct: false
+        rationale: "Untrusted third-party content should never go into the system prompt, where it would sit alongside your own instructions."
+      - id: B
+        text: "In a tool_result block, ideally JSON-encoded and labelled as an email from an unknown sender."
+        correct: true
+        rationale: "Deliver third-party content inside tool_result blocks, say what it is and where it came from, and JSON-encode it so it cannot break out into an instruction context."
+      - id: C
+        text: "In a plain user text block, concatenated after your instructions for that turn."
+        correct: false
+        rationale: "The guidance says untrusted content belongs in tool results, not in system prompts or plain user text blocks."
+      - id: D
+        text: "Anywhere, because Claude is trained to resist injections and placement makes no difference."
+        correct: false
+        rationale: "Claude is resilient, but structuring the app so it can tell untrusted content from instructions strengthens the guardrails."
+    source:
+      title: "Mitigate jailbreaks and prompt injections"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
+  - id: prod-prompting.D3.S3.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A team caches a large shared prefix and sees an 80% cache hit rate. How does that affect their input-tokens-per-minute (ITPM) limit on most Claude models?"
+    select: 1
+    options:
+      - id: A
+        text: "Cache reads count double toward ITPM, so caching lowers how much they can send."
+        correct: false
+        rationale: "Cache reads do not count toward ITPM on most models; they are billed at a fraction of the base input price."
+      - id: B
+        text: "Nothing changes, because ITPM counts every input token whether cached or not."
+        correct: false
+        rationale: "That describes combined TPM limits at some providers; for most Claude models only uncached input counts."
+      - id: C
+        text: "ITPM is replaced by a separate cache-only limit once caching is enabled."
+        correct: false
+        rationale: "There is no separate cache limit; input_tokens and cache_creation_input_tokens count toward the same ITPM."
+      - id: D
+        text: "Only uncached input and cache writes count, so their effective input throughput rises a lot."
+        correct: true
+        rationale: "For most models, cache_read_input_tokens do not count toward ITPM; with an 80% hit rate a 2M ITPM limit can process about 10M total input tokens per minute."
+    source:
+      title: "Rate limits"
+      url: "https://platform.claude.com/docs/en/api/rate-limits"
+  - id: prod-prompting.D3.S3.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your service gets HTTP 429 rate_limit_error with no retry-after header, and retries keep failing for hours. What is the most likely cause?"
+    select: 1
+    options:
+      - id: A
+        text: "A transient overload; the SDK's default two retries should already have fixed it."
+        correct: false
+        rationale: "This 429 does not clear with retries: the docs say retrying, including the SDK's automatic retries, fails until access resumes."
+      - id: B
+        text: "The token bucket only refills at the start of each hour, so it will reset on the hour."
+        correct: false
+        rationale: "The token bucket replenishes capacity continuously rather than at fixed intervals."
+      - id: C
+        text: "The organization reached its usage tier's monthly spend cap, so usage is paused until access resumes."
+        correct: true
+        rationale: "A tier spend-cap 429 has no retry-after header and keeps failing, even with SDK retries, until access resumes or a higher limit is granted."
+      - id: D
+        text: "The organization reached a spend limit it set itself, below its tier's monthly cap."
+        correct: false
+        rationale: "A spend limit you set returns HTTP 400 invalid_request_error, not a 429; the 429 with no retry-after that keeps failing until access resumes is the tier's monthly spend cap."
+    source:
+      title: "Rate limits"
+      url: "https://platform.claude.com/docs/en/api/rate-limits"
+  - id: prod-prompting.D3.S3.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "An agent with a web-fetch tool also holds credentials for a payments API it rarely needs. Which mitigation limits the damage if a fetched page injects instructions that get through?"
+    select: 1
+    options:
+      - id: A
+        text: "Add a sentence to the system prompt asking Claude never to call the payments API."
+        correct: false
+        rationale: "A policy in the prompt helps, but it does not bound the damage if an injection succeeds; the access is still there."
+      - id: B
+        text: "Least privilege: remove access the agent does not need, sandbox tools and scope permissions narrowly."
+        correct: true
+        rationale: "Apply least privilege so a successful injection can do minimal damage: no secrets it doesn't need, sandboxed tools, narrowly scoped permissions."
+      - id: C
+        text: "Put your own safety instructions inside each tool result so Claude rereads them after every fetch."
+        correct: false
+        rationale: "Claude treats tool-result content as untrusted, so instructions placed there may be ignored or flagged; send them in a following user turn."
+      - id: D
+        text: "Raise the temperature so the model is less likely to follow any single instruction exactly."
+        correct: false
+        rationale: "No sampling setting appears among the page's mitigations; it relies on structure (tool results, JSON encoding), screening and least privilege."
+    source:
+      title: "Mitigate jailbreaks and prompt injections"
+      url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"

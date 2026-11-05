@@ -1,0 +1,36 @@
+skill: D3.S2
+diagrams:
+  - id: ai-capabilities.D3.S2.diagram-layered-guardrails
+    title: "Layered guardrails for an agent that reads untrusted content"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: IN, label: "User input" }
+      - { id: SCR, label: "Harmlessness screen: lightweight model, structured verdict" }
+      - { id: SD, label: "Verdict harmful, or the screen refused?", shape: decision }
+      - { id: BLOCK, label: "Decline; throttle or ban repeat offenders" }
+      - { id: AG, label: "Agent: system prompt states the untrusted-content policy; least privilege" }
+      - { id: TOOL, label: "Tool returns third-party content (email, webpage, file)" }
+      - { id: TS, label: "Injection screen on the tool output" }
+      - { id: TD, label: "injection_suspected, or the screen refused?", shape: decision }
+      - { id: TR, label: "tool_result: JSON-encoded, source labelled" }
+      - { id: STRIP, label: "tool_result: error or stripped summary; consider telling the user" }
+      - { id: MON, label: "Monitor outputs; refine prompts, validation and filters" }
+    edges:
+      - { from: IN, to: SCR }
+      - { from: SCR, to: SD }
+      - { from: SD, to: BLOCK, label: "yes" }
+      - { from: SD, to: AG, label: "no" }
+      - { from: AG, to: TOOL, label: "calls a tool" }
+      - { from: TOOL, to: TS }
+      - { from: TS, to: TD }
+      - { from: TD, to: STRIP, label: "yes" }
+      - { from: TD, to: TR, label: "no" }
+      - { from: TR, to: AG, label: "untrusted data" }
+      - { from: STRIP, to: AG }
+      - { from: AG, to: MON, label: "outputs" }
+      - { from: BLOCK, to: MON }
+    sources:
+      - https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks

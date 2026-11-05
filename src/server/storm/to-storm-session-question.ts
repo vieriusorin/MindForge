@@ -14,7 +14,7 @@ export function toStormSessionQuestion(
   readHash: string,
 ): StormSessionQuestion {
   return {
-    question: toPlayableQuestion(question),
+    question: toPlayableQuestion(question, readHash),
     contentHash: readHash,
     chosen: row.chosen,
     unreviewed: row.unreviewed,

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Bird,
   CloudLightning,
   Flower,
   Footprints,
@@ -36,6 +37,7 @@ export function AppSidebar({
   groups,
   duelHref,
   walkHref,
+  cuckooHref,
   stormHref,
   reviewHref,
   signOutAction,
@@ -132,6 +134,18 @@ export function AppSidebar({
                 <Link href={walkHref}>
                   <Footprints />
                   <span>Daily Walk</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={isActivePath(pathname, cuckooHref)}
+                tooltip="Spot the Cuckoo"
+              >
+                <Link href={cuckooHref}>
+                  <Bird />
+                  <span>Spot the Cuckoo</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

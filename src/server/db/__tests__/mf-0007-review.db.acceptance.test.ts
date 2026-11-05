@@ -198,6 +198,7 @@ describe("MF-0007 review (Pollination)", () => {
         ["questions", "questions"],
         ["cards", "cards"],
         ["diagrams", "diagrams"],
+        ["cuckoos", "cuckoos"], // MF-0016: a fourth item kind
       ] as const) {
         let names: string[] = [];
         try {

@@ -1,0 +1,158 @@
+skill: D6.S2
+questions:
+  - id: agent-skills.D6.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You are about to write a skill for your team's data reports. According to the authoring best practices, what should you create before writing extensive documentation for it?"
+    select: 1
+    options:
+      - id: A
+        text: "A full reference that covers every edge case the reports could ever run into."
+        correct: false
+        rationale: "The guide warns against documenting imagined problems: evaluations come first so the skill solves real ones, then you write minimal instructions."
+      - id: B
+        text: "A shared draft for the team, so that their feedback shapes the first version."
+        correct: false
+        rationale: "Team feedback belongs to later iteration. The evaluation-driven process starts by finding gaps and building evaluations before writing the skill."
+      - id: C
+        text: "Evaluations: scenarios that test where Claude falls short without the skill."
+        correct: true
+        rationale: "The guide says to create evaluations before writing extensive documentation: identify gaps by running Claude without a skill, then build three scenarios that test them."
+      - id: D
+        text: "A list of models to support, picked before any instructions are written."
+        correct: false
+        rationale: "Testing with the models you plan to use matters, but the guide puts building evaluations first, before extensive documentation."
+    source:
+      title: "Skill authoring best practices"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+  - id: agent-skills.D6.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A draft skill opens with three paragraphs explaining what a PDF is and how Python libraries work. What does the \"concise is key\" principle say about them?"
+    select: 1
+    options:
+      - id: A
+        text: "Keep them: background on the basics makes sure Claude doesn't miss anything."
+        correct: false
+        rationale: "The guide's default assumption is that Claude is already very smart. Explaining what it already knows spends tokens without adding anything."
+      - id: B
+        text: "Cut them: assume Claude already knows this and add only context it lacks."
+        correct: true
+        rationale: "The guide says to add only context Claude doesn't already have, and to ask of each paragraph whether it justifies its token cost."
+      - id: C
+        text: "Keep them: once the skill loads, its length no longer costs anything at all."
+        correct: false
+        rationale: "Once Claude loads `SKILL.md`, every token competes with conversation history and other context."
+      - id: D
+        text: "Move them into the description so that they are preloaded in every session."
+        correct: false
+        rationale: "Only the name and description of each skill are preloaded at startup, so padding the description adds to what is pre-loaded instead of saving context."
+    source:
+      title: "Skill authoring best practices"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+  - id: agent-skills.D6.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your skill runs a database migration that must happen in an exact sequence; a wrong flag can corrupt data. How much freedom should its instructions give Claude?"
+    select: 1
+    options:
+      - id: A
+        text: "High freedom: a few heuristics, and trust Claude to find the right approach."
+        correct: false
+        rationale: "High freedom suits tasks where multiple approaches are valid, such as code review. A fragile, fixed sequence is the opposite case."
+      - id: B
+        text: "Medium freedom: a pseudocode template that Claude adapts to each database."
+        correct: false
+        rationale: "Medium freedom fits when a preferred pattern exists and some variation is acceptable. Here variation is the risk."
+      - id: C
+        text: "Several alternative tools, so Claude can choose whichever one fits best."
+        correct: false
+        rationale: "The guide lists offering too many options as an anti-pattern: give a default instead."
+      - id: D
+        text: "Low freedom: one specific script to run exactly, with no changed flags."
+        correct: true
+        rationale: "Low freedom is for fragile, error-prone operations where a specific sequence must be followed. The guide's example is a database migration: run exactly this script, don't modify the command."
+    source:
+      title: "Skill authoring best practices"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+  - id: agent-skills.D6.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A teammate says: \"I asked a question in the session where I wrote my skill, and it triggered, so the skill works.\" What is missing from that check?"
+    select: 1
+    options:
+      - id: A
+        text: "A comparison of realistic prompts in fresh sessions, with and without it."
+        correct: true
+        rationale: "Triggering shows only that Claude found the skill. The page's check is a baseline comparison in fresh sessions, because leftover context from authoring masks gaps in the instructions."
+      - id: B
+        text: "A second run in that same session, to confirm the result can be repeated."
+        correct: false
+        rationale: "Repeating it in the authoring session keeps the leftover context that hides gaps. The page asks for a fresh session."
+      - id: C
+        text: "A count of the tokens the skill used, since a cheap run proves it is correct."
+        correct: false
+        rationale: "Cost isn't correctness. The page measures separately whether Claude invokes the skill and whether the output matches what you expect."
+      - id: D
+        text: "A look at /doctor to confirm the skill appears in the listing of skills."
+        correct: false
+        rationale: "`/doctor` estimates the listing's context cost. Appearing in the listing says nothing about whether the output is right."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D6.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "You tuned a skill with Claude Opus and it works well. Your team also runs it on Claude Haiku for cheap batch jobs, and occasionally on Sonnet. What does the guide recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Ship it as is, because a skill's instructions behave the same on any model."
+        correct: false
+        rationale: "Skills act as additions to models, so their effectiveness depends on the underlying model."
+      - id: B
+        text: "Test on each model you plan to use and aim for wording that works on all."
+        correct: true
+        rationale: "The guide says to test with all the models you plan to use: check Haiku gets enough guidance, Sonnet is clear and Opus isn't over-explained, and aim for instructions that work with all."
+      - id: C
+        text: "Add every detail Haiku might need, even if Opus now reads long explanations."
+        correct: false
+        rationale: "The guide's check for Opus is whether the skill avoids over-explaining. The goal is instructions that work well with all models, not only the weakest."
+      - id: D
+        text: "Keep it on Opus alone, since a skill tuned for one model can't serve others."
+        correct: false
+        rationale: "The guide expects skills to serve several models: if you plan to use one across models, aim for instructions that work well with all of them."
+    source:
+      title: "Skill authoring best practices"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+  - id: agent-skills.D6.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "While testing your skill with a fresh Claude instance, you notice it opens one reference file on nearly every task and never opens another bundled file. How should you iterate?"
+    select: 1
+    options:
+      - id: A
+        text: "Tell Claude in SKILL.md to read every bundled file at the start of each task."
+        correct: false
+        rationale: "Forcing every file to load defeats progressive disclosure: Claude should read additional files only as needed, since every loaded token competes for context."
+      - id: B
+        text: "Keep the structure; how Claude moves through the files doesn't affect results."
+        correct: false
+        rationale: "The guide says to watch how Claude navigates a skill: unexpected paths, missed connections and ignored content are signals to restructure."
+      - id: C
+        text: "Weigh moving the often-read content into SKILL.md; question the unused file."
+        correct: true
+        rationale: "If Claude repeatedly reads the same file, consider putting that content in `SKILL.md`. If it never opens a bundled file, the file may be unnecessary or poorly signaled."
+      - id: D
+        text: "Have the authoring instance judge the files from the text, without more tests."
+        correct: false
+        rationale: "The guide's loop alternates refining with one instance and testing with another, and says to iterate on observed behavior rather than assumptions."
+    source:
+      title: "Skill authoring best practices"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"

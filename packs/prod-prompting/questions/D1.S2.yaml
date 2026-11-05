@@ -1,0 +1,158 @@
+skill: D1.S2
+questions:
+  - id: prod-prompting.D1.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "A developer wants Claude to reply in a fixed format and tone, and decides to add examples to the prompt. What does the prompting guide recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "Exactly one example, because more than one makes Claude copy the examples word for word."
+        correct: false
+        rationale: "The guide recommends several examples, varied enough that Claude does not pick up unintended patterns."
+      - id: B
+        text: "Ten or more near-identical examples, so the pattern is impossible to miss."
+        correct: false
+        rationale: "Near-identical examples teach the accidental sameness too; the guide asks for relevant and diverse examples."
+      - id: C
+        text: "Three to five relevant, diverse examples, each wrapped in <example> tags (several inside <examples>)."
+        correct: true
+        rationale: "The guide calls few-shot examples one of the most reliable ways to steer format, tone and structure, and recommends 3 to 5 that are relevant, diverse and structured in tags."
+      - id: D
+        text: "No examples, because current models follow written instructions only."
+        correct: false
+        rationale: "The guide states examples improve accuracy and consistency, and that multishot examples also work with thinking."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: prod-prompting.D1.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "What does the effort parameter (output_config.effort) control in a Messages API request?"
+    select: 1
+    options:
+      - id: A
+        text: "How many tokens Claude spends on the whole response: text, tool calls and thinking, trading thoroughness for efficiency."
+        correct: true
+        rationale: "Effort trades response thoroughness against token efficiency with one model, and it affects all output tokens, including tool calls and thinking when active."
+      - id: B
+        text: "The size of the context window available to the request."
+        correct: false
+        rationale: "Effort changes how much Claude writes and thinks, not how much input fits in the window."
+      - id: C
+        text: "How random the next-token choice is, like a temperature setting."
+        correct: false
+        rationale: "Effort is about how much work goes into a response, not about the sampling distribution."
+      - id: D
+        text: "An exact thinking budget in tokens that the model can never exceed."
+        correct: false
+        rationale: "The docs call effort a behavioral signal, not a strict token budget; use max_tokens for a hard limit."
+    source:
+      title: "Effort"
+      url: "https://platform.claude.com/docs/en/build-with-claude/effort"
+  - id: prod-prompting.D1.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A review summarizer's prompt has four examples, all of short, positive reviews. On long, angry reviews Claude still produces short, upbeat summaries. What is the best fix?"
+    select: 1
+    options:
+      - id: A
+        text: "Delete the examples and rely on written instructions alone."
+        correct: false
+        rationale: "Examples are one of the most reliable ways to steer output; the problem is what these examples show, not that there are examples."
+      - id: B
+        text: "Move the examples after the review so they are the last thing Claude reads."
+        correct: false
+        rationale: "Their position does not change the pattern they teach; four look-alike examples still teach short and upbeat."
+      - id: C
+        text: "Raise the sampling temperature so the summaries vary more."
+        correct: false
+        rationale: "More randomness does not teach the missing cases; the examples still show only one kind of review."
+      - id: D
+        text: "Make the examples diverse, including long and negative reviews, so Claude does not learn an unintended pattern."
+        correct: true
+        rationale: "The guide asks for examples that are relevant and diverse, covering edge cases and varying enough that Claude does not pick up unintended patterns."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  - id: prod-prompting.D1.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "An orchestrator fans out thousands of short, simple subagent calls. Latency and cost matter, and the team's evals show quality holds at lower settings. Which effort level fits?"
+    select: 1
+    options:
+      - id: A
+        text: "max, so every subagent reasons as deeply as possible."
+        correct: false
+        rationale: "max removes limits on token spending; the docs reserve it for the hardest problems and note it can add cost for small gains."
+      - id: B
+        text: "low, the most efficient level, meant for simple tasks that need the best speed and lowest cost, such as subagents."
+        correct: true
+        rationale: "The effort table lists low for simpler tasks needing the best speed and lowest costs, naming subagents as the example; the evals confirm quality holds."
+      - id: C
+        text: "xhigh, because subagents are part of an agentic system."
+        correct: false
+        rationale: "xhigh is for long-running agentic and coding work with very large token budgets, not short scoped calls."
+      - id: D
+        text: "Leave effort unset, because the default is always the cheapest level."
+        correct: false
+        rationale: "Omitting effort applies the model's default level, which is not low on any model (per the docs at time of writing, high on most and medium on a few)."
+    source:
+      title: "Effort"
+      url: "https://platform.claude.com/docs/en/build-with-claude/effort"
+  - id: prod-prompting.D1.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A long chat relies on prompt caching to stay cheap. To save money, a developer changes the top-level effort on every request based on how hard the latest question looks. What is the trap?"
+    select: 1
+    options:
+      - id: A
+        text: "Effort cannot change after the first request; the API returns a 400 error."
+        correct: false
+        rationale: "Effort can change between requests; the issue is what that does to the cache."
+      - id: B
+        text: "Changes after the first turn are ignored, so there is no saving but no harm."
+        correct: false
+        rationale: "The change takes effect; it is not ignored."
+      - id: C
+        text: "Changing top-level effort between requests invalidates prompt caching; keep it constant in a cached conversation, or use per-message effort where supported."
+        correct: true
+        rationale: "The effort docs say changing the top-level value invalidates prompt caching, and per-message effort (beta, on the models the docs list at time of writing) preserves the cache."
+      - id: D
+        text: "Effort only changes thinking, so it cannot affect caching or cost."
+        correct: false
+        rationale: "Effort affects all output tokens, and changing the top-level value breaks cache hits."
+    source:
+      title: "Effort"
+      url: "https://platform.claude.com/docs/en/build-with-claude/effort"
+  - id: prod-prompting.D1.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "To cap thinking cost, a team sends thinking {type: enabled, budget_tokens: 10000} to a Claude 4.7 or later model. What happens, and what does the guide recommend?"
+    select: 1
+    options:
+      - id: A
+        text: "The budget is honored exactly, so it is the right control for a hard cost ceiling."
+        correct: false
+        rationale: "On Claude 4.7 and later, setting budget_tokens returns a 400 error."
+      - id: B
+        text: "The request returns a 400 error; use adaptive thinking, control depth with effort, and use max_tokens as the hard limit."
+        correct: true
+        rationale: "The guide says budget_tokens returns 400 on 4.7 and later and recommends lowering effort, or using max_tokens as a hard limit, with adaptive thinking."
+      - id: C
+        text: "The parameter is ignored and the model thinks without limit."
+        correct: false
+        rationale: "It is rejected, not ignored."
+      - id: D
+        text: "budget_tokens must equal max_tokens on these models, or the request fails."
+        correct: false
+        rationale: "There is no such rule; manual budgets are not accepted at all on these models."
+    source:
+      title: "Prompting best practices"
+      url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"

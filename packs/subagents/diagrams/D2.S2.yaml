@@ -1,0 +1,40 @@
+skill: D2.S2
+diagrams:
+  - id: subagents.D2.S2.diagram-which-model-runs
+    title: "Which model a subagent runs on"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    direction: TB
+    nodes:
+      - { id: FORCE, label: "CLAUDE_CODE_SUBAGENT_MODEL_FORCE on?", shape: decision }
+      - { id: FORCED, label: "CLAUDE_CODE_SUBAGENT_MODEL if set, else the main conversation's model (Explore keeps its listed model); model field and per-invocation model ignored; forks stay on the main model" }
+      - { id: PARAM, label: "Claude passed a model for this invocation (or a mod's agent.spawn hook set one)?", shape: decision }
+      - { id: PARAMM, label: "That alias: sonnet, opus, haiku or fable (in two documented cases an alias of the main model's family runs the main conversation's model)" }
+      - { id: FRONT, label: "model field in the subagent's frontmatter?", shape: decision }
+      - { id: FRONTM, label: "The frontmatter model (inherit = the main conversation's model)" }
+      - { id: ENV, label: "CLAUDE_CODE_SUBAGENT_MODEL set? (by itself it does not change Explore or Plan)", shape: decision }
+      - { id: ENVM, label: "The model in CLAUDE_CODE_SUBAGENT_MODEL" }
+      - { id: MAIN, label: "The main conversation's model" }
+      - { id: ALLOW, label: "Allowed by the organization's availableModels allowlist?", shape: decision }
+      - { id: SUBST, label: "Substitute: newest allowed version of a blocked family alias, otherwise the inherited model (CLAUDE_CODE_SUBAGENT_MODEL tried first if set)" }
+      - { id: RUN, label: "Subagent runs on this model (/tasks shows it)" }
+    edges:
+      - { from: FORCE, to: FORCED, label: "yes" }
+      - { from: FORCE, to: PARAM, label: "no" }
+      - { from: PARAM, to: PARAMM, label: "yes" }
+      - { from: PARAM, to: FRONT, label: "no" }
+      - { from: FRONT, to: FRONTM, label: "yes" }
+      - { from: FRONT, to: ENV, label: "no" }
+      - { from: ENV, to: ENVM, label: "yes" }
+      - { from: ENV, to: MAIN, label: "no" }
+      - { from: PARAMM, to: ALLOW }
+      - { from: FRONTM, to: ALLOW }
+      - { from: ENVM, to: ALLOW }
+      - { from: ALLOW, to: RUN, label: "yes" }
+      - { from: ALLOW, to: SUBST, label: "no" }
+      - { from: SUBST, to: RUN }
+      - { from: MAIN, to: RUN }
+      - { from: FORCED, to: ALLOW, label: "the variable's value is checked" }
+    sources:
+      - https://code.claude.com/docs/en/sub-agents

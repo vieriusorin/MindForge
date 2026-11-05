@@ -1,0 +1,28 @@
+skill: D2.S1
+cards:
+  - id: prod-prompting.D2.S1.card-tool-description
+    concept: Tool descriptions
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      A tool definition is a name, a description and an input schema. Claude never sees your code;
+      it decides whether and when to call a tool from the user's request and the tool's
+      description, and the description is by far the most important factor in tool performance. Say what the
+      tool does, when to use it and when not to, what each parameter means, and what it does not
+      return. Aim for at least 3–4 sentences.
+    inNature: >-
+      A honeybee's waggle dance. A forager comes home and dances the direction and distance of the
+      flowers. The other bees never see the field; they fly out on the strength of the dance alone.
+      A precise dance sends them to the right patch; a vague one sends them elsewhere.
+    whereItBreaks:
+      - "A bad dance wastes one trip; a bad description gets the wrong tool picked over and over, on every request that uses it."
+      - "Bees follow one dance at a time. Claude reads every tool description at once and picks between them, so overlapping descriptions cause confusion that no single dance has."
+      - "The schema is not a dance: it defines the input's shape, and only with `strict: true` are the inputs guaranteed to match it exactly."
+    contrast: >-
+      The description steers *which* tool and *when*; the `input_schema` (plus `strict: true`)
+      constrains *what shape* the input takes; `tool_choice` decides *whether* a tool call is
+      allowed or required at all.
+    diagram: prod-prompting.D2.S1.diagram-tool-choice
+    sources:
+      - https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools

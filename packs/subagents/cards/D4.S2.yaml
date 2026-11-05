@@ -1,0 +1,35 @@
+skill: D4.S2
+cards:
+  - id: subagents.D4.S2.card-lightest-tool-that-fits
+    concept: Pick the lightest tool that fits, which is often not a subagent
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    simply: >-
+      Before reaching for a subagent, check the lighter options. A quick fix or work with lots of
+      back-and-forth stays in the main conversation. Team conventions you want applied while you work
+      together belong in a skill, which runs in the main conversation context. A side task that needs
+      everything you have discussed is a fork: it inherits the whole conversation, reuses the parent's
+      prompt cache, and only its final result comes back. Use a subagent for a self-contained job
+      where only the result matters, and an agent team when workers must share findings,
+      challenge each other and coordinate on their own. Common mistakes: an agent team for sequential
+      edits to one file, a skill with `context: fork` that is expected to remember the discussion, and
+      an orchestrator wrapped around a task one well-built prompt could do.
+    inNature: >-
+      An ant colony (an analogy). Many foragers search alone; when one finds a large food source it
+      lays a pheromone trail on the way home, and nestmates follow and reinforce it, so the colony
+      coordinates many workers through a shared trail only when a find is worth it.
+    whereItBreaks:
+      - "A pheromone trail fades on its own when it stops paying. Agent teams add coordination overhead and use significantly more tokens than a single session, and token usage scales with the number of active teammates."
+      - "A trail carries a direction, not a forager's memory. A fork inherits the entire conversation, and its first request reuses the parent's prompt cache."
+      - "A colony does not weigh its own design. 'Building effective agents' asks you to: find the simplest solution possible and increase complexity only when needed."
+    contrast: >-
+      Subagents report results back to the main agent, which manages all the work; agent teammates
+      share a task list, claim work and message each other directly. Subagents cost less because
+      results are summarized back to the main context; each teammate is a separate Claude instance.
+    diagram: subagents.D4.S2.diagram-which-tool
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://code.claude.com/docs/en/agent-teams
+      - https://code.claude.com/docs/en/skills
+      - https://www.anthropic.com/research/building-effective-agents

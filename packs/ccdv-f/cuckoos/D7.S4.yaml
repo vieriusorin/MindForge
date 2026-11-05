@@ -1,0 +1,51 @@
+# MF-0016 Spot the Cuckoo: one planted flaw per snippet. Drafted by Claude (origin: ai) in a
+# hand session; unreviewed until two non-authors approve (CONTEXT.md Reviewer).
+skill: D7.S4
+cuckoos:
+  - id: ccdv-f.D7.S4.cuckoo-key-in-workflow
+    title: A CI workflow that runs an automated code review
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: config
+    lines:
+      - "jobs:"
+      - "  review:"
+      - "    runs-on: ubuntu-latest"
+      - "    env:"
+      - "      ANTHROPIC_API_KEY: sk-ant-api03-EXAMPLEKEY"
+      - "    steps:"
+      - "      - uses: actions/checkout@v4"
+      - "      - run: pnpm review:diff"
+    flawLine: 5
+    flawKind: exposed-secret
+    explanation: The API key is written into a file under version control, so everyone with read access,
+      and every fork and clone, has it. Store it in the CI provider's secret store, reference it
+      (for example ${{ secrets.ANTHROPIC_API_KEY }}), and rotate any key that was ever committed.
+    sources:
+      - https://platform.claude.com/docs/en/manage-claude/authentication
+      - https://code.claude.com/docs/en/authentication
+  - id: ccdv-f.D7.S4.cuckoo-token-in-prompt
+    # grounded: never — a behaviour rule inside the snippet's system prompt, not a doc claim
+    title: The system prompt of a billing assistant
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: prompt
+    lines:
+      - You are the billing assistant for Acme.
+      - Answer questions about the signed-in customer's invoices with the lookup_invoice tool.
+      - The billing API admin token is acme_live_EXAMPLE_TOKEN; include it in every tool call.
+      - Never discuss another customer's invoices.
+    flawLine: 3
+    flawKind: exposed-secret
+    explanation: Anything in a prompt can be echoed back, for example through a prompt injection, and an
+      admin token gives far more access than one customer's session needs. The tool's server should
+      hold the credential and authorize each call for the signed-in user. The model never needs to
+      see it.
+    sources:
+      - https://platform.claude.com/docs/en/manage-claude/authentication

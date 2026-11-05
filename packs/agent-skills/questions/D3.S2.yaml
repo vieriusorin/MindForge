@@ -1,0 +1,158 @@
+skill: D3.S2
+questions:
+  - id: agent-skills.D3.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "Your api-client skill needs the full API specification, a long document Claude only needs for some requests. Where should the specification go?"
+    select: 1
+    options:
+      - id: A
+        text: "In its own file, such as reference.md, linked from SKILL.md with a note on what it holds."
+        correct: true
+        rationale: "Supporting files keep SKILL.md focused while Claude reads detailed material only when needed. The page says to reference them from SKILL.md so Claude knows what each file contains and when to load it."
+      - id: B
+        text: "In the SKILL.md body itself, so the whole specification is right there whenever the skill runs."
+        correct: false
+        rationale: "Once a skill loads, its content stays in context across turns, so every line is a recurring token cost. The page's tip is to keep SKILL.md under 500 lines and move detailed reference to separate files."
+      - id: C
+        text: "In the description field, so Claude can match requests against every endpoint the API offers."
+        correct: false
+        rationale: "The description says what the skill does and when to use it, and the combined description text is truncated in the skill listing to reduce context usage. It is not a place for a specification."
+      - id: D
+        text: "In the project's CLAUDE.md, so the specification is available from the first message of every session."
+        correct: false
+        rationale: "CLAUDE.md content is always loaded. Unlike it, a skill's body loads only when it's used, so long reference material costs almost nothing until you need it."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"
+  - id: agent-skills.D3.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You install twenty skills, and today you only ask about a spreadsheet. Before any skill is triggered, what of those twenty skills occupies Claude's context?"
+    select: 1
+    options:
+      - id: A
+        text: "Each skill's whole SKILL.md body, so Claude can read them all and choose the right one."
+        correct: false
+        rationale: "The body is level 2: Claude reads SKILL.md only when a request matches the skill's description, and only then does it enter the context window."
+      - id: B
+        text: "Only each skill's name and description, taken from its YAML frontmatter at startup."
+        correct: true
+        rationale: "Level 1 metadata is loaded at startup into the system prompt. Until a skill is triggered, only its name and description occupy context, which is why you can install many skills without a context penalty."
+      - id: C
+        text: "Nothing at all until you mention a skill by name, when Claude first scans the skills folder."
+        correct: false
+        rationale: "Claude needs something to match against: the name and description of every skill are loaded at startup, and the description is what requests are matched against."
+      - id: D
+        text: "A compressed copy of every bundled file, so reference material is ready the moment it's needed."
+        correct: false
+        rationale: "Bundled files are level 3 and cost nothing until accessed. Reference files load into context when read; scripts run through bash and only their output enters context."
+    source:
+      title: "Agent Skills overview"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"
+  - id: agent-skills.D3.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "Your PDF skill bundles scripts/analyze_form.py, which extracts form fields. You want Claude to use the script as a tool, not study it. How should SKILL.md refer to it?"
+    select: 1
+    options:
+      - id: A
+        text: "\"See analyze_form.py for the field extraction algorithm\", so Claude follows the logic step by step."
+        correct: false
+        rationale: "That wording tells Claude to read the script as reference, which the guide reserves for complex logic you want understood. It loads the code into context instead of running it."
+      - id: B
+        text: "Say nothing about it: Claude executes every script in the skill folder whenever the skill loads."
+        correct: false
+        rationale: "The guide asks you to make clear in your instructions whether Claude should run a script or read it. Loading the skill does not by itself run the scripts in its folder."
+      - id: C
+        text: "\"Run analyze_form.py to extract fields\": its code stays out of context; only the output enters."
+        correct: true
+        rationale: "Running is the most common intent, and execution is preferred for most utility scripts. Scripts run through bash without loading their contents into context: only the output consumes tokens."
+      - id: D
+        text: "Paste the script into SKILL.md, so Claude can write an equivalent version that fits each request."
+        correct: false
+        rationale: "Pre-made scripts are more reliable than generated code, save tokens because no code goes into context, and keep results consistent across uses."
+    source:
+      title: "Skill authoring best practices"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+  - id: agent-skills.D3.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "SKILL.md links to advanced.md, advanced.md links to details.md, and details.md holds the real rules. Claude sometimes answers with only part of those rules. What is the likely cause and fix?"
+    select: 1
+    options:
+      - id: A
+        text: "details.md is outside the scripts/ folder; move every reference file there so Claude can open it."
+        correct: false
+        rationale: "Folders are your choice; the guide only asks for descriptive names organised by domain or feature. scripts/ holds code to run, not rules to read."
+      - id: B
+        text: "Reference files must stay under 100 lines; split details.md into several shorter files instead."
+        correct: false
+        rationale: "There's no such limit. For reference files longer than 100 lines the guide asks for a table of contents at the top, so Claude sees the full scope even when it previews only part."
+      - id: C
+        text: "Claude opens one supporting file per skill; merge advanced.md and details.md into one document."
+        correct: false
+        rationale: "Claude can read as many files as a task needs; the guide's own examples link several reference files from one SKILL.md."
+      - id: D
+        text: "Nesting is too deep, so Claude may only preview details.md; link it straight from SKILL.md."
+        correct: true
+        rationale: "With nested references Claude might preview a file with a command such as `head -100` instead of reading it whole. The guide says to keep references one level deep, linking every reference file directly from SKILL.md."
+    source:
+      title: "Skill authoring best practices"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+  - id: agent-skills.D3.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your data-warehouse skill covers finance, sales, product and marketing schemas. Version 1 is one big SKILL.md; version 2 is a short SKILL.md that links reference/finance.md, reference/sales.md and so on. A user asks about the sales pipeline. Which statement about context cost holds?"
+    select: 1
+    options:
+      - id: A
+        text: "Both versions cost the same, because a triggered skill loads every file in its folder at once."
+        correct: false
+        rationale: "Triggering loads SKILL.md, not the folder. In the guide's example, Claude reads SKILL.md and then calls bash to read just the file the question needs."
+      - id: B
+        text: "Version 2: Claude reads SKILL.md and reference/sales.md only; the others cost zero tokens."
+        correct: true
+        rationale: "This is the guide's progressive-disclosure pattern: Claude reads SKILL.md, follows the link to the one reference file it needs, and the other files stay on the filesystem consuming zero context tokens until needed."
+      - id: C
+        text: "Version 2 costs more, since each reference file adds its own name and description at startup."
+        correct: false
+        rationale: "At startup only the name and description of each skill are pre-loaded. Reference files inside a skill add nothing until Claude reads them."
+      - id: D
+        text: "Version 1 is cheaper over time: once read, a long SKILL.md drops out of context after the turn."
+        correct: false
+        rationale: "Once Claude loads SKILL.md, every token competes with the conversation history and other context. That ongoing cost is why the guide keeps the body short and splits detail into files."
+    source:
+      title: "Skill authoring best practices"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+  - id: agent-skills.D3.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your migration skill is one very long SKILL.md, with its most important safety rule at the bottom. In long sessions, after the conversation is auto-compacted, Claude stops applying that rule. What explains this, and what is the better design?"
+    select: 1
+    options:
+      - id: A
+        text: "Compaction keeps only each skill's start; put the rule near the top and move detail to files."
+        correct: true
+        rationale: "After compaction Claude Code re-attaches the most recent invocation of each skill but keeps only its first part, within a shared budget. The page says to put the most important instructions near the top, and to keep SKILL.md short with detail in separate files."
+      - id: B
+        text: "Claude re-reads SKILL.md on every turn, so an edit to the file mid-session silently replaced the rule."
+        correct: false
+        rationale: "The opposite holds: the rendered content enters the conversation once and Claude Code does not re-read the skill file on later turns."
+      - id: C
+        text: "Supporting files survive compaction but SKILL.md does not, so move the whole procedure into reference.md."
+        correct: false
+        rationale: "What compaction carries forward is the invoked skill's rendered SKILL.md content, trimmed to its start. Nothing in the page says reference files are preserved instead."
+      - id: D
+        text: "Compaction unloads skills permanently, so the only fix is to copy the safety rule into a CLAUDE.md."
+        correct: false
+        rationale: "It isn't permanent: invoking the skill again restores its full content. Skills are re-attached after compaction within a token budget."
+    source:
+      title: "Extend Claude with skills"
+      url: "https://code.claude.com/docs/en/skills"

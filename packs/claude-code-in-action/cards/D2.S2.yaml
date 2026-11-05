@@ -1,0 +1,28 @@
+skill: D2.S2
+cards:
+  - id: claude-code-in-action.D2.S2.card-plan-before-editing
+    concept: Plan before editing, and the permission modes
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      For a change you want to review before it touches disk, use plan mode: Claude reads files
+      and proposes a plan, and makes no edits until you approve. Start with
+      claude --permission-mode plan, or press Shift+Tab until the status bar shows plan mode on.
+      Shift+Tab cycles the permission modes: Manual asks before edits and commands, acceptEdits
+      applies file edits without asking, plan explores without editing. Give Claude a screenshot
+      when the problem is visual.
+    inNature: >-
+      An orb-weaver spider strings a few frame threads and tests their tension before it spins the
+      sticky spiral that catches prey.
+    whereItBreaks:
+      - "The spider decides alone when to start spinning. In plan mode Claude makes no edits until you approve the plan."
+      - "The spider tests with its legs. Claude explores by reading files and running read-only shell commands; it doesn't edit your source files."
+      - "A spider has one way of working. Claude Code has several permission modes, and you can set the starting one with defaultMode in a settings file."
+    contrast: >-
+      acceptEdits is the opposite trade: Claude applies file edits without asking, which is fast
+      when you already trust the direction, and plan mode is for when you don't yet.
+    diagram: claude-code-in-action.D2.S2.diagram-permission-modes
+    sources:
+      - https://code.claude.com/docs/en/common-workflows
+      - https://code.claude.com/docs/en/permissions

@@ -1,0 +1,30 @@
+skill: D1.S2
+cards:
+  - id: subagents.D1.S2.card-built-ins-and-delegation
+    concept: Claude routes work to built-in or custom subagents by matching descriptions
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      You ask "where is the retry logic for webhooks?" Claude needs to search without changing
+      anything, so it delegates to Explore, the read-only built-in, and picks a thoroughness level
+      (quick, medium or very thorough). In plan mode the same kind of research goes to Plan, so the
+      main conversation stays read-only. A task that must explore and then edit goes to
+      general-purpose. Your own subagents compete on their `description`: Claude matches the task
+      in your request against each description and the current context. When you need a specific
+      one, @-mention it for one task, or start the session with `--agent <name>`.
+    inNature: >-
+      A leafcutter ant colony. Workers come in different sizes and each size tends to take a
+      different job, from cutting leaves to tending the fungus garden, so each task lands with the
+      kind of worker suited to it.
+    whereItBreaks:
+      - "An ant cannot change its body size, which largely decides the jobs it does well. A subagent's role is a file you can edit, and a user or project subagent named `Explore` overrides the built-in one."
+      - "No ant decides who does what. In Claude Code the main conversation decides, reading each subagent's description, unless you force the choice with an @-mention."
+      - "Leafcutter ants share what they find through trail pheromones that any nestmate can follow. A subagent works in its own context window, and only its final result returns to Claude."
+    contrast: >-
+      Automatic delegation leaves the choice to Claude. Naming a subagent in plain language is a
+      hint Claude may follow; an @-mention guarantees that subagent runs for one task; `--agent` or
+      the `agent` setting makes the whole session run as that subagent.
+    diagram: subagents.D1.S2.diagram-who-gets-the-task
+    sources:
+      - https://code.claude.com/docs/en/sub-agents

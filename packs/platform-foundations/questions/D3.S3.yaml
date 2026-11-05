@@ -1,0 +1,158 @@
+skill: D3.S3
+questions:
+  - id: platform-foundations.D3.S3.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "On the current memory experience (not the legacy one some organizations still use), on Tuesday you tell Claude that your release moved from Friday to Monday. On Wednesday you open a new chat. With memory on, how does the Help Center say Claude's memory handles this?"
+    select: 1
+    options:
+      - id: A
+        text: "It keeps a full transcript of each chat and re-reads all of them at the start of a new conversation."
+        correct: false
+        rationale: "The page says Claude saves memory as a set of individual topics as you chat, not as stored transcripts it replays."
+      - id: B
+        text: "It saves things only when you say \"remember this\"; nothing from the chat is stored automatically."
+        correct: false
+        rationale: "The page says Claude saves on its own, and that you can also tell Claude to remember something directly."
+      - id: C
+        text: "It stores the details you share, ID and account numbers included, so later chats can reuse them."
+        correct: false
+        rationale: "The page says some information is never saved to memory even if you ask, including government ID numbers and financial account numbers."
+      - id: D
+        text: "It saves the moved date as a topic while you chat, so the next chat already knows."
+        correct: true
+        rationale: "The page says Claude saves memory as individual topics as you chat, giving the example that if you mention a deadline moved, your next conversation already knows."
+    source:
+      title: "Use Claude's chat search and memory to build on previous context"
+      url: "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context"
+  - id: platform-foundations.D3.S3.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You want to think through a job offer with Claude without the chat appearing in your history or shaping what Claude remembers about you. Which option fits?"
+    select: 1
+    options:
+      - id: A
+        text: "A regular chat with Memory switched off in the \"+\" menu before the first message."
+        correct: false
+        rationale: "The page says a chat with memory turned off still stays in your chat history, and Claude can still find it when searching past chats."
+      - id: B
+        text: "An incognito chat, opened from the ghost icon when starting a chat outside a project."
+        correct: true
+        rationale: "The page says incognito chats are temporary conversations that aren't saved to your chat history or to Claude's memory, started from the ghost icon outside a project."
+      - id: C
+        text: "An incognito chat started from inside a project, so it sits next to the project's files."
+        correct: false
+        rationale: "The page says incognito mode is currently only available for chats outside of projects, so the ghost icon does not appear in a project."
+      - id: D
+        text: "A project chat with Memory switched off in the \"+\" menu, which also keeps it out of past-chat search."
+        correct: false
+        rationale: "The page says a chat with memory turned off stays in your chat history and Claude can still find it when searching past chats."
+    source:
+      title: "Use incognito chats"
+      url: "https://support.claude.com/en/articles/12260368-use-incognito-chats"
+  - id: platform-foundations.D3.S3.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A freelance developer on the current memory experience (not the legacy one some organizations still use) has one project for client Acme and one for client Birch. They want chats in the Acme project to draw on nothing remembered outside that project. What should they do?"
+    select: 1
+    options:
+      - id: A
+        text: "Nothing: a project's chats already ignore the memory saved from chats outside projects."
+        correct: false
+        rationale: "The page says that in a project Claude uses the project's memory alongside your memory from chats outside of projects."
+      - id: B
+        text: "Reset memory, which wipes Birch's project memory but keeps Acme's project memory in place."
+        correct: false
+        rationale: "The page says Reset memory permanently deletes all memories, including project memories; it cannot target one project."
+      - id: C
+        text: "Turn off \"Use account memory\" under Memory on the Acme project's page."
+        correct: true
+        rationale: "The page says each project has its own memory and does not use other projects' memory, and that to keep a project's memory fully separate you turn off Use account memory on the project's page."
+      - id: D
+        text: "Run the Acme work in incognito chats started from inside the Acme project."
+        correct: false
+        rationale: "The page describes the ghost icon for incognito chats when starting a chat outside of a project; to keep a project separate it points to turning off Use account memory instead."
+    source:
+      title: "Use Claude's chat search and memory to build on previous context"
+      url: "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context"
+  - id: platform-foundations.D3.S3.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "On the current memory experience (not the legacy one some organizations still use), inside a project a developer wants one chat about a sensitive refactor to use no memory at all, while staying in chat history so it can be found later from other chats. What should they do?"
+    select: 1
+    options:
+      - id: A
+        text: "Start a new chat and turn off Memory in the \"+\" menu before sending the first message."
+        correct: true
+        rationale: "The page says a chat started with memory off doesn't use your memory or, in a project, the project's memory, stays in your chat history, and has to be set before the first message."
+      - id: B
+        text: "Open an incognito chat from the ghost icon at the top of the project's chat screen."
+        correct: false
+        rationale: "The page describes the ghost icon for chats started outside of a project, and an incognito chat isn't saved to your chat history, which the developer wants to keep."
+      - id: C
+        text: "Turn off Memory in the \"+\" menu partway through the chat, once the sensitive part begins."
+        correct: false
+        rationale: "The page says memory has to be turned off before you send the first message; once the chat starts the setting can't be changed."
+      - id: D
+        text: "Turn off \"Use account memory\" on the project page, which changes just this one chat."
+        correct: false
+        rationale: "That setting sits on the project's page and separates the project from account memory; the chat would still use the project's memory."
+    source:
+      title: "Use Claude's chat search and memory to build on previous context"
+      url: "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context"
+  - id: platform-foundations.D3.S3.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "A team wants their API-based support agent to remember each customer's setup across sessions, much as memory does in claude.ai. They add the memory tool. Where does that memory live?"
+    select: 1
+    options:
+      - id: A
+        text: "In storage their app controls: Claude asks for operations on `/memories`, their handler runs them."
+        correct: true
+        rationale: "The docs say the memory tool operates client-side: Claude requests file operations and your application runs them, mapping the `/memories` prefix onto storage you control."
+      - id: B
+        text: "On Anthropic's servers, where it syncs with the memory topics of the user's claude.ai account."
+        correct: false
+        rationale: "The docs say memory lives entirely in your application; nothing describes a sync with claude.ai memory."
+      - id: C
+        text: "In a sandboxed server-side container that Anthropic manages and keeps between the agent's requests."
+        correct: false
+        rationale: "The docs say the memory tool operates client-side: Claude only requests operations, and your application runs each one against storage you control, so memory lives in your application."
+      - id: D
+        text: "In the context window, which the API keeps extending as the agent's memory grows over time."
+        correct: false
+        rationale: "The docs say the memory tool builds up knowledge without keeping everything in the context window; the agent reads files back on demand."
+    source:
+      title: "Memory tool"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool"
+  - id: platform-foundations.D3.S3.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your memory tool handler maps `/memories` onto a per-user folder on disk. A tool call asks to view `/memories/../../secrets.env`. How should the handler respond?"
+    select: 1
+    options:
+      - id: A
+        text: "Serve it as asked, since the API strips traversal sequences before the tool call reaches your app."
+        correct: false
+        rationale: "The docs put this on your implementation: it must validate each path in each command to prevent directory traversal attacks."
+      - id: B
+        text: "Serve it, since the path begins with `/memories` and that prefix check is enough on its own."
+        correct: false
+        rationale: "This example path begins with the prefix and still reaches outside the directory; the docs also ask you to resolve paths to canonical form and reject `../` sequences."
+      - id: C
+        text: "Reject it: resolve the path to its canonical form and refuse anything that leaves the memory folder."
+        correct: true
+        rationale: "The docs show this exact kind of path as a traversal attack and advise resolving paths to canonical form, verifying they stay within the memory directory, and rejecting `../` sequences."
+      - id: D
+        text: "Drop the call quietly, since Claude does not ask for paths outside `/memories` and it must be a glitch."
+        correct: false
+        rationale: "The docs treat such paths as a real attack the handler must guard against, not as something Claude's requests rule out."
+    source:
+      title: "Memory tool"
+      url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool"

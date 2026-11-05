@@ -1,0 +1,31 @@
+skill: D1.S1
+diagrams:
+  - id: claude-code-in-action.D1.S1.diagram-agentic-loop
+    title: "The agentic loop"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    direction: TB
+    nodes:
+      - { id: PROMPT, label: "Your prompt" }
+      - { id: GATHER, label: "Gather context: search and read files" }
+      - { id: ACT, label: "Take action: edit files, run commands" }
+      - { id: VERIFY, label: "Verify results: run tests, read output" }
+      - { id: DONE, label: "Task complete?", shape: decision }
+      - { id: END, label: "Report back to you" }
+      - { id: YOU, label: "You interrupt: Esc, or a queued correction" }
+      - { id: TOOLS, label: "Tools: file operations, search, execution, web, code intelligence" }
+    edges:
+      - { from: PROMPT, to: GATHER }
+      - { from: GATHER, to: ACT, label: "changes needed" }
+      - { from: GATHER, to: DONE, label: "a question: context may be enough" }
+      - { from: ACT, to: VERIFY }
+      - { from: VERIFY, to: DONE }
+      - { from: DONE, to: GATHER, label: "no, repeat" }
+      - { from: DONE, to: END, label: "yes" }
+      - { from: YOU, to: GATHER, label: "steer at any point" }
+      - { from: TOOLS, to: GATHER, label: "results feed the next decision" }
+      - { from: TOOLS, to: ACT }
+      - { from: TOOLS, to: VERIFY }
+    sources:
+      - https://code.claude.com/docs/en/how-claude-code-works

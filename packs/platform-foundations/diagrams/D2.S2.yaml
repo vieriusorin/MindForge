@@ -1,0 +1,33 @@
+skill: D2.S2
+diagrams:
+  - id: platform-foundations.D2.S2.diagram-project-anatomy
+    title: "What a project holds, and its API counterpart"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: P, label: "Project: a self-contained workspace" }
+      - { id: K, label: "Knowledge base: uploaded documents, text, code and files" }
+      - { id: I, label: "Project instructions: tone, role or industry perspective" }
+      - { id: C, label: "Chats in the project use the knowledge and instructions" }
+      - { id: L, label: "Knowledge approaching context limits?", shape: decision }
+      - { id: R, label: "Paid plans: RAG mode, capacity up to 10x" }
+      - { id: S, label: "Team or Enterprise: share as Can view or Can edit" }
+      - { id: AS, label: "API counterpart: the role in the system prompt" }
+      - { id: AD, label: "API counterpart: long documents at the top, in <document> tags, query last" }
+    edges:
+      - { from: P, to: K }
+      - { from: P, to: I }
+      - { from: K, to: C }
+      - { from: I, to: C }
+      - { from: K, to: L }
+      - { from: L, to: R, label: "yes, paid plan" }
+      - { from: L, to: C, label: "no" }
+      - { from: R, to: C }
+      - { from: P, to: S, label: "shared" }
+      - { from: I, to: AS, label: "on the API" }
+      - { from: K, to: AD, label: "on the API" }
+    sources:
+      - https://support.claude.com/en/articles/9517075-what-are-projects
+      - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices

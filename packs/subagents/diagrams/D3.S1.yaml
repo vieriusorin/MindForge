@@ -1,0 +1,39 @@
+skill: D3.S1
+diagrams:
+  - id: subagents.D3.S1.diagram-brief-to-report
+    title: "From brief to report"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: L, label: "Lead (main conversation) describes the task" }
+      - { id: B, label: "Brief: objective, output format, tools and sources to use, task boundaries" }
+      - { id: V, label: "Brief vague?", shape: decision }
+      - { id: X, label: "Subagents duplicate work, leave gaps or misread the task" }
+      - { id: S, label: "Subagent works in its own context window" }
+      - { id: T, label: "Reached maxTurns?", shape: decision }
+      - { id: P, label: "Output marked as partial; Claude can resume it" }
+      - { id: O, label: "Large structured output (code, report)?", shape: decision }
+      - { id: R, label: "Store it in an external system; pass a lightweight reference back" }
+      - { id: U, label: "Condensed, distilled summary (often 1,000-2,000 tokens)" }
+      - { id: E, label: "Cut off by an API error: foreground returns partial output with a note it didn't finish; background is marked failed with its last output" }
+    edges:
+      - { from: L, to: B }
+      - { from: B, to: V }
+      - { from: V, to: X, label: "yes" }
+      - { from: V, to: S, label: "no" }
+      - { from: S, to: T }
+      - { from: T, to: P, label: "yes" }
+      - { from: T, to: O, label: "no" }
+      - { from: O, to: R, label: "yes" }
+      - { from: O, to: U, label: "no" }
+      - { from: P, to: L, label: "returned" }
+      - { from: R, to: L, label: "reference" }
+      - { from: U, to: L, label: "summary" }
+      - { from: S, to: E, label: "API error" }
+      - { from: E, to: L, label: "reported" }
+    sources:
+      - https://code.claude.com/docs/en/sub-agents
+      - https://www.anthropic.com/research/multi-agent-research-system
+      - https://www.anthropic.com/research/effective-context-engineering-for-ai-agents

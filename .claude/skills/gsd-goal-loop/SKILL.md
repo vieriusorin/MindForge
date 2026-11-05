@@ -120,7 +120,7 @@ the test for each: (a) ids or manifests it keeps on disk, and whether they stay 
 restart, auth uuids change): bind a stored id to the owner that wrote it; (b) decisions another actor makes between
 runs (reject, dismiss, approve, hand-played answers), and whether the re-run respects them. Each gets a regression
 test shown RED before done (MF-0029 retro: manifest id reuse after a reset could delete hand-played answers, and
-re-planned reviews landed on rejected items; both found only in review).
+re-planned reviews landed on rejected items; both found only in review). (c) failure order: every check that can fail on its inputs (pack registered, content hash fresh, item accepted, config valid) runs for ALL inputs before the first delete or other destructive write, and again inside the transaction; a transaction does not protect deletes made before it opens. Name a committed test that makes the second input bad and asserts the first run's data is still there (MF-0034 retro: the multi-pack seed deleted the demo world, then one stale pack failed inside the transaction).
 
 Before writing any SC that names an external API's wire format, id pattern, limit or model id, load
 the matching skill (for example `claude-api`) and read the live reference. Paste the constraint into
@@ -133,7 +133,7 @@ never attempted, a domain with no data), a config value absent (a pack without `
 boundary of every threshold. Each row names the shown result and who decided it. A row the draft did not
 state is a Concern for the user, not a default for the builder. When the GOAL was drafted in an earlier
 session, also re-read each draft decision against the user's later answers and `CONTEXT.md` for
-contradictions. Before writing an oracle over a library's numbers (ts-fsrs, date maths, rounding), run a
+contradictions. When the GOAL drafts a check or lint rule with a named proof case (a reserved gate ticket), run the drafted rule over that proof case with a read-only probe before freezing anything, then over every shipped item it will govern; the first run of a new check is a review of existing content, so list its hits as findings in the GOAL. A rule the proof case cannot turn RED on is a Concern for the user, not a build (MF-0036: 'quantifier absent from the cited page' passed its own proof line because the page said `never` 12 times; the same probe found a shipped `flawLine` pointing at a true line). For AI-drafted pack items (questions, cards, diagrams, cuckoos) the drafter brief names four checks that no script covers, because the planned MF-0033 gate only sees tokens and quantifiers (MF-0039: 12 misleading + 1 unsupported claims were omissions, found only by the fresh verifiers): (1) for any security, safety or permission statement, quote the cited page's strictest rule first and keep its qualifier ('only from trusted sources', 'extreme caution'); never soften it to 'should audit'; (2) for any 'always', 'by default' or 'is loaded' statement, grep the page for the flag or mode that removes it, and state the exception or scope the claim; (3) in a diagram, every row of a table the page gives (name-clash order, scopes, troubleshooting steps) is a branch reachable from every node it applies to, and an ordering edge needs a page sentence that orders it; (4) a rationale gives the page's reason, not a plausible one (check the symptom against the page's own failure modes). Keep the fresh-context verifier per domain group in the plan; the brief reduces its findings, it does not replace it. The whole pack-ticket shape is in `references/templates.md` (Course-pack ticket). A reserved sibling that states the same rule (MF-0033) gets the same probe when it is picked up. Before writing an oracle over a library's numbers (ts-fsrs, date maths, rounding), run a
 one-line probe of the library and record the result in the oracle test's comment. A formula taken from the
 docs can differ from what the code does (MF-0015 retro: ts-fsrs floors elapsed days).
 
@@ -208,6 +208,15 @@ schema accepts (respect its constraints), delete child-first in `afterAll`, tole
 ticket has not migrated yet. Run the file twice at freeze: a second run that fails on leftovers is
 a fixture defect, not the SC's red.
 
+A test that proves an interleaving (concurrent call, lock wait, torn read, "before COMMIT") must carry an
+ordering witness: record where the observed call was answered relative to the other side (e.g.
+`isCommittedAtResponse`) and assert it. Awaiting alone is not enough: `supabase.rpc(...)` and `.from(...)`
+return lazy builders that send nothing until `.then`/`await`, so a call started inside a transaction runs
+after COMMIT unless it is awaited there. Before FREEZE, run the case once against a variant with the
+opposite behaviour (the call moved after COMMIT, or the lock removed) and write its result in LOOP-VERIFY
+under "RED at freeze"; if it stays green, the case is vacuous. A red caused by a missing function or column
+is not that proof (MF-0032: SC-2 was frozen green-for-the-wrong-reason and found only in review).
+
 From here, frozen files are a contract:
 - edits to a frozen file **ask the user** (a guard hook, if the project has one; otherwise you ask);
 - their red is expected while `stage:` is intake…build, and blocking from `stage: test` on;
@@ -235,6 +244,16 @@ options** with why, and the ```` ```json tasks ```` graph — one task per build
 with `agent`, `owns`, `depends_on`, `closes`, `done_when`, `context` (`references/templates.md`).
 EVAL validates it: acyclic, known agents, every SC closed. Done when an engineer who never saw
 this conversation could implement from the plan alone.
+
+**Contract-widening tickets: grep the shape, not the table.** When the ticket adds a member to a closed set
+or a field to a shared shape (an item kind, `ITEM_TYPES`, a `CHECK` list, `PackContent`, a loader's return
+type), list the frozen tests it will break before the plan is approved. Run, over every
+`**/*.acceptance.test.*` and every path in the `builds_on` tickets' `FROZEN.json`: `grep -ln` for the set's
+name, its sibling members as literals (e.g. `'question'` next to `'card'`), the shape's type name, and any
+literal of the loader's output. Put each hit in LOOP-PLAN under "Frozen files this will re-freeze", each
+with the new expected value and the reason, and take all of them to the plan-approval checkpoint as one
+batch. A collision found later is a re-freeze that stops BUILD or TEST for a separate approval (MF-0016:
+MF-0003 SC-5, MF-0006 SC-6, MF-0007 SC-1 and the ticket's own SC-5 fixture, one per stage).
 
 High-risk: present the plan and wait for approval. Normal: proceed.
 
@@ -276,7 +295,7 @@ Write `LOOP-VERIFY.md` (one row per SC: verdict + literal evidence) and `.planni
 Evidence is pasted toolchain output and observed screens, never "should work"; anything unverified
 is listed as unverified. A bug the reviewer finds gets its regression test shown RED first: add the
 test, run it against the unfixed code (revert the fix by copying the file aside, or `git stash -u`; plain `git stash` leaves untracked files in place, so the run is not against the unfixed code, MF-0029), paste the failing line, then restore the
-fix. A test written after the fix and never seen red does not count.
+fix. A test written after the fix and never seen red does not count. A fix made after a high-risk review that touches a delete, auth or privileged-client path is not covered by the review hash. Before DONE, re-run the reviewer on the delta only (the changed hunks plus the RED regression) and update `reviewed_hash`; if it is not re-reviewed, write "post-review change to <path> not re-read" in LOOP-VERIFY and in the evidence's Not verified list (MF-0034). CLI-only or message-only fixes that refuse before any DB call may stay on the original review.
 
 **Decision:**
 - VERIFY DONE and EVAL healthy → Stage 5.

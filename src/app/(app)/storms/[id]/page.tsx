@@ -88,7 +88,7 @@ function FinishedStorm({
     const question = questionOf(r.questionId);
     if (!question) return [];
     return {
-      question: toPlayableQuestion(question),
+      question: toPlayableQuestion(question, r.contentHash),
       chosen: r.chosen ?? [],
       correct: r.correct,
       voided: r.voided,

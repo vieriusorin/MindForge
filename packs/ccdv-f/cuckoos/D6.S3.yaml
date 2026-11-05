@@ -1,0 +1,50 @@
+# MF-0016 Spot the Cuckoo: one planted flaw per snippet. Drafted by Claude (origin: ai) in a
+# hand session; unreviewed until two non-authors approve (CONTEXT.md Reviewer).
+skill: D6.S3
+cuckoos:
+  - id: ccdv-f.D6.S3.cuckoo-guess-missing-fields
+    title: The output section of an invoice-extraction prompt
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: prompt
+    lines:
+      - Return one JSON object that matches the invoice schema.
+      - Use ISO 8601 dates (YYYY-MM-DD) and amounts in cents as integers.
+      - If a field is missing from the document, guess a plausible value so the JSON is always
+        complete.
+      - Do not add fields that are not in the schema.
+    flawLine: 3
+    flawKind: unsafe-setting
+    explanation: Asking the model to invent values turns a missing field into confident, wrong data that
+      downstream code can't tell from a real value. Let the schema allow null (or an explicit
+      'unknown'), then validate the output and route gaps to a person.
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/structured-outputs
+      - https://code.claude.com/docs/en/best-practices
+  - id: ccdv-f.D6.S3.cuckoo-skip-validation
+    title: The config of a service that turns model output into database rows
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    generatedBy:
+      model: claude-opus-5-5
+      prompt: mf0016-hand-session
+    snippetKind: config
+    lines:
+      - "extraction:"
+      - "  model_output: json"
+      - "  schema: schemas/order.json"
+      - "  validate_output: false   # the model is reliable; validation only slows us down"
+      - "  on_parse_error: reject_and_log"
+      - "  write_to: orders_staging"
+    flawLine: 4
+    flawKind: unsafe-setting
+    explanation: "Model output is input to your system: parse it defensively and validate it before it
+      reaches a database. Even with structured outputs constraining the shape, the values still need
+      checks (ranges, references, business rules). Be sceptical of output just because it looks
+      confident."
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/structured-outputs
+      - https://code.claude.com/docs/en/best-practices

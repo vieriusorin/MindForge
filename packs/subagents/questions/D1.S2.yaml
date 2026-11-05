@@ -1,0 +1,158 @@
+skill: D1.S2
+questions:
+  - id: subagents.D1.S2.q1
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You are in plan mode and Claude needs to understand how the payments module is wired before proposing a plan. Which built-in subagent does it delegate that research to?"
+    select: 1
+    options:
+      - id: A
+        text: "Explore, the read-only search agent that Claude uses for every codebase question it has."
+        correct: false
+        rationale: "Explore handles searching a codebase without changes, but during plan mode the docs name a dedicated research agent for planning."
+      - id: B
+        text: "General-purpose, because preparing a plan requires editing files to try the possible changes out."
+        correct: false
+        rationale: "Plan mode keeps the main conversation read-only; general-purpose is for tasks that need both exploration and modification."
+      - id: C
+        text: "Plan, a read-only research agent that gathers context so the main conversation stays read-only."
+        correct: true
+        rationale: "When you're in plan mode and Claude needs to understand your codebase, it delegates research to the Plan subagent, so exploration output stays in a separate context window while the main conversation remains read-only."
+      - id: D
+        text: "claude-code-guide, the helper agent that answers questions about how the current repository works."
+        correct: false
+        rationale: "claude-code-guide is used when you ask questions about Claude Code features, not about your codebase."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D1.S2.q2
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    stem: "You never mention any subagent in your request, yet Claude hands the work to your db-reviewer. What does Claude base that automatic delegation on?"
+    select: 1
+    options:
+      - id: A
+        text: "The task in your request, the subagent's `description` field, and the current context of the session."
+        correct: true
+        rationale: "Claude automatically delegates tasks based on the task description in your request, the `description` field in subagent configurations, and current context."
+      - id: B
+        text: "The order of the subagent files on disk, trying each one in turn until one of them accepts the task."
+        correct: false
+        rationale: "Delegation is a match between the task and each subagent's description, not a walk through files in order."
+      - id: C
+        text: "The subagent's system prompt body, which Claude reads in full for every subagent before each request."
+        correct: false
+        rationale: "Claude uses each subagent's description to decide; the system prompt only loads when that subagent runs."
+      - id: D
+        text: "Nothing: Claude only ever delegates to a custom subagent when you @-mention it in your message."
+        correct: false
+        rationale: "An @-mention guarantees a subagent runs, but Claude also delegates automatically when a task matches a description."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D1.S2.q3
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "For this one review of the auth changes you want your `code-reviewer` subagent to run for certain, but the rest of the session should stay a normal session. What do you do?"
+    select: 1
+    options:
+      - id: A
+        text: "Write \"use the code-reviewer subagent\" in your message, which always forces that subagent to run."
+        correct: false
+        rationale: "Naming a subagent in natural language is a suggestion: Claude decides whether to delegate."
+      - id: B
+        text: "Restart with `claude --agent code-reviewer`, so that the subagent takes the review on from the start."
+        correct: false
+        rationale: "`--agent` makes the whole session run as that subagent, with its tool restrictions and model, which is more than one task."
+      - id: C
+        text: "Add \"use proactively\" to the reviewer's description, so that it is guaranteed to run on the next turn."
+        correct: false
+        rationale: "\"Use proactively\" encourages proactive delegation; it does not guarantee that a specific subagent runs."
+      - id: D
+        text: "@-mention it, for example `@\"code-reviewer (agent)\"` followed by your request about the auth changes."
+        correct: true
+        rationale: "Of the three explicit patterns, the @-mention guarantees the subagent runs for one task; natural language leaves the choice to Claude and `--agent` applies to the whole session."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D1.S2.q4
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    stem: "A teammate's migration-checker subagent is never picked automatically. Its description is just \"Helper\", and its system prompt is three pages of SQL rules. What is the fix most likely to help?"
+    select: 1
+    options:
+      - id: A
+        text: "Add even more SQL rules to the system prompt, so Claude can see how much the subagent knows."
+        correct: false
+        rationale: "Claude decides when to delegate from the description; the system prompt only loads when the subagent runs."
+      - id: B
+        text: "Rewrite the description to say clearly what the subagent does and when Claude should use it."
+        correct: true
+        rationale: "Claude uses each subagent's description to decide when to delegate, so the docs say to write a clear description; to encourage proactive delegation, include phrases like \"use proactively\"."
+      - id: C
+        text: "Move the subagent into the background, so that Claude notices it whenever it is between tasks."
+        correct: false
+        rationale: "Foreground or background controls how a subagent runs once delegated, not whether Claude picks it."
+      - id: D
+        text: "Give it every available tool, so that its configuration matches more of the requests you send."
+        correct: false
+        rationale: "Tool access controls what a subagent can do, not how Claude matches tasks to it; delegation follows the description."
+    source:
+      title: "Create custom subagents"
+      url: "https://code.claude.com/docs/en/sub-agents"
+  - id: subagents.D1.S2.q5
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "In an Agent SDK app, the main agent delegates a flaky-test investigation to a `test-runner` subagent defined in `agents`. The subagent needs the failing test's path and the stack trace. How does it get them?"
+    select: 1
+    options:
+      - id: A
+        text: "It reads the parent's conversation history, which every subagent receives when it starts its task."
+        correct: false
+        rationale: "Unless it is a fork, a subagent's context starts fresh: it doesn't receive the parent's conversation history or tool results."
+      - id: B
+        text: "The main agent must put them in the Agent tool's prompt string, the only content passed down to it."
+        correct: true
+        rationale: "The only content you pass from parent to subagent is the Agent tool's prompt string, so include any file paths, error messages, or decisions the subagent needs directly in that prompt."
+      - id: C
+        text: "They arrive through the parent's system prompt, which the SDK copies into every subagent's context."
+        correct: false
+        rationale: "The parent's system prompt is on the list of what a subagent doesn't receive; it gets its own `prompt` instead."
+      - id: D
+        text: "The SDK attaches the parent's latest tool results automatically whenever a subagent is spawned."
+        correct: false
+        rationale: "The parent's tool results are not passed down; anything the subagent needs must go in the prompt string."
+    source:
+      title: "Subagents in the SDK"
+      url: "https://code.claude.com/docs/en/agent-sdk/subagents"
+  - id: subagents.D1.S2.q6
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: expert
+    stem: "Your SDK app delegates a long dependency audit to an auditor subagent. You never want the main agent to block on it, even when Claude decides its next action needs the report. What do you set?"
+    select: 1
+    options:
+      - id: A
+        text: "Set `maxTurns` to 1 in its definition, so the auditor returns straight away and never holds anything up."
+        correct: false
+        rationale: "`maxTurns` caps the agentic turns and marks the output as partial; it does not decide whether Claude waits."
+      - id: B
+        text: "Leave `tools` out of the definition, because a subagent that has no tools always runs in the background."
+        correct: false
+        rationale: "Omitting `tools` makes the subagent inherit every tool available to subagents; it has nothing to do with waiting."
+      - id: C
+        text: "Set `background` to `true` in the auditor's AgentDefinition, to keep that agent in the background."
+        correct: true
+        rationale: "A spawned subagent runs in the background by default, but Claude waits when its next action needs the report; to make the choice yourself, set `background` to `true` in the definition to keep that agent in the background."
+      - id: D
+        text: "Mention the auditor by name in the prompt, which makes the SDK run that subagent asynchronously."
+        correct: false
+        rationale: "Naming a subagent in the prompt guarantees which subagent runs; it does not stop Claude from waiting for it."
+    source:
+      title: "Subagents in the SDK"
+      url: "https://code.claude.com/docs/en/agent-sdk/subagents"

@@ -37,6 +37,7 @@ function sessionQuestion(
         { id: "C", text: "c" },
       ],
       source: { title: "Docs", url: "https://example.com" },
+      contentHash: `hash-${id}`,
     },
     contentHash: `hash-${id}`,
     chosen,

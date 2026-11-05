@@ -1,0 +1,35 @@
+skill: D2.S6
+diagrams:
+  - id: claude-code-in-action.D2.S6.diagram-comment-to-reply
+    title: "From a GitHub event to Claude's answer"
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: practitioner
+    direction: TB
+    nodes:
+      - { id: EVENT, label: "GitHub event: comment, review, new issue, pull request or schedule" }
+      - { id: MODE, label: "Does the workflow set a prompt input?", shape: decision }
+      - { id: INTER, label: "Interactive mode: wait for the trigger phrase, @claude by default" }
+      - { id: AUTO, label: "Automation mode: run the prompt without a mention" }
+      - { id: WRITE, label: "Issue or PR event: does the user have write access?", shape: decision }
+      - { id: HUMAN, label: "Is the actor a bot not listed in allowed_bots?", shape: decision }
+      - { id: FAIL, label: "Run fails before Claude starts" }
+      - { id: WORK, label: "Claude works: analyse code, implement changes, push commits" }
+      - { id: COMMENT, label: "Reply as a comment on the triggering issue or PR" }
+      - { id: LOG, label: "Results in the workflow run log, unless the prompt tells Claude to post and it has a tool that can post" }
+      - { id: IDLE, label: "No trigger phrase: Claude doesn't respond" }
+    edges:
+      - { from: EVENT, to: MODE }
+      - { from: MODE, to: INTER, label: "no" }
+      - { from: MODE, to: AUTO, label: "yes" }
+      - { from: INTER, to: WRITE, label: "trigger phrase found" }
+      - { from: INTER, to: IDLE, label: "no trigger phrase" }
+      - { from: AUTO, to: WRITE }
+      - { from: WRITE, to: FAIL, label: "no, and not in allowed_non_write_users" }
+      - { from: WRITE, to: HUMAN, label: "yes, or a schedule (no user authors it)" }
+      - { from: HUMAN, to: FAIL, label: "yes" }
+      - { from: HUMAN, to: WORK, label: "no" }
+      - { from: WORK, to: COMMENT, label: "interactive mode" }
+      - { from: WORK, to: LOG, label: "automation mode" }
+    sources:
+      - https://code.claude.com/docs/en/github-actions

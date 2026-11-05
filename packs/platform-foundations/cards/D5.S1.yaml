@@ -1,0 +1,29 @@
+skill: D5.S1
+cards:
+  - id: platform-foundations.D5.S1.card-silting-pond
+    concept: Context as a budget
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      Everything in a conversation takes up the context window: instructions, messages, tool
+      results, files and Claude's own replies. More context isn't automatically better: as the
+      token count grows, accuracy and recall degrade. When a session drifts, restart in a new chat
+      (and let Claude search the old one), summarize the old turns (compaction on the API), or
+      persist the facts you need in memory so the next chat starts with them.
+    inNature: >-
+      A pond fed by a muddy stream. Long before it overflows, the silt clouds the water and you
+      lose sight of the stones on the bottom. You can dig a fresh pond, dredge the old one down to
+      what matters, or lift the stones you need onto the bank where they stay dry for the next pond.
+    whereItBreaks:
+      - "A pond silts up evenly, but in standard API behavior previous turns are preserved completely until you compact or edit the context; chat interfaces such as claude.ai can instead manage the window first in, first out."
+      - "Dredging throws the silt away; compaction replaces older turns with a summary Claude writes, and if the default summary drops something a later turn needs, you can write your own summarization prompt."
+      - "Stones on the bank stay put whatever you do; a chat started with memory turned off saves nothing to memory, and an incognito chat is not saved to memory or chat history."
+    contrast: >-
+      D5.S2 (usage limits) is about how much you can use Claude over time across conversations;
+      this skill is about how much one conversation holds and how well Claude works with it.
+    diagram: platform-foundations.D5.S1.diagram-context-budget
+    sources:
+      - https://platform.claude.com/docs/en/build-with-claude/context-windows
+      - https://platform.claude.com/docs/en/build-with-claude/compaction
+      - https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context

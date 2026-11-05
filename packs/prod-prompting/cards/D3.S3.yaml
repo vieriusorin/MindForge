@@ -1,0 +1,30 @@
+skill: D3.S3
+cards:
+  - id: prod-prompting.D3.S3.card-token-bucket
+    concept: Rate limits as a token bucket
+    origin: ai
+    author: sorin.vieriu@ddroidd.com
+    level: foundation
+    simply: >-
+      The Claude API limits each organization's requests per minute and input and output tokens per minute.
+      Capacity refills continuously, like a bucket under a tap, instead of resetting once a minute. If you
+      empty it you get a 429; when the response has a retry-after header, wait that long and retry. Short
+      bursts can trip the limit even when your per-minute average looks fine.
+    inNature: >-
+      A forest spring filling a pool. Animals can drink as fast as the pool allows; drain it and they must
+      wait while water seeps back in. A herd arriving all at once empties the pool even though the spring's
+      daily flow would have been plenty for them spread over the day.
+    whereItBreaks:
+      - "A spring has one pool; the API has separate buckets for requests, input tokens and output tokens, and exceeding any one returns a 429."
+      - "On most Claude models, tokens read from the prompt cache are not taken from the input bucket at all; a spring has no such free water."
+      - "A dry pool always refills; a 429 from the monthly spend cap does not clear by waiting minutes and carries no retry-after."
+    contrast: >-
+      A rate-limit 429 means your organization went over one of its own limits: wait the retry-after
+      seconds (the SDK honours it) and smooth your traffic. A 529 overloaded_error means the API itself is
+      temporarily overloaded, which can happen under high traffic across all users; the SDK retries it with
+      exponential backoff. The exception is the spend-cap 429: it has no retry-after, and retries fail until
+      access resumes.
+    diagram: prod-prompting.D3.S3.diagram-error-retry
+    sources:
+      - https://platform.claude.com/docs/en/api/rate-limits
+      - https://platform.claude.com/docs/en/api/errors
