@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "src/server/db/__tests__/mf-0007-review.db.acceptance.test.ts",
-      "sha256": "381db32d458fb7b8776224684943155a280077dd68f37089adcfc1ef4dab543c",
+      "sha256": "95f089d72b39432eb1b370bb135167b18e7a088f6f791f2b4a54f9aa838060fb",
       "first_failure": "SC-1: PostgresError relation \"private.items\" does not exist; SC-2..SC-6: rpc PGRST202 (function not found); SC-7: review_states not in schema cache; identical on 2nd run (fixture + teardown survive)"
     },
     {
@@ -19,6 +19,13 @@
       "reason": "User decision 2026-11-04 (MF-0016 TEST): the sync registers a fourth item kind, cuckoos (item_type cuckoo). SC-1 expected-registry kind list gains [\"cuckoos\",\"cuckoos\"]; intent (every item of every pack, a second run changes nothing) unchanged. No assertion removed or weakened.",
       "files": {
         "src/server/db/__tests__/mf-0007-review.db.acceptance.test.ts": "381db32d458fb7b8776224684943155a280077dd68f37089adcfc1ef4dab543c"
+      }
+    },
+    {
+      "at": "2026-11-05T12:38:54.247Z",
+      "reason": "User decision 2026-11-05 (MF-0025 TEST): the sync now removes keys and items of any unregistered pack (MF-0025 C-1 = A). SC-1 fixture count flips from ITEMS.length to 0 (it asserted the old rule), and the fixture items are re-seeded right after it via seedFixtureItems(); SC-1 registry checks and SC-2..SC-7 unchanged. Flipped assertion shown RED against the pre-MF-0025 script: expected 7 to be 0.",
+      "files": {
+        "src/server/db/__tests__/mf-0007-review.db.acceptance.test.ts": "95f089d72b39432eb1b370bb135167b18e7a088f6f791f2b4a54f9aa838060fb"
       }
     }
   ]

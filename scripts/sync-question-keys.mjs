@@ -15,6 +15,7 @@
  * MF-0016: cuckoos (packs/<slug>/cuckoos/*.yaml) are keyed like questions, with the flawed line's
  * number as the only correct option, and registered with item_type 'cuckoo'.
  * MF-0032: a pack's keys and items are written in ONE transaction (record_attempt binds the two).
+ * MF-0025: keys and items of a pack whose folder is gone are deleted with its registry row.
  *
  * DB: $SUPABASE_DB_URL, else the LOCAL stack from `supabase status`.
  * Usage: node scripts/sync-question-keys.mjs
@@ -186,6 +187,17 @@ try {
               updated_at = now()`;
     }
     await tx`delete from private.packs where not (slug = any(${packs}))`;
+    // MF-0025: a removed pack's keys and items leave with its registry row, so record_attempt and
+    // review_item refuse them. Its reviews, flags and approvals cascade (user decision C-1 = A);
+    // attempts and storms keep their history (ids by value, no FK).
+    const keys = await tx`
+      delete from private.question_keys where not (pack_slug = any(${packs}))`;
+    const items = await tx`
+      delete from private.items where not (pack_slug = any(${packs}))`;
+    if (keys.count || items.count)
+      console.log(
+        `unregistered packs: removed ${keys.count} key(s), ${items.count} item(s)`,
+      );
   });
   console.log(`pack registry: ${packs.join(", ")}`);
   for (const pack of packs) {
@@ -223,7 +235,7 @@ try {
       await tx`delete from private.question_keys where pack_slug = ${pack} and not (question_id = any(${keyIds}))`;
 
       // MF-0007: hash_synced_at moves only when the hash changes (C-3: the 48 h analogy clock).
-      // Only this pack's rows are deleted, so packs without a folder here are never touched.
+      // Only this pack's rows are deleted here; removed packs were cleared with the registry (MF-0025).
       for (const i of items) {
         await tx`
           insert into private.items as cur

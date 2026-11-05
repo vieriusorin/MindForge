@@ -150,17 +150,22 @@ beforeAll(async () => {
       () => db`insert into private.content_maintainers (pack_slug, email, is_analogy_owner)
                values (${PACK}, ${M.email}, false), (${PACK}, ${O.email}, true)`,
     );
-    for (const it of ITEMS)
-      await tolerate(
-        () => db`insert into private.items
-                   (item_id, pack_slug, skill_code, item_type, content_hash, origin, author_email, hash_synced_at)
-                 values (${id(it.name)}, ${PACK}, 'S1', ${it.type}, ${`h-${it.name}-v1`}, ${it.origin},
-                         ${it.author ? A.email : null}, now() - make_interval(hours => ${it.ageHours}))`,
-      );
+    await seedFixtureItems(db);
   } finally {
     await db.end();
   }
 });
+
+/** The fixture items. Re-seeded after SC-1: a sync removes an unregistered pack's items (MF-0025). */
+async function seedFixtureItems(db: ReturnType<typeof sql>): Promise<void> {
+  for (const it of ITEMS)
+    await tolerate(
+      () => db`insert into private.items
+                 (item_id, pack_slug, skill_code, item_type, content_hash, origin, author_email, hash_synced_at)
+               values (${id(it.name)}, ${PACK}, 'S1', ${it.type}, ${`h-${it.name}-v1`}, ${it.origin},
+                       ${it.author ? A.email : null}, now() - make_interval(hours => ${it.ageHours}))`,
+    );
+}
 
 afterAll(async () => {
   const db = sql();
@@ -238,7 +243,8 @@ describe("MF-0007 review (Pollination)", () => {
       expect(await read()).toEqual(first);
       const [fixture] =
         await db`select count(*)::int as n from private.items where pack_slug = ${PACK}`;
-      expect(fixture?.n).toBe(ITEMS.length); // sync never touches a pack it doesn't own
+      expect(fixture?.n).toBe(0); // MF-0025: an unregistered pack's items are removed
+      await seedFixtureItems(db);
     } finally {
       await db.end();
     }
