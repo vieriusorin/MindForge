@@ -97,7 +97,7 @@ function readKeys(packSlug) {
 /** MF-0013: exam timing and skill -> domain map from packs/<slug>/pack.yaml. */
 function readPackMeta(packSlug) {
   const pack = YAML.parse(
-    readFileSync(join(ROOT, "packs", packSlug, "pack.yaml"), "utf8"),
+    readFileSync(join(PACKS_DIR, packSlug, "pack.yaml"), "utf8"),
   );
   const skills = (pack.domains ?? []).flatMap((d) =>
     (d.skills ?? []).map((s) => ({ skill_code: s.code, domain_code: d.code })),
