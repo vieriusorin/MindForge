@@ -1,0 +1,32 @@
+{
+  "ticket": "MF-0017",
+  "frozen_at": "2026-11-05T08:47:51.6274698Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/engine/expedition/__tests__/mf-0017-expedition.acceptance.test.ts",
+      "sha256": "42cc22c79dce3ae74af1f6359526c2fdc168528e048e391c239cac3521af3481",
+      "first_failure": "SC-4 x10, gate x1: Error: not implemented"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0017-expedition.db.acceptance.test.ts",
+      "sha256": "8a9d5b301a4eb3c11582f3b736076d9ef3cec2ceb64b2926396106ff81bcc42c",
+      "first_failure": "Re-freeze (review B1): SC-2 x2 expected 8 to be 7 against the unfixed SQL (pre-join recall counted)"
+    },
+    {
+      "path": "src/features/expeditions/components/start-expedition-form/__tests__/mf-0017-start-expedition-form.acceptance.test.tsx",
+      "sha256": "cb420e1e098d0b9779da039fe40729588ec51dcf5373313cb4f0900de98171bf",
+      "first_failure": "SC-5 x5: Error: not implemented"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-05T09:47:12.5861670Z",
+      "path": "src/server/db/__tests__/mf-0017-expedition.db.acceptance.test.ts",
+      "from": "be8f1bbc06bdee0056fbc81890b474275aec101d6ed58f9a8eeb777e1467d684",
+      "to": "8a9d5b301a4eb3c11582f3b736076d9ef3cec2ceb64b2926396106ff81bcc42c",
+      "reason": "Review B1 (privacy): count only recalls made after joining. Fixture: group G members joined_at set (M2 mid-window), new pre-join M2 row (counts false), parity applies joined_at, SC-3 own-rows list 3 -> 4. EXPECTED_PROGRESS unchanged (7).",
+      "approved_by": "user 2026-11-05"
+    }
+  ]
+}

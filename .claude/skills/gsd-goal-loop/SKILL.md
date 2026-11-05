@@ -145,6 +145,11 @@ leaderboard, "N of M" line) states under "Constraints → how met" what the view
 that implies who contributed is itself a disclosure. Give one worked example at the minimum group size in
 the SC's proof. A high-risk plan over other people's data without this is not ready for approval (MF-0011
 retro: a threshold of 3 including the viewer passed every gate; only the fresh-context reviewer caught it). Single-snapshot reachability is not a privacy proof. (d) The figures must not depend on any input the viewer controls: their own row, answers or attempts, a join or leave. The viewer can change those between two loads and difference the result, so the pool and the threshold both exclude the viewer, and the SC says so. Every such SC carries a viewer-invariance test: fix the other members, vary the viewer (no memory, a first answer in another region, healthy everywhere) and assert the output is deep-equal. A decision inherited from a precedent ticket ("the viewer is pooled in") is re-tested against this ticket's objective before it is copied into "Constraints -> how met" (MF-0011 retro: threshold included the viewer; MF-0021 retro: pool included the viewer, found at review after the SC-3 enumeration passed). Name the residual that survives (collusion or a second account changing their own row between loads) in Concerns for the user; do not accept it on their behalf.
+(e) Membership changes by OTHER members are visible too (the member list): a figure that moves by exactly
+one member's past contribution when that member joins or leaves is a per-member oracle. Scope counted rows
+to each member's tenure (for example `answered_at >= joined_at`) or show the change is indistinguishable
+from others' activity, and put the join/leave case in the SC's proof (MF-0017 B1: found only by the
+reviewer, cost a re-freeze).
 
 Decide what follows from existing decisions and record it under "Decided without a question",
 with its source. Ask only what does not — see `references/escalation.md`. Two defensible business
