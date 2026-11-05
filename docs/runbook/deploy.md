@@ -90,6 +90,63 @@ Notes:
   then run B. Never edit an applied migration, and never change hosted schema by hand.
 - **Answer keys:** check out the previous commit of `packs/` and re-run B3.
 
+## E. Release gate run (MF-0020)
+
+The gate: a colleague who has never seen the app joins from an invite on the hosted URL, plants 3 seeds,
+wins a Scenario Duel, and sees their trees grow. You run all of it. It writes to the production DB only
+through the app.
+
+### E0. Before you start
+- [ ] §A done once, §B done for the current `main`, and B4 says "No issues found".
+- [ ] The latest `main` CI run is **success**. Don't run the gate on a red `main`.
+- [ ] The gate pack has a nature card for each of the 3 skills you'll point the colleague at
+      (`ls packs/<pack>/cards`). A skill without a card still plants, but then the gate doesn't show a card.
+- [ ] The colleague has no account yet (they're new to the app), and they've agreed to have their run recorded.
+- [ ] `psql` is on your PATH for E2. Without it, use `docker run --rm -i postgres:17 psql` in place of `psql`.
+
+### E1. Run
+1. Sign in as yourself on `https://<prod-origin>`, create a group on the gate pack, and copy the invite link.
+   It must start with `SITE_URL`.
+2. Send the link to the colleague. Don't give them any other instructions. The point is that a newcomer finds the way alone.
+3. The colleague opens the link, signs in by magic link, and lands in the group.
+   **Capture:** the group page with their avatar (S1), and their empty dashboard forest (S2).
+4. The colleague plants 3 seeds, one per skill, on `/play/<pack>/plant/<skill>`.
+   **Capture:** each plant screen with the card showing (S3–S5).
+5. The colleague plays one Scenario Duel (`/play/<pack>/duel`) to the end screen.
+   **Capture:** "Duel finished: X / N correct" (S6). It counts as a win when X ≥ ⌈N/2⌉ (MF-0020 C-3).
+6. The colleague opens the dashboard. **Capture:** the forest with the planted skills beyond "Not yet" (S7).
+
+### E2. Read back (read-only, counts only)
+Run this as yourself, with the colleague's email passed as a variable. It prints no email and no uuid, so
+the output can go into the evidence as-is.
+
+```sh
+psql "$(DB_URL)" -v email="<colleague email>" -v pack="ccdv-f" -X -A -F ' | ' -f - <<'SQL'
+begin read only;
+with u as (select id from auth.users where lower(email) = lower(:'email'))
+select
+  (select count(*) from u)                                              as user_found,
+  exists (select 1 from public.group_members gm join u on gm.user_id = u.id)
+                                                                        as is_member,
+  (select count(*) from public.attempts a join u on a.user_id = u.id
+     where a.pack_slug = :'pack')                                       as attempts,
+  (select count(*) filter (where a.correct) from public.attempts a join u on a.user_id = u.id
+     where a.pack_slug = :'pack')                                       as correct,
+  (select count(distinct a.skill_code) from public.attempts a join u on a.user_id = u.id
+     where a.pack_slug = :'pack')                                       as distinct_skills_attempted;
+rollback;
+SQL
+```
+
+Expected: `user_found = 1`, `is_member = t`, `distinct_skills_attempted ≥ 3`, and `attempts` covers the
+3 plant checks plus the Duel.
+
+### E3. Record
+- Add a §D row: date, who ran it, "E1–E2", and the result.
+- Put S1–S7 and the E2 output in `.planning/evidence/MF-0020.md`. Call the colleague "colleague A", never by
+  name or email.
+- A step that fails is a **new ticket** (evidence, the step, what was expected). Don't hot-fix it on production.
+
 ## D. Dry-run log
 
 Record each first-time or unusual run here: date, who, steps, output summary.
