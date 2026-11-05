@@ -3,7 +3,7 @@
  * write the survivors as `origin: ai` YAML for a PR. `--dry-run` prints the plan and an upper-bound
  * cost without calling the API (no key needed). A real run is MF-0022's.
  *
- * Usage: pnpm generate:questions [--pack ccdv-f] [--skill D2.S1] [--count N] [--dry-run]
+ * Usage: pnpm generate:questions [--pack ccdv-f] [--domain D2 | --skill D2.S1] [--count N] [--dry-run]
  * Env (real run): ANTHROPIC_API_KEY or an `ant auth login` profile, MF_AUTHOR_EMAIL, MF_MAX_BATCH_USD (default 25).
  */
 import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
@@ -57,6 +57,8 @@ const VerdictOutput = z.object({
 
 interface Args {
   pack: string;
+  /** MF-0022: one domain per batch keeps a pack under MF_MAX_BATCH_USD. */
+  domain: string | null;
   skill: string | null;
   count: number | undefined;
   dryRun: boolean;
@@ -79,6 +81,7 @@ function parseArgs(argv: string[]): Args {
     throw new Error(`--count must be an integer 0..100, got "${countRaw}"`);
   return {
     pack,
+    domain: value("--domain") ?? null,
     skill: value("--skill") ?? null,
     count,
     dryRun: argv.includes("--dry-run"),
@@ -98,8 +101,10 @@ interface SkillPlan {
 
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
-  const prompts = loadPrompts(["writer", "verifier"] as const);
   const pack = await loadPackFile(join(ROOT, "packs", args.pack, "pack.yaml"));
+  const prompts = loadPrompts(["writer", "verifier"] as const, {
+    packName: pack.name,
+  });
   const questions = await loadPackQuestions(
     pack,
     join(ROOT, "packs", args.pack, "questions"),
@@ -107,10 +112,13 @@ async function main(): Promise<void> {
   const store = fileCorpusStore(CORPUS_DIR);
 
   const skills = pack.domains
+    .filter((d) => args.domain === null || d.code === args.domain)
     .flatMap((d) => d.skills)
     .filter((s) => args.skill === null || s.code === args.skill);
   if (skills.length === 0)
-    throw new Error(`no skill "${args.skill}" in ${args.pack}`);
+    throw new Error(
+      `no skill "${args.skill ?? "*"}" in domain "${args.domain ?? "*"}" of ${args.pack}`,
+    );
 
   const plans: SkillPlan[] = [];
   for (const s of skills) {

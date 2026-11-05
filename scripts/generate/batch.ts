@@ -8,10 +8,12 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import {
   estimateBatchCost,
+  fillPrompt,
   parsePrompt,
   promptLockViolations,
   submitBatch,
 } from "@/content-pipeline/pipeline";
+import type { PromptVars } from "@/content-pipeline/prompts";
 import type {
   BatchClient,
   BatchRequest,
@@ -28,9 +30,14 @@ const PromptLockFile = z.record(
   z.strictObject({ version: z.number().int(), bodyHash: z.string() }),
 );
 
-/** Every prompt must match its lock (MF-0008 SC-5); returns the named ones, throwing when one is missing. */
+/**
+ * Every prompt must match its lock (MF-0008 SC-5); returns the named ones filled for the pack
+ * (MF-0022 SC-2: the lock hashes the template, so filling comes after the check), throwing when one
+ * is missing or keeps a placeholder.
+ */
 export function loadPrompts<N extends string>(
   names: readonly N[],
+  vars: PromptVars,
 ): Record<N, Prompt> {
   const dir = join(ROOT, "prompts");
   const prompts = readdirSync(dir)
@@ -47,7 +54,7 @@ export function loadPrompts<N extends string>(
   const entries = names.map((name) => {
     const prompt = prompts.find((p) => p.name === name);
     if (!prompt) throw new Error(`prompts/${name}.md is required`);
-    return [name, prompt] as const;
+    return [name, fillPrompt(prompt, vars)] as const;
   });
   return Object.fromEntries(entries) as Record<N, Prompt>;
 }

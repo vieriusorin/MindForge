@@ -179,6 +179,13 @@ acceptance-test writing (MF-0012: SC-6 `server-only` vs `server-side.md` §2; SC
 `failure`, put it in the checkpoint: fix it as T0 (a separate hunk) or park. When `package.json`, the lockfile or
 `pnpm-workspace.yaml` changed, also run `pnpm install --frozen-lockfile` in a scratch copy: only the frozen
 install fails on an unresolved `allowBuilds` placeholder (MF-0019: 13 red runs on `main`, 6 PRs merged unverified).
+(5) For each SC or plan line that names a CLI flag or subcommand (`--domain`, `--skill`, `--dry-run`), grep the
+script's argument parser for it now (`grep -n -- '--domain' scripts/**/*.ts`). A flag that does not exist is a plan
+step with an owner at the checkpoint, not a discovery in BUILD (MF-0022: `--domain` was assumed from MF-0008 evidence
+and found missing in BUILD, step 5b). When the user widens scope at the checkpoint (one pack to seven, one skill to
+all), re-run this grep and also grep the code the wider scope reaches for literals naming the original subject
+(`grep -rn "Certified" prompts/ src/content-pipeline`): a cap, a count or a hard-coded name sized for one case breaks
+at several.
 
 Then run `grill-with-docs` against the draft and fold the answers back. With `--research`, triage
 each question (`references/research.md`) before putting it to the user: facts go to the researcher

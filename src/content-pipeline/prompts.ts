@@ -52,6 +52,20 @@ export function relockPrompts(prompts: Prompt[], lock: PromptLock): PromptLock {
   return next;
 }
 
+/** MF-0022 SC-2: the values a generation prompt's `{{…}}` placeholders take. */
+export interface PromptVars {
+  readonly packName: string;
+}
+
+/** MF-0022 SC-2: the prompt with its placeholders filled; throws on any `{{…}}` left unfilled. */
+export function fillPrompt(prompt: Prompt, vars: PromptVars): Prompt {
+  const body = prompt.body.replaceAll("{{packName}}", vars.packName);
+  const left = /\{\{\w+\}\}/.exec(body);
+  if (left)
+    throw new Error(`fillPrompt: unfilled ${left[0]} in prompt ${prompt.name}`);
+  return { ...prompt, body };
+}
+
 /** `name@version`, the `generatedBy.prompt` value written on items. */
 export function promptRef(prompt: Prompt): string {
   return `${prompt.name}@${prompt.version}`;

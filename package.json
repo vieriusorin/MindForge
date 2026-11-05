@@ -22,6 +22,7 @@
     "generate:questions": "tsx scripts/generate/questions.ts",
     "generate:cards": "tsx scripts/generate/cards.ts",
     "generate:diagrams": "tsx scripts/generate/diagrams.ts",
+    "generate:eval": "tsx scripts/generate/eval.ts",
     "prompts:lock": "tsx scripts/generate/lock-prompts.ts",
     "check:packs": "node scripts/check-pack-grounding.mjs"
   },
