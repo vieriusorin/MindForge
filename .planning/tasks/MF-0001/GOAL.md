@@ -54,13 +54,13 @@ part of **B6 (forest model, pure)**, and **B9 (second pack)**.
 - [x] SC-5: `treeStage(state)` returns the spec §2.2 stage for literal cases: no state → seed; 1 recall, stability 1 → sprout; stability 3 → sapling; stability 14 without Feynman → sapling; stability 14 with Feynman → tree; stability 45 with Feynman, no storm → tree; stability 45 + Feynman + storm → ancient; and `wilting: true` when retrievability 0.84 on a sapling, `false` at 0.85, never on a seed. Proof: acceptance test `src/engine/forest/__tests__/mf-0001-stage.acceptance.test.ts`.
 - [x] SC-6: `/` renders the CCDV-F forest: 8 region headings with name + weight %, 25 seed tiles each showing the skill name and weight. Proof: browser check (chrome-devtools snapshot, counts pasted) on `pnpm dev`.
 - [x] SC-7: typecheck, lint, full test suite green; `pnpm build` succeeds; evidence file written. Proof: VERIFY receipt.
-- [x] SC-8: The `.claude/` hooks copied from P4T work in this repo: every hook command in `.claude/settings.json` exits 0 with no stderr on a sample input and imports no path missing from the repo; the Stop gate runs this repo's typecheck / biome / vitest (no test-DB lock, no `env-run`); rule digests in `inject-rule-context.mjs` describe MindForge paths (`src/engine`, `packs`, `src/app`) instead of P4T ones. Proof: `scripts/check-hooks.mjs` run log pasted in LOOP-VERIFY.
+- [x] SC-8: The `.claude/` hooks copied from another project work in this repo: every hook command in `.claude/settings.json` exits 0 with no stderr on a sample input and imports no path missing from the repo; the Stop gate runs this repo's typecheck / biome / vitest (no test-DB lock, no `env-run`); rule digests in `inject-rule-context.mjs` describe MindForge paths (`src/engine`, `packs`, `src/app`) instead of the source project's. Proof: `scripts/check-hooks.mjs` run log pasted in LOOP-VERIFY.
 
 ## Concerns
 
 | # | Collision | Owner | Status |
 |---|-----------|-------|--------|
-| C-1 | `.claude/` hooks were copied from P4T and import scripts absent here. | user | resolved 2026-11-02: adapt to MindForge inside MF-0001 (SC-8) |
+| C-1 | `.claude/` hooks were copied from another project and import scripts absent here. | user | resolved 2026-11-02: adapt to MindForge inside MF-0001 (SC-8) |
 | C-2 | Spec ❓Q-1 (Supabase vs Drizzle+Turso) is unresolved. This ticket avoids it by having no DB; the next ticket (auth + schema, high-risk) cannot start without it. | user | open (not blocking MF-0001) |
 | C-3 | Second pack content (spec ❓Q-7 open). | user | resolved 2026-11-02: placeholder "Team onboarding sample" pack |
 

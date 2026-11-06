@@ -39,7 +39,32 @@ project's own value when it exists; otherwise use the default and say so in the 
 | `PROJECT_DOC` | `.planning/PROJECT.md` (Out of Scope, Key Decisions) | CLAUDE.md |
 | `ACCESS_DOC` | a roles / permissions matrix | none — every access question is `decision` |
 | `NIGHT_RUNNER` | an unattended runner script | none — `--autonomous` runs in the current session |
-| `HIGH_RISK` | high-risk paths in CLAUDE.md / `ticket-traceability` | schema + migrations, authz / access policy, auth wiring, privileged DB clients, money and other derived figures |
+| `HIGH_RISK` | high-risk paths in CLAUDE.md / `ticket-traceability` | schema + migrations, authz / access policy, auth wiring, privileged DB clients, money and other derived figures, **gate scripts** (`scripts/check-*.mjs`, `scripts/lib/*-check.mjs`), hooks and settings, and any script that writes to an external service (GitHub issues/projects, hosted DB) |
+| `TRACKER` — shared issue mirror | a `ticket:github`-style script (MindForge: `pnpm ticket:github`, config `.planning/github.json`) | none — `.planning/` is the only record; say so in the hand-off |
+
+## GitHub mirror (MindForge: `pnpm ticket:github`)
+
+GOAL.md stays the source of truth; the GitHub issue and the **MindForge** project are its shared,
+visible copy, so the team sees who holds what and how far it is. The script derives everything from
+GOAL.md: issue (created if missing, title from `title:`), status label, project **Status**
+(reserved → Todo · in-progress → In Progress · blocked-on-* → Blocked · complete-pending-manual-commit
+→ In Review · merged → Done), project **Stage**, milestone (from `week:`), the parent link (from the
+"Split out of / Reserved … from / Drafted … by <ID>" line) and "blocked by" links (from `depends_on` +
+`builds_on`). Each stage or status move adds a one-line progress comment to the issue.
+
+**When to run it** — `pnpm ticket:github <ID>` right after each of these, and quote its one-line result:
+- Stage 0: the number is reserved (issue created) or the ticket is claimed (`--claim`, below);
+- every change to `stage:` or `goal_status:` (INTAKE → DESIGN → … → HAND-OFF, a PARK, a block);
+- **every new ticket this one spawns** — a DESIGN split, a reserved follow-up, a RETRO gate action,
+  a WATCH finding: write its GOAL.md with `title:` and the origin line (`> Reserved <date> from <ID> …`),
+  then `pnpm ticket:github <NEW-ID>`. It becomes a sub-issue of this ticket automatically. Never leave a
+  new GOAL.md without its issue: the issue is what reserves the number for everyone else.
+
+When the Stop hook is installed (`scripts/ticket-github.mjs --changed --background`), it syncs any
+GOAL.md that changed at the end of each turn, and running the script by hand is a no-op. If `gh` is
+missing or logged out, the script says so; tell the user
+`brew install gh && gh auth login && gh auth refresh -s project`, and carry on (the sync is visibility,
+not a gate). The sync log is `.planning/.github-sync.log`.
 
 **References — read the one for the stage you are in:**
 
@@ -74,7 +99,16 @@ lifecycle and may call them as reviewers. `ticket-traceability` owns the tier ru
   A number free here can already be reserved on another branch, and a merge then concatenates two
   tickets into one GOAL.md (MF-0022/MF-0023, 2026-11-04). After a merge, run
   `grep -c '^ticket_id:' .planning/tasks/*/GOAL.md` and fix any count above 1 before starting work.
-- `mkdir -p .planning/tasks/<ID>` **immediately**, so a parallel session sees the claim.
+  With TRACKER: `pnpm ticket:github next` does all of the above plus the issue list (the shared registry
+  across machines) and prints the next free id; use it rather than counting by hand.
+- `mkdir -p .planning/tasks/<ID>` **immediately**, so a parallel session sees the claim. As soon as the
+  GOAL.md has its front matter (`ticket_id`, `title`, `stage: intake`, `goal_status: in-progress`), run
+  `pnpm ticket:github <ID>`: the issue now exists, so the number is taken for every contributor, and it
+  is assigned to whoever runs it.
+- **Picking up an existing ticket** (`reserved`, or someone else's issue): `pnpm ticket:github <ID> --claim`.
+  It refuses when the issue is assigned to someone else; tell the user who holds it and stop. Only with the
+  user's go-ahead pass `--force`. On success it assigns the user running Claude, sets
+  `goal_status: in-progress` and moves the project card to In Progress.
 - **Branch check**, once the ID is known (also on resume): `git branch --show-current`.
   - On `main` (or the repo's default branch) → create the ticket's branch and switch to it before writing
     anything else: `git switch <ID>` if it already exists, else `git switch -c <ID>`. Uncommitted work comes
@@ -116,7 +150,9 @@ GOALs of the tickets this one builds on, and memory entries on the area. A brief
 an Out-of-Scope fence is an escalation, not an Objective.
 
 Set `tier:` (spike / normal / high-risk, per `ticket-traceability`). High-risk = anything in the
-HIGH_RISK binding, and **any figure users are paid, billed or audited from**. A spike does not use
+HIGH_RISK binding, which includes tooling that gates or publishes: a gate, a hook, or a script with an
+outward side effect is high-risk even with no app code and no DB ("dev tooling" is not a reason for normal;
+MF-0055), and **any figure users are paid, billed or audited from**. A spike does not use
 this loop — say so and stop.
 
 ## Stage 2 — DESIGN (requirements + design in one session)
@@ -345,6 +381,14 @@ Stage 5; quote it, never paraphrase. Failures present in the baseline are pre-ex
 High-risk adds a **fresh-context reviewer** (a subagent, or `/code-review`) reading the diff against
 GOAL + LOOP-PLAN — the agent that wrote the code does not sign it off.
 
+**Browser check is not optional for anything a user sees** (a page, a component, a figure, a message,
+an email link). On the local stack with `pnpm dev` (port 3001) and `pnpm dev:seed` data, sign in as the
+demo account that fits the SC (`docs/runbook/dev-seed.md`), walk each such SC in the browser
+(chrome-devtools MCP: `new_page`, then wait for the streamed DOM; `pageId` when the browser is shared),
+and save a screenshot per SC to `.planning/evidence/<ID>/sc-<n>-<what>.png`. Check dark mode and a phone
+width (375px) for any new screen. What you clicked and saw becomes the evidence's **See it yourself**
+table (`references/templates.md`): the user must be able to repeat it without reading the code.
+
 Write `LOOP-VERIFY.md` (one row per SC: verdict + literal evidence) and `.planning/evidence/<ID>.md`.
 Evidence is pasted toolchain output and observed screens, never "should work"; anything unverified
 is listed as unverified. A bug the reviewer finds gets its regression test shown RED first: add the
@@ -362,11 +406,20 @@ fix. A test written after the fix and never seen red does not count. A fix made 
 ## Stage 5 — HAND-OFF (deploy gate: the developer passes it)
 
 Set `goal_status: complete-pending-manual-commit`, tick the SCs, append the Iteration Log entry,
+run `pnpm ticket:github <ID>` (the card moves to In Review),
 then give the hand-off from the template: changed files (flag hunks in files other sessions also
-touch), suggested commit `<ID> <type>: <description>`, ordering against uncommitted sibling
+touch), suggested commit `<ID> <type>: <description>` with `Closes #<issue>` in its body and in the PR
+description (merging closes the issue; the project shows Done), ordering against uncommitted sibling
 tickets, every manual step left (migrations per environment, env vars, stakeholder questions), and
 what was **not** verified. Quote the PR or `main` run's CI `conclusion` in the hand-off, and never
-present "merge" as a next step while it is `failure` (MF-0019). Then Stage 7.
+present "merge" as a next step while it is `failure` (MF-0019).
+
+**Show it, don't only say it.** The hand-off message carries the **See it yourself** block from the
+evidence (URL, account, clicks, what to look for per SC, screenshot paths), and the browser is left open
+on the changed screen with `pnpm dev` still running, so the user sees the feature before reading a diff.
+For a ticket with nothing on screen, give the one command that shows its effect (`pnpm check:packs`,
+a SQL read-back) and its expected output. `pnpm gate:planning` fails a hand-off after MF-0054 whose
+evidence has no `## See it yourself` section (MF-0055). Then Stage 7.
 
 ## Stage 6 — WATCH (optional, read-only)
 

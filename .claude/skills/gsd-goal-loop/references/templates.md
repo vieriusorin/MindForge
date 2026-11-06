@@ -13,6 +13,7 @@ Written in INTAKE, completed in DESIGN, frozen before PLAN. The Iteration Log is
 ```markdown
 ---
 ticket_id: <PREFIX>-0042
+title: <short plain-English name>  # the GitHub issue title (`pnpm ticket:github`), e.g. "Real group pinning"
 tier: normal                      # spike | normal | high-risk
 stage: design                     # intake | design | plan | build | test | handoff | watch
 branch: <PREFIX>-0042             # the branch the work sits on; Stage 0 creates `<ID>` when started on main
@@ -235,6 +236,21 @@ The durable record; the LOOP files are working copies.
 | Receipt (VERIFY) | DONE — <verdict>, tree <first 12 of hash>, <n> receipts |
 | Process eval (EVAL) | healthy / the failing rows |
 
+## See it yourself
+
+Local stack + `pnpm dev` on http://localhost:3001. Sign in as `<demo account from pnpm dev:seed>`
+(magic link in Mailpit, http://127.0.0.1:54324).
+
+| SC | Open | Do | You should see |
+|----|------|----|----------------|
+| SC-1 | http://localhost:3001/<route> | <clicks / keys, in order> | <what appears; the figure, label or state> |
+| SC-2 | … | … | … |
+
+Screenshots: `.planning/evidence/<ID>/sc-1-<what>.png`, … (taken in this run, light and dark where it matters).
+
+<!-- A ticket with nothing on screen keeps the heading and says why: "n/a: <script/DB only; run `pnpm …` to see it>".
+     `pnpm gate:planning` fails a hand-off after MF-0054 without this section (MF-0055). -->
+
 ## Notes for the committer
 
 - <ordering against sibling tickets; files shared with other sessions — stage by hunk>
@@ -276,6 +292,14 @@ Changed files
 
 Suggested commit
   <ID> feat: <description>
+
+  Closes #<issue number from `pnpm ticket:github <ID>`>   ← in the PR description too; the merge closes
+                                                            the issue and the project moves it to Done
+
+See it yourself (also in .planning/evidence/<ID>.md)
+  http://localhost:3001/<route> as <demo account> → <clicks> → <what you see>   (SC-1)
+  screenshots: .planning/evidence/<ID>/
+  The page is left open in the browser on the last screen checked.
 
 Before / after committing
   - commit <OTHER-ID> first (this builds on its uncommitted changes)

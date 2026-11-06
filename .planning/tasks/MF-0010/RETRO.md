@@ -40,5 +40,5 @@ applied: 2026-11-06
 - skill-edit (additive), applied: `.claude/skills/gsd-goal-loop/SKILL.md` resume step gains the stale-stage check
   (`git log main --grep=<ID>`, resume at T7, grep every SC-named test); `.claude/skills/testing-strategy/SKILL.md`
   gains "Know what jsdom can't prove" (`inert`, Tailwind).
-- gate, reserved, not built: `.planning/tasks/MF-0056/GOAL.md` (Tailwind arbitrary-variant underscore check).
+- gate, reserved, not built: `.planning/tasks/MF-0057/GOAL.md` (Tailwind arbitrary-variant underscore check; first reserved as MF-0056, renumbered at the merge with main because the MF-0055 retro took that ID).
 - held: nothing.

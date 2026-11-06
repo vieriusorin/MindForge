@@ -28,11 +28,11 @@ resume_with: /gsd-goal-loop
 ## Decisions during build
 
 - `pnpm setup` is a pnpm built-in ("Sets up pnpm"), so the script is **`pnpm dev:setup`** (the planning session flagged this; verified with `pnpm setup --help`).
-- `scripts/lib/planificare-report.ts` (a P4T file copied in at 10:56 local, which broke `pnpm typecheck` repo-wide) was **removed with the user's approval**. Nothing referenced it.
+- `scripts/lib/planificare-report.ts` (a file from another project, copied in at 10:56 local, which broke `pnpm typecheck` repo-wide) was **removed with the user's approval**. Nothing referenced it.
 
 ## Incident: over-broad formatter
 
-`pnpm biome check --write scripts` also reformatted four copied P4T files (`clean-room`, `test-db-lock`, `ticket-eval`, `ticket-receipts`). They're untracked, so there was no git baseline. Proof that only formatting changed: each of the 12 copied `scripts/lib` files equals P4T's current file after formatting with this repo's Biome config (`equal-after-format` 12/12). They were left formatted, because restoring the unformatted originals would make `pnpm lint` fail.
+`pnpm biome check --write scripts` also reformatted four copied files (`clean-room`, `test-db-lock`, `ticket-eval`, `ticket-receipts`). They're untracked, so there was no git baseline. Proof that only formatting changed: each of the 12 copied `scripts/lib` files equals its source project's current file after formatting with this repo's Biome config (`equal-after-format` 12/12). They were left formatted, because restoring the unformatted originals would make `pnpm lint` fail.
 
 ## Receipt
 

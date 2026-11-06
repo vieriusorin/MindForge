@@ -1,34 +1,28 @@
 ---
 ticket_id: MF-0056
-tier: normal                      # dev tooling: a source lint for Tailwind class tokens; no app code, no DB
+title: gate:planning rejects a hand-off ticket with no LOOP-VERIFY.md / FROZEN.json
+tier: high-risk                   # a gate script (MF-0055 retro: gates are high-risk)
 stage: intake
-branch:
-builds_on: [MF-0010]
+builds_on: [MF-0053, MF-0055]
 last_iteration: 0
-goal_status: reserved             # created by the MF-0010 retro (gate action); never built automatically
+goal_status: reserved
 ---
 
-> Reserved 2026-11-06 by the MF-0010 retro (gate action). Not started.
+> Reserved 2026-11-06 by the MF-0055 retro (gate action). Not built; a hypothesis until re-derived at pickup.
 
 ## Objective
 
-Tailwind 4 reads `_` inside an arbitrary variant as a space. `[&_.react-flow__edge-text]:fill-…` therefore compiles
-to `.react-flow edge-text` and matches nothing; MF-0010's diagram edge labels drew as black boxes in dark mode and
-no test could see it (jsdom does not compile Tailwind). A literal underscore must be written `\_`.
+**Today.** `pnpm gate:planning` checks GOAL front matter, the design-preflight line (MF-0053) and the evidence's
+"See it yourself" heading (MF-0055). It does not check which records a hand-off folder holds: MF-0055 reached
+`complete-pending-manual-commit` with only GOAL.md (no LOOP-VERIFY.md, no FROZEN.json, no RETRO until close-out), and the
+gate printed `ok`.
 
-End state: a pure check `scripts/lib/tailwind-variant-check.mjs` (with a co-located test) scans `src/**/*.tsx`
-(skipping `src/components/ui/**`) and flags class tokens matching `\[&[^\]]*_\.[A-Za-z0-9-]*__[A-Za-z0-9-]*`
-(a bare `_` before a class name containing `__`), with the message
-`<file>: Tailwind turns "_" into a space; write "\_\_" for a literal double underscore in <token>`.
-It runs in the same Stop/CI gate as `gate:planning`.
+**End state (draft).** A new check beside `checkSeeItYourself` in `scripts/lib/planning-check.mjs`, wired in
+`scripts/check-planning.mjs`: a ticket after a cutoff (draft: MF-0055) with `goal_status: complete-pending-manual-commit`
+and tier normal or high-risk fails without `LOOP-VERIFY.md`; for high-risk, also without `FROZEN.json` and `REVIEW.md`.
 
-## Success Criteria (proposed; the claimant confirms and freezes)
+## Open questions (re-derive at pickup, before asking)
 
-- [ ] SC-1: the pre-fix token `[&_.react-flow__edge-text]:fill-muted-foreground` is flagged; the escaped form
-  `[&_.react-flow\_\_edge-text]:fill-muted-foreground` and `[&_.recharts-cartesian-axis-tick_text]` are clean.
-  Proof: unit test.
-- [ ] SC-2: the check passes on today's `src/` and is wired into the gate. Proof: gate run.
-
-## Open questions
-
-- CI and hook config are guarded (as MF-0046): the wiring step needs the user's approval.
+- Yield: a read-only pass over all ticket folders: how many at hand-off or complete lack LOOP-VERIFY.md / FROZEN.json? It decides the cutoff.
+- Does `ticket-traceability` (lines ~41-43) let a normal-tier ticket skip FROZEN.json? If so, require FROZEN.json only for high-risk.
+- Proof case to replay read-only: MF-0055's folder as handed off (GOAL.md + evidence only) must turn RED.
