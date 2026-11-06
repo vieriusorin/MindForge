@@ -11,8 +11,9 @@
  */
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { register } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkFlawKeys } from "./lib/cuckoo-flaw-key.mjs";
 import { checkCuckooFile } from "./lib/cuckoo-grounding.mjs";
 import { checkItemFile } from "./lib/item-grounding.mjs";
@@ -22,6 +23,10 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const PACKS = process.env.MF_PACKS_DIR
   ? resolve(process.env.MF_PACKS_DIR)
   : join(ROOT, "packs");
+// MF-0058: learning paths (`paths/<slug>.yaml`); MF_PATHS_DIR lets the SC-1 test point at fixtures.
+const PATHS = process.env.MF_PATHS_DIR
+  ? resolve(process.env.MF_PATHS_DIR)
+  : join(ROOT, "paths");
 const CORPUS = join(ROOT, ".cache", "corpus");
 
 // Every cuckoo YAML file under PACKS/<pack>/cuckoos, sorted, as absolute paths.
@@ -68,9 +73,47 @@ for (const pack of readdirSync(PACKS).sort()) {
 }
 const keyLengthSummary = `key-length: ${keyLength.checked} checked, ${keyLength.problems} problem(s), ${keyLength.grandfathered} skipped (grandfathered), ${keyLength.multi} multi-select not checked`;
 
+// MF-0058 SC-1: every path names known packs with skills, once each. Structural, so it runs before
+// the corpus-absent skip and CI sees it. The engine is TypeScript: load it the way validate-packs does.
+register("./lib/ts-resolve.mjs", import.meta.url);
+const engine = (path) => import(pathToFileURL(join(ROOT, path)).href);
+const { checkPath } = await engine("src/engine/path/check-path.ts");
+const { loadPackFile } = await engine("src/engine/pack/index.ts");
+
+const packSkillCounts = new Map();
+for (const dir of readdirSync(PACKS).sort()) {
+  const file = join(PACKS, dir, "pack.yaml");
+  if (!existsSync(file)) continue;
+  try {
+    const pack = await loadPackFile(file);
+    packSkillCounts.set(
+      pack.slug,
+      pack.domains.reduce((sum, domain) => sum + domain.skills.length, 0),
+    );
+  } catch {
+    // A pack.yaml that fails to load reads as unknown here; its own error comes from pnpm typecheck/validate-packs.
+  }
+}
+
+const pathFiles = existsSync(PATHS)
+  ? readdirSync(PATHS)
+      .filter((name) => name.endsWith(".yaml"))
+      .sort()
+      .map((name) => join(PATHS, name))
+  : [];
+for (const path of pathFiles) {
+  const lines = checkPath({
+    file: relative(ROOT, path),
+    text: readFileSync(path, "utf8"),
+    packSkillCounts,
+  });
+  problems.push(...lines.map((message) => ({ message })));
+}
+
 if (!existsSync(CORPUS)) {
   for (const p of problems) console.error(p.message);
   console.log(
+    `check:packs: .cache/corpus missing, corpus rules skipped (run pnpm generate:corpus); flaw-key + paths (${pathFiles.length}): ${problems.length} problem(s)`,
     `check:packs: .cache/corpus missing, corpus rules skipped (run pnpm generate:corpus); flaw-key: ${flawKeyProblems} problem(s); ${keyLengthSummary}`,
   );
   process.exit(problems.length > 0 ? 1 : 0);
@@ -132,6 +175,7 @@ for (const pack of readdirSync(PACKS).sort()) {
 
 for (const p of problems) console.error(p.message);
 console.log(
+  `check:packs: ${checked} cuckoo file(s), ${pathFiles.length} path(s), ${itemsChecked} item(s) checked, ${itemsSkipped} skipped (source not cached), ${problems.length} problem(s)`,
   `check:packs: ${checked} cuckoo file(s), ${itemsChecked} item(s) checked, ${itemsSkipped} skipped (source not cached), ${problems.length} problem(s); ${keyLengthSummary}`,
 );
 process.exit(problems.length > 0 ? 1 : 0);

@@ -53,6 +53,7 @@ questions:
       title: "Usage limit best practices"
       url: "https://support.claude.com/en/articles/9797557-usage-limit-best-practices"
   - id: platform-foundations.D5.S2.q3
+    # framing: claude.ai — the cited support article covers usage limits on the Claude plans (Help Center collection Claude, Usage and limits), whose web app is claude.ai
     origin: ai
     author: sorin.vieriu@ddroidd.com
     level: practitioner

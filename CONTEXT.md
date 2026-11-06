@@ -28,6 +28,11 @@ Canonical terms. When code, docs or tickets disagree with this file, this file w
 - **Memory forecast**: per domain, the skill-weighted average retrievability projected to the exam date. "If nothing changes, how much you will still remember on exam day."
 - **Readiness weather**: per domain, from the lower of the memory forecast and the last storm score: sunny ≥ 85%, cloudy 72–85%, rain < 72%, fog when there is no data. Exam packs only. MindForge never shows an estimated scaled exam score.
 
+- **Path**: an ordered list of course packs, declared in `paths/<slug>.yaml`. It follows the order of an Anthropic Academy path when one exists (v1: Claude Developer). The order is recommended: nothing is locked, and every pack stays playable on its own (MF-0058).
+- **Enrolled**: a learner who pressed Start path. Enrollment is private and can be left at any time; leaving keeps every Course complete record, and starting again shows the same progress. It never changes which pack Today, Play and Review follow (the pin rule stays).
+- **Course complete**: a course pack in which every skill has reached at least Sapling (a wilting Sapling counts). It is recorded once, with its date and the pack version, right after the graded attempt that completes it, whether or not the learner is enrolled, and it is kept even if memory later fades; the live health beside it shows the fading. Exam and onboarding packs never complete.
+- **Path complete**: every course in a path is Course complete. It is derived, not stored, and dated by the latest course. It is a trophy, never a certification.
+
 ## People
 
 - **Learner**: a signed-in person who plays. Their forest is private to them.

@@ -7,6 +7,7 @@ import {
   Footprints,
   LayoutGrid,
   LogOut,
+  Route,
   Swords,
   TreePine,
   Users,
@@ -80,6 +81,18 @@ export function AppSidebar({
                 <Link href="/today">
                   <LayoutGrid />
                   <span>Today</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={isActivePath(pathname, "/paths")}
+                tooltip="Paths"
+              >
+                <Link href="/paths">
+                  <Route />
+                  <span>Paths</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

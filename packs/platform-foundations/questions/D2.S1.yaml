@@ -105,6 +105,7 @@ questions:
       title: "Enable and use web search"
       url: "https://support.claude.com/en/articles/10684626-enable-and-use-web-search"
   - id: platform-foundations.D2.S1.q5
+    # framing: claude.ai — scenario setting only; the stem sets the consumer app's search against the API tool, and the key rests on the web search tool page's web_search tool, allowed_domains and max_uses
     origin: ai
     author: sorin.vieriu@ddroidd.com
     level: expert

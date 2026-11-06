@@ -1,6 +1,7 @@
 skill: D2.S2
 cards:
   - id: subagents.D2.S2.card-tune-the-worker
+    # example-name: log-summarizer
     concept: Fit each subagent to its job with model, effort, skills, memory and isolation
     origin: ai
     author: sorin.vieriu@ddroidd.com

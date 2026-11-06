@@ -27,6 +27,7 @@ questions:
       title: "Context windows"
       url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"
   - id: platform-foundations.D5.S1.q2
+    # framing: claude.ai — the cited support article documents memory in the Claude apps (on the web, Claude Desktop and Claude Mobile), of which claude.ai is the web app
     origin: ai
     author: sorin.vieriu@ddroidd.com
     level: foundation

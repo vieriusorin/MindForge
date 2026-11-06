@@ -105,6 +105,7 @@ questions:
       title: "Use Claude's chat search and memory to build on previous context"
       url: "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context"
   - id: platform-foundations.D3.S3.q5
+    # framing: claude.ai — scenario setting only; the stem and distractor B set the consumer app's memory against the API tool, and the key rests on the memory tool page's client-side /memories storage
     origin: ai
     author: sorin.vieriu@ddroidd.com
     level: expert

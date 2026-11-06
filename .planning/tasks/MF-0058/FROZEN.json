@@ -1,0 +1,52 @@
+{
+  "ticket": "MF-0058",
+  "frozen_at": "2026-11-06T09:55:06Z",
+  "files": [
+    {
+      "path": "src/engine/path/__tests__/mf-0058-path-file.acceptance.test.ts",
+      "sha256": "178846f93dcb5251a75320c9a2a37840d4ad7e522be944ee87d03f39b77e4b2a",
+      "first_failure": "SC-1: Error: not implemented (parsePath/checkPath); yaml ENOENT paths/claude-developer.yaml; check:packs prints no path problem"
+    },
+    {
+      "path": "src/engine/path/__tests__/mf-0058-course-complete.acceptance.test.ts",
+      "sha256": "f3b84bad520b0eef7079267e83b6015da2f69b2e31671c67a1cf6f077755191d",
+      "first_failure": "SC-2: Error: not implemented (isCourseComplete), 9 rows"
+    },
+    {
+      "path": "src/engine/path/__tests__/mf-0058-path-progress.acceptance.test.ts",
+      "sha256": "a70f63ddace8ba6f658c287eac0bea5dfa159aca4bf264a10b748d20e18970d3",
+      "first_failure": "SC-3: Error: not implemented (pathProgress), 9 rows"
+    },
+    {
+      "path": "src/server/paths/__tests__/mf-0058-course-completion.db.acceptance.test.ts",
+      "sha256": "81c5cf1433d1cb4c6204467b769d901ea95911f236be8b09112b03d2c88baa49",
+      "first_failure": "SC-4: Error: not implemented (recordCourseCompletion); relation public.course_completions does not exist"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0058-paths-rls.db.acceptance.test.ts",
+      "sha256": "1a2dd64c4edf9e4424fb381f86ff7afed7f9f6012a24628c9c981ad3f894aa41",
+      "first_failure": "SC-5: relation public.course_completions / public.path_enrollments does not exist; PGRST205; startPath/leavePath not implemented"
+    },
+    {
+      "path": "src/server/paths/__tests__/mf-0058-recorder-wiring.acceptance.test.ts",
+      "sha256": "5ab7e0f927395eae772b4a4ddd27cc27849a7c2f019e862e52361ed9d384e359",
+      "first_failure": "SC-5 lock: expected [Array(1)] to deeply equal [..(2)]; SC-6 call sites: expected [] to include grade-answer.ts / grade-cuckoo.ts / storm"
+    },
+    {
+      "path": "src/features/__tests__/mf-0058-recorder-failure.db.acceptance.test.ts",
+      "sha256": "040f9b27799f0b6560149f99654dfc70e7d0c41edd27526511a5270dcfeaf231",
+      "first_failure": "SC-6: recorder vi.fn() not called with ObjectContaining (ok + attempt-row assertions already pass)"
+    },
+    {
+      "path": "src/features/paths/__tests__/mf-0058-path-parity.acceptance.test.ts",
+      "sha256": "81b5e7f285177763651f280f53967404b1738991864025fb1f4fd042343eb9c7",
+      "first_failure": "SC-8: ENOENT src/app/(app)/paths/[pathSlug]/page.tsx; Today: expected [] to not deeply equal []"
+    },
+    {
+      "path": "src/features/app-shell/components/app-sidebar/__tests__/mf-0058-paths-link.acceptance.test.tsx",
+      "sha256": "d8370629836fdacf96a63a5a267e2a5a9e4293f53edc8a0156b2fcac138a9917",
+      "first_failure": "SC-9: Unable to find an accessible element with the role \"link\" and name \"Paths\""
+    }
+  ],
+  "history": []
+}

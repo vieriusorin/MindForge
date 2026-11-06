@@ -21,7 +21,7 @@ cards:
       grows it; keep it in the pot you carry with you and it goes everywhere you go.
     whereItBreaks:
       - "Two plants with the same name can share a bed. Two subagents with the same name cannot: Claude Code uses the one from the higher-priority location (managed settings, then `--agents`, then `.claude/agents/`, then `~/.claude/agents/`, then a plugin's `agents/` directory)."
-      - "A seed with a smudged label still grows. A subagent file with a `name` but no `description` is skipped, and a misspelled field such as `max_turns` is ignored without an error."
+      - "A seed with a smudged label still grows. A subagent file with a `name` but no `description` is skipped, and a field it doesn't recognize, such as a misspelling of `maxTurns`, is ignored without an error."
       - "A planted seed is fixed in place. Claude Code watches `~/.claude/agents/` and `.claude/agents/`, so an edited file is used by the next delegation with no restart. A few cases still need one, such as the first file in an `agents` directory that did not exist when the session started."
     contrast: >-
       A file vs a definition in code. The `--agents` CLI flag takes the definitions as JSON: each key is the

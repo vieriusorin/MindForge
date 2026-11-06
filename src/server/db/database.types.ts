@@ -57,6 +57,28 @@ export type Database = {
           },
         ];
       };
+      course_completions: {
+        Row: {
+          completed_at: string;
+          pack_slug: string;
+          pack_version: number;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          completed_at?: string;
+          pack_slug: string;
+          pack_version: number;
+          user_id: string;
+        };
+        Update: {
+          completed_at?: string;
+          pack_slug?: string;
+          pack_version?: number;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       expeditions: {
         Row: {
           created_by: string;
@@ -151,6 +173,25 @@ export type Database = {
           invite_code?: string;
           name?: string;
           pack_slug?: string;
+        };
+        Relationships: [];
+      };
+      path_enrollments: {
+        Row: {
+          path_slug: string;
+          started_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          path_slug: string;
+          started_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          path_slug?: string;
+          started_at?: string;
+          user_id?: string;
         };
         Relationships: [];
       };
