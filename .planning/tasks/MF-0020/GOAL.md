@@ -57,8 +57,8 @@ recorded once, and the runbook lets the platform owner repeat it.
 
 | Precondition | State | Source |
 |---|---|---|
-| Hosted Vercel project for MindForge | **missing.** `vercel project ls` lists superb-ai, p4t-staging, p4-t, feedinar | CLI, 2026-11-05 |
-| Hosted Supabase `mindforge-prod` | **missing.** `supabase projects list` lists only `p4t-staging` | CLI, 2026-11-05 |
+| Hosted Vercel project for MindForge | **missing.** `vercel project ls` lists only unrelated projects | CLI, 2026-11-05 |
+| Hosted Supabase `mindforge-prod` | **missing.** `supabase projects list` lists only an unrelated project | CLI, 2026-11-05 |
 | MF-0004 deploy runbook | present, `docs/runbook/deploy.md` §A–§D | repo |
 | MF-0010 Seed Planting on `main` | **merged** (PR #9, `4fc1b12`). Its GOAL still says `stage: build`, which is stale | `git log main` |
 | ≥ 3 `ccdv-f` nature cards | **1** (`packs/ccdv-f/cards/D5.S1.yaml`) | `ls packs/ccdv-f/cards` |

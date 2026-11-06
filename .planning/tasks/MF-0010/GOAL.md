@@ -66,7 +66,7 @@ with React Flow, ADR 0003), then 3 quick-check questions from that skill. A corr
   tests pass. No proof needs `db:reset` or `supabase stop/start`: SC-4 writes attempts for a dedicated local
   test user only.
 - Hosted target check (read-only, 2026-11-04): `vercel project ls` lists no MindForge project; `supabase projects
-  list` lists only `p4t-staging`. The hosted release gate cannot be proved from this ticket (see C-2).
+  list` lists only an unrelated project. The hosted release gate cannot be proved from this ticket (see C-2).
 
 ## Success Criteria
 

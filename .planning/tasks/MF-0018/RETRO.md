@@ -13,7 +13,7 @@ written_by: main session (inline)
 - Non-destructive setup was proven with seeded data, not just on an empty DB.
 
 ## Wrong
-- **tooling:** `biome check --write scripts` touched files outside the ticket (copied P4T scripts). Formatting-only was proven afterwards, but it should never have happened.
+- **tooling:** `biome check --write scripts` touched files outside the ticket (copied scripts). Formatting-only was proven afterwards, but it should never have happened.
 - **tooling (repeat):** zsh didn't word-split `$UNTOUCHED` (the same trap as in MF-0001), and a "clean PATH" still held Homebrew via pnpm. Both were caught by checking the output.
 
 ## Actions

@@ -47,3 +47,7 @@ graphify-out/
 
 # MF-0008: content pipeline cache (fetched docs, run reports); never committed
 .cache/
+
+# MF-0055: per-machine GitHub sync state for pnpm ticket:github
+.planning/.github-sync.json
+.planning/.github-sync.log

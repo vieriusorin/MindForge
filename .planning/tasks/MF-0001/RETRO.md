@@ -11,7 +11,7 @@ written_by: main session (inline; no fresh-context retro agent was run)
 ## Right
 
 - Freezing the acceptance tests before writing code caught a spec error. The SC-1 test encoded "27 skills", but the source-copied pack had 25. The test failed for a real reason rather than passing quietly.
-- Proving each check could fail (the original P4T hooks fail the checker; a type-error probe blocks the Stop gate) made SC-8 real, not just "exit 0".
+- Proving each check could fail (the original copied hooks fail the checker; a type-error probe blocks the Stop gate) made SC-8 real, not just "exit 0".
 - Delivering the thinnest slice first, with no DB, auth or AI, avoided blocking on the open ❓ decisions.
 
 ## Wrong

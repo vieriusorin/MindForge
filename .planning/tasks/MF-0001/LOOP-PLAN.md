@@ -13,7 +13,7 @@ resume_with: /gsd-goal-loop
 
 - Greenfield. Scaffold from `create-next-app@16.4.4` (`--ts --tailwind --biome --app --src-dir --cache-components`): Next 16.4.4, React 19.3, Biome 2.4.2, Cache Components + Partial Prefetching on (`next.config.ts`). Added zod 4.6.7, yaml 2.9.1, vitest 5.0.5. `typecheck` = `next typegen && tsc --noEmit` (needed for the global `LayoutProps` type, `src/app/layout.tsx:20`).
 - Next 16 docs (`node_modules/next/dist/docs/01-app/01-getting-started/08-caching.md`): uncached async work outside `<Suspense>` blocks the route. Pack files are static → a data-level `"use cache"` + `cacheLife` read keeps `/` in the static shell.
-- No precedent ticket. Hooks in `.claude/` are copied from P4T: `stop-gate.mjs:31` imports `scripts/lib/test-db-lock.mjs`, `lib/agent-scopes.mjs:13` and `retro-trigger.mjs:15` import `scripts/lib/ticket-eval.mjs`, and `settings.json` SessionEnd calls `scripts/session-metrics.mjs`. None of these exist. `stop-gate.mjs` also runs `scripts/env-run.mjs`.
+- No precedent ticket. Hooks in `.claude/` are copied from another project: `stop-gate.mjs:31` imports `scripts/lib/test-db-lock.mjs`, `lib/agent-scopes.mjs:13` and `retro-trigger.mjs:15` import `scripts/lib/ticket-eval.mjs`, and `settings.json` SessionEnd calls `scripts/session-metrics.mjs`. None of these exist. `stop-gate.mjs` also runs `scripts/env-run.mjs`.
 - Gates: none defined (`gate:*` absent). VERIFY has no script → default receipt (typecheck, lint, test, build + `git diff HEAD | shasum -a 256`). Note: the repo has one commit and most files are untracked, so the receipt also hashes `git ls-files -o --exclude-standard` contents.
 
 ## SC coverage
@@ -38,7 +38,7 @@ resume_with: /gsd-goal-loop
 5. `src/engine/forest/tree-stage.ts`: implement spec §2.2. Rules in order: `null` or `successfulRecalls < 1` → seed (never wilting); ancient if stability ≥ 45 ∧ feynman ∧ storm; tree if stability ≥ 14 ∧ feynman; sapling if stability ≥ 3; else sprout. `wilting = stage ≠ seed ∧ retrievability < 0.85`. Thresholds as one exported `as const` object.
 6. `src/server/packs/get-pack.ts`: `getPack(slug)` with `"use cache"` + `cacheLife("days")`, reads `packs/<slug>/pack.yaml` from `process.cwd()`. `next.config.ts`: `outputFileTracingIncludes: { "/": ["./packs/**/*"] }` so the files ship with a deployment.
 7. `src/app/page.tsx` (container: reads the pack, passes data) + `src/features/forest/components/forest/` (`forest.tsx` presentational, `types.ts`, `utils.ts` formatting weights, `index.ts`): one `<section>` per domain with `<h2>` "<name> · <weight>%", a grid of tiles each showing 🌰, the skill name and "<weight>%". Every tile is a seed because there's no memory yet: the page calls `treeStage(null)`, so the engine decides the stage, not the UI. Replace scaffold `page.tsx` content, keep `layout.tsx` and set metadata title "MindForge".
-8. Hooks: add `.claude/hooks/lib/util.mjs` (`globToRegExp`, `frontmatter`) and point `agent-scopes.mjs` and `retro-trigger.mjs` at it. `stop-gate.mjs`: drop the test-db-lock import and `env-run`, run `vitest` directly, run eslint only if installed, rename the off switch to `MF_STOP_GATE` (P4T name still honoured). `settings.json`: remove the SessionEnd `session-metrics` hook and rename the status messages. `inject-rule-context.mjs`: replace the P4T rules with MindForge digests (`src/app` pages under Cache Components, `src/engine` pure + pack-agnostic, `packs/*.yaml` sourced facts, tests). `agent-scopes.mjs`: add `src/engine/**`, `src/server/**`, `packs/**` to service-builder, and `src/features/**` to ui-builder.
+8. Hooks: add `.claude/hooks/lib/util.mjs` (`globToRegExp`, `frontmatter`) and point `agent-scopes.mjs` and `retro-trigger.mjs` at it. `stop-gate.mjs`: drop the test-db-lock import and `env-run`, run `vitest` directly, run eslint only if installed, rename the off switch to `MF_STOP_GATE` (old name still honoured at the time). `settings.json`: remove the SessionEnd `session-metrics` hook and rename the status messages. `inject-rule-context.mjs`: replace the copied rules with MindForge digests (`src/app` pages under Cache Components, `src/engine` pure + pack-agnostic, `packs/*.yaml` sourced facts, tests). `agent-scopes.mjs`: add `src/engine/**`, `src/server/**`, `packs/**` to service-builder, and `src/features/**` to ui-builder.
 9. `scripts/check-hooks.mjs`: for each command in `settings.json` hooks, run it with a sample JSON stdin; assert exit 0, empty stderr, and that every relative import in `.claude/hooks/**` resolves to an existing file.
 
 ## Riskiest step
@@ -50,7 +50,7 @@ Step 8: editing the Stop gate can turn a red into a green without anyone noticin
 - JSON packs instead of YAML: harder for non-developers to write by hand and to review in PRs.
 - Putting the CCDV-F blueprint in TS constants: violates the pack-agnostic principle (G6).
 - Rendering the forest with a client canvas now: the spec says a simple SVG/CSS grid first (§1.8). No client JS is needed.
-- Deleting the P4T hooks: the user chose to adapt them.
+- Deleting the copied hooks: the user chose to adapt them.
 
 ## Verify
 

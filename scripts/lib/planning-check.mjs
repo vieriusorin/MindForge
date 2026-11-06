@@ -143,3 +143,35 @@ export function checkDesignPreflight(entries, scriptNames) {
     ];
   });
 }
+
+// MF-0055: hand-offs before this rule had no browser walkthrough for the user; it governs tickets
+// picked up after MF-0054 (MF-0054 was in flight in another session when the rule landed).
+const SEE_IT_CUTOFF = "MF-0054";
+const SEE_IT_HEADING = /^## See it yourself\b/m;
+
+/**
+ * MF-0055: one line per ticket after MF-0054 at hand-off (`goal_status: complete-pending-manual-commit`)
+ * whose `.planning/evidence/<ID>.md` is missing or has no `## See it yourself` section. The section
+ * gives the user the URL, account and clicks to watch each SC work in the browser, or says
+ * `n/a: <reason>` for a ticket with nothing on screen.
+ * @param {readonly TaskEntry[]} entries
+ * @param {(dir: string) => string | null} readEvidence the evidence text for a ticket, or null
+ * @returns {string[]}
+ */
+export function checkSeeItYourself(entries, readEvidence) {
+  return entries.flatMap(({ dir, goalText }) => {
+    if (goalText === null || dir <= SEE_IT_CUTOFF) return [];
+    const text = goalText.replace(/\r\n/g, "\n");
+    if (frontValue(text, "goal_status") !== "complete-pending-manual-commit")
+      return [];
+    const evidence = readEvidence(dir);
+    if (evidence === null)
+      return [
+        `${dir}: at hand-off but .planning/evidence/${dir}.md is missing`,
+      ];
+    if (SEE_IT_HEADING.test(evidence.replace(/\r\n/g, "\n"))) return [];
+    return [
+      `${dir}: evidence has no "## See it yourself" section (URL, account and clicks per SC, or "n/a: <reason>")`,
+    ];
+  });
+}
