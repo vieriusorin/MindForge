@@ -22,6 +22,7 @@ import { rotateInviteCode } from "@/features/groups/actions";
 import { GroupHeatmap } from "@/features/groups/components/group-heatmap";
 import { InviteLink } from "@/features/groups/components/invite-link";
 import { MemberList } from "@/features/groups/components/member-list";
+import { PinToggle } from "@/features/groups/components/pin-toggle";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getPackContent } from "@/server/content/get-pack-content";
 import { getReviewContext } from "@/server/content/get-review-context";
@@ -30,6 +31,7 @@ import { getLatestExpedition } from "@/server/expeditions/get-latest-expedition"
 import { getGroup } from "@/server/groups/get-group";
 import { getGroupHeatmap } from "@/server/groups/get-group-heatmap";
 import { listMembers } from "@/server/groups/list-members";
+import { listMyPins } from "@/server/groups/list-my-pins";
 import { siteOrigin } from "@/server/http/site-origin";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
@@ -110,9 +112,10 @@ async function GroupSlot({
   const now = new Date();
   // MF-0013: storms are graded lazily, so a storm past its deadline counts before we read results.
   await finalizeExpiredStorms();
-  const [members, pack, attempts, content, review, stormResults] =
+  const [members, pins, pack, attempts, content, review, stormResults] =
     await Promise.all([
       listMembers(group.id),
+      listMyPins(),
       getPack(group.packSlug),
       listMyAttempts(user.id, group.packSlug),
       getPackContent(group.packSlug),
@@ -148,11 +151,18 @@ async function GroupSlot({
 
   return (
     <>
-      <header className="mb-6">
-        <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-          {pack.name}
-        </p>
-        <h1 className="mt-1 text-4xl">{group.name}</h1>
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-x-4">
+        <div className="min-w-0">
+          <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            {pack.name}
+          </p>
+          <h1 className="mt-1 text-4xl">{group.name}</h1>
+        </div>
+        <PinToggle
+          groupId={group.id}
+          groupName={group.name}
+          isPinned={pins.some((p) => p.groupId === group.id)}
+        />
       </header>
       <div className="mb-8 grid gap-6 md:grid-cols-2">
         <MemberList members={members} currentUserId={user.id} />

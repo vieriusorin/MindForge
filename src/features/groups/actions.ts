@@ -8,8 +8,17 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import { listPacks } from "@/server/packs/list-packs";
 import { createServerSupabase } from "@/server/supabase/server";
 import { CreateGroupInput } from "./schemas";
-import type { CreateGroupResult, RotateInviteResult } from "./types";
-import { createGroupRpcError, rotateInviteRpcError } from "./utils/rpc-errors";
+import type {
+  CreateGroupResult,
+  PinGroupResult,
+  RotateInviteResult,
+  UnpinGroupResult,
+} from "./types";
+import {
+  createGroupRpcError,
+  pinRpcError,
+  rotateInviteRpcError,
+} from "./utils/rpc-errors";
 
 /**
  * Called from `useCreateGroupForm` through `useMutation`. Takes `unknown`: the client's types
@@ -81,4 +90,52 @@ export async function rotateInviteCode(
   if (error) return { ok: false, error: rotateInviteRpcError(error) };
   refresh();
   return { ok: true } satisfies ActionResult;
+}
+
+/** MF-0054: `pin_group` returns the replaced pin, if the cap of 3 made it evict one. */
+const PinGroupRows = z
+  .array(z.object({ evicted_id: z.uuid(), evicted_name: z.string() }))
+  .max(1);
+
+/**
+ * MF-0054 SC-5: pins a group to the sidebar. The DB refuses a group you are not in (42501) and
+ * replaces the oldest pin beyond 3 in the same write. The hook refreshes the screen on success.
+ */
+export async function pinGroup(groupId: unknown): Promise<PinGroupResult> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/sign-in?next=/groups");
+  const parsed = GroupId.safeParse(groupId);
+  if (!parsed.success)
+    return { ok: false, error: "This group link is not valid." };
+
+  const supabase = await createServerSupabase();
+  const { data, error } = await supabase.rpc("pin_group", {
+    p_group_id: parsed.data,
+  });
+  if (error) return { ok: false, error: pinRpcError(error) };
+  const rows = PinGroupRows.safeParse(data);
+  if (!rows.success) return { ok: false, error: pinRpcError({}) };
+  const [evicted] = rows.data;
+  return {
+    ok: true,
+    evicted: evicted
+      ? { id: evicted.evicted_id, name: evicted.evicted_name }
+      : null,
+  };
+}
+
+/** MF-0054 SC-5: removes your pin; unpinning a group that is not pinned succeeds. */
+export async function unpinGroup(groupId: unknown): Promise<UnpinGroupResult> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/sign-in?next=/groups");
+  const parsed = GroupId.safeParse(groupId);
+  if (!parsed.success)
+    return { ok: false, error: "This group link is not valid." };
+
+  const supabase = await createServerSupabase();
+  const { error } = await supabase.rpc("unpin_group", {
+    p_group_id: parsed.data,
+  });
+  if (error) return { ok: false, error: pinRpcError(error) };
+  return { ok: true };
 }

@@ -1,0 +1,37 @@
+{
+  "ticket": "MF-0054",
+  "frozen_at": "2026-11-06T06:38:16Z",
+  "files": [
+    {
+      "path": "src/server/groups/__tests__/mf-0054-sidebar-section.acceptance.test.ts",
+      "sha256": "5bc86ae6f2681f5543e0d16c53b0c5f1105a62859ed73ca12f6c9426f985c789",
+      "first_failure": "SC-1, SC-2: Error: not implemented (typed stubs sidebarGroupSection, primaryPackSlug); parity: layout.tsx does not call listMyPins("
+    },
+    {
+      "path": "src/features/groups/__tests__/mf-0054-pin-actions.acceptance.test.ts",
+      "sha256": "39751048e36f647b206965c926cb5577ea2d418127cf1844ddeff350cbba49f4",
+      "first_failure": "SC-5: Error: not implemented (typed stubs pinGroup, unpinGroup)"
+    },
+    {
+      "path": "src/features/groups/components/pin-toggle/__tests__/mf-0054-pin-toggle.acceptance.test.tsx",
+      "sha256": "e303f292f759189aaf0a4b582335a84dd00d97c6ee38fa0a4f0f8213274afaa5",
+      "first_failure": "SC-6: Error: not implemented (typed stub PinToggle)"
+    },
+    {
+      "path": "src/features/app-shell/components/app-sidebar/__tests__/mf-0054-sidebar-label.acceptance.test.tsx",
+      "sha256": "40557d0e119bcffdce37af0d3c1a6f622ab8af74fd01b0d856d2f212caf44b1e",
+      "first_failure": "SC-7: TestingLibraryElementError: Unable to find an element with the text: Recent (3 regression-lock cases green by design)"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0054-group-pins.db.acceptance.test.ts",
+      "sha256": "36e8634fe6b6f5ab379c634da066b1bf0318d001b0e7535210a483a75e604537",
+      "first_failure": "SC-3, SC-4: PostgresError: relation \"private.group_pins\" does not exist / function public.pin_group not found; identical on a 2nd run"
+    },
+    {
+      "path": "src/dev-seed/__tests__/mf-0054-seed-pins.db.acceptance.test.ts",
+      "sha256": "ed2614b3749b0501467e782d51b4e711cc869cd76e03489bb351519c4e8a8368",
+      "first_failure": "SC-8: Error: pin_group: Could not find the function public.pin_group(p_group_id) (beforeAll); identical on a 2nd run"
+    }
+  ],
+  "history": []
+}

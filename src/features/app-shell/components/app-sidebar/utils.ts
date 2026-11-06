@@ -17,10 +17,3 @@ export function isStormActive(
   const section = stormHref.slice(0, stormHref.lastIndexOf("/"));
   return isActivePath(pathname, section) || isActivePath(pathname, "/storms");
 }
-
-/** The sidebar pins at most this many groups; the rest are one click away on /groups. */
-export const MAX_PINNED_GROUPS = 3;
-
-export function pinnedGroups<T>(groups: readonly T[]): T[] {
-  return groups.slice(0, MAX_PINNED_GROUPS);
-}

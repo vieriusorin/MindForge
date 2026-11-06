@@ -29,12 +29,13 @@ import {
 } from "@/components/ui/sidebar";
 import { initials } from "@/lib/initials";
 import type { AppSidebarProps } from "./types";
-import { isActivePath, isStormActive, pinnedGroups } from "./utils";
+import { isActivePath, isStormActive } from "./utils";
 
 export function AppSidebar({
   displayName,
   packName,
   groups,
+  groupsLabel = "Pinned",
   duelHref,
   walkHref,
   cuckooHref,
@@ -168,9 +169,9 @@ export function AppSidebar({
 
         {groups.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Pinned</SidebarGroupLabel>
+            <SidebarGroupLabel>{groupsLabel}</SidebarGroupLabel>
             <SidebarMenu>
-              {pinnedGroups(groups).map((g) => (
+              {groups.map((g) => (
                 <SidebarMenuItem key={g.id}>
                   <SidebarMenuButton
                     asChild

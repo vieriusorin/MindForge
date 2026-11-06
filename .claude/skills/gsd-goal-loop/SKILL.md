@@ -221,7 +221,13 @@ Every SC whose proof is a test gets that test **now**, from the requirement, in 
 literals from the SC, never the output of code. The red must be a RUNTIME failure: TYPECHECK stays
 green. For a module the plan will create, add a typed stub that throws `new Error("not
 implemented")`; read a data file the plan will create at runtime, never `import` it (a missing
-import is a compile error, not the SC's red).
+import is a compile error, not the SC's red). A stub for an EXISTING export (one with callers, or
+one that a non-frozen test or the dev server loads) must not throw: add the new shape beside the old
+one (a new name, or a new parameter that defaults to the old behaviour) and have the acceptance test
+import the new name, so the old callers stay green until BUILD switches them. After writing stubs,
+run the whole `pnpm test` once and require that the only reds are the frozen files; a non-frozen red
+now is a plan error (MF-0054: the throwing `primaryPackSlug` stub reddened `primary-pack.test.ts`
+and broke `pnpm dev` for the whole plan-approval wait).
 
 Before FREEZE, format and lint the acceptance files you wrote (`pnpm exec biome check --write <those
 files, listed explicitly>`, then `pnpm lint`). A hash taken before formatting turns the first lint run

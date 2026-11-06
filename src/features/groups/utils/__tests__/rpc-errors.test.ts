@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   createGroupRpcError,
   MAX_GROUPS_PER_USER,
+  pinRpcError,
   rotateInviteRpcError,
 } from "../rpc-errors";
 
@@ -41,5 +42,20 @@ describe("rotateInviteRpcError", () => {
     expect(rotateInviteRpcError({ code: "08006" })).toBe(
       "Could not reset the link. Try again.",
     );
+  });
+});
+
+describe("pinRpcError", () => {
+  it("explains a refused pin on a group you are not in (42501)", () => {
+    expect(pinRpcError({ code: "42501" })).toBe(
+      "You can only pin groups you belong to.",
+    );
+  });
+
+  it("falls back to a retry message for anything else", () => {
+    expect(pinRpcError({ code: "XX000" })).toBe(
+      "Could not update your pins. Try again.",
+    );
+    expect(pinRpcError({})).toBe("Could not update your pins. Try again.");
   });
 });

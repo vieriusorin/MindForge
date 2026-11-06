@@ -18,6 +18,12 @@ export interface MyGroup {
   role: GroupRole;
 }
 
+/** MF-0054: one of the viewer's own pins (private.group_pins via public.list_my_pins). `pinnedAt` is ISO. */
+export interface GroupPin {
+  groupId: string;
+  pinnedAt: string;
+}
+
 export interface GroupDetail {
   id: string;
   name: string;

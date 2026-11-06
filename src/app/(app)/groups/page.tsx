@@ -4,19 +4,25 @@ import { CreateGroupForm } from "@/features/groups/components/create-group-form"
 import { GroupList } from "@/features/groups/components/group-list";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { listMyGroups } from "@/server/groups/list-my-groups";
+import { listMyPins } from "@/server/groups/list-my-pins";
 import { listPacks } from "@/server/packs/list-packs";
 
 async function GroupsSlot() {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in?next=/groups");
-  const [groups, packs] = await Promise.all([
+  const [groups, pins, packs] = await Promise.all([
     listMyGroups(user.id),
+    listMyPins(),
     listPacks(),
   ]);
   const packNames = Object.fromEntries(packs.map((p) => [p.slug, p.name]));
   return (
     <div className="grid gap-6 md:grid-cols-[1fr_20rem]">
-      <GroupList groups={groups} packNames={packNames} />
+      <GroupList
+        groups={groups}
+        packNames={packNames}
+        pinnedGroupIds={pins.map((p) => p.groupId)}
+      />
       <CreateGroupForm packs={packs} />
     </div>
   );

@@ -15,6 +15,7 @@ import { TodayBriefing } from "@/features/dashboard/components/today-briefing";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyGroups } from "@/server/groups/list-my-groups";
+import { listMyPins } from "@/server/groups/list-my-pins";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
 import { listPacks } from "@/server/packs/list-packs";
@@ -27,12 +28,14 @@ import { listMyStormResults } from "@/server/storm/list-my-storm-results";
 async function TodaySlot() {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in?next=/today");
-  const [name, groups, packs] = await Promise.all([
+  const [name, groups, pins, packs] = await Promise.all([
     getDisplayName(user.id),
     listMyGroups(user.id),
+    listMyPins(),
     listPacks(),
   ]);
-  const packSlug = primaryPackSlug(groups);
+  // MF-0054: the same pack the sidebar plays (the newest pin, else the newest-joined group)
+  const packSlug = primaryPackSlug({ groups, pins });
   // MF-0013: storms are graded lazily, so a storm past its deadline counts before we read results.
   await finalizeExpiredStorms();
   const [pack, attempts, questions, review, stormResults] = await Promise.all([
