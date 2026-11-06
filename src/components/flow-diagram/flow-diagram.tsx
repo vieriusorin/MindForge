@@ -15,9 +15,11 @@ const NODE_TYPES = { diagram: DiagramNodeView };
  */
 export function FlowDiagram({ direction, nodes, edges }: FlowDiagramProps) {
   const layout = layoutDiagram({ direction, nodes, edges });
+  // MF-0010: Tailwind reads `_` in an arbitrary variant as a space, so React Flow's `__` class
+  // names are escaped (`\_\_`); unescaped, the labels fell back to an SVG black fill.
   return (
     <div
-      className="w-full [--xy-attribution-background-color:transparent] [--xy-edge-stroke-width:1.5] [--xy-edge-stroke:var(--muted-foreground)] [&_.react-flow__attribution_a]:text-muted-foreground [&_.react-flow__edge-text]:fill-muted-foreground [&_.react-flow__edge-text]:text-xs [&_.react-flow__edge-textbg]:fill-background"
+      className="w-full [--xy-attribution-background-color:transparent] [--xy-edge-stroke-width:1.5] [--xy-edge-stroke:var(--muted-foreground)] [&_.react-flow\_\_attribution_a]:text-muted-foreground [&_.react-flow\_\_edge-text]:fill-muted-foreground [&_.react-flow\_\_edge-text]:text-xs [&_.react-flow\_\_edge-textbg]:fill-background"
       style={{ aspectRatio: `${layout.width + 32} / ${layout.height + 32}` }}
     >
       <ReactFlow

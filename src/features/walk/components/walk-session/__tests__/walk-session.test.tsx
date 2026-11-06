@@ -1,4 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { PlayableQuestion } from "@/engine/questions";
 import { renderWithProviders } from "@/test/render";
@@ -40,7 +41,7 @@ const GRADED = {
   },
 } as const;
 
-function renderWalk(steps: WalkStep[] = STEPS) {
+function renderWalk(steps: WalkStep[] = STEPS, newSeedPrimer?: ReactNode) {
   return renderWithProviders(
     <WalkSession
       packSlug="p"
@@ -48,6 +49,7 @@ function renderWalk(steps: WalkStep[] = STEPS) {
       skillNames={{ S1: "Skill one", S2: "Skill two" }}
       todayHref="/today"
       duelHref="/play/p/duel"
+      newSeedPrimer={newSeedPrimer}
     />,
   );
 }
@@ -128,6 +130,29 @@ describe("WalkSession", () => {
 
     await user.tab();
     expect(screen.getByRole("radio", { name: /First/ })).toHaveFocus();
+  });
+
+  it("MF-0010 SC-8: the new seed's card and diagram show above its question, and only on that step", async () => {
+    answerWalkQuestion.mockResolvedValue(GRADED);
+    const { user } = renderWalk(
+      STEPS,
+      <section aria-label="Seed primer">card and diagram</section>,
+    );
+
+    expect(screen.queryByRole("region", { name: "Seed primer" })).toBeNull();
+
+    await user.click(screen.getByRole("radio", { name: /Second/ }));
+    await user.click(screen.getByRole("button", { name: "Check answer" }));
+    await user.click(
+      await screen.findByRole("button", { name: "Next question" }),
+    );
+    const stem = await screen.findByRole("heading", {
+      name: "Stem of p.S2.1",
+    });
+    const primer = screen.getByRole("region", { name: "Seed primer" });
+    expect(
+      primer.compareDocumentPosition(stem) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it("sends one attempt even when Check is clicked twice", async () => {

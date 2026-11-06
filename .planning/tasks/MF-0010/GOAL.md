@@ -1,11 +1,11 @@
 ---
 ticket_id: MF-0010
 tier: normal                      # UI + read of file content; no schema
-stage: build
+stage: handoff
 branch: feat/MF-0010
 builds_on: []
-last_iteration: 1
-goal_status: in-progress
+last_iteration: 2
+goal_status: complete-pending-manual-commit
 track: G                          # seat Coder D
 week: W2
 depends_on: [MF-0006]
@@ -70,26 +70,26 @@ with React Flow, ADR 0003), then 3 quick-check questions from that skill. A corr
 
 ## Success Criteria
 
-- [ ] SC-1: `/play/ccdv-f/plant/D5.S1` shows the Temperature card (simply, in nature, every "where it breaks"
+- [x] SC-1: `/play/ccdv-f/plant/D5.S1` shows the Temperature card (simply, in nature, every "where it breaks"
   line visible without interaction, contrast, sources as links) and its diagram, then the checks. Proof: browser
   on the local stack.
-- [ ] SC-2: The diagram (React Flow, ADR 0003) renders client-side and is readable in light and dark; React Flow's
+- [x] SC-2: The diagram (React Flow, ADR 0003) renders client-side and is readable in light and dark; React Flow's
   code is not in the initial JS of `/today` or of the plant page (it loads only after hydration, through
   `flow-diagram-lazy.tsx`). Proof: browser in both themes + the plant page HTML's `<script>` chunks contain no
   React Flow code, and `/today`'s none either. *(amended 2026-11-04, user: React Flow replaces Mermaid)*
-- [ ] SC-3: The diagram exposes its title, every node label and every connection (in words, with its label) to
+- [x] SC-3: The diagram exposes its title, every node label and every connection (in words, with its label) to
   assistive tech; the drawing itself is hidden from it. Proof: frozen `ui` acceptance test + a11y snapshot in the
   browser. *(amended 2026-11-04 with the format change)*
-- [ ] SC-4: On the local stack, a seed-stage skill's tile on the group page says "Plant this seed"; answering its
+- [x] SC-4: On the local stack, a seed-stage skill's tile on the group page says "Plant this seed"; answering its
   checks with ≥ 1 correct records one attempt per check (row count grows by the number of checks) and the tile
   shows a sprout afterwards. With 0 correct it stays a seed. Proof: browser + DB row count, dedicated test user.
 - [ ] ~~SC-5~~: moved to MF-0020 (C-2).
-- [ ] SC-6: Choosing what to plant is one pure function with a frozen test: approved card > unreviewed card >
+- [x] SC-6: Choosing what to plant is one pure function with a frozen test: approved card > unreviewed card >
   none, ties by id, flagged/rejected never chosen; diagram from the card's link, else the skill's best playable
   diagram; ≤ 3 checks, approved first, never flagged/rejected. Proof:
   `src/engine/content/__tests__/mf-0010-seed-planting.acceptance.test.ts`.
-- [ ] SC-7: Component-split rules, typecheck, lint, tests, build pass. Proof: receipt in LOOP-VERIFY.md.
-- [ ] SC-8: The walk's "new" slot shows the skill's card and diagram before its question (MF-0009 C-1: this
+- [x] SC-7: Component-split rules, typecheck, lint, tests, build pass. Proof: receipt in LOOP-VERIFY.md.
+- [x] SC-8: The walk's "new" slot shows the skill's card and diagram before its question (MF-0009 C-1: this
   ticket merges second, so it wires the slot). Proof: browser on the local stack + the walk's `ui` test.
 
 ## Constraints → how met
@@ -138,4 +138,9 @@ with React Flow, ADR 0003), then 3 quick-check questions from that skill. A corr
 - 2026-11-04 · build · Plan change (iteration 0 → 1): user switched diagrams to React Flow + graph format (ADR
   0003). Mermaid renderer removed; content format, 2 pack diagrams, MF-0006 + MF-0010 frozen tests re-frozen with
   recorded reasons, each new assertion seen red. LOOP-PLAN T3 rewritten.
-
+- 2026-11-06 · build→verify→handoff · All of T1–T6 were already on `main` (5f706e2 and later); this pass ran T7 and the
+  browser proofs on a seeded local stack (prod build for SC-2). Two defects found and fixed: (1) edge labels drew as black
+  boxes in dark mode: Tailwind 4 reads `_` in an arbitrary variant as a space, so `[&_.react-flow__edge-text]` matched
+  nothing (escaped `\_\_` in `flow-diagram.tsx`; browser proof both themes); (2) React Flow's attribution link stayed
+  focusable inside the `aria-hidden` drawing (SC-3 "non-focusable"): the wrapper is now `inert`, new ui test seen red
+  first. Added the walk `ui` test case SC-8 named. Receipt: LOOP-VERIFY.md § "Receipt 2026-11-06".
