@@ -1,6 +1,7 @@
 /**
- * ADR 0004 / MF-0011: the secret-key client bypasses RLS, so exactly one file may import it, and
- * no client code may name the key. A second importer is a decision for a new ADR, not a test edit.
+ * ADR 0004 / MF-0011 and ADR 0006 / MF-0058: the secret-key client bypasses RLS, so exactly two
+ * files may import it (the heatmap read and the course-completion write), and no client code may
+ * name the key. A third importer is a decision for a new ADR, not a test edit.
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -24,12 +25,16 @@ const files = sourceFiles(SRC)
   }));
 
 describe("secret-key client", () => {
-  it("is imported by get-group-heatmap.ts only", () => {
+  it("is imported by get-group-heatmap.ts and record-course-completion.ts only", () => {
     const importers = files
       // any string literal naming the module: static import, dynamic import(), require(), re-export
       .filter((f) => /["'`][^"'`]*supabase\/secret(\.ts)?["'`]/.test(f.text))
-      .map((f) => f.rel);
-    expect(importers).toEqual(["src/server/groups/get-group-heatmap.ts"]);
+      .map((f) => f.rel)
+      .sort();
+    expect(importers).toEqual([
+      "src/server/groups/get-group-heatmap.ts",
+      "src/server/paths/record-course-completion.ts",
+    ]);
   });
 
   it("names SUPABASE_SECRET_KEY in secret.ts only, and never as NEXT_PUBLIC_", () => {

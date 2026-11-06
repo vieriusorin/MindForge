@@ -1,11 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Cuckoo, ReviewContext } from "@/engine/content";
 
-const { rpc } = vi.hoisted(() => ({ rpc: vi.fn() }));
+const { rpc, recordCourseCompletion } = vi.hoisted(() => ({
+  rpc: vi.fn(),
+  recordCourseCompletion: vi.fn(async (_input: unknown): Promise<void> => {}),
+}));
 
 vi.mock("server-only", () => ({}));
 vi.mock("@/server/supabase/server", () => ({
   createServerSupabase: async () => ({ rpc }),
+}));
+vi.mock("@/server/paths/record-course-completion", () => ({
+  recordCourseCompletion,
 }));
 vi.mock("@/server/content/get-pack-content", () => ({
   getPackContent: async () => ({ cuckoos: [CUCKOO] }),
@@ -46,7 +52,11 @@ const INPUT = {
 const { gradeCuckoo } = await import("../grade-cuckoo");
 
 describe("gradeCuckoo (MF-0032)", () => {
-  beforeEach(() => rpc.mockReset());
+  beforeEach(() => {
+    rpc.mockReset();
+    recordCourseCompletion.mockReset();
+    recordCourseCompletion.mockResolvedValue(undefined);
+  });
 
   it("sends the hash the learner read to record_attempt", async () => {
     rpc.mockResolvedValue({ data: true, error: null });
@@ -69,6 +79,53 @@ describe("gradeCuckoo (MF-0032)", () => {
     expect(await gradeCuckoo(INPUT)).toEqual({
       ok: false,
       error: "not-gradable",
+    });
+  });
+});
+
+describe("gradeCuckoo records Course complete (MF-0058 SC-6)", () => {
+  beforeEach(() => {
+    rpc.mockReset();
+    recordCourseCompletion.mockReset();
+    recordCourseCompletion.mockResolvedValue(undefined);
+  });
+
+  it("asks the recorder after a correct, recorded answer", async () => {
+    rpc.mockResolvedValue({ data: true, error: null });
+    await gradeCuckoo(INPUT);
+    expect(recordCourseCompletion).toHaveBeenCalledWith({
+      userId: "u1",
+      packSlug: "p",
+      now: expect.any(Date),
+    });
+  });
+
+  it("doesn't ask the recorder after a wrong answer", async () => {
+    rpc.mockResolvedValue({ data: false, error: null });
+    await gradeCuckoo({ ...INPUT, line: 1 });
+    expect(recordCourseCompletion).not.toHaveBeenCalled();
+  });
+
+  it("doesn't ask the recorder when the answer isn't recorded", async () => {
+    rpc.mockResolvedValue({ data: null, error: { code: "55000" } });
+    await gradeCuckoo(INPUT);
+    rpc.mockResolvedValue({ data: null, error: { code: "42501" } });
+    await gradeCuckoo(INPUT);
+    expect(recordCourseCompletion).not.toHaveBeenCalled();
+  });
+
+  it("returns the same feedback when the recorder fails", async () => {
+    rpc.mockResolvedValue({ data: true, error: null });
+    recordCourseCompletion.mockRejectedValue(new Error("down"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    expect(await gradeCuckoo(INPUT)).toEqual({
+      ok: true,
+      feedback: {
+        correct: true,
+        flawLine: 2,
+        flawKind: "injected-instruction",
+        explanation: "Line 2 is an instruction.",
+      },
     });
   });
 });

@@ -15,8 +15,12 @@ import { sql } from "@/test/local-stack";
 /** `schema.relation[.column] grantee PRIVILEGE`, sorted. From the MF-0002 / MF-0003 migrations. */
 const RELATION_ALLOW_LIST = [
   "public.attempts authenticated SELECT",
+  "public.course_completions authenticated SELECT", // MF-0058, approved 2026-11-06
   "public.group_members authenticated SELECT",
   "public.groups authenticated SELECT",
+  "public.path_enrollments authenticated DELETE", // MF-0058, approved 2026-11-06
+  "public.path_enrollments authenticated INSERT", // MF-0058, approved 2026-11-06
+  "public.path_enrollments authenticated SELECT", // MF-0058, approved 2026-11-06
   "public.profiles authenticated SELECT",
   "public.storm_questions authenticated SELECT", // MF-0013 C-5, approved 2026-11-04
   "public.storms authenticated SELECT", // MF-0013 C-5, approved 2026-11-04

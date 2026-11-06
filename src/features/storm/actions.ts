@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { recordCourseCompletion } from "@/server/paths/record-course-completion";
+import { getStorm } from "@/server/storm/get-storm";
 import { startStormFor } from "@/server/storm/start-storm";
 import { createServerSupabase } from "@/server/supabase/server";
 import { AnswerStormInput, FinishStormInput, StartStormInput } from "./schemas";
@@ -56,7 +58,11 @@ export async function answerStormQuestion(
   return { ok: true };
 }
 
-/** MF-0013: end the storm now; the DB grades it. Idempotent: finishing a finished storm is a no-op. */
+/**
+ * MF-0013: end the storm now; the DB grades it. Idempotent: finishing a finished storm is a no-op.
+ * MF-0058: then ask the recorder whether the graded storm completed the course (storms exist only for
+ * exam packs today, so the recorder returns at its `kind` check; the call keeps the path covered).
+ */
 export async function finishStorm(input: unknown): Promise<FinishStormResult> {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in?next=/today");
@@ -73,5 +79,21 @@ export async function finishStorm(input: unknown): Promise<FinishStormResult> {
     p_storm_id: parsed.data.stormId,
   });
   if (error) return { ok: false, error: stormRpcError(error) };
+
+  try {
+    const storm = await getStorm(parsed.data.stormId);
+    if (storm)
+      await recordCourseCompletion({
+        userId: user.id,
+        packSlug: storm.packSlug,
+        now: new Date(),
+      });
+  } catch (error) {
+    // MF-0058 SC-6: completion is a side effect of a graded storm; it never fails the finish.
+    console.error(
+      "recordCourseCompletion:",
+      error instanceof Error ? error.message : "unknown error",
+    );
+  }
   return { ok: true };
 }

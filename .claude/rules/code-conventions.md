@@ -78,7 +78,9 @@ Use the full domain word (`attempt`, not `att`). Abbreviate only universal terms
 - Server Actions never throw to the client for expected failures. They return `ActionResult`
   (`state-and-data.md` §3).
 - Don't leave `console.log` in committed code. `console.error` is allowed in error boundaries and
-  Route Handlers only, and never with a secret, token or a whole row.
+  Route Handlers only, and never with a secret, token or a whole row. **Named exception** (MF-0058, user
+  2026-11-06): the `catch` around each `recordCourseCompletion(` call may `console.error` the error message
+  only, because a failed completion record must never fail the attempt and must not fail silently.
 
 ## Dates and numbers
 

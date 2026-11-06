@@ -8,6 +8,7 @@ import type { AnswerFeedback } from "@/engine/questions";
 import type { ActionResult } from "@/lib/action-result";
 import { getItemHashes } from "@/server/content/get-item-hashes";
 import { getReviewContext } from "@/server/content/get-review-context";
+import { recordCourseCompletion } from "@/server/paths/record-course-completion";
 import { getPackQuestions } from "@/server/questions/get-pack-questions";
 import { createServerSupabase } from "@/server/supabase/server";
 import { isStaleVersionError } from "./is-stale-version-error";
@@ -64,6 +65,19 @@ export async function gradeAnswer({
   if (isStaleVersionError(error)) return { ok: false, error: "changed" };
   if (error || typeof data !== "boolean") {
     return { ok: false, error: "not-gradable" };
+  }
+
+  // MF-0058 SC-6: only a correct answer can raise stability, so only it can complete a course.
+  if (data) {
+    try {
+      await recordCourseCompletion({ userId, packSlug, now: new Date() });
+    } catch (error) {
+      // MF-0058 SC-6: completion is a side effect of a committed attempt; it never fails the answer.
+      console.error(
+        "recordCourseCompletion:",
+        error instanceof Error ? error.message : "unknown error",
+      );
+    }
   }
 
   return {

@@ -48,7 +48,9 @@ End LOOP-PLAN.md with exactly one fenced block whose info string is `json tasks`
 - `agent` ∈ `schema-builder` · `service-builder` · `ui-builder` · `acceptance-writer`. The layer
   order is schema/types → pure logic → service → action → UI → strings.
 - `owns` are globs; the scope hook and `ticket:eval` both hold builders to them. Keep owns of tasks
-  that may run in parallel disjoint. Generous within a layer, never across layers.
+  that may run in parallel disjoint. Generous within a layer, never across layers. Before finishing,
+  check each glob against `SCOPES` in `.claude/hooks/lib/agent-scopes.mjs` (MF-0058 retro: a
+  `service-builder` task owned `src/features/*/schemas.ts`, which its scope refuses).
 - `closes`: every SC in GOAL.md must be closed by at least one task.
 - `done_when`: shell commands that exit 0 when the task is done — usually the frozen test files
   for its SCs plus `pnpm typecheck`. The orchestrator re-runs them; the builder's word is not used.

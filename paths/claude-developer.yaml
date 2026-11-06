@@ -1,0 +1,12 @@
+# MF-0058: Anthropic's "Claude Developer" path, in Anthropic's order, over the courses MindForge has a pack for.
+# Source fetched 2026-11-06. Anthropic's path also lists four courses with no MindForge pack yet, each a future
+# pack ticket: AI Fluency for Builders (2), Claude Platform 101 (4), Claude Code 101 (5), Introduction to MCP (7).
+slug: claude-developer
+name: Claude Developer
+source: https://anthropic-partners.skilljar.com/path/claude-developer
+courses:
+  - ai-capabilities
+  - platform-foundations
+  - claude-code-in-action
+  - agent-skills
+  - subagents

@@ -9,7 +9,7 @@
     },
     {
       "path": "src/server/db/__tests__/mf-0005-grants.db.acceptance.test.ts",
-      "sha256": "b4e794c2c30f1547bc3006c57eb698a8adcf65dd01d69d6c0c82416a09acf5aa",
+      "sha256": "fa1c135f798df5fd9a34c2b682cbe06f1aa6b6232f33226f7ef270deecfa7ac9",
       "frozen_green": true,
       "reason": "SC-3 is a regression lock: the current migrations are already correct, so the gate is green today. Its red is proven at TEST on scratch migrations (grant truncate; table without revoke all), logged in evidence and reverted.",
       "first_failure": null
@@ -23,6 +23,16 @@
         {
           "path": "src/server/db/__tests__/mf-0005-grants.db.acceptance.test.ts",
           "sha256": "7f549f8111695a55769f95c12aaec40b3938c4878ff67686a6f155d8a3cbdf92"
+        }
+      ]
+    },
+    {
+      "at": "2026-11-06T10:17:30Z",
+      "reason": "MF-0058 plan approval (T1R), approved by the user 2026-11-06: four allow-list lines for the new path tables (public.course_completions authenticated SELECT; public.path_enrollments authenticated SELECT/INSERT/DELETE, rows scoped by RLS to the learner). Still a regression lock afterwards.",
+      "previous": [
+        {
+          "path": "src/server/db/__tests__/mf-0005-grants.db.acceptance.test.ts",
+          "sha256": "b4e794c2c30f1547bc3006c57eb698a8adcf65dd01d69d6c0c82416a09acf5aa"
         }
       ]
     }

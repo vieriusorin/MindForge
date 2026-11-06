@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { playableQuestions } from "@/engine/content";
 import { buildForest, summarizeForest } from "@/engine/forest";
 import { countableAttempts, memoryBySkill, planWalk } from "@/engine/memory";
+import { pathProgress } from "@/engine/path";
 import { readiness } from "@/engine/readiness";
 import { readinessStorms, stormProof } from "@/engine/storm";
 import { BlueprintChart } from "@/features/dashboard/components/blueprint-chart";
@@ -12,6 +14,7 @@ import { GroupsCard } from "@/features/dashboard/components/groups-card";
 import { GrowthDonut } from "@/features/dashboard/components/growth-donut";
 import { ReadinessCard } from "@/features/dashboard/components/readiness-card";
 import { TodayBriefing } from "@/features/dashboard/components/today-briefing";
+import { PathCard } from "@/features/paths/components/path-card";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyGroups } from "@/server/groups/list-my-groups";
@@ -20,10 +23,59 @@ import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
 import { listPacks } from "@/server/packs/list-packs";
 import { primaryPackSlug } from "@/server/packs/primary-pack";
+import { getMyCourseForest } from "@/server/paths/get-my-course-forest";
+import { getPathEnrollment } from "@/server/paths/get-path-enrollment";
+import { listCourseCompletions } from "@/server/paths/list-course-completions";
+import { listPaths } from "@/server/paths/list-paths";
 import { getDisplayName } from "@/server/profiles/get-display-name";
 import { getPackQuestions } from "@/server/questions/get-pack-questions";
 import { finalizeExpiredStorms } from "@/server/storm/finalize-expired-storms";
 import { listMyStormResults } from "@/server/storm/list-my-storm-results";
+
+/**
+ * MF-0058 SC-8: a Path card per enrolled path, with the same `pathProgress` as the path page. Not
+ * enrolled anywhere: nothing renders and no course is replayed.
+ */
+async function TodayPathCards({ userId, now }: { userId: string; now: Date }) {
+  const paths = await listPaths();
+  const enrollments = await Promise.all(
+    paths.map((path) => getPathEnrollment(userId, path.slug)),
+  );
+  const enrolled = paths.filter((_, index) => enrollments[index] !== null);
+  if (enrolled.length === 0) return null;
+  const completions = await listCourseCompletions(userId);
+  const cards = await Promise.all(
+    enrolled.map(async (path) => {
+      const forests = new Map(
+        await Promise.all(
+          path.courses.map(
+            async (packSlug) =>
+              [
+                packSlug,
+                await getMyCourseForest({ userId, packSlug, now }),
+              ] as const,
+          ),
+        ),
+      );
+      return {
+        path,
+        progress: pathProgress({ path, completions, forests }),
+      };
+    }),
+  );
+  return (
+    <div className="mt-6 grid items-start gap-6 lg:grid-cols-2">
+      {cards.map(({ path, progress }) => (
+        <PathCard
+          key={path.slug}
+          slug={path.slug}
+          name={path.name}
+          progress={progress}
+        />
+      ))}
+    </div>
+  );
+}
 
 async function TodaySlot() {
   const user = await getCurrentUser();
@@ -102,6 +154,10 @@ async function TodaySlot() {
               }
         }
       />
+
+      <Suspense fallback={<Skeleton className="mt-6 h-40 w-full rounded-xl" />}>
+        <TodayPathCards userId={user.id} now={now} />
+      </Suspense>
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <BlueprintChart domains={summary.domains} />

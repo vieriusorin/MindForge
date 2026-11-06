@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Pack files are read at runtime: ship them with the server output.
-  outputFileTracingIncludes: { "/": ["./packs/**/*"] },
+  // Pack and path files are read at runtime: ship them with the server output.
+  outputFileTracingIncludes: { "/": ["./packs/**/*", "./paths/**/*"] },
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

@@ -131,6 +131,7 @@ questions:
       title: "Code execution tool"
       url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool"
   - id: platform-foundations.D3.S2.q6
+    # framing: claude.ai — scenario setting only; the stem and distractor A set the consumer app against the API, and the key rests on the code execution page's no-internet container and pre-installed libraries
     origin: ai
     author: sorin.vieriu@ddroidd.com
     level: expert
