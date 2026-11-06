@@ -40,6 +40,8 @@ const NEVER_SOURCE_RE = /^(\.planning|node_modules|\.next|public|drizzle\/meta)\
 
 /** @param {string} rel repo-relative POSIX path */
 export function isRelevantSource(rel) {
+  // MF-0046: `gate:workspace` checks this file; a placeholder edit to it alone must still run the gates.
+  if (rel === "pnpm-workspace.yaml") return true;
   return SOURCE_RE.test(rel) && !NEVER_SOURCE_RE.test(rel);
 }
 

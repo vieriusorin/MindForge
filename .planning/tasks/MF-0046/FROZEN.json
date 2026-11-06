@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0046",
+  "frozen_at": "2026-11-06T12:00:00.000Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0046-workspace-check.acceptance.test.ts",
+      "sha256": "36f7063632b44ed165732065ba61e650dc00eceee86635583966bc541843bccb",
+      "first_failure": "SC-1/SC-2/SC-3: expected +0 to be 1 (stub check-workspace.mjs exits 0 on the placeholder, the 71ac090 proof case and every malformed shape); SC-5: isRelevantSource(\"pnpm-workspace.yaml\") expected false to be true. 4/4; full pnpm test: only this file red (928 passed)"
+    }
+  ],
+  "history": []
+}
