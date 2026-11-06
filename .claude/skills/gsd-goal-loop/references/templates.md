@@ -113,6 +113,16 @@ a token it cannot match, so this unfilled placeholder fails it (MF-0043)>
 |---|---|---|
 | `<path>/__tests__/<id>-x.acceptance.test.ts:<line>` | <the assertion that breaks → its new value> | <why; approval> |
 
+## Parsers (omit only when no parser, gate or exemption is added or changed)
+
+<one block per parser, INCLUDING secondary parsers inside a larger change (an `owns:` list, a path pattern, a header
+line), not only the main algorithm. Accepted grammar: <the exact line or token shapes accepted; everything else is an
+error naming the input>. Rejected inputs: <table: input, expected error, test file>. Exempt-path test: <the same
+malformed item inside an exempt set / main-session / grandfather list must still fail; the shape check runs before
+the skip>. Cross-check: <a brute-force or property test against a naive oracle for the main algorithm, as MF-0048 did
+with 3.1M pairs>. See `verification.md` §4 (MF-0048 retro: the owns parser shipped as a blocklist with the exemption
+before the syntax check, though §4 named both traps).>
+
 ## SC coverage
 
 | SC | Steps | Proof |

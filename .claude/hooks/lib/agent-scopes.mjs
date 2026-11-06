@@ -45,8 +45,11 @@ export const SCOPES = {
   "research-interpreter": [`${TASK}/research/**`],
 };
 
-/** Never writable by a role agent, whatever its globs say. */
-const NEVER = [
+/**
+ * Never writable by a role agent, whatever its globs say. The single owner of this list: the plan check
+ * (`validatePlan` in scripts/lib/ticket-eval.mjs, MF-0048) reads it to refuse a plan that assigns one of these paths.
+ */
+export const NEVER_GLOBS = Object.freeze([
   ".planning/evidence/**",
   `${TASK}/FROZEN.json`,
   ".claude/**",
@@ -55,7 +58,9 @@ const NEVER = [
   ".husky/**",
   "package.json",
   "pnpm-lock.yaml",
-].map(globToRegExp);
+]);
+
+const NEVER = NEVER_GLOBS.map(globToRegExp);
 
 const compiled = Object.fromEntries(
   Object.entries(SCOPES).map(([k, globs]) => [k, globs.map(globToRegExp)]),

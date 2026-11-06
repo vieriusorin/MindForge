@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0048",
+  "frozen_at": "2026-11-06T13:30:00.000Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0048-plan-never.acceptance.test.ts",
+      "sha256": "ddf97c7744505217ecea50d0fe50c93d54c79547f19fa67e9d21f0b9b62d4a08",
+      "first_failure": "SC-1: expected [] to deeply equal [ Array(1) ] (no NEVER rule); SC-2: expected [] to have a length of 2 (MF-0013 plan passes); SC-3: [ 'T1: unknown agent \"inline\"', ... ] (main-session agents rejected); SC-4: NEVER_GLOBS stub [] vs the 8 globs. 4/4; full pnpm test: only this file red (945 passed)"
+    }
+  ],
+  "history": []
+}
