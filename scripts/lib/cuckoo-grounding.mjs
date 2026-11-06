@@ -4,7 +4,7 @@
 import YAML from "yaml";
 
 /**
- * @typedef {"parse" | "quantifier" | "annotation" | "token" | "source"} GroundingRule
+ * @typedef {"parse" | "quantifier" | "annotation" | "token" | "source" | "flaw-key"} GroundingRule
  * @typedef {{ file: string, id?: string, line?: number, rule: GroundingRule, word?: string, message: string }} GroundingProblem
  */
 
