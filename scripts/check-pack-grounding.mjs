@@ -4,7 +4,8 @@
  * its cited sources (`.cache/corpus/<sha256(url)>.json`, written by `pnpm generate:corpus`).
  * It runs the cuckoo rule (scripts/lib/cuckoo-grounding.mjs) and, since MF-0033, the token and leak rules
  * for questions, cards and diagrams (scripts/lib/item-grounding.mjs). Since MF-0041 it also runs the
- * flaw-key rule (scripts/lib/cuckoo-flaw-key.mjs), which needs no corpus and so runs first. The
+ * flaw-key rule (scripts/lib/cuckoo-flaw-key.mjs), which needs no corpus and so runs first. Since
+ * MF-0044 the key-length rule (scripts/lib/key-length.mjs) runs beside it, also corpus-free. The
  * corpus rules skip when the corpus is absent (CI, fresh clones).
  * Exit 1 on any problem.
  */
@@ -16,6 +17,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkFlawKeys } from "./lib/cuckoo-flaw-key.mjs";
 import { checkCuckooFile } from "./lib/cuckoo-grounding.mjs";
 import { checkItemFile } from "./lib/item-grounding.mjs";
+import { checkKeyLengths } from "./lib/key-length.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const PACKS = process.env.MF_PACKS_DIR
@@ -47,6 +49,29 @@ const problems = cuckooFiles().flatMap((path) =>
     text: readFileSync(path, "utf8"),
   }),
 );
+const flawKeyProblems = problems.length;
+
+// MF-0044: the key-length rule, also corpus-free, over every PACKS/<pack>/questions/*.yaml.
+const keyLength = { checked: 0, problems: 0, grandfathered: 0, multi: 0 };
+for (const pack of readdirSync(PACKS).sort()) {
+  const dir = join(PACKS, pack, "questions");
+  if (!existsSync(dir)) continue;
+  for (const name of readdirSync(dir).sort()) {
+    if (!name.endsWith(".yaml")) continue;
+    const path = join(dir, name);
+    const result = checkKeyLengths({
+      file: relative(ROOT, path),
+      pack,
+      text: readFileSync(path, "utf8"),
+    });
+    problems.push(...result.problems);
+    keyLength.checked += result.checked;
+    keyLength.problems += result.problems.length;
+    keyLength.grandfathered += result.grandfathered;
+    keyLength.multi += result.multi;
+  }
+}
+const keyLengthSummary = `key-length: ${keyLength.checked} checked, ${keyLength.problems} problem(s), ${keyLength.grandfathered} skipped (grandfathered), ${keyLength.multi} multi-select not checked`;
 
 // MF-0058 SC-1: every path names known packs with skills, once each. Structural, so it runs before
 // the corpus-absent skip and CI sees it. The engine is TypeScript: load it the way validate-packs does.
@@ -89,6 +114,7 @@ if (!existsSync(CORPUS)) {
   for (const p of problems) console.error(p.message);
   console.log(
     `check:packs: .cache/corpus missing, corpus rules skipped (run pnpm generate:corpus); flaw-key + paths (${pathFiles.length}): ${problems.length} problem(s)`,
+    `check:packs: .cache/corpus missing, corpus rules skipped (run pnpm generate:corpus); flaw-key: ${flawKeyProblems} problem(s); ${keyLengthSummary}`,
   );
   process.exit(problems.length > 0 ? 1 : 0);
 }
@@ -150,5 +176,6 @@ for (const pack of readdirSync(PACKS).sort()) {
 for (const p of problems) console.error(p.message);
 console.log(
   `check:packs: ${checked} cuckoo file(s), ${pathFiles.length} path(s), ${itemsChecked} item(s) checked, ${itemsSkipped} skipped (source not cached), ${problems.length} problem(s)`,
+  `check:packs: ${checked} cuckoo file(s), ${itemsChecked} item(s) checked, ${itemsSkipped} skipped (source not cached), ${problems.length} problem(s); ${keyLengthSummary}`,
 );
 process.exit(problems.length > 0 ? 1 : 0);
