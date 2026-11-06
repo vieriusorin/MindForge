@@ -11,6 +11,10 @@ export type ExpeditionCardProps =
       target: number;
       progress: number;
       summary: ExpeditionSummary;
-      /** Only when the viewer is the admin and nothing is running. */
+      /** Only when the viewer is the admin and `canStartExpedition` allows a start. */
       startForm?: ReactNode;
+      /** MF-0059: the admin's End expedition button, only while it runs. */
+      endButton?: ReactNode;
+      /** MF-0059 C-1: ended because the group moved to its next course (`isEndedByCourseMove`). */
+      movedOn: boolean;
     };

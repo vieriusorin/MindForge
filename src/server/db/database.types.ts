@@ -83,9 +83,10 @@ export type Database = {
         Row: {
           created_by: string;
           domain_code: string;
-          ends_at: string;
+          ends_at: string | null;
           group_id: string;
           id: string;
+          pack_slug: string;
           starts_at: string;
           target: number;
         };
@@ -93,18 +94,20 @@ export type Database = {
         Insert: {
           created_by: string;
           domain_code: string;
-          ends_at: string;
+          ends_at?: string | null;
           group_id: string;
           id?: string;
+          pack_slug: string;
           starts_at: string;
           target: number;
         };
         Update: {
           created_by?: string;
           domain_code?: string;
-          ends_at?: string;
+          ends_at?: string | null;
           group_id?: string;
           id?: string;
+          pack_slug?: string;
           starts_at?: string;
           target?: number;
         };
@@ -156,6 +159,7 @@ export type Database = {
           invite_code: string;
           name: string;
           pack_slug: string;
+          path_slug: string | null;
         };
         ComputedFields: never;
         Insert: {
@@ -165,6 +169,7 @@ export type Database = {
           invite_code: string;
           name: string;
           pack_slug: string;
+          path_slug?: string | null;
         };
         Update: {
           created_at?: string;
@@ -173,6 +178,7 @@ export type Database = {
           invite_code?: string;
           name?: string;
           pack_slug?: string;
+          path_slug?: string | null;
         };
         Relationships: [];
       };
@@ -307,6 +313,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      advance_group_course: {
+        Args: { p_from_pack?: string; p_group_id: string };
+        Returns: string;
+      };
       answer_storm_question: {
         Args: {
           p_chosen: string[];
@@ -324,6 +334,12 @@ export type Database = {
         Args: { p_name: string; p_pack_slug: string };
         Returns: string;
       };
+      create_path_group: {
+        Args: { p_name: string; p_path_slug: string };
+        Returns: string;
+      };
+      end_expedition: { Args: { p_group_id: string }; Returns: undefined };
+      expedition_pack: { Args: { p_expedition_id: string }; Returns: string };
       expedition_progress: {
         Args: { p_expedition_id: string };
         Returns: number;
@@ -339,6 +355,13 @@ export type Database = {
           attempts: Json;
           is_viewer: boolean;
           member_key: number;
+        }[];
+      };
+      group_invite_preview: {
+        Args: { p_code: string };
+        Returns: {
+          name: string;
+          path_slug: string;
         }[];
       };
       join_group: { Args: { p_code: string }; Returns: string };

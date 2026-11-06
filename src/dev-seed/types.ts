@@ -93,7 +93,7 @@ export interface PlannedStorm {
   questions: PlannedStormQuestion[];
 }
 
-/** MF-0052 SC-5: the group's active expedition (ends 7 days after `startsAt`, as the table requires). */
+/** MF-0052 SC-5: the group's running expedition. MF-0059: open, with no end (own pace). */
 export interface PlannedExpedition {
   domainCode: string;
   target: number;

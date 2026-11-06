@@ -1,5 +1,5 @@
 import type { ActionResult, FormActionResult } from "@/lib/action-result";
-import type { CreateGroupValues } from "./schemas";
+import type { CreateGroupValues, CreatePathGroupValues } from "./schemas";
 
 export type CreateGroupResult = FormActionResult<
   { groupId: string },
@@ -15,3 +15,15 @@ export type UnpinGroupResult = ActionResult;
 
 /** MF-0004: resetting the invite link; the error is the message the invite card shows. */
 export type RotateInviteResult = ActionResult;
+
+/** MF-0059: creating a group that follows a Group path. */
+export type CreatePathGroupResult = FormActionResult<
+  { groupId: string },
+  CreatePathGroupValues
+>;
+
+/** MF-0059: joining through an invite; the hook navigates to `groupId`. */
+export type JoinGroupResult = ActionResult<{ groupId: string }>;
+
+/** MF-0059: the admin moving the group to the next course of its path. */
+export type AdvanceGroupCourseResult = ActionResult;

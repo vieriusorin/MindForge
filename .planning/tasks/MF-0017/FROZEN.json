@@ -10,7 +10,7 @@
     },
     {
       "path": "src/server/db/__tests__/mf-0017-expedition.db.acceptance.test.ts",
-      "sha256": "49372fa5af4777c759887ca602c48689c6f5a980f168f5bc799432e1a1f297a0",
+      "sha256": "5ffd0c6590550deece52a42613bf8416d1bf17b0a936e3cb55399b18dd0269e9",
       "first_failure": "Re-freeze (review B1): SC-2 x2 expected 8 to be 7 against the unfixed SQL (pre-join recall counted)"
     },
     {
@@ -35,6 +35,14 @@
       "to": "49372fa5af4777c759887ca602c48689c6f5a980f168f5bc799432e1a1f297a0",
       "reason": "MF-0024 (option B): private.question_keys / private.items gain CHECK split_part(id,'.',1) = pack_slug. Fixture ids re-prefixed: PREFIX `mf0017-${RUN}-` -> `${PACK}.mf0017-${RUN}.` (one line). No assertion changed; 13/13 pass before the CHECK exists.",
       "approved_by": "user 2026-11-05 (MF-0024 checkpoint, option B)"
+    },
+    {
+      "at": "2026-11-06T12:49:25Z",
+      "path": "src/server/db/__tests__/mf-0017-expedition.db.acceptance.test.ts",
+      "from": "49372fa5af4777c759887ca602c48689c6f5a980f168f5bc799432e1a1f297a0",
+      "to": "5ffd0c6590550deece52a42613bf8416d1bf17b0a936e3cb55399b18dd0269e9",
+      "reason": "MF-0059 own pace (user 2026-11-06): start_expedition opens an expedition (ends_at null). SC-1 only: title 'sets a 7-day window' -> 'starts it open'; `seven_days` (ends_at - starts_at = 7 days) -> `open` (ends_at is null). Red before the edit against the MF-0059 T1 tree: seven_days null. Every other case unchanged.",
+      "approved_by": "user 2026-11-06 (MF-0059 plan approval)"
     }
   ]
 }

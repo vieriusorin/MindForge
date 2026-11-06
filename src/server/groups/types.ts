@@ -30,6 +30,14 @@ export interface GroupDetail {
   packSlug: string;
   inviteCode: string;
   createdBy: string;
+  /** MF-0059: the Group path this group follows, or null for a pack-only group. */
+  pathSlug: string | null;
+}
+
+/** MF-0059: what the join page shows before the user joins. */
+export interface InvitePreview {
+  name: string;
+  pathSlug: string | null;
 }
 
 export interface GroupMember {

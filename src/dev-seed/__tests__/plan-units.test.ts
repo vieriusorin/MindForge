@@ -149,7 +149,6 @@ describe("planReviews (review_item's rules, applied by the planner)", () => {
 });
 
 describe("planDemoWorlds (MF-0052 inner rules)", () => {
-  const DAY = 24 * 60 * 60 * 1000;
   const PLAN_NOW = new Date("2026-11-05T12:00:00.000Z");
   const YOU = "me@example.com";
 
@@ -280,7 +279,6 @@ describe("planDemoWorlds (MF-0052 inner rules)", () => {
           t.correct &&
           domains.get(t.skillCode) === expedition.domainCode &&
           t.answeredAt.getTime() >= start &&
-          t.answeredAt.getTime() < start + 7 * DAY &&
           t.answeredAt.getTime() >= (joined.get(t.email) ?? Infinity),
       ).length;
       expect(counted).toBeGreaterThan(0);

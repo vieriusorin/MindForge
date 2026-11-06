@@ -3,36 +3,44 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import type { FormEvent } from "react";
-import {
-  type Control,
-  type FieldErrors,
-  type UseFormRegister,
-  useForm,
-} from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { applyFormError } from "@/lib/action-result";
-import { createGroup } from "../../../actions";
-import { CreateGroupInput, type CreateGroupValues } from "../../../schemas";
+import { createGroup, createPathGroup } from "../../../actions";
+import { GroupFormInput, type GroupFormValues } from "../../../schemas";
+import type {
+  GroupFormFields,
+  PathOption,
+  UseCreateGroupFormReturn,
+} from "../types";
+import { pathNoticeFor } from "../utils";
 
-export interface UseCreateGroupFormReturn {
-  control: Control<CreateGroupValues>;
-  register: UseFormRegister<CreateGroupValues>;
-  errors: FieldErrors<CreateGroupValues>;
-  onSubmit: (event?: FormEvent<HTMLFormElement>) => Promise<void>;
-  isSubmitting: boolean;
+/** MF-0059: one form, two actions: a pack group or a group that follows a path. */
+function createFrom(values: GroupFormValues) {
+  return values.kind === "path"
+    ? createPathGroup({ name: values.name, pathSlug: values.pathSlug })
+    : createGroup({ name: values.name, packSlug: values.packSlug });
 }
 
 export function useCreateGroupForm(
   defaultPackSlug: string,
+  paths: readonly PathOption[] = [],
 ): UseCreateGroupFormReturn {
   const router = useRouter();
+  const defaultValues: GroupFormFields = {
+    kind: "pack",
+    name: "",
+    packSlug: defaultPackSlug,
+    pathSlug: paths[0]?.slug ?? "",
+  };
   const form = useForm({
-    resolver: zodResolver(CreateGroupInput),
-    defaultValues: { name: "", packSlug: defaultPackSlug },
+    resolver: zodResolver(GroupFormInput),
+    defaultValues,
   });
+  const kind = useWatch({ control: form.control, name: "kind" });
+  const pathSlug = useWatch({ control: form.control, name: "pathSlug" });
 
   const mutation = useMutation({
-    mutationFn: createGroup,
+    mutationFn: createFrom,
     onSuccess: (result) => {
       if (!result.ok) {
         applyFormError(form.setError, result.error);
@@ -55,5 +63,8 @@ export function useCreateGroupForm(
     onSubmit: form.handleSubmit((values) => mutation.mutate(values)),
     // Stays true through the router.push after success, so the button can't double-submit.
     isSubmitting: mutation.isPending || mutation.data?.ok === true,
+    kind,
+    canChoosePath: paths.length > 0,
+    pathNotice: pathNoticeFor({ kind, pathSlug: pathSlug ?? "", paths }),
   };
 }

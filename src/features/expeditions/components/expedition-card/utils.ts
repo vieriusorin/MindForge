@@ -32,6 +32,8 @@ export function timeLeftLabel(timeLeft: ExpeditionTimeLeft): string {
       return "Less than an hour left";
     case "ended":
       return "Ended";
+    case "open":
+      return "No end date";
   }
 }
 
@@ -57,8 +59,13 @@ export function goalLine(input: {
 /** No expedition yet: the admin is invited to start one, a member is told who can. */
 export function noneLine(canStart: boolean): string {
   return canStart
-    ? "Set a 7-day goal: every member's correct recalls in one domain count."
+    ? "Set a goal: every member's correct recalls in one domain count until you end it."
     : "No expedition yet. Your group admin can start one.";
+}
+
+/** MF-0059 C-1: shown on an ended expedition whose pack is no longer the group's current course. */
+export function movedOnLine(): string {
+  return "Ended. The group has since moved to the next course.";
 }
 
 export function tooSmallLine(minMembers: number): string {

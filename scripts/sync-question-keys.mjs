@@ -16,6 +16,9 @@
  * number as the only correct option, and registered with item_type 'cuckoo'.
  * MF-0032: a pack's keys and items are written in ONE transaction (record_attempt binds the two).
  * MF-0025: keys and items of a pack whose folder is gone are deleted with its registry row.
+ * MF-0059: also writes the path registry (private.path_courses) from paths/*.yaml, which
+ * create_path_group, join_group and advance_group_course read. Every path file is checked before
+ * the first write, and the registry is replaced in the same transaction as the pack registry.
  *
  * DB: $SUPABASE_DB_URL, else the LOCAL stack from `supabase status`.
  * Usage: node scripts/sync-question-keys.mjs
@@ -25,6 +28,7 @@
 import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import postgres from "postgres";
 import YAML from "yaml";
 import { contentHash } from "./lib/content-hash.mjs";
@@ -37,6 +41,12 @@ const ROOT = resolve(import.meta.dirname, "..");
 const PACKS_DIR = process.env.MINDFORGE_PACKS_DIR || join(ROOT, "packs");
 if (process.env.MINDFORGE_PACKS_DIR && process.env.SUPABASE_DB_URL) {
   console.error("Refusing MINDFORGE_PACKS_DIR together with SUPABASE_DB_URL.");
+  process.exit(1);
+}
+// MF-0059: same rule for the path registry (a partial folder would drop hosted paths).
+const PATHS_DIR = process.env.MINDFORGE_PATHS_DIR || join(ROOT, "paths");
+if (process.env.MINDFORGE_PATHS_DIR && process.env.SUPABASE_DB_URL) {
+  console.error("Refusing MINDFORGE_PATHS_DIR together with SUPABASE_DB_URL.");
   process.exit(1);
 }
 
@@ -152,10 +162,10 @@ if (process.env.SUPABASE_DB_URL) {
   const git = (...args) =>
     execFileSync("git", args, { cwd: ROOT, encoding: "utf8" }).trim();
   const branch = git("rev-parse", "--abbrev-ref", "HEAD");
-  const dirty = git("status", "--porcelain", "--", "packs");
+  const dirty = git("status", "--porcelain", "--", "packs", "paths");
   if (branch !== "main" || dirty) {
     console.error(
-      `Refusing to sync a remote DB from branch "${branch}"${dirty ? " with local changes under packs/" : ""}. Check out an up-to-date main first.`,
+      `Refusing to sync a remote DB from branch "${branch}"${dirty ? " with local changes under packs/ or paths/" : ""}. Check out an up-to-date main first.`,
     );
     process.exit(1);
   }
@@ -170,6 +180,57 @@ const packs = readdirSync(PACKS_DIR, { withFileTypes: true })
 const problems = await validatePacks(ROOT, PACKS_DIR, packs);
 if (problems.length) {
   console.error(`Not syncing: invalid pack content.\n${problems.join("\n")}`);
+  process.exit(1);
+}
+
+// MF-0059 (MF-0034 failure order): every path file is parsed and checked before the first write.
+// No cross-check against pack folders: check:packs owns that, and fixture packs dirs would fail it.
+async function readPaths() {
+  let names;
+  try {
+    names = readdirSync(PATHS_DIR)
+      .filter((n) => n.endsWith(".yaml"))
+      .sort();
+  } catch (error) {
+    if (error?.code === "ENOENT") return { paths: [], problems: [] };
+    throw error;
+  }
+  const { parsePath } = await import(
+    pathToFileURL(join(ROOT, "src/engine/path/parse-path.ts")).href
+  );
+  const paths = [];
+  const problems = [];
+  for (const name of names) {
+    const source = `paths/${name}`;
+    let path;
+    try {
+      path = parsePath(readFileSync(join(PATHS_DIR, name), "utf8"), source);
+    } catch (error) {
+      problems.push(error instanceof Error ? error.message : String(error));
+      continue;
+    }
+    // getPath reads paths/<slug>.yaml, so a file under another name would never be found.
+    if (name !== `${path.slug}.yaml`)
+      problems.push(
+        `${source}: slug "${path.slug}" does not match the file name`,
+      );
+    if (paths.some((p) => p.slug === path.slug))
+      problems.push(
+        `${source}: slug "${path.slug}" is used by another path file`,
+      );
+    const twice = path.courses.filter((c, i) => path.courses.indexOf(c) !== i);
+    if (twice.length)
+      problems.push(
+        `${source}: course listed twice: ${[...new Set(twice)].join(", ")}`,
+      );
+    paths.push(path);
+  }
+  return { paths, problems };
+}
+
+const { paths, problems: pathProblems } = await readPaths();
+if (pathProblems.length) {
+  console.error(`Not syncing: invalid path file.\n${pathProblems.join("\n")}`);
   process.exit(1);
 }
 
@@ -198,8 +259,23 @@ try {
       console.log(
         `unregistered packs: removed ${keys.count} key(s), ${items.count} item(s)`,
       );
+
+    // MF-0059: the path registry follows the files; a failure leaves the old registry whole.
+    for (const path of paths) {
+      await tx`delete from private.path_courses where path_slug = ${path.slug}`;
+      for (const [i, course] of path.courses.entries()) {
+        await tx`
+          insert into private.path_courses (path_slug, position, pack_slug)
+          values (${path.slug}, ${i + 1}, ${course})`;
+      }
+    }
+    const slugs = paths.map((p) => p.slug);
+    await tx`delete from private.path_courses where not (path_slug = any(${slugs}))`;
   });
   console.log(`pack registry: ${packs.join(", ")}`);
+  console.log(
+    `path registry: ${paths.map((p) => `${p.slug} (${p.courses.length} courses)`).join(", ") || "none"}`,
+  );
   for (const pack of packs) {
     // MF-0013: the skill -> domain map; only this pack's rows are replaced.
     const { skills } = readPackMeta(pack);

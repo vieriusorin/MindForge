@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
+import { JoinReady } from "./components/join-ready";
 import type { JoinCardProps } from "./types";
 
-export function JoinCard({ joinAction, invalid }: JoinCardProps) {
-  if (invalid) {
+export function JoinCard(props: JoinCardProps) {
+  if (props.status === "invalid") {
     return (
       <p role="alert" className="text-destructive">
         This invite link is invalid or has been reset. Ask a group member for a
@@ -11,13 +11,10 @@ export function JoinCard({ joinAction, invalid }: JoinCardProps) {
     );
   }
   return (
-    <form action={joinAction} className="flex flex-col gap-4">
-      <p className="text-muted-foreground">
-        You&apos;ve been invited to a MindForge study group.
-      </p>
-      <Button type="submit" size="lg">
-        Join the group
-      </Button>
-    </form>
+    <JoinReady
+      code={props.code}
+      groupName={props.groupName}
+      notice={props.notice}
+    />
   );
 }

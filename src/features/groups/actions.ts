@@ -6,16 +6,28 @@ import { z } from "zod";
 import { type ActionResult, formErrorFromZod } from "@/lib/action-result";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { listPacks } from "@/server/packs/list-packs";
+import { getPath } from "@/server/paths/get-path";
 import { createServerSupabase } from "@/server/supabase/server";
-import { CreateGroupInput } from "./schemas";
+import {
+  AdvanceGroupCourseInput,
+  CreateGroupInput,
+  CreatePathGroupInput,
+  JoinGroupInput,
+} from "./schemas";
 import type {
+  AdvanceGroupCourseResult,
   CreateGroupResult,
+  CreatePathGroupResult,
+  JoinGroupResult,
   PinGroupResult,
   RotateInviteResult,
   UnpinGroupResult,
 } from "./types";
 import {
+  advanceGroupCourseRpcError,
   createGroupRpcError,
+  createPathGroupRpcError,
+  joinGroupRpcError,
   pinRpcError,
   rotateInviteRpcError,
 } from "./utils/rpc-errors";
@@ -54,18 +66,94 @@ export async function createGroup(input: unknown): Promise<CreateGroupResult> {
   return { ok: true, groupId: data };
 }
 
-const Code = z.string().regex(/^[0-9a-f]{16,64}$/);
-
-export async function joinGroup(code: string): Promise<void> {
+/**
+ * MF-0059: a group that follows a Group path. Called from the create form's hook through
+ * `useMutation`; the DB (`private.create_path_group`) enrolls the creator in the path and checks
+ * the slug against the path registry too, so a file removed since the check still fails cleanly.
+ */
+export async function createPathGroup(
+  input: unknown,
+): Promise<CreatePathGroupResult> {
   const user = await getCurrentUser();
-  if (!user) redirect(`/sign-in?next=${encodeURIComponent(`/join/${code}`)}`);
-  if (!Code.safeParse(code).success)
-    redirect(`/join/${encodeURIComponent(code)}?error=invalid`);
+  if (!user) redirect("/sign-in?next=/groups");
+
+  const parsed = CreatePathGroupInput.safeParse(input);
+  if (!parsed.success)
+    return { ok: false, error: formErrorFromZod(parsed.error) };
+
+  const path = await getPath(parsed.data.pathSlug);
+  if (!path)
+    return {
+      ok: false,
+      error: {
+        message: "Pick a path.",
+        fieldErrors: { pathSlug: "Pick a path." },
+      },
+    };
 
   const supabase = await createServerSupabase();
-  const { data, error } = await supabase.rpc("join_group", { p_code: code });
-  if (error || !data) redirect(`/join/${code}?error=invalid`);
-  redirect(`/groups/${data}`);
+  const { data, error } = await supabase.rpc("create_path_group", {
+    p_name: parsed.data.name,
+    p_path_slug: parsed.data.pathSlug,
+  });
+  if (error || !data)
+    return { ok: false, error: createPathGroupRpcError(error ?? {}) };
+  return { ok: true, groupId: data };
+}
+
+const INVALID_INVITE =
+  "This invite link is invalid or has been reset. Ask a group member for a new one.";
+
+/**
+ * MF-0059 (F6): called from `useJoinCard` through `useMutation`, never on GET (a link prefetch
+ * must not join anyone). Returns the group id instead of redirecting; the hook navigates.
+ * `join_group` also enrolls the new member in the group's path, when it has one.
+ */
+export async function joinGroup(input: unknown): Promise<JoinGroupResult> {
+  // Parsed before the auth guard: the sign-in redirect returns to this invite when it is valid.
+  const parsed = JoinGroupInput.safeParse(input);
+  const user = await getCurrentUser();
+  if (!user)
+    redirect(
+      parsed.success
+        ? `/sign-in?next=${encodeURIComponent(`/join/${parsed.data.code}`)}`
+        : "/sign-in?next=/groups",
+    );
+  if (!parsed.success) return { ok: false, error: INVALID_INVITE };
+
+  const supabase = await createServerSupabase();
+  const { data, error } = await supabase.rpc("join_group", {
+    p_code: parsed.data.code,
+  });
+  if (error || !data)
+    return { ok: false, error: joinGroupRpcError(error ?? {}) };
+  // The sidebar lists the new group.
+  refresh();
+  return { ok: true, groupId: data };
+}
+
+/**
+ * MF-0059: moves a path group to the next course of its path (and ends a running expedition).
+ * The definer function is the authorization (admin only; no column grant lets anyone else change
+ * `pack_slug`); the hidden button is not. `fromPack` makes a stale tab fail with 40001.
+ */
+export async function advanceGroupCourse(
+  input: unknown,
+): Promise<AdvanceGroupCourseResult> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/sign-in?next=/groups");
+  const parsed = AdvanceGroupCourseInput.safeParse(input);
+  if (!parsed.success)
+    return { ok: false, error: "This group link is not valid." };
+
+  const supabase = await createServerSupabase();
+  const { error } = await supabase.rpc("advance_group_course", {
+    p_group_id: parsed.data.groupId,
+    p_from_pack: parsed.data.fromPack,
+  });
+  if (error) return { ok: false, error: advanceGroupCourseRpcError(error) };
+  refresh();
+  return { ok: true };
 }
 
 const GroupId = z.uuid();

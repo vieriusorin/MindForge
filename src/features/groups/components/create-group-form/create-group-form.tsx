@@ -1,6 +1,5 @@
 "use client";
 
-import { Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,19 +15,23 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { KindField } from "./components/kind-field";
+import { PackField } from "./components/pack-field";
+import { PathField } from "./components/path-field";
 import { useCreateGroupForm } from "./hooks/use-create-group-form";
 import type { CreateGroupFormProps } from "./types";
 
-export function CreateGroupForm({ packs }: CreateGroupFormProps) {
-  const { control, register, errors, onSubmit, isSubmitting } =
-    useCreateGroupForm(packs[0]?.slug ?? "");
+export function CreateGroupForm({ packs, paths }: CreateGroupFormProps) {
+  const {
+    control,
+    register,
+    errors,
+    onSubmit,
+    isSubmitting,
+    kind,
+    canChoosePath,
+    pathNotice,
+  } = useCreateGroupForm(packs[0]?.slug ?? "", paths);
   return (
     <Card>
       <CardHeader>
@@ -47,40 +50,12 @@ export function CreateGroupForm({ packs }: CreateGroupFormProps) {
               />
               <FieldError errors={errors.name ? [errors.name] : undefined} />
             </Field>
-            <Controller
-              control={control}
-              name="packSlug"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="pack">Learning pack</FieldLabel>
-                  <Select
-                    name={field.name}
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger
-                      id="pack"
-                      className="w-full"
-                      aria-invalid={fieldState.invalid}
-                      onBlur={field.onBlur}
-                      ref={field.ref}
-                    >
-                      <SelectValue placeholder="Choose a pack" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {packs.map((p) => (
-                        <SelectItem key={p.slug} value={p.slug}>
-                          {p.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
-                  />
-                </Field>
-              )}
-            />
+            {canChoosePath ? <KindField control={control} /> : null}
+            {kind === "path" ? (
+              <PathField control={control} paths={paths} notice={pathNotice} />
+            ) : (
+              <PackField control={control} packs={packs} />
+            )}
             <FieldError
               errors={errors.root?.server ? [errors.root.server] : undefined}
             />

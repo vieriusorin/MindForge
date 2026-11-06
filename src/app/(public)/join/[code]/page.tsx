@@ -1,34 +1,36 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-import { joinGroup } from "@/features/groups/actions";
 import { JoinCard } from "@/features/groups/components/join-card";
+import { joinNotice } from "@/features/groups/utils/path-notice";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getInvitePreview } from "@/server/groups/get-invite-preview";
+import { getPath } from "@/server/paths/get-path";
 
 async function JoinSlot({
   params,
-  searchParams,
 }: {
   params: PageProps<"/join/[code]">["params"];
-  searchParams: PageProps<"/join/[code]">["searchParams"];
 }) {
-  const [{ code }, query] = await Promise.all([params, searchParams]);
+  const { code } = await params;
   const user = await getCurrentUser();
   if (!user) redirect(`/sign-in?next=${encodeURIComponent(`/join/${code}`)}`);
   // No mutation on GET: joining needs the button (link prefetch must not join anyone).
+  const preview = await getInvitePreview(code);
+  if (!preview) return <JoinCard status="invalid" />;
+  // MF-0059: a path file removed since the group was made shows no notice rather than failing.
+  const path = preview.pathSlug ? await getPath(preview.pathSlug) : null;
   return (
     <JoinCard
-      joinAction={joinGroup.bind(null, code)}
-      invalid={query.error === "invalid"}
+      status="ready"
+      code={code}
+      groupName={preview.name}
+      notice={path ? joinNotice(path.name) : null}
     />
   );
 }
 
-export default function JoinPage({
-  params,
-  searchParams,
-}: PageProps<"/join/[code]">) {
+export default function JoinPage({ params }: PageProps<"/join/[code]">) {
   return (
     <main className="flex flex-1 items-start justify-center px-4 py-16">
       <div aria-hidden className="bg-backdrop fixed inset-0 -z-10" />
@@ -42,7 +44,7 @@ export default function JoinPage({
           <Suspense
             fallback={<p className="text-muted-foreground">Loading…</p>}
           >
-            <JoinSlot params={params} searchParams={searchParams} />
+            <JoinSlot params={params} />
           </Suspense>
         </CardContent>
       </Card>
