@@ -35,6 +35,9 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      - name: Workspace check
+        # MF-0046: before Install, so a committed pnpm placeholder (merge 71ac090) is named, not an Install red.
+        run: node scripts/check-workspace.mjs
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Typecheck

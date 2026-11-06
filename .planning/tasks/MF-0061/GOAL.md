@@ -12,6 +12,7 @@ goal_status: reserved             # reserved by MF-0044 (user decision C-3); nev
 > Reserved 2026-11-06 from MF-0044 (user decision C-3 at the DESIGN checkpoint). Not started.
 > Renumbered 2026-11-06 from MF-0059: the merge of MF-0044 (#93) and MF-0058 (#95) concatenated two reservations of
 > MF-0059 into one GOAL.md. MF-0059 kept the groups ticket (issue #91); this retrofit had no issue yet.
+> Reserved 2026-11-06 from MF-0044 (user decision C-3 at the DESIGN checkpoint). Not started. Renumbered from MF-0059 on 2026-11-06: the MF-0058 merge (cc79c34) concatenated it into the other MF-0059 GOAL.md (issue #91).
 
 ## Objective
 

@@ -27,6 +27,7 @@
     "prompts:lock": "tsx scripts/generate/lock-prompts.ts",
     "check:packs": "node scripts/check-pack-grounding.mjs",
     "gate:planning": "node scripts/check-planning.mjs",
+    "gate:workspace": "node scripts/check-workspace.mjs",
     "ticket:github": "node scripts/ticket-github.mjs",
     "ticket:collisions": "node scripts/frozen-collisions.mjs"
   },
