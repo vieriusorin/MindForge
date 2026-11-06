@@ -41,3 +41,10 @@ export function rotateInviteRpcError(error: RpcError): string {
     ? "Only the group admin can reset the link."
     : "Could not reset the link. Try again.";
 }
+
+/** MF-0054: map a pin_group / unpin_group RPC error to the toggle's message. 42501 = not a member. */
+export function pinRpcError(error: RpcError): string {
+  return error.code === "42501"
+    ? "You can only pin groups you belong to."
+    : "Could not update your pins. Try again.";
+}

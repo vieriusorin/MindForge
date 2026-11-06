@@ -14,6 +14,8 @@ import { ModeToggle } from "@/features/app-shell/components/mode-toggle";
 import { signOut } from "@/features/auth/actions";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { listMyGroups } from "@/server/groups/list-my-groups";
+import { listMyPins } from "@/server/groups/list-my-pins";
+import { sidebarGroupSection } from "@/server/groups/sidebar-group-section";
 import { getPack } from "@/server/packs/get-pack";
 import { primaryPackSlug } from "@/server/packs/primary-pack";
 import { getDisplayName } from "@/server/profiles/get-display-name";
@@ -21,17 +23,21 @@ import { getDisplayName } from "@/server/profiles/get-display-name";
 async function Sidebar() {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in");
-  const [name, groups] = await Promise.all([
+  const [name, groups, pins] = await Promise.all([
     getDisplayName(user.id),
     listMyGroups(user.id),
+    listMyPins(),
   ]);
-  const packSlug = primaryPackSlug(groups);
+  // MF-0054: pinned groups (or the 3 newest-joined, as "Recent"); the newest pin sets the pack
+  const section = sidebarGroupSection({ groups, pins });
+  const packSlug = primaryPackSlug({ groups, pins });
   const pack = await getPack(packSlug);
   return (
     <AppSidebar
       displayName={name ?? user.email?.split("@")[0] ?? "Learner"}
       packName={pack.name}
-      groups={groups.map((g) => ({ id: g.id, name: g.name }))}
+      groups={(section?.groups ?? []).map((g) => ({ id: g.id, name: g.name }))}
+      groupsLabel={section?.label}
       duelHref={`/play/${packSlug}/duel`}
       walkHref={`/play/${packSlug}/walk`}
       cuckooHref={`/play/${packSlug}/cuckoo`}

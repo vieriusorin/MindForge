@@ -1,18 +1,8 @@
 import { describe, expect, it } from "vitest";
-import {
-  isActivePath,
-  isStormActive,
-  MAX_PINNED_GROUPS,
-  pinnedGroups,
-} from "../utils";
+import { isActivePath, isStormActive } from "../utils";
 
-describe("pinnedGroups", () => {
-  it("pins at most three groups, in the given order", () => {
-    expect(MAX_PINNED_GROUPS).toBe(3);
-    expect(pinnedGroups(["a", "b", "c", "d"])).toEqual(["a", "b", "c"]);
-    expect(pinnedGroups([])).toEqual([]);
-  });
-});
+// MF-0054: which groups the section shows moved to src/server/groups/sidebar-group-section.ts
+// (frozen in mf-0054-sidebar-section.acceptance.test.ts); the sidebar renders what it is given.
 
 describe("isActivePath", () => {
   it("matches the exact path", () => {

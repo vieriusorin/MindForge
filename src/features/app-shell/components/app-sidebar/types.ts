@@ -7,6 +7,8 @@ export interface AppSidebarProps {
   displayName: string;
   packName: string;
   groups: SidebarGroupLink[];
+  /** MF-0054: the section title over `groups` (the layout picks it); omitted = "Pinned". */
+  groupsLabel?: "Pinned" | "Recent";
   /** Scenario Duel for the learner's primary pack: /play/<packSlug>/duel. */
   duelHref: string;
   /** MF-0009: Daily Walk for the same pack: /play/<packSlug>/walk. */

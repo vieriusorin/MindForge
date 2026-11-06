@@ -311,6 +311,13 @@ export type Database = {
           target: number;
         }[];
       };
+      list_my_pins: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          group_id: string;
+          pinned_at: string;
+        }[];
+      };
       list_open_flags: {
         Args: { p_pack_slug: string };
         Returns: {
@@ -337,6 +344,13 @@ export type Database = {
           item_id: string;
           item_type: string;
           skill_code: string;
+        }[];
+      };
+      pin_group: {
+        Args: { p_group_id: string };
+        Returns: {
+          evicted_id: string;
+          evicted_name: string;
         }[];
       };
       record_attempt: {
@@ -387,6 +401,7 @@ export type Database = {
         };
         Returns: string;
       };
+      unpin_group: { Args: { p_group_id: string }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;

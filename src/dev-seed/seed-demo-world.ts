@@ -332,6 +332,7 @@ export async function seedDemoWorlds({
 
     const mine: number[] = [];
     const myStorms: string[] = [];
+    const myJoins: { groupId: string; joinedAt: Date }[] = [];
     for (const world of worlds) {
       const { packSlug } = world.group;
       await assertWorldSeedable(tx, world);
@@ -359,6 +360,8 @@ export async function seedDemoWorlds({
         await tx`
           insert into public.group_members (group_id, user_id, role, joined_at)
           values (${group.id}, ${id}, ${role}, ${join.joinedAt.toISOString()})`;
+        if (id === youId)
+          myJoins.push({ groupId: group.id, joinedAt: join.joinedAt });
       }
 
       const rows = world.attempts.map((t) => ({
@@ -469,6 +472,16 @@ export async function seedDemoWorlds({
       mine.push(
         ...inserted.filter((r) => r.user_id === youId).map((r) => Number(r.id)),
       );
+    }
+
+    // MF-0054 SC-8: pin your demo groups oldest join first, so your newest join (ccdv-f, MF-0052 SC-1)
+    // is your newest pin and drives the primary pack. Same DB path as the action: the membership
+    // check and the cap of 3 apply (your own pins may be replaced). The 2 ms gap keeps pins distinct
+    // at the millisecond precision JS reads pinned_at with.
+    myJoins.sort((a, b) => a.joinedAt.getTime() - b.joinedAt.getTime());
+    for (const { groupId } of myJoins) {
+      await tx`select pg_sleep(0.002)`;
+      await tx`select * from private.pin_group_for(${youId}::uuid, ${groupId}::uuid)`;
     }
 
     const seeded = [...idOf.values()];
