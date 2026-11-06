@@ -351,7 +351,8 @@ MF-0003 SC-5, MF-0006 SC-6, MF-0007 SC-1 and the ticket's own SC-5 fixture, one 
 (`pack_slug`). Each hit in "Frozen files this will re-freeze" must quote the assertion line that breaks and the
 new expected value; a hit is stated as "fixture only" only after that file's assertions were read (MF-0025:
 the MF-0007 SC-1 fixture inserted an unregistered slug and asserted it survived; found in TEST, and first
-told to the user as fixture-only).
+told to the user as fixture-only). A listed file is skipped for every symbol: when you add a symbol after a file was
+listed, re-read that file's assertions for the new symbol yourself.
 
 High-risk: present the plan and wait for approval. Normal: proceed.
 

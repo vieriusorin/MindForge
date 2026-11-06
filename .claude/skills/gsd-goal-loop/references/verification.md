@@ -65,6 +65,13 @@ node -e "for (const k of Object.keys(require('./package.json').scripts)) if (k.s
 (Use the project's package manager.) Re-run a FAIL bare to read it. A gate failing on a file you
 did not touch is still reported, as pre-existing, with the file named.
 
+**Writing a gate or check script: its parser fails closed (MF-0043 retro).** Any token, section, heading level or
+syntax it cannot parse is an error (non-zero exit, naming the input), never dropped and never read as "none found".
+Do not `filter()` unparseable input away: collect a result plus a `rejected` list and fail when that list is
+non-empty. In the plan, list the inputs the parser must reject, each with a test: an unparseable token, a nested
+subheading inside the section, a generic or qualified name, and an empty section that is not the literal "None".
+MF-0043 shipped all four as exit 0, and review found them over 3 rounds.
+
 ## 5. Lint
 
 Run LINT bare. Diagnostic limits and your own `| tail` both hide violations.

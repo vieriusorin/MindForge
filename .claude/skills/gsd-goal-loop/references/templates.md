@@ -49,6 +49,11 @@ autonomy: ready                   # optional: set by the USER after the freeze; 
 - [ ] SC-2: …
 - [ ] SC-n: strings in every locale; evidence file; every gate; browser check of <screen>.
 
+<!-- A ticket that replaces a hand procedure with a script, or rewrites a skill step: list every clause of the old
+procedure as its own SC row, or mark it dropped on purpose in Concerns, and run the new rule over every shipped layout
+before freezing (MF-0043 retro: the "as literals" clause was lost in the skill rewrite, and the first parser fix broke
+the MF-0032 layout). -->
+
 ## Concerns
 
 | # | Collision | Owner | Status |
@@ -90,6 +95,23 @@ resume_with: /gsd-goal-loop
 
 <what exists, with file:line; the precedent ticket and the pattern it set; current vs required
 behaviour; which gates the touched paths sit on>
+
+## Symbols changed
+
+<each existing name the change reaches, in backticks: a function whose signature changes (`name` or `name(q)`), a
+closed set and its members as literals (`'card'`, `not-in-pack`), a shared type (`Type` or `Type.field`; for
+`Promise<Type>` list `Type`). "None." when
+nothing existing changes; backticks here mean "changed". `pnpm ticket:collisions <ID>` reads this list and exits 2 on
+a token it cannot match, so this unfilled placeholder fails it (MF-0043)>
+
+## Frozen files this will re-freeze
+
+<one row per frozen file the change breaks, or that you read and found still holds; "None." otherwise. Re-run
+`pnpm ticket:collisions <ID>` until it exits 0.>
+
+| File:line | Change (new expected value) | Reason |
+|---|---|---|
+| `<path>/__tests__/<id>-x.acceptance.test.ts:<line>` | <the assertion that breaks → its new value> | <why; approval> |
 
 ## SC coverage
 
