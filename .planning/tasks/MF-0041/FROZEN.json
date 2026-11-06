@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0041",
+  "frozen_at": "2026-11-06",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0041-flaw-key.acceptance.test.ts",
+      "sha256": "4e53c0fc8d10bf274f8fa366cd012986678bb69994c1a0914bc03cef78f93de6",
+      "first_failure": "SC-1…SC-4, SC-6: Error: not implemented (19, stub scripts/lib/cuckoo-flaw-key.mjs); SC-5: AssertionError: expected +0 to be 1 (CLI does not run the rule)"
+    }
+  ],
+  "history": []
+}

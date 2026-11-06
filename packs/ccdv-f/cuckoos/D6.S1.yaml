@@ -29,6 +29,7 @@ cuckoos:
     sources:
       - https://code.claude.com/docs/en/sub-agents
   - id: ccdv-f.D6.S1.cuckoo-keep-every-tool-result
+    # flaw-line: 4 — "Never clear old tool results" — line 1 is a heading, so each list label trails its line number by 1
     title: The context policy in a long-running research agent's system prompt
     origin: ai
     author: sorin.vieriu@ddroidd.com

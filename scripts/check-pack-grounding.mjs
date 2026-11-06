@@ -3,14 +3,16 @@
  * MF-0036: `pnpm check:packs`, an offline grounding check over pack content and the cached text of
  * its cited sources (`.cache/corpus/<sha256(url)>.json`, written by `pnpm generate:corpus`).
  * It runs the cuckoo rule (scripts/lib/cuckoo-grounding.mjs) and, since MF-0033, the token and leak rules
- * for questions, cards and diagrams (scripts/lib/item-grounding.mjs). Skips with exit 0 when the corpus
- * is absent (CI, fresh clones).
+ * for questions, cards and diagrams (scripts/lib/item-grounding.mjs). Since MF-0041 it also runs the
+ * flaw-key rule (scripts/lib/cuckoo-flaw-key.mjs), which needs no corpus and so runs first. The
+ * corpus rules skip when the corpus is absent (CI, fresh clones).
  * Exit 1 on any problem.
  */
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { checkFlawKeys } from "./lib/cuckoo-flaw-key.mjs";
 import { checkCuckooFile } from "./lib/cuckoo-grounding.mjs";
 import { checkItemFile } from "./lib/item-grounding.mjs";
 
@@ -20,11 +22,33 @@ const PACKS = process.env.MF_PACKS_DIR
   : join(ROOT, "packs");
 const CORPUS = join(ROOT, ".cache", "corpus");
 
+// Every cuckoo YAML file under PACKS/<pack>/cuckoos, sorted, as absolute paths.
+function cuckooFiles() {
+  const files = [];
+  for (const pack of readdirSync(PACKS).sort()) {
+    const dir = join(PACKS, pack, "cuckoos");
+    if (!existsSync(dir)) continue;
+    for (const name of readdirSync(dir).sort()) {
+      if (name.endsWith(".yaml")) files.push(join(dir, name));
+    }
+  }
+  return files;
+}
+
+// MF-0041: structural, no corpus needed, so it runs before the corpus-absent skip (CI).
+const problems = cuckooFiles().flatMap((path) =>
+  checkFlawKeys({
+    file: relative(ROOT, path),
+    text: readFileSync(path, "utf8"),
+  }),
+);
+
 if (!existsSync(CORPUS)) {
+  for (const p of problems) console.error(p.message);
   console.log(
-    "check:packs: .cache/corpus missing, skipped (run pnpm generate:corpus)",
+    `check:packs: .cache/corpus missing, corpus rules skipped (run pnpm generate:corpus); flaw-key: ${problems.length} problem(s)`,
   );
-  process.exit(0);
+  process.exit(problems.length > 0 ? 1 : 0);
 }
 
 const texts = new Map();
@@ -43,23 +67,16 @@ function corpus(url) {
   return texts.get(url);
 }
 
-const problems = [];
 let checked = 0;
-for (const pack of readdirSync(PACKS).sort()) {
-  const dir = join(PACKS, pack, "cuckoos");
-  if (!existsSync(dir)) continue;
-  for (const name of readdirSync(dir).sort()) {
-    if (!name.endsWith(".yaml")) continue;
-    const path = join(dir, name);
-    checked++;
-    problems.push(
-      ...checkCuckooFile({
-        file: relative(ROOT, path),
-        text: readFileSync(path, "utf8"),
-        corpus,
-      }),
-    );
-  }
+for (const path of cuckooFiles()) {
+  checked++;
+  problems.push(
+    ...checkCuckooFile({
+      file: relative(ROOT, path),
+      text: readFileSync(path, "utf8"),
+      corpus,
+    }),
+  );
 }
 
 let itemsChecked = 0;
