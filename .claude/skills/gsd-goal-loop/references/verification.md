@@ -70,6 +70,10 @@ syntax it cannot parse is an error (non-zero exit, naming the input), never drop
 Do not `filter()` unparseable input away: collect a result plus a `rejected` list and fail when that list is
 non-empty. In the plan, list the inputs the parser must reject, each with a test: an unparseable token, a nested
 subheading inside the section, a generic or qualified name, and an empty section that is not the literal "None".
+The same holds for an exemption, grandfather list or allowlist: it may skip only the one rule it exists for, and the
+structure and shape checks run first for every item, exempt or not. Add a plan test: the same malformed item inside
+an exempt set must still fail (MF-0044: the grandfather skip came before the structure checks, so 156 questions went
+unchecked until review minor 1).
 MF-0043 shipped all four as exit 0, and review found them over 3 rounds.
 
 ## 5. Lint

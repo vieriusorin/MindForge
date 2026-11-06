@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0044",
+  "frozen_at": "2026-11-06T09:19:44.665Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0044-key-length.acceptance.test.ts",
+      "sha256": "a80b26e51d082b10ebb5fda3e2ba52cdb2484e2ac06cbaf5bf5227b293e091bb",
+      "first_failure": "SC-1: expected +0 to be 1 (no key-length rule: a 1.20x key exits 0); SC-2/SC-3/SC-6: stdout has no key-length summary; SC-4: stderr has no select: 1 key-count problem. 5/5, identical on a 2nd run"
+    }
+  ],
+  "history": []
+}
