@@ -165,7 +165,7 @@ A **pack** is a folder of files (`packs/<slug>/pack.yaml` + seed content). It is
 | **Odd One Out** | 4 items, one doesn't belong; explain why | Classification, contrast | W3 |
 | **Boss Storm** | Timed domain challenge mixing recall, scenarios and connections between skills. You only survive if you show understanding | Integration | W4 |
 | **Full Storm** | Full mock exam (53 questions / 120 min, blueprint-weighted) | Exam conditions | W4 |
-| **Group Expedition** | Weekly co-op goal: "Together, bring the Security region to green." Everyone's correct recalls count | Social motivation | W4 |
+| **Group Expedition** | Co-op goal at the group's own pace: "Together, bring the Security region to green." Everyone's correct recalls count | Social motivation | W4 |
 | **Pollination** | Reviewing someone else's AI-generated item (approve, fix or flag) | Peer review = learning | ✅ W2 |
 
 ### 2.4 Nature association engine
@@ -358,7 +358,7 @@ All answered 2026-11-03. Details: `docs/plan/ROADMAP.md` §2, glossary `CONTEXT.
 | B10 | Spot the Cuckoo + Diagram Builder + Odd One Out | Playable | W3 |
 | B11 | Feynman Campfire | Explanation graded with gap feedback | W3 |
 | B12 | Boss Storm + Full Storm + readiness weather | Mock exam with per-domain report | W4 |
-| B13 | Group Expedition | Weekly co-op goal with shared progress | W4 |
+| B13 | Group Expedition | Co-op goal at the group's own pace, with shared progress | W4 |
 
 ### 3.2 Conventions
 

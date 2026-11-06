@@ -403,8 +403,6 @@ export interface DemoPackInput {
   items: SeedItem[];
 }
 
-/** MF-0052 SC-5: `expeditions_ends_at_check` (ends_at = starts_at + 7 days). */
-const EXPEDITION_DAYS = 7;
 /** Storms lie in [now − 10 d, now − 3 d − 1 h], so none enters the expedition window (starts now − 3 d). */
 const STORM_FIRST_DAY = 10;
 const EXPEDITION_START_DAY = 3;
@@ -670,10 +668,11 @@ function planDemoStorms({
 
 /**
  * MF-0052 SC-5: the group's active expedition, started 3 days before `now`, on the domain with the most
- * correct answers `expedition_progress` will count (members, inside the window, after joining; first
+ * correct answers `expedition_progress` will count (members, since it started, after joining; first
  * in pack order on a tie), with a target above that count so progress shows between 0 and the target.
  * Throws when no domain has a counted answer.
  */
+// MF-0059: expeditions are open (no end), so every answer from startsAt on counts.
 export function planExpedition({
   world,
   pack,
@@ -684,7 +683,6 @@ export function planExpedition({
   now: Date;
 }): PlannedExpedition {
   const startsAt = new Date(now.getTime() - EXPEDITION_START_DAY * DAY_MS);
-  const endsAt = startsAt.getTime() + EXPEDITION_DAYS * DAY_MS;
   const domains = domainBySkill(pack);
   const joined = new Map(
     world.joins.map((j) => [j.email, j.joinedAt.getTime()]),
@@ -693,8 +691,7 @@ export function planExpedition({
   for (const t of world.attempts) {
     const at = t.answeredAt.getTime();
     const domain = domains.get(t.skillCode);
-    if (!t.correct || !domain || at < startsAt.getTime() || at >= endsAt)
-      continue;
+    if (!t.correct || !domain || at < startsAt.getTime()) continue;
     if (at < (joined.get(t.email) ?? Number.POSITIVE_INFINITY)) continue;
     counts.set(domain, (counts.get(domain) ?? 0) + 1);
   }

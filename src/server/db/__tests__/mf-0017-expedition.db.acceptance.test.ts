@@ -426,7 +426,7 @@ describe("MF-0017 expedition (DB)", () => {
     });
   });
 
-  it("SC-1: the admin starts one (target 10, the lower bound); the database sets a 7-day window from its own clock", async () => {
+  it("SC-1: the admin starts one (target 10, the lower bound); the database starts it open, from its own clock", async () => {
     const created = await start(A.client, G, DOMAIN, 10);
     expect(created.error).toBeNull();
     EXPEDITION_G = created.data as string;
@@ -439,13 +439,13 @@ describe("MF-0017 expedition (DB)", () => {
           domain_code: string;
           target: number;
           created_by: string;
-          seven_days: boolean;
+          open: boolean;
           fresh: boolean;
           starts_at: Date;
         }[]
       >`
         select group_id, domain_code, target, created_by, starts_at,
-               ends_at - starts_at = interval '7 days' as seven_days,
+               ends_at is null as open,
                starts_at between now() - interval '1 minute' and now() as fresh
         from public.expeditions where id = ${EXPEDITION_G}`;
       expect(row).toMatchObject({
@@ -453,7 +453,7 @@ describe("MF-0017 expedition (DB)", () => {
         domain_code: DOMAIN,
         target: 10,
         created_by: A.id,
-        seven_days: true,
+        open: true,
         fresh: true,
       });
       // the client cannot send a time: the function takes exactly these three arguments

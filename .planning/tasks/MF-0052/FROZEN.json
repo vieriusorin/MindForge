@@ -9,7 +9,7 @@
     },
     {
       "path": "src/dev-seed/__tests__/mf-0052-seed.db.acceptance.test.ts",
-      "sha256": "600b19790d653aca48422b61d90d301c359ca517d752e2d98983050a728eadca",
+      "sha256": "545c1f6a71dc3e382f444a4c50566bb5cea763bef4b16edb867b69c8676f62ae",
       "first_failure": "SC-1, SC-3, SC-4, SC-5, SC-6: Error: not implemented (planDemoWorlds stub, in beforeAll); identical on a 2nd run (fixture + teardown survive)"
     },
     {
@@ -28,5 +28,14 @@
       "first_failure": "SC-11: Error: not implemented (typed stub toRecentStormRows)"
     }
   ],
-  "history": []
+  "history": [
+    {
+      "at": "2026-11-06T12:49:25Z",
+      "path": "src/dev-seed/__tests__/mf-0052-seed.db.acceptance.test.ts",
+      "from": "600b19790d653aca48422b61d90d301c359ca517d752e2d98983050a728eadca",
+      "to": "545c1f6a71dc3e382f444a4c50566bb5cea763bef4b16edb867b69c8676f62ae",
+      "reason": "MF-0059 own pace (user 2026-11-06): the seed inserts open expeditions (ends_at null). SC-5 only: drop `endsAt` and `expect(endsAt).toBeGreaterThan(Date.now())` -> `expect(row.ends_at).toBeNull()`; per-domain window upper bound -> coalesce(ends_at, 'infinity'). Red before the edit against the T1+T5 tree (ZodError on a null ends_at). Green once T6 makes LatestExpeditionRows.ends_at nullable.",
+      "approved_by": "user 2026-11-06 (MF-0059 plan approval)"
+    }
+  ]
 }

@@ -80,7 +80,7 @@ export function StartExpeditionForm({
             id="expedition-target-hint"
             className="text-sm text-muted-foreground"
           >
-            Correct recalls the group makes together in 7 days.
+            Correct recalls the group makes together.
           </p>
           <FieldError errors={errors.target ? [errors.target] : undefined} />
         </Field>

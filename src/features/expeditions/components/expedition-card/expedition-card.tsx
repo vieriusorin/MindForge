@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import type { ExpeditionCardProps } from "./types";
 import {
   goalLine,
+  movedOnLine,
   noneLine,
   progressLine,
   statusLook,
@@ -27,7 +28,7 @@ function Title() {
   );
 }
 
-/** MF-0017: the group's shared 7-day goal. Group total only (Q5); figures from the engine. */
+/** MF-0017: the group's shared goal, at its own pace (MF-0059). Group total only (Q5); figures from the engine. */
 export function ExpeditionCard(props: ExpeditionCardProps) {
   if (props.status === "too-small") {
     return (
@@ -73,11 +74,12 @@ export function ExpeditionCard(props: ExpeditionCardProps) {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Badge variant={look.badge}>{look.label}</Badge>
           <span className="text-sm text-muted-foreground tabular-nums">
-            {timeLeftLabel(summary.timeLeft)}
+            {props.movedOn ? movedOnLine() : timeLeftLabel(summary.timeLeft)}
           </span>
         </div>
         <Progress value={summary.percent} aria-label={line} className="h-2" />
         <p className="text-sm font-medium tabular-nums">{line}</p>
+        {props.endButton}
         {props.startForm ? (
           <div className="mt-2 border-t pt-4">{props.startForm}</div>
         ) : null}

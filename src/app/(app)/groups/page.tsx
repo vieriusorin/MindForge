@@ -6,14 +6,16 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import { listMyGroups } from "@/server/groups/list-my-groups";
 import { listMyPins } from "@/server/groups/list-my-pins";
 import { listPacks } from "@/server/packs/list-packs";
+import { listPaths } from "@/server/paths/list-paths";
 
 async function GroupsSlot() {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in?next=/groups");
-  const [groups, pins, packs] = await Promise.all([
+  const [groups, pins, packs, paths] = await Promise.all([
     listMyGroups(user.id),
     listMyPins(),
     listPacks(),
+    listPaths(),
   ]);
   const packNames = Object.fromEntries(packs.map((p) => [p.slug, p.name]));
   return (
@@ -23,7 +25,10 @@ async function GroupsSlot() {
         packNames={packNames}
         pinnedGroupIds={pins.map((p) => p.groupId)}
       />
-      <CreateGroupForm packs={packs} />
+      <CreateGroupForm
+        packs={packs}
+        paths={paths.map((p) => ({ slug: p.slug, name: p.name }))}
+      />
     </div>
   );
 }

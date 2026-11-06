@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { startExpeditionRpcError } from "../rpc-errors";
+import { endExpeditionRpcError, startExpeditionRpcError } from "../rpc-errors";
 
 describe("startExpeditionRpcError", () => {
   it("says an expedition is already running on 23P01", () => {
@@ -31,5 +31,28 @@ describe("startExpeditionRpcError", () => {
     expect(startExpeditionRpcError({})).toEqual({
       message: "Couldn't start the expedition. Try again.",
     });
+  });
+});
+
+describe("endExpeditionRpcError", () => {
+  it("refuses a non-admin on 42501", () => {
+    expect(endExpeditionRpcError({ code: "42501" })).toBe(
+      "Only the group admin can end an expedition.",
+    );
+  });
+
+  it("says nothing is running on P0002", () => {
+    expect(endExpeditionRpcError({ code: "P0002" })).toBe(
+      "No expedition is running.",
+    );
+  });
+
+  it("falls back to a retry message for anything else", () => {
+    expect(endExpeditionRpcError({ code: "XX000" })).toBe(
+      "Couldn't end the expedition. Try again.",
+    );
+    expect(endExpeditionRpcError({})).toBe(
+      "Couldn't end the expedition. Try again.",
+    );
   });
 });

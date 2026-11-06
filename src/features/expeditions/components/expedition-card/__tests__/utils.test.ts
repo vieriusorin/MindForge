@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   goalLine,
+  movedOnLine,
   noneLine,
   progressLine,
   STATUS_LOOK,
@@ -26,6 +27,15 @@ describe("expedition card copy", () => {
       "Less than an hour left",
     );
     expect(timeLeftLabel({ kind: "ended" })).toBe("Ended");
+    // MF-0059: an expedition runs at the group's own pace
+    expect(timeLeftLabel({ kind: "open" })).toBe("No end date");
+  });
+
+  // MF-0059 (user, 2026-11-06): true whether the move ended it or the admin ended it before a later move.
+  it("says the group has moved on since the expedition's course (MF-0059 C-1)", () => {
+    expect(movedOnLine()).toBe(
+      "Ended. The group has since moved to the next course.",
+    );
   });
 
   it("states progress with both numbers and the percent", () => {
@@ -39,7 +49,7 @@ describe("expedition card copy", () => {
 
   it("invites the admin to start one and tells a member who can", () => {
     expect(noneLine(true)).toBe(
-      "Set a 7-day goal: every member's correct recalls in one domain count.",
+      "Set a goal: every member's correct recalls in one domain count until you end it.",
     );
     expect(noneLine(false)).toBe(
       "No expedition yet. Your group admin can start one.",

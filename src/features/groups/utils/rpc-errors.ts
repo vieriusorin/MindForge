@@ -1,5 +1,5 @@
 import type { FormError } from "@/lib/action-result";
-import type { CreateGroupValues } from "../schemas";
+import type { CreateGroupValues, CreatePathGroupValues } from "../schemas";
 
 /** The part of a PostgREST error we decide on. */
 export interface RpcError {
@@ -47,4 +47,51 @@ export function pinRpcError(error: RpcError): string {
   return error.code === "42501"
     ? "You can only pin groups you belong to."
     : "Could not update your pins. Try again.";
+}
+
+/**
+ * MF-0059: map a create_path_group RPC error to what the form shows. SQLSTATEs from
+ * private.create_path_group (supabase/migrations/20261106140000_mf0059_path_groups.sql):
+ * 22023 = unknown path, 54000 = group limit reached.
+ */
+export function createPathGroupRpcError(
+  error: RpcError,
+): FormError<keyof CreatePathGroupValues & string> {
+  switch (error.code) {
+    case "22023":
+      return {
+        message: "Pick a path.",
+        fieldErrors: { pathSlug: "Pick a path." },
+      };
+    case "54000":
+      return {
+        message: `You can create up to ${MAX_GROUPS_PER_USER} groups.`,
+      };
+    default:
+      return { message: "Could not create the group. Try again." };
+  }
+}
+
+/** MF-0059: map a join_group RPC error to the join card's message. P0002 = invalid or reset code. */
+export function joinGroupRpcError(error: RpcError): string {
+  return error.code === "P0002"
+    ? "This invite link is invalid or has been reset. Ask a group member for a new one."
+    : "Could not join the group. Try again.";
+}
+
+/**
+ * MF-0059: map an advance_group_course RPC error to the Move button's message. 42501 = not the
+ * admin, 40001 = the group moved since the screen rendered, P0001 = no path or no next course.
+ */
+export function advanceGroupCourseRpcError(error: RpcError): string {
+  switch (error.code) {
+    case "42501":
+      return "Only the group admin can move the group to the next course.";
+    case "40001":
+      return "The group has already moved. Refresh to see its course.";
+    case "P0001":
+      return "This group has no next course to move to.";
+    default:
+      return "Could not move the group. Try again.";
+  }
 }

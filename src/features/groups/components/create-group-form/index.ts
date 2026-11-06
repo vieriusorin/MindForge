@@ -1,2 +1,2 @@
 export { CreateGroupForm } from "./create-group-form";
-export type { CreateGroupFormProps } from "./types";
+export type { CreateGroupFormProps, PathOption } from "./types";

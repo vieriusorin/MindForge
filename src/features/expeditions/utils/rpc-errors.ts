@@ -40,3 +40,19 @@ export function startExpeditionRpcError(
       return { message: START_EXPEDITION_MESSAGES.unknown };
   }
 }
+
+/**
+ * MF-0059: map an end_expedition RPC error to the End button's message. SQLSTATEs from
+ * private.end_expedition (supabase/migrations/20261106140000_mf0059_path_groups.sql):
+ * 42501 = not the admin, P0002 = nothing running.
+ */
+export function endExpeditionRpcError(error: RpcError): string {
+  switch (error.code) {
+    case "42501":
+      return "Only the group admin can end an expedition.";
+    case "P0002":
+      return "No expedition is running.";
+    default:
+      return "Couldn't end the expedition. Try again.";
+  }
+}

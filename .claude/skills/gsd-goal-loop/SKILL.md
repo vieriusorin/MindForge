@@ -58,7 +58,11 @@ GOAL.md: issue (created if missing, title from `title:`), status label, project 
 - **every new ticket this one spawns** — a DESIGN split, a reserved follow-up, a RETRO gate action,
   a WATCH finding: write its GOAL.md with `title:` and the origin line (`> Reserved <date> from <ID> …`),
   then `pnpm ticket:github <NEW-ID>`. It becomes a sub-issue of this ticket automatically. Never leave a
-  new GOAL.md without its issue: the issue is what reserves the number for everyone else.
+  new GOAL.md without its issue: the issue is what reserves the number for everyone else. Take <NEW-ID> from
+  `pnpm ticket:github next` run in that same turn, after `git fetch` (it reads folders, issues and every local and
+  remote branch). Never use <this ID>+1 or a number you have only written into a GOAL line or a retro: "reserved
+  MF-0059" holds nothing until its folder and issue exist (MF-0044 and MF-0058 both named MF-0059 the same day; the
+  merge put two tickets in one GOAL.md, reddened main CI on `gate:planning` and cost a pickup split, MF-0061).
 
 When the Stop hook is installed (`scripts/ticket-github.mjs --changed --background`), it syncs any
 GOAL.md that changed at the end of each turn, and running the script by hand is a no-op. If `gh` is

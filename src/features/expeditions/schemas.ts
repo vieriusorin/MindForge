@@ -18,3 +18,6 @@ export const StartExpeditionInput = z.strictObject({
 });
 
 export type StartExpeditionValues = z.input<typeof StartExpeditionInput>;
+
+/** MF-0059: `endExpedition`'s input. The DB checks the admin and that one is running. */
+export const EndExpeditionInput = z.strictObject({ groupId: z.uuid() });

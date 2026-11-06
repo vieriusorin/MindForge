@@ -8,7 +8,7 @@ export async function getGroup(groupId: string): Promise<GroupDetail | null> {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase
     .from("groups")
-    .select("id, name, pack_slug, invite_code, created_by")
+    .select("id, name, pack_slug, invite_code, created_by, path_slug")
     .eq("id", groupId)
     .maybeSingle();
   if (error) throw new Error(`getGroup: ${error.message}`);
@@ -19,5 +19,6 @@ export async function getGroup(groupId: string): Promise<GroupDetail | null> {
     packSlug: data.pack_slug,
     inviteCode: data.invite_code,
     createdBy: data.created_by,
+    pathSlug: data.path_slug,
   };
 }

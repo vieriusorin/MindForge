@@ -1,0 +1,22 @@
+{
+  "ticket": "MF-0059",
+  "frozen_at": "2026-11-06T12:16:43Z",
+  "files": [
+    {
+      "path": "src/server/db/__tests__/mf-0059-path-groups.db.acceptance.test.ts",
+      "sha256": "de3ef20fd9b553c28e12336d3bb54155253e2b3511c5b4dabd74b61b56a7fda3",
+      "first_failure": "SC-1: relation private.path_courses does not exist (42P01); SC-2: PGRST202 create_path_group; SC-3/4/5/9: beforeAll Could not find the function public.create_path_group(p_name, p_path_slug); SC-10: expected { ends_at: Date } to match { ends_at: null }, CHECK expeditions_seven_days, PGRST202 end_expedition"
+    },
+    {
+      "path": "src/engine/path/__tests__/mf-0059-group-course-step.acceptance.test.ts",
+      "sha256": "1e4197261d467a59238b937d44f323631be70b9391dd4ed2d93734e8f9dcde11",
+      "first_failure": "SC-6: Error: not implemented (groupCourseStep), 6 cases"
+    },
+    {
+      "path": "src/engine/expedition/__tests__/mf-0059-open-expedition.acceptance.test.ts",
+      "sha256": "26d2357ec9d1e9be0faf165d594bdcc3c8041aac718f642bbcf77c2a05af2727",
+      "first_failure": "SC-10: Error: not implemented (summarizeExpedition with endsAt: null), 6 cases"
+    }
+  ],
+  "history": []
+}

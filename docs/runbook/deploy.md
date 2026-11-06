@@ -67,7 +67,7 @@ Steps B1–B3 make the database match the code, so do them right after the merge
 |---|---|---|
 | B1 | Preview the migrations | `pnpm exec supabase db push --linked --dry-run` |
 | B2 | Apply the migrations | `pnpm exec supabase db push --linked` |
-| B3 | Sync the pack registry + answer keys | `SUPABASE_DB_URL="$(DB_URL)" pnpm db:sync-keys` |
+| B3 | Sync the pack and path registries + answer keys | `SUPABASE_DB_URL="$(DB_URL)" pnpm db:sync-keys` |
 | B4 | Security advisors at WARN and above (must say "No issues found") | `pnpm exec supabase db advisors --linked --type security --level warn --fail-on warn` |
 | B5 | Check the deployment | Vercel dashboard: the latest `main` deployment is **Ready** and aliased to production |
 | B6 | Smoke test | open `https://<prod-origin>`, sign in by magic link, open a group, copy the invite link (must start with `SITE_URL`) |
@@ -75,11 +75,12 @@ Steps B1–B3 make the database match the code, so do them right after the merge
 Notes:
 - B3 must follow B2: `create_group` refuses every pack until `private.packs` is filled, and
   the Duel grades only questions whose keys are synced.
-- Changes to `packs/**/questions/**` need B3 even when there is no migration.
+- Changes to `packs/**/questions/**` or `paths/**` need B3 even when there is no migration
+  (`create_path_group`, `join_group` and `advance_group_course` read the path registry, MF-0059).
 - B4 ignores INFO on purpose. Without `--level warn` it lists `rls_enabled_no_policy` for `private.packs` and
   `private.question_keys`. Those are deliberate deny-all tables (RLS on, no grants, read only by definer functions).
   Any WARN/ERROR on a MindForge object means: open a ticket, don't hot-fix in the dashboard.
-- B3 refuses to run against a remote DB unless the checkout is `main` with no local changes under `packs/`,
+- B3 refuses to run against a remote DB unless the checkout is `main` with no local changes under `packs/` or `paths/`,
   because it unregisters every pack whose folder is missing. A stale branch would disable group creation for that pack.
 
 ## C. Rollback

@@ -6,26 +6,37 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { plantableSkills } from "@/engine/content";
 import {
+  canStartExpedition,
   EXPEDITION_MIN_MEMBERS,
+  isEndedByCourseMove,
+  isExpeditionActive,
   isExpeditionAllowed,
   summarizeExpedition,
 } from "@/engine/expedition";
 import { buildForest } from "@/engine/forest";
 import { countableAttempts, memoryBySkill } from "@/engine/memory";
 import type { Pack } from "@/engine/pack";
+import { groupCourseStep } from "@/engine/path";
 import { stormProof } from "@/engine/storm";
 import { serializeDuel } from "@/features/duel/search-params";
+import { EndExpeditionButton } from "@/features/expeditions/components/end-expedition-button";
 import { ExpeditionCard } from "@/features/expeditions/components/expedition-card";
 import { StartExpeditionForm } from "@/features/expeditions/components/start-expedition-form";
 import { Forest } from "@/features/forest/components/forest";
 import { rotateInviteCode } from "@/features/groups/actions";
 import { GroupHeatmap } from "@/features/groups/components/group-heatmap";
+import {
+  GroupPathCard,
+  pathCardView,
+} from "@/features/groups/components/group-path-card";
 import { InviteLink } from "@/features/groups/components/invite-link";
 import { MemberList } from "@/features/groups/components/member-list";
+import { MoveCourseButton } from "@/features/groups/components/move-course-button";
 import { PinToggle } from "@/features/groups/components/pin-toggle";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getPackContent } from "@/server/content/get-pack-content";
 import { getReviewContext } from "@/server/content/get-review-context";
+import { getExpeditionPack } from "@/server/expeditions/get-expedition-pack";
 import { getExpeditionProgress } from "@/server/expeditions/get-expedition-progress";
 import { getLatestExpedition } from "@/server/expeditions/get-latest-expedition";
 import { getGroup } from "@/server/groups/get-group";
@@ -35,17 +46,21 @@ import { listMyPins } from "@/server/groups/list-my-pins";
 import { siteOrigin } from "@/server/http/site-origin";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
+import { listPacks } from "@/server/packs/list-packs";
+import { getPath } from "@/server/paths/get-path";
 import { finalizeExpiredStorms } from "@/server/storm/finalize-expired-storms";
 import { listMyStormResults } from "@/server/storm/list-my-storm-results";
 
 /**
  * MF-0017: the group's expedition, streamed apart. C-2: only groups of ≥ 4 members run one, so
  * the progress read is never called for a smaller group. The start form is the admin's only, and
- * only while nothing is running (the database re-checks both).
+ * only when `canStartExpedition` allows it (the database re-checks both). MF-0059: an expedition
+ * counts in its own pack, which may be a course the group has moved on from (C-1).
  */
 async function ExpeditionSlot(props: {
   groupId: string;
   pack: Pack;
+  currentPack: string;
   memberCount: number;
   isAdmin: boolean;
   now: Date;
@@ -63,18 +78,31 @@ async function ExpeditionSlot(props: {
   const latest = await getLatestExpedition(props.groupId);
   if (!latest) return <ExpeditionCard status="none" startForm={startForm} />;
 
-  const progress = await getExpeditionProgress(latest.id);
+  const [progress, expeditionPack] = await Promise.all([
+    getExpeditionProgress(latest.id),
+    getExpeditionPack(latest.id),
+  ]);
   const summary = summarizeExpedition({
     progress,
     target: latest.target,
     startsAt: new Date(latest.startsAt),
-    endsAt: new Date(latest.endsAt),
+    endsAt: latest.endsAt === null ? null : new Date(latest.endsAt),
     now: props.now,
   });
+  // Domain codes repeat across packs: name the domain from the expedition's own pack.
+  const domainPack =
+    expeditionPack === props.currentPack
+      ? props.pack
+      : await getPack(expeditionPack);
   // A domain dropped from the pack after the start still names itself by its code.
   const domainName =
-    props.pack.domains.find((d) => d.code === latest.domainCode)?.name ??
+    domainPack.domains.find((d) => d.code === latest.domainCode)?.name ??
     latest.domainCode;
+  const movedOn = isEndedByCourseMove({
+    expeditionPack,
+    currentPack: props.currentPack,
+    isActive: summary.isActive,
+  });
   return (
     <ExpeditionCard
       status="shown"
@@ -82,7 +110,62 @@ async function ExpeditionSlot(props: {
       target={latest.target}
       progress={progress}
       summary={summary}
-      startForm={summary.isActive ? undefined : startForm}
+      movedOn={movedOn}
+      startForm={canStartExpedition(summary) ? startForm : undefined}
+      endButton={
+        props.isAdmin && summary.isActive ? (
+          <EndExpeditionButton groupId={props.groupId} />
+        ) : undefined
+      }
+    />
+  );
+}
+
+/**
+ * MF-0059 SC-7: the path a path group follows, streamed apart. A removed path file renders nothing
+ * (C-3: pack-only on screen). Only the admin gets the Move button (the database re-checks).
+ */
+async function GroupPathSlot(props: {
+  groupId: string;
+  pathSlug: string;
+  currentPack: string;
+  isAdmin: boolean;
+  now: Date;
+}) {
+  const [path, packs, latest] = await Promise.all([
+    getPath(props.pathSlug),
+    listPacks(),
+    props.isAdmin ? getLatestExpedition(props.groupId) : null,
+  ]);
+  if (!path) return null;
+  const view = pathCardView({
+    path,
+    step: groupCourseStep({ path, currentPack: props.currentPack }),
+    packNames: Object.fromEntries(packs.map((p) => [p.slug, p.name])),
+  });
+  const hasRunningExpedition =
+    latest !== null &&
+    isExpeditionActive({
+      startsAt: new Date(latest.startsAt),
+      endsAt: latest.endsAt === null ? null : new Date(latest.endsAt),
+      now: props.now,
+    });
+  return (
+    <GroupPathCard
+      view={view}
+      moveButton={
+        props.isAdmin ? (
+          // Keyed by the course: a fresh button (and mutation state) after each move.
+          <MoveCourseButton
+            key={props.currentPack}
+            groupId={props.groupId}
+            fromPack={props.currentPack}
+            nextCourseName={view.nextCourseName}
+            disabledReason={view.moveDisabledReason}
+            hasRunningExpedition={hasRunningExpedition}
+          />
+        ) : undefined
+      }
     />
   );
 }
@@ -172,6 +255,19 @@ async function GroupSlot({
           rotateAction={rotateInviteCode.bind(null, group.id)}
         />
       </div>
+      {group.pathSlug ? (
+        <div className="mb-8">
+          <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
+            <GroupPathSlot
+              groupId={group.id}
+              pathSlug={group.pathSlug}
+              currentPack={group.packSlug}
+              isAdmin={isAdmin}
+              now={now}
+            />
+          </Suspense>
+        </div>
+      ) : null}
       <div className="mb-8">
         <Suspense fallback={<Skeleton className="h-48 w-full rounded-xl" />}>
           <GroupHeatmapSlot
@@ -187,6 +283,7 @@ async function GroupSlot({
           <ExpeditionSlot
             groupId={group.id}
             pack={pack}
+            currentPack={group.packSlug}
             memberCount={members.length}
             isAdmin={isAdmin}
             now={now}

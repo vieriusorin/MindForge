@@ -465,7 +465,7 @@ export async function seedDemoWorlds({
         await tx`
           insert into public.expeditions (group_id, domain_code, target, starts_at, ends_at, created_by)
           values (${group.id}, ${e.domainCode}, ${e.target}, ${e.startsAt.toISOString()}::timestamptz,
-                  ${e.startsAt.toISOString()}::timestamptz + interval '7 days',
+                  null,
                   ${userId(e.createdByEmail)})`;
       }
 

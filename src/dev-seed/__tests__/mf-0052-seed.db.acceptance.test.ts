@@ -251,12 +251,11 @@ describe("MF-0052 seeded demo world", () => {
       const [row] = LatestExpeditionRows.parse(latest.data);
       if (!row) throw new Error(`no expedition in ${group.pack_slug}`);
       const startsAt = new Date(row.starts_at).getTime();
-      const endsAt = new Date(row.ends_at).getTime();
       expect(Math.abs(startsAt - (NOW.getTime() - 3 * DAY))).toBeLessThan(
         5 * 60 * 1000,
       );
       expect(startsAt).toBeLessThanOrEqual(Date.now());
-      expect(endsAt).toBeGreaterThan(Date.now());
+      expect(row.ends_at).toBeNull();
 
       const progress = await YOU.client.rpc("expedition_progress", {
         p_expedition_id: row.id,
@@ -271,7 +270,7 @@ describe("MF-0052 seeded demo world", () => {
         from private.pack_skills ps
         left join public.attempts a
           on a.pack_slug = ps.pack_slug and a.skill_code = ps.skill_code and a.correct
-          and a.answered_at >= ${row.starts_at} and a.answered_at < ${row.ends_at}
+          and a.answered_at >= ${row.starts_at} and a.answered_at < coalesce(${row.ends_at}::timestamptz, 'infinity')
           and exists (
             select 1 from public.group_members m
             where m.group_id = ${group.id} and m.user_id = a.user_id and a.answered_at >= m.joined_at)
