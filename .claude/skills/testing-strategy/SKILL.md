@@ -61,6 +61,11 @@ They break on every styling class change and say nothing about behaviour.
 ### Test behaviour, not implementation
 Assert what a caller observes. UI-string assertions use the app's real copy, in the UI language.
 
+### Know what jsdom can't prove (MF-0010 retro)
+jsdom and user-event ignore `inert`, and Tailwind never compiles in jsdom. For a focus or
+CSS-selector SC, assert the attribute or class on the subtree in a ui test, and prove the
+behaviour in the browser (both themes for colour).
+
 ## Suggested gate for any change
 
 ```bash

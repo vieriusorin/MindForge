@@ -98,6 +98,11 @@ mtime (some are stale), show the top few with their `stage:`, and ask which. Res
 recorded `stage:`, re-reading GOAL and the last LOOP-* files — never from memory. Run the branch check
 above first.
 
+**Stale stage check (MF-0010 retro):** on resume, run `git log main --oneline --grep=<ID>`. If
+commits exist but GOAL.md `stage:` is still `build`, set the stage from what is on main, resume at
+T7 verify, and list every SC whose proof names a test or browser step that has not run. Grep for
+every test an SC names; a missing one is unbuilt work, not a passed proof.
+
 ---
 
 ## Stage 1 — INTAKE (Plan: capture intent)
