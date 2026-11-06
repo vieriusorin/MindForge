@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0043",
+  "frozen_at": "2026-11-06T08:50:41.730Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0043-frozen-collisions.acceptance.test.ts",
+      "sha256": "95773a9b71167334b3821192fce803654fc0fec653fff9b7eb602763e7ed9ad1",
+      "first_failure": "SC-1..SC-5: Error: not implemented (checkFrozenCollisions stub in scripts/lib/frozen-collisions.mjs); 5/5 fail, identical on a 2nd run"
+    }
+  ],
+  "history": []
+}
