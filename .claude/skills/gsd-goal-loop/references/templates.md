@@ -97,6 +97,21 @@ behaviour; which gates the touched paths sit on>
 |----|-------|-------|
 | SC-1 | 2, 3 | `<path>/__tests__/x.test.ts` — oracle cases a, b, c |
 
+## Symbols changed
+
+<input to `pnpm ticket:collisions <ID>` (MF-0043); write it in GOAL.md at DESIGN, carry it here at PLAN.
+One bullet per symbol, or exactly `- none`. A bullet in any other shape is an error, not a skip.>
+
+- function `toPlayableQuestion`      <a function whose signature or behaviour changes: flags `name(` and imports>
+- name `ITEM_TYPES`                  <a closed set, shared type or constant: flags the whole word>
+- literal `'question'`               <a sibling member or output literal: flags the exact text>
+
+### Frozen files this will re-freeze
+
+| File | Change | Reason |
+|---|---|---|
+| `<path>.acceptance.test.ts:<line>` | <the assertion line that breaks → its new expected value> | <why; who approved> |
+
 ## Steps
 
 1. `<path>/x.ts` — <exact change>

@@ -1,0 +1,12 @@
+{
+  "ticket": "MF-0043",
+  "frozen_at": "2026-11-06T09:06:32.166Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0043-frozen-collisions.acceptance.test.ts",
+      "sha256": "aa9baa0686f97bf8591b26e22ffa722bb96353f9cc23628c956f8adb2bd851a4",
+      "first_failure": "SC-1: expected false to be true (no mf-0008:10 hit; CLI stub throws); SC-2: expected 1 to be 0; SC-3..SC-6: Error: not implemented (checkCollisions stub)"
+    }
+  ]
+}

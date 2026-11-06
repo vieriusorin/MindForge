@@ -247,6 +247,11 @@ and found missing in BUILD, step 5b). When the user widens scope at the checkpoi
 all), re-run this grep and also grep the code the wider scope reaches for literals naming the original subject
 (`grep -rn "Certified" prompts/ src/content-pipeline`): a cap, a count or a hard-coded name sized for one case breaks
 at several.
+(6) When the ticket changes a function's signature or behaviour, a closed set, or a shared shape, write a
+`## Symbols changed` list in GOAL.md (`references/templates.md`, LOOP-PLAN shape; otherwise `- none`) and run
+`pnpm ticket:collisions <ID>`. Every `file:line` it prints is a frozen file this ticket will break: list it under
+"Frozen files this will re-freeze" and take it to this checkpoint, not to PLAN (MF-0032: the 1-argument
+`toPlayableQuestion(q)` in `mf-0008-schema.acceptance.test.ts:70` surfaced only at PLAN, costing a second approval).
 
 Then run `grill-with-docs` against the draft and fold the answers back. With `--research`, triage
 each question (`references/research.md`) before putting it to the user: facts go to the researcher
@@ -332,10 +337,13 @@ this conversation could implement from the plan alone.
 **Contract-widening or behaviour-changing tickets: grep the thing you change, not your own wording.** When
 the ticket adds a member to a closed set or a field to a shared shape (an item kind, `ITEM_TYPES`, a `CHECK`
 list, `PackContent`, a loader's return type), or changes what a shared writer does to rows it did not write
-before (a sync or seed script, a SQL function, a trigger, a delete rule), list the frozen tests it will break before the plan is approved. Run, over every
-`**/*.acceptance.test.*` and every path in the `builds_on` tickets' `FROZEN.json`: `grep -ln` for the set's
-name, its sibling members as literals (e.g. `'question'` next to `'card'`), the shape's type name, and any
-literal of the loader's output. Put each hit in LOOP-PLAN under "Frozen files this will re-freeze", each
+before (a sync or seed script, a SQL function, a trigger, a delete rule), list the frozen tests it will break before the plan is approved. Carry
+the `## Symbols changed` list into LOOP-PLAN: each function whose signature or behaviour changes (`function`), the
+set's name and the shape's type name (`name`), its sibling members as literals and any literal of the loader's
+output (`literal`, e.g. `'question'` next to `'card'`). Then run `pnpm ticket:collisions <ID>`: it greps every
+`**/*.acceptance.test.*` and every `FROZEN.json` path (not only `builds_on`), and exits 1 with `file:line` for each
+hit in a file not yet listed. Aliased imports (`import { x as y }`) are flagged on the import line only; read that
+file's `y(` calls by hand. Put each hit in LOOP-PLAN under "Frozen files this will re-freeze", each
 with the new expected value and the reason, and take all of them to the plan-approval checkpoint as one
 batch. A collision found later is a re-freeze that stops BUILD or TEST for a separate approval (MF-0016:
 MF-0003 SC-5, MF-0006 SC-6, MF-0007 SC-1 and the ticket's own SC-5 fixture, one per stage). For a behaviour change also grep for the changed file's name and path (`sync-question-keys`,
