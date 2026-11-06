@@ -76,6 +76,14 @@ an exempt set must still fail (MF-0044: the grandfather skip came before the str
 unchecked until review minor 1).
 MF-0043 shipped all four as exit 0, and review found them over 3 rounds.
 
+**Parsing a structured format (YAML, TOML, a table) without a library: write an allowlist, not a blocklist (MF-0046).**
+Define the accepted line shapes as a short grammar in the plan, accept only lines that match one of them, and treat
+every other line as an error naming the line. Do not write a parser that rejects listed bad shapes and passes the rest:
+MF-0046 shipped that way and review found fail-open inputs in rounds 1, 2 and 3 (duplicate entry, block sequence at
+column 0, a `#` without whitespace, anchors, tags, escaped keys) until the parser was rewritten as an allowlist of line
+shapes. The plan's test list holds one fixture per shape class (duplicate keys, repeated blocks, comments, quoting,
+indentation variants, BOM), each expected to exit non-zero, plus one lock that the supported shapes still pass.
+
 ## 5. Lint
 
 Run LINT bare. Diagnostic limits and your own `| tail` both hide violations.

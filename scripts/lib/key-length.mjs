@@ -12,7 +12,7 @@ import YAML from "yaml";
 export const KEY_LENGTH_LIMIT = 1.15;
 
 /**
- * Packs shipped before the rule, skipped until MF-0059 retrofits them (user decision MF-0044 C-3). Probe
+ * Packs shipped before the rule, skipped until MF-0061 (first reserved as MF-0059) retrofits them (user decision MF-0044 C-3). Probe
  * 2026-11-06: ccdv-f 40, prod-prompting 28, platform-foundations 2 failing questions.
  */
 export const GRANDFATHERED_PACKS = new Set([
