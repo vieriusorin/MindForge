@@ -27,7 +27,8 @@
     "prompts:lock": "tsx scripts/generate/lock-prompts.ts",
     "check:packs": "node scripts/check-pack-grounding.mjs",
     "gate:planning": "node scripts/check-planning.mjs",
-    "ticket:github": "node scripts/ticket-github.mjs"
+    "ticket:github": "node scripts/ticket-github.mjs",
+    "ticket:collisions": "node scripts/frozen-collisions.mjs"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.1.3",

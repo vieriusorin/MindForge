@@ -247,6 +247,9 @@ and found missing in BUILD, step 5b). When the user widens scope at the checkpoi
 all), re-run this grep and also grep the code the wider scope reaches for literals naming the original subject
 (`grep -rn "Certified" prompts/ src/content-pipeline`): a cap, a count or a hard-coded name sized for one case breaks
 at several.
+(6) When the design already says which existing functions, sets or shared types change, write them under
+`## Symbols changed` in a draft LOOP-PLAN.md now and run `pnpm ticket:collisions <ID>`. Each `path:line` it prints is
+a frozen file to re-freeze: take it to this checkpoint, not to PLAN (MF-0043; Stage 3a has the full rule).
 
 Then run `grill-with-docs` against the draft and fold the answers back. With `--research`, triage
 each question (`references/research.md`) before putting it to the user: facts go to the researcher
@@ -330,20 +333,29 @@ EVAL validates it: acyclic, known agents, every SC closed. Done when an engineer
 this conversation could implement from the plan alone.
 
 **Contract-widening or behaviour-changing tickets: grep the thing you change, not your own wording.** When
-the ticket adds a member to a closed set or a field to a shared shape (an item kind, `ITEM_TYPES`, a `CHECK`
-list, `PackContent`, a loader's return type), or changes what a shared writer does to rows it did not write
-before (a sync or seed script, a SQL function, a trigger, a delete rule), list the frozen tests it will break before the plan is approved. Run, over every
-`**/*.acceptance.test.*` and every path in the `builds_on` tickets' `FROZEN.json`: `grep -ln` for the set's
-name, its sibling members as literals (e.g. `'question'` next to `'card'`), the shape's type name, and any
-literal of the loader's output. Put each hit in LOOP-PLAN under "Frozen files this will re-freeze", each
-with the new expected value and the reason, and take all of them to the plan-approval checkpoint as one
+the ticket changes an existing function's signature or return value, adds a member to a closed set or a field to a
+shared shape (an item kind, `ITEM_TYPES`, a `CHECK` list, `PackContent`, a loader's return type), or changes what a
+shared writer does to rows it did not write before (a sync or seed script, a SQL function, a trigger, a delete rule),
+list the frozen tests it will break before the plan is approved. List
+in LOOP-PLAN under `## Symbols changed`, each in backticks, every name the change reaches: a function whose
+signature changes (`toPlayableQuestion` or `toPlayableQuestion(q)`), the set's name, its sibling members as literals
+(`'question'` next to `'card'`, or a hyphenated `not-in-pack`), the shape's type name (`PackContent.items` counts as
+`PackContent`), and any literal of the loader's output. Write "None." when nothing existing changes, and keep backticks
+there for changed names only. Then run `pnpm ticket:collisions <ID>` (MF-0043): it greps every `**/*.acceptance.test.*`
+and every path in the `builds_on` tickets' `FROZEN.json` for those names as whole words, and prints each `path:line` not
+yet named under "Frozen files this will re-freeze" (exit 1). It catches the call sites a shape grep misses (MF-0032:
+the 1-argument `toPlayableQuestion(q)` in `mf-0008-schema`, found a stage late). It exits 2 on a token it cannot match
+(a command, a path, a phrase with spaces): grep such a literal by hand, record the result, and drop its backticks.
+Put each hit in LOOP-PLAN under "Frozen files this will re-freeze", each with the new expected value and the reason,
+re-run until it exits 0, and take all of them to the plan-approval checkpoint as one
 batch. A collision found later is a re-freeze that stops BUILD or TEST for a separate approval (MF-0016:
 MF-0003 SC-5, MF-0006 SC-6, MF-0007 SC-1 and the ticket's own SC-5 fixture, one per stage). For a behaviour change also grep for the changed file's name and path (`sync-question-keys`,
 `db:sync-keys`), the tables it writes (`private.items`, `question_keys`), and the column the new rule keys on
 (`pack_slug`). Each hit in "Frozen files this will re-freeze" must quote the assertion line that breaks and the
 new expected value; a hit is stated as "fixture only" only after that file's assertions were read (MF-0025:
 the MF-0007 SC-1 fixture inserted an unregistered slug and asserted it survived; found in TEST, and first
-told to the user as fixture-only).
+told to the user as fixture-only). A listed file is skipped for every symbol: when you add a symbol after a file was
+listed, re-read that file's assertions for the new symbol yourself.
 
 High-risk: present the plan and wait for approval. Normal: proceed.
 
