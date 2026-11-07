@@ -1,9 +1,9 @@
 import type { NodeMode } from "@/engine/path";
 
-/** MF-0062: what each node's link says it opens. */
+/** MF-0062: what each node's link says it opens. MF-0064: Seed, Sprout and fading nodes open a lesson. */
 export const NODE_MODE_LABEL = {
-  plant: "Seed Planting",
-  walk: "Daily Walk",
+  plant: "Lesson",
+  walk: "Lesson",
   duel: "Scenario Duel",
 } as const satisfies Record<NodeMode, string>;
 
@@ -14,8 +14,9 @@ export interface StartNodeInput {
 }
 
 /**
- * MF-0062: the start-node contract. The only place a course-map node becomes a URL; MF-0064 (lesson
- * player) changes the target here and nowhere else.
+ * MF-0062: the start-node contract. The only place a course-map node becomes a URL. MF-0064: a Seed,
+ * Sprout or fading node (plant, walk) opens the lesson scoped to that skill, so "Water first" always
+ * recalls the skill it names; a Sapling+ node keeps the pack's Scenario Duel.
  */
 export function startNodeHref({
   packSlug,
@@ -23,8 +24,8 @@ export function startNodeHref({
   mode,
 }: StartNodeInput): string {
   const base = `/play/${packSlug}`;
-  if (mode === "plant") return `${base}/plant/${encodeURIComponent(skillCode)}`;
-  return `${base}/${mode}`;
+  if (mode === "duel") return `${base}/duel`;
+  return `${base}/lesson/${encodeURIComponent(skillCode)}`;
 }
 
 /**

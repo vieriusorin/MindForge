@@ -3,6 +3,7 @@
  * view shows each domain, each skill node with its stage and health in words, exactly one next step,
  * a Start link to that node's mode, the Boss Storm checkpoints (exam packs only), and no XP, streak
  * or league (D-3). Links are what a tap opens; their targets are the start-node contract (SC-4).
+ * Re-frozen by MF-0064 (U-2): Seed, Sprout and fading nodes are labelled and open "Lesson".
  */
 import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
@@ -147,13 +148,13 @@ describe("MF-0062 SC-6: the course map view", () => {
     expect(within(d2).getByText("Seed")).toBeTruthy();
     const names = within(d2)
       .getAllByRole("link", {
-        name: /^(Seed Planting|Daily Walk|Scenario Duel): /,
+        name: /^(Lesson|Scenario Duel): /,
       })
       .map((a) => a.getAttribute("aria-label") ?? a.textContent);
     expect(names).toEqual([
-      "Daily Walk: System prompts",
-      "Seed Planting: Few-shot examples",
-      "Seed Planting: Output formats",
+      "Lesson: System prompts",
+      "Lesson: Few-shot examples",
+      "Lesson: Output formats",
     ]);
   });
 
@@ -163,11 +164,11 @@ describe("MF-0062 SC-6: the course map view", () => {
       screen.getByRole("link", { name: "Scenario Duel: Agent loops" }),
     ).toHaveProperty("pathname", "/play/ccdv-f/duel");
     expect(
-      screen.getByRole("link", { name: "Daily Walk: System prompts" }),
-    ).toHaveProperty("pathname", "/play/ccdv-f/walk");
+      screen.getByRole("link", { name: "Lesson: System prompts" }),
+    ).toHaveProperty("pathname", "/play/ccdv-f/lesson/2.1");
     expect(
-      screen.getByRole("link", { name: "Seed Planting: Output formats" }),
-    ).toHaveProperty("pathname", "/play/ccdv-f/plant/2.3");
+      screen.getByRole("link", { name: "Lesson: Output formats" }),
+    ).toHaveProperty("pathname", "/play/ccdv-f/lesson/2.3");
   });
 
   it("SC-6: exactly one node carries Water first, and Start opens that node's mode", async () => {
@@ -184,12 +185,12 @@ describe("MF-0062 SC-6: the course map view", () => {
       within(marked[0] as HTMLElement).getByText("System prompts"),
     ).toBeTruthy();
     const start = screen.getByRole("link", { name: /^Start/ });
-    expect(start).toHaveProperty("pathname", "/play/ccdv-f/walk");
+    expect(start).toHaveProperty("pathname", "/play/ccdv-f/lesson/2.1");
     await user.tab();
     expect(document.activeElement).toBe(start);
   });
 
-  it("SC-6: a Next step marks its node and Start opens Seed Planting for it", () => {
+  it("SC-6: a Next step marks its node and Start opens the lesson for it", () => {
     renderWithProviders(
       <CourseMap packSlug="ai-capabilities" map={COURSE_MAP} />,
     );
@@ -203,7 +204,7 @@ describe("MF-0062 SC-6: the course map view", () => {
     expect(screen.queryByText("Water first")).toBeNull();
     expect(screen.getByRole("link", { name: /^Start/ })).toHaveProperty(
       "pathname",
-      "/play/ai-capabilities/plant/c.1",
+      "/play/ai-capabilities/lesson/c.1",
     );
   });
 

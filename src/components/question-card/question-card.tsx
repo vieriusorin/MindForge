@@ -37,6 +37,7 @@ export function QuestionCard({
   onToggle,
   headingRef,
   footer,
+  showRationales = true,
 }: QuestionCardProps) {
   const isMulti = question.select > 1;
   const headingId = `question-${question.id}`;
@@ -90,7 +91,7 @@ export function QuestionCard({
             )}
             <span>
               <span className="font-medium">{OPTION_VERDICT[state]}</span>
-              {feedback.rationales[o.id]}
+              {showRationales && feedback.rationales[o.id]}
             </span>
           </p>
         )}
