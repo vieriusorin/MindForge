@@ -1,0 +1,63 @@
+{
+  "ticket": "MF-0065",
+  "frozen_at": "2026-11-07T11:19:54.098Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/engine/memory/__tests__/mf-0065-confidence-grading.acceptance.test.ts",
+      "sha256": "6a5bfc63315c8f673a0d4139b954492b2360a6583eae04a451f6cd2a9fd5beb5",
+      "first_failure": "SC-4/SC-5: Error: not implemented (ratingFor, confidentMissAt); CM3 walk reason expected water got strengthen; replay of correct+unsure 2.3065 vs 1.2931; CM7 nextReviewAt 2026-11-26T09:00Z vs 2026-11-22T09:00Z. SC-7 heatmap green (vacuous until replay reads confidence; non-vacuity run after BUILD)."
+    },
+    {
+      "path": "src/engine/memory/__tests__/mf-0065-next-item.acceptance.test.ts",
+      "sha256": "5be19270f6f0c79d7decd41605a9bcbe730a41275a5818a04adeca6916e80a82",
+      "first_failure": "SC-6: Error: not implemented (orderSkillItems); walk serves p.S1.q3 (least recently seen) instead of p.S1.q2."
+    },
+    {
+      "path": "src/engine/misconceptions/__tests__/mf-0065-misconceptions.acceptance.test.ts",
+      "sha256": "176ccf14c922441539ab56d4cfdff49a3711382b0a54b003245ee2f913555b3e",
+      "first_failure": "SC-8/SC-9: Error: not implemented (parseMisconceptions, misconceptionTally, lessonMixUp, confusableSkills); planLesson ignores confusable (got S3, expected S1/S2)."
+    },
+    {
+      "path": "src/test/__tests__/mf-0065-check-misconceptions.acceptance.test.ts",
+      "sha256": "3402cb1613b10fab43e34a6e56b38ac91fb5bbc1c30cd32634ae608a3d9d61ba",
+      "first_failure": "SC-8: stdout lacks \"misconceptions: 1 file(s), 1 tag(s), 0 problem(s)\"; a tag on a correct option exits 0."
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0065-confidence.db.acceptance.test.ts",
+      "sha256": "1c52545c47d74656039bd3a4b7396eb08897f7e39d70c7fbf9628f4e83066fb5",
+      "first_failure": "SC-1..SC-3: PGRST202 (5-arg record_attempt missing); SC-1 signature list is the 4-arg pair; SC-7 no rows written (keys.size 0). 2nd run identical."
+    },
+    {
+      "path": "src/features/__tests__/mf-0065-confidence-input.acceptance.test.ts",
+      "sha256": "3c6bf6615f0342b7dc37fc54774f7261a14c993d535e56c0b2d437a50392ac99",
+      "first_failure": "SC-10: strictObject refuses confidence (forwards: expected ok true got Pick an answer first.); refusals already green."
+    },
+    {
+      "path": "src/server/attempts/__tests__/mf-0065-grade-confidence.acceptance.test.ts",
+      "sha256": "25cce7a380aecbe41a8e4b080b6019bd99f9309a5d2b09f0794b5d551dfeed5d",
+      "first_failure": "SC-10: record_attempt called without p_confidence."
+    },
+    {
+      "path": "src/features/__tests__/mf-0065-confidence-tap.acceptance.test.tsx",
+      "sha256": "9c5732e573bd6954e7b340b05e05dce7ca999561ca688a7c30df111bb5af26f1",
+      "first_failure": "SC-11: Unable to find role group \"How sure are you?\"; SC-12: no \"Mix-up to watch\" text."
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-07T11:24:40.347Z",
+      "reason": "Fixture defect found once the 5-arg function existed: the SC-7 group insert lacked the NOT NULL invite_code (PostgresError 23502), a red that was not the SC's. Added invite_code to the insert only; no assertion changed (SKILL 2b: a missing-fixture red is fixed and re-frozen).",
+      "previous": {
+        "src/server/db/__tests__/mf-0065-confidence.db.acceptance.test.ts": "8aaee47cee00f4b476b3d1f01a85d0d2d0c2ddd21f8e96b945ae1667a8dafcc8"
+      }
+    },
+    {
+      "at": "2026-11-07T11:26:52.190Z",
+      "reason": "BUILD found the frozen literal p_confidence: null unrepresentable: the generated RPC Args type types a defaulted parameter as optional string (no null), and a cast is banned (code-conventions). No tap now sends no p_confidence key, which is the same DB call (default null; SC-1 DB test proves a no-tap row stores null). SC-10 text amended the same way. Own ticket, before plan approval; reported in the hand-off.",
+      "previous": {
+        "src/server/attempts/__tests__/mf-0065-grade-confidence.acceptance.test.ts": "758c55cc43657c428a6175ab8a2d9a8cae62ad3e001c5f88c604d9949620df7f"
+      }
+    }
+  ]
+}

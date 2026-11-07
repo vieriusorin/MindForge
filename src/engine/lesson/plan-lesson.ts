@@ -2,6 +2,7 @@ import { planSeedPlanting } from "../content/plan-seed-planting";
 import { isPlayable, reviewStateOf } from "../content/review";
 import type { PackContent, ReviewContext } from "../content/types";
 import type { ForestView } from "../forest/build-forest";
+import { orderSkillItems } from "../memory/order-skill-items";
 import type { Attempt } from "../memory/types";
 import type { Question } from "../questions/types";
 import type { LessonPlan, LessonStep } from "./types";
@@ -21,57 +22,31 @@ export interface PlanLessonInput {
   review: ReviewContext;
   /** The learner's graded attempts for the pack, for item order. */
   attempts: readonly Attempt[];
-}
-
-interface LastAnswer {
-  at: number;
-  correct: boolean;
-}
-
-function lastAnswers(attempts: readonly Attempt[]): Map<string, LastAnswer> {
-  const last = new Map<string, LastAnswer>();
-  for (const a of attempts) {
-    const at = a.answeredAt.getTime();
-    const seen = last.get(a.questionId);
-    if (!seen || at >= seen.at)
-      last.set(a.questionId, { at, correct: a.correct });
-  }
-  return last;
-}
-
-/** 0 = last answered wrong, 1 = never answered, 2 = last answered right. */
-function bucketOf(last: LastAnswer | undefined): number {
-  if (!last) return 1;
-  return last.correct ? 2 : 0;
+  /** MF-0065 (DQ-10): skills the pack's misconceptions link to this one, preferred first. */
+  confusable?: readonly string[];
 }
 
 /**
- * D-L6: a skill's servable items (playable, at most 4 options), wrong-last first, then never
- * answered (file order), then least recently answered.
+ * D-L6: a skill's servable items (playable, at most 4 options) in the shared next-item order
+ * (`orderSkillItems`, MF-0065): wrong-last first, then never answered (file order), then least recently answered.
  */
 function orderedItems(
   skillCode: string,
-  { content, review }: Pick<PlanLessonInput, "content" | "review">,
-  last: ReadonlyMap<string, LastAnswer>,
+  {
+    content,
+    review,
+    attempts,
+  }: Pick<PlanLessonInput, "content" | "review" | "attempts">,
 ): Question[] {
-  return content.questions
-    .map((question, order) => ({ question, order }))
-    .filter(
-      ({ question }) =>
+  return orderSkillItems(
+    content.questions.filter(
+      (question) =>
         question.skillCode === skillCode &&
         question.options.length <= LESSON_MAX_OPTIONS &&
         isPlayable(reviewStateOf(review, question), "practice"),
-    )
-    .sort((a, b) => {
-      const la = last.get(a.question.id);
-      const lb = last.get(b.question.id);
-      return (
-        bucketOf(la) - bucketOf(lb) ||
-        (la?.at ?? 0) - (lb?.at ?? 0) ||
-        a.order - b.order
-      );
-    })
-    .map((x) => x.question);
+    ),
+    attempts,
+  );
 }
 
 /**
@@ -84,17 +59,13 @@ export function planLesson(input: PlanLessonInput): LessonPlan {
   const trees = forest.regions.flatMap((r) => r.trees);
   const index = trees.findIndex((t) => t.skillCode === skillCode);
   const isNewSkill = (trees[index]?.stage ?? "seed") === "seed";
-  const last = lastAnswers(input.attempts);
 
   const { card, diagram } = planSeedPlanting({
     content,
     review,
     skill: skillCode,
   });
-  const recalls = orderedItems(skillCode, input, last).slice(
-    0,
-    LESSON_RECALL_TARGET,
-  );
+  const recalls = orderedItems(skillCode, input).slice(0, LESSON_RECALL_TARGET);
 
   if (!card && !diagram && recalls.length === 0) {
     return {
@@ -106,12 +77,24 @@ export function planLesson(input: PlanLessonInput): LessonPlan {
     };
   }
 
+  // MF-0065 (DQ-10): a skill the pack's misconceptions link to this one comes first, if already met;
+  // otherwise MF-0064 D-L3's nearest earlier met skill.
+  const isMet = (code: string): boolean => {
+    const tree = trees.find((t) => t.skillCode === code);
+    return tree !== undefined && tree.stage !== "seed";
+  };
+  const earlier = trees
+    .slice(0, Math.max(index, 0))
+    .reverse()
+    .map((t) => t.skillCode);
   let confusable: { skillCode: string; question: Question } | null = null;
-  for (let i = index - 1; i >= 0 && !confusable; i--) {
-    const tree = trees[i];
-    if (!tree || tree.stage === "seed") continue;
-    const [question] = orderedItems(tree.skillCode, input, last);
-    if (question) confusable = { skillCode: tree.skillCode, question };
+  for (const code of [...(input.confusable ?? []), ...earlier]) {
+    if (code === skillCode || !isMet(code)) continue;
+    const [question] = orderedItems(code, input);
+    if (question) {
+      confusable = { skillCode: code, question };
+      break;
+    }
   }
 
   const teach: LessonStep[] = [

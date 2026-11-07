@@ -1,11 +1,6 @@
-import {
-  type Card,
-  createEmptyCard,
-  fsrs,
-  generatorParameters,
-  Rating,
-} from "ts-fsrs";
+import { type Card, createEmptyCard, fsrs, generatorParameters } from "ts-fsrs";
 import type { MemorySnapshot } from "../forest/tree-stage";
+import { ratingFor } from "./grade";
 import type { Attempt } from "./types";
 
 /** Deterministic scheduler: no fuzz, so the same attempts always give the same forest. */
@@ -28,7 +23,8 @@ export function replayCard(
     card = scheduler.next(
       card,
       attempt.answeredAt,
-      attempt.correct ? Rating.Good : Rating.Again,
+      // MF-0065 (ADR 0007): the learner's tap grades the rating; no tap = Good / Again.
+      ratingFor(attempt),
     ).card;
     if (attempt.correct) successfulRecalls++;
   }

@@ -7,8 +7,10 @@ import {
   feedbackMessage,
   toggleChoice,
 } from "@/components/question-card";
+import type { Confidence } from "@/engine/memory";
 import type { AnswerFeedback } from "@/engine/questions";
 import { submissionKey } from "@/lib/attempt-id";
+import { confidenceField, nextConfidence } from "@/lib/confidence";
 import { useAttemptId } from "@/lib/use-attempt-id";
 import { useSingleFlight } from "@/lib/use-single-flight";
 import { answerWalkQuestion } from "../../../actions";
@@ -30,6 +32,9 @@ export interface UseWalkSessionReturn {
   feedbackRef: RefObject<HTMLOutputElement | null>;
   doneRef: RefObject<HTMLHeadingElement | null>;
   toggle: (optionId: string) => void;
+  /** MF-0065: the optional tap before the reveal; null when there is none. */
+  confidence: Confidence | null;
+  chooseConfidence: (confidence: Confidence) => void;
   submit: () => void;
   next: () => void;
 }
@@ -40,6 +45,7 @@ export function useWalkSession(
 ): UseWalkSessionReturn {
   const [index, setIndex] = useState(0);
   const [chosen, setChosen] = useState<string[]>([]);
+  const [confidence, setConfidence] = useState<Confidence | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const feedbackRef = useRef<HTMLOutputElement | null>(null);
   const doneRef = useRef<HTMLHeadingElement | null>(null);
@@ -80,6 +86,12 @@ export function useWalkSession(
     setChosen((c) => toggleChoice(c, optionId, step.question.select));
   };
 
+  // MF-0065: the tap belongs to the answer; it locks with the verdict and while checking.
+  const chooseConfidence = (tapped: Confidence): void => {
+    if (feedback || mutation.isPending) return;
+    setConfidence((c) => nextConfidence(c, tapped));
+  };
+
   const isSubmittable =
     step !== null &&
     canSubmit({
@@ -96,7 +108,10 @@ export function useWalkSession(
       questionId: step.question.id,
       chosen,
       contentHash: step.question.contentHash,
-      clientAttemptId: attempt.idFor(submissionKey(step.question.id, chosen)),
+      ...confidenceField(confidence),
+      clientAttemptId: attempt.idFor(
+        submissionKey(step.question.id, chosen, confidence),
+      ),
     });
   };
 
@@ -105,6 +120,7 @@ export function useWalkSession(
     attempt.clear();
     mutation.reset();
     setChosen([]);
+    setConfidence(null);
     setIndex((i) => i + 1);
   };
 
@@ -123,6 +139,8 @@ export function useWalkSession(
     feedbackRef,
     doneRef,
     toggle,
+    confidence,
+    chooseConfidence,
     submit,
     next,
   };

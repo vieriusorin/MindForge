@@ -4,6 +4,7 @@ import { DiagramFigure } from "@/components/diagram-figure";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { planLesson } from "@/engine/lesson";
+import { confusableSkills } from "@/engine/misconceptions";
 import { LessonPlayer } from "@/features/lesson/components/lesson-player";
 import { lessonHref } from "@/features/lesson/search-params";
 import { toPlayerSteps } from "@/features/lesson/utils/to-player-steps";
@@ -11,6 +12,7 @@ import { NatureCardView } from "@/features/seed-planting/components/nature-card"
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getItemHashes } from "@/server/content/get-item-hashes";
 import { getPackContent } from "@/server/content/get-pack-content";
+import { getPackMisconceptions } from "@/server/content/get-pack-misconceptions";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
@@ -35,19 +37,34 @@ async function LessonSlot({
 
   const now = new Date();
   // MF-0064 D-L3: the same forest the course map shows decides Seed vs met and the confusable skill.
-  const [pack, forest, content, hashes, review, attempts] = await Promise.all([
-    getPack(packSlug),
-    getMyCourseForest({ userId: user.id, packSlug, now }),
-    getPackContent(packSlug),
-    getItemHashes(packSlug),
-    getReviewContext(user.id, packSlug),
-    listMyAttempts(user.id, packSlug),
-  ]);
+  const [pack, forest, content, hashes, review, attempts, misconceptions] =
+    await Promise.all([
+      getPack(packSlug),
+      getMyCourseForest({ userId: user.id, packSlug, now }),
+      getPackContent(packSlug),
+      getItemHashes(packSlug),
+      getReviewContext(user.id, packSlug),
+      listMyAttempts(user.id, packSlug),
+      getPackMisconceptions(packSlug),
+    ]);
   const skills = pack.domains.flatMap((d) => d.skills);
   const skillInfo = skills.find((s) => s.code === skillCode);
   if (!skillInfo) notFound();
 
-  const plan = planLesson({ skillCode, forest, content, review, attempts });
+  // MF-0065 (DQ-10): skills this one's distractors mix in come first for the confusable step.
+  const confusable = confusableSkills({
+    skillCode,
+    misconceptions,
+    questions: content.questions,
+  });
+  const plan = planLesson({
+    skillCode,
+    forest,
+    content,
+    review,
+    attempts,
+    confusable,
+  });
   const steps = toPlayerSteps({
     steps: plan.steps,
     // MF-0032: each question carries the version this page shows.

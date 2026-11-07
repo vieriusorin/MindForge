@@ -1,5 +1,6 @@
 import type { ReactNode, Ref } from "react";
 import type { LessonProgress } from "@/engine/lesson";
+import type { Confidence } from "@/engine/memory";
 import type { AnswerFeedback } from "@/engine/questions";
 import type { PlayerStep } from "../../types";
 import type { QuestionStep } from "./utils";
@@ -51,6 +52,9 @@ export interface QuestionStepProps {
   isLast: boolean;
   feedbackRef: Ref<HTMLOutputElement>;
   onToggle: (optionId: string) => void;
+  /** MF-0065: the optional tap before the reveal. */
+  confidence: Confidence | null;
+  onChooseConfidence: (confidence: Confidence) => void;
   onSubmit: () => void;
   onNext: () => void;
 }

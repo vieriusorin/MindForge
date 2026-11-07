@@ -1,0 +1,274 @@
+# MF-0065: misconception tags for the subagents pack. Not part of any item's content hash.
+misconceptions:
+  - id: subagent-returns-everything
+    label: "A subagent passes back its raw output, file reads or full trace, not just a summary"
+  - id: subagent-results-need-manual-copy
+    label: "You must open the subagent's transcript yourself to get its findings"
+  - id: subagent-inherits-conversation
+    label: "A regular subagent automatically gets the parent's conversation, memory or system prompt"
+  - id: fresh-context-is-empty
+    label: "A fresh subagent context is empty: no system prompt, no CLAUDE.md, no task"
+  - id: mention-changes-how-subagent-runs
+    label: "Naming or @-mentioning a subagent changes what it sees or how it runs"
+  - id: compact-replaces-delegation
+    label: "Running /compact and handing work to a subagent do the same job"
+  - id: btw-can-do-side-work
+    label: "/btw can run tools or carry reusable instructions as a side task"
+  - id: verbose-work-belongs-in-main
+    label: "Verbose output like logs and test runs is best handled in the main conversation"
+  - id: fresh-subagent-beats-fork
+    label: "For work that needs the shared background, a fresh subagent or a team beats a fork"
+  - id: built-in-subagent-roles-confused
+    label: "In plan mode, research goes to Explore, general-purpose or claude-code-guide"
+  - id: delegation-not-from-description
+    label: "Claude picks a subagent by its name, system prompt, tools, model or file order"
+  - id: plain-request-guarantees-subagent
+    label: "Naming a subagent in plain text, or adding 'use proactively', guarantees it runs"
+  - id: delegation-needs-mention
+    label: "Claude only hands work to a custom subagent when you @-mention it"
+  - id: main-session-settings-for-one-task
+    label: "`--agent` and `initialPrompt` apply to one delegated task, not the whole session"
+  - id: background-changes-more-than-waiting
+    label: "Running in the foreground or background changes a subagent's context, files or limits"
+    skill: D1.S2
+  - id: max-turns-does-not-return-partial
+    label: "Hitting `maxTurns` discards, ignores or restarts the work, not returning partial output"
+  - id: subagent-definition-place-confused
+    label: "A subagent is a JSON object, a CLAUDE.md heading, or a file named after its `name`"
+  - id: scope-reach-confused
+    label: "A project `.claude/agents/` or `--agents` subagent reaches your other projects"
+  - id: name-clash-wrong-winner
+    label: "On a name clash, a user, plugin or file subagent wins over a higher-priority one"
+  - id: duplicates-load-merge-or-fail
+    label: "Same-name subagent definitions both load, merge, or stop with an error"
+  - id: required-fields-confused
+    label: "`description` can be left out, while `tools` or `model` must be set"
+  - id: field-spelling-flexible
+    label: "Field names like `max_turns`, `turns` or `reasoningEffort` are accepted"
+  - id: subagent-default-model-fixed
+    label: "A subagent with no `model` field runs on a fixed default such as Haiku or Sonnet"
+  - id: bigger-model-costs-less
+    label: "A bigger model like Opus makes a subagent cheaper because it needs fewer turns"
+  - id: delegation-is-cheap
+    label: "Subagents or extra agents cost little or nothing, or even lower the token total"
+  - id: skill-or-memory-field-misread
+    label: "Listing `Skill` in `tools` or setting `memory` preloads a skill"
+  - id: memory-isolates-edits
+    label: "Setting `memory: local` keeps a subagent's file edits isolated"
+  - id: worktree-from-pushed-branch
+    label: "An isolated worktree starts from your feature branch once it is pushed"
+  - id: stated-intent-restricts-tools
+    label: "Prompt wording or a tool's intended use restricts or isolates what a subagent can do"
+  - id: permission-mode-filters-commands
+    label: "A permission mode or a `Stop` hook can vet individual edits or commands"
+  - id: disallowed-specifier-narrows
+    label: "A `disallowedTools` entry like `Bash(git push *)` removes only that command"
+  - id: default-tools-confused
+    label: "With no `tools` field a subagent gets no tools, read-only tools, or all tools unfiltered"
+  - id: tool-fields-override-each-other
+    label: "Overlapping `tools` and `disallowedTools` make one field win, or the file fail to load"
+  - id: lead-can-leave-scope-and-effort-vague
+    label: "A short, vague task is enough; subagents work out scope and effort themselves"
+  - id: subagent-count-not-scaled
+    label: "The same number of subagents suits every query, simple or complex"
+  - id: large-output-through-coordinator
+    label: "Large subagent outputs should pass through or be rebuilt by the coordinator"
+  - id: iterative-work-fits-subagents
+    label: "Back-and-forth iterative work is a good fit for subagents"
+  - id: chain-for-independent-work
+    label: "Independent investigations should be chained so each gets the previous findings"
+  - id: multi-agent-fits-dependent-work
+    label: "Coding and tightly interdependent tasks are the best fit for multi-agent systems"
+  - id: teams-and-subagents-swapped
+    label: "Subagents suit collaborative work, and agent teams suit sequential same-file work"
+  - id: subagent-for-inline-guidance
+    label: "A subagent or fork can guide the edits you make in the main conversation"
+  - id: skill-isolates-context
+    label: "A skill keeps its output out of the main conversation's context"
+    skill: D4.S2
+  - id: context-fork-copies-conversation
+    label: "A skill with `context: fork` runs in a fork of the current conversation"
+  - id: start-with-autonomous-agents
+    label: "Autonomous agents or frameworks are the right starting point even for simple tasks"
+tags:
+  subagents.D1.S1.q1:
+    A: subagent-returns-everything
+    C: subagent-results-need-manual-copy
+    D: compact-replaces-delegation
+  subagents.D1.S1.q2:
+    A: subagent-inherits-conversation
+    B: fresh-context-is-empty
+    C: subagent-inherits-conversation
+  subagents.D1.S1.q3:
+    B: subagent-inherits-conversation
+    C: subagent-inherits-conversation
+    D: mention-changes-how-subagent-runs
+  subagents.D1.S1.q4:
+    A: compact-replaces-delegation
+    B: btw-can-do-side-work
+    D: verbose-work-belongs-in-main
+  subagents.D1.S1.q5:
+    A: subagent-returns-everything
+    B: subagent-returns-everything
+  subagents.D1.S1.q6:
+    B: subagent-returns-everything
+    C: subagent-inherits-conversation
+    D: fresh-subagent-beats-fork
+  subagents.D1.S2.q1:
+    A: built-in-subagent-roles-confused
+    B: built-in-subagent-roles-confused
+    D: built-in-subagent-roles-confused
+  subagents.D1.S2.q2:
+    B: delegation-not-from-description
+    C: delegation-not-from-description
+    D: delegation-needs-mention
+  subagents.D1.S2.q3:
+    A: plain-request-guarantees-subagent
+    B: main-session-settings-for-one-task
+    C: plain-request-guarantees-subagent
+  subagents.D1.S2.q4:
+    A: delegation-not-from-description
+    D: delegation-not-from-description
+  subagents.D1.S2.q5:
+    A: subagent-inherits-conversation
+    C: subagent-inherits-conversation
+    D: subagent-inherits-conversation
+  subagents.D1.S2.q6:
+    D: mention-changes-how-subagent-runs
+  subagents.D2.S1.q1:
+    B: scope-reach-confused
+    C: subagent-definition-place-confused
+    D: scope-reach-confused
+  subagents.D2.S1.q2:
+    A: subagent-definition-place-confused
+    B: subagent-definition-place-confused
+    D: required-fields-confused
+  subagents.D2.S1.q3:
+    A: name-clash-wrong-winner
+    C: duplicates-load-merge-or-fail
+    D: duplicates-load-merge-or-fail
+  subagents.D2.S1.q4:
+    A: background-changes-more-than-waiting
+    C: required-fields-confused
+  subagents.D2.S1.q5:
+    A: name-clash-wrong-winner
+    B: duplicates-load-merge-or-fail
+    D: duplicates-load-merge-or-fail
+  subagents.D2.S1.q6:
+    A: name-clash-wrong-winner
+    C: scope-reach-confused
+    D: scope-reach-confused
+  subagents.D2.S2.q1:
+    A: subagent-default-model-fixed
+    B: subagent-default-model-fixed
+    C: required-fields-confused
+  subagents.D2.S2.q2:
+    A: bigger-model-costs-less
+    C: delegation-is-cheap
+    D: verbose-work-belongs-in-main
+  subagents.D2.S2.q3:
+    A: skill-or-memory-field-misread
+    B: skill-or-memory-field-misread
+    D: main-session-settings-for-one-task
+  subagents.D2.S2.q4:
+    B: background-changes-more-than-waiting
+    C: memory-isolates-edits
+    D: stated-intent-restricts-tools
+  subagents.D2.S2.q5:
+    B: worktree-from-pushed-branch
+    C: background-changes-more-than-waiting
+  subagents.D2.S2.q6:
+    A: field-spelling-flexible
+    B: required-fields-confused
+    C: field-spelling-flexible
+  subagents.D3.S1.q1:
+    A: delegation-not-from-description
+    C: delegation-not-from-description
+    D: delegation-not-from-description
+  subagents.D3.S1.q2:
+    B: subagent-returns-everything
+    C: subagent-returns-everything
+    D: subagent-results-need-manual-copy
+  subagents.D3.S1.q3:
+    A: lead-can-leave-scope-and-effort-vague
+    B: lead-can-leave-scope-and-effort-vague
+  subagents.D3.S1.q4:
+    A: max-turns-does-not-return-partial
+    B: max-turns-does-not-return-partial
+    D: max-turns-does-not-return-partial
+  subagents.D3.S1.q5:
+    B: subagent-count-not-scaled
+    C: lead-can-leave-scope-and-effort-vague
+  subagents.D3.S1.q6:
+    A: large-output-through-coordinator
+    B: large-output-through-coordinator
+    D: subagent-returns-everything
+  subagents.D3.S2.q1:
+    B: permission-mode-filters-commands
+    D: stated-intent-restricts-tools
+  subagents.D3.S2.q2:
+    A: default-tools-confused
+    B: default-tools-confused
+    C: default-tools-confused
+  subagents.D3.S2.q3:
+    B: tool-fields-override-each-other
+    C: tool-fields-override-each-other
+    D: tool-fields-override-each-other
+  subagents.D3.S2.q4:
+    A: disallowed-specifier-narrows
+    C: permission-mode-filters-commands
+    D: stated-intent-restricts-tools
+  subagents.D3.S2.q5:
+    A: disallowed-specifier-narrows
+    B: permission-mode-filters-commands
+    C: permission-mode-filters-commands
+  subagents.D3.S2.q6:
+    A: default-tools-confused
+    C: stated-intent-restricts-tools
+    D: stated-intent-restricts-tools
+  subagents.D4.S1.q1:
+    B: verbose-work-belongs-in-main
+    C: btw-can-do-side-work
+    D: skill-isolates-context
+  subagents.D4.S1.q2:
+    A: delegation-is-cheap
+    C: verbose-work-belongs-in-main
+    D: subagent-default-model-fixed
+  subagents.D4.S1.q3:
+    A: iterative-work-fits-subagents
+    B: iterative-work-fits-subagents
+    D: iterative-work-fits-subagents
+  subagents.D4.S1.q4:
+    A: chain-for-independent-work
+    C: subagent-returns-everything
+  subagents.D4.S1.q5:
+    A: delegation-is-cheap
+    C: delegation-is-cheap
+    D: delegation-is-cheap
+  subagents.D4.S1.q6:
+    B: multi-agent-fits-dependent-work
+    C: multi-agent-fits-dependent-work
+    D: subagent-count-not-scaled
+  subagents.D4.S2.q1:
+    A: subagent-for-inline-guidance
+    B: subagent-for-inline-guidance
+    C: btw-can-do-side-work
+  subagents.D4.S2.q2:
+    A: teams-and-subagents-swapped
+    B: delegation-is-cheap
+    D: teams-and-subagents-swapped
+  subagents.D4.S2.q3:
+    A: background-changes-more-than-waiting
+    C: context-fork-copies-conversation
+  subagents.D4.S2.q4:
+    B: teams-and-subagents-swapped
+    C: delegation-is-cheap
+    D: teams-and-subagents-swapped
+  subagents.D4.S2.q5:
+    A: start-with-autonomous-agents
+    B: start-with-autonomous-agents
+    D: start-with-autonomous-agents
+  subagents.D4.S2.q6:
+    A: fresh-subagent-beats-fork
+    B: fresh-subagent-beats-fork
+    C: fresh-subagent-beats-fork

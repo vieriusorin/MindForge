@@ -4,6 +4,7 @@ import {
   type QuestionGradeError,
   reviewStateOf,
 } from "@/engine/content";
+import type { Confidence } from "@/engine/memory";
 import type { AnswerFeedback } from "@/engine/questions";
 import type { ActionResult } from "@/lib/action-result";
 import { getItemHashes } from "@/server/content/get-item-hashes";
@@ -25,6 +26,8 @@ export interface GradeAnswerInput {
   contentHash: string;
   /** MF-0067: the submission id; a retry with the same id returns the first grade. */
   clientAttemptId: string;
+  /** MF-0065: the learner's tap before the reveal; absent = no tap. */
+  confidence?: Confidence;
 }
 
 /**
@@ -40,6 +43,7 @@ export async function gradeAnswer({
   chosen,
   contentHash,
   clientAttemptId,
+  confidence,
 }: GradeAnswerInput): Promise<
   ActionResult<{ feedback: AnswerFeedback }, GradeError>
 > {
@@ -65,6 +69,8 @@ export async function gradeAnswer({
     p_chosen: chosen,
     p_content_hash: contentHash,
     p_client_attempt_id: clientAttemptId,
+    // MF-0065: stored with the grade in the same call; no tap = no key (the DB default, null)
+    ...(confidence ? { p_confidence: confidence } : {}),
   });
   if (isStaleVersionError(error)) return { ok: false, error: "changed" };
   if (error || typeof data !== "boolean") {

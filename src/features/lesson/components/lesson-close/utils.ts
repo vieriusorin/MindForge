@@ -53,3 +53,8 @@ export function reviewLine(
     ? { text: `Next review: ${DAY.format(skill.nextReviewAt)}`, zone: "UTC" }
     : { text: "No review date: a seed does not fade", zone: null };
 }
+
+/** MF-0065 (DQ-12): how many times the mix-up was picked, in words. */
+export function mixUpCountLine(count: number): string {
+  return count === 1 ? "picked 1 time" : `picked ${count} times`;
+}

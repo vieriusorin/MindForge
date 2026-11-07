@@ -67,3 +67,17 @@ describe("the minted id meets the input contract (MF-0067)", () => {
     }
   });
 });
+
+describe("submissionKey with a confidence tap (MF-0065)", () => {
+  it("no tap keeps the MF-0067 key", () => {
+    expect(submissionKey("q1", ["B"], null)).toBe(submissionKey("q1", ["B"]));
+  });
+  it("a different tap is a different submission", () => {
+    expect(submissionKey("q1", ["B"], "sure")).not.toBe(
+      submissionKey("q1", ["B"], "unsure"),
+    );
+    expect(submissionKey("q1", ["B"], "sure")).not.toBe(
+      submissionKey("q1", ["B"]),
+    );
+  });
+});

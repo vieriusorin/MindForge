@@ -2,12 +2,14 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { lessonOutcome } from "@/engine/lesson";
+import { lessonMixUp } from "@/engine/misconceptions";
 import { LessonClose } from "@/features/lesson/components/lesson-close";
 import {
   lessonHref,
   loadLessonDoneParams,
 } from "@/features/lesson/search-params";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getPackMisconceptions } from "@/server/content/get-pack-misconceptions";
 import { getReviewContext } from "@/server/content/get-review-context";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
@@ -31,12 +33,14 @@ async function DoneSlot({
   // MF-0064 D-L10: without a start time there is no "before"; start the lesson again.
   if (!since) redirect(back);
 
-  const [pack, attempts, review, stormResults] = await Promise.all([
-    getPack(packSlug),
-    listMyAttempts(user.id, packSlug),
-    getReviewContext(user.id, packSlug),
-    listMyStormResults(user.id, packSlug),
-  ]);
+  const [pack, attempts, review, stormResults, misconceptions] =
+    await Promise.all([
+      getPack(packSlug),
+      listMyAttempts(user.id, packSlug),
+      getReviewContext(user.id, packSlug),
+      listMyStormResults(user.id, packSlug),
+      getPackMisconceptions(packSlug),
+    ]);
   const skillInfo = pack.domains
     .flatMap((d) => d.skills)
     .find((s) => s.code === skillCode);
@@ -51,6 +55,8 @@ async function DoneSlot({
     since,
     now: new Date(),
   });
+  // MF-0065 (DQ-12): the learner's own picks during this lesson only.
+  const mixUp = lessonMixUp({ attempts, misconceptions, since });
 
   return (
     <>
@@ -60,7 +66,11 @@ async function DoneSlot({
         </p>
         <h1 className="mt-1 text-3xl md:text-4xl">{skillInfo.name}</h1>
       </header>
-      <LessonClose outcome={outcome} mapHref={`/play/${packSlug}`} />
+      <LessonClose
+        outcome={outcome}
+        mapHref={`/play/${packSlug}`}
+        mixUp={mixUp}
+      />
     </>
   );
 }

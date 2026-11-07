@@ -5,7 +5,7 @@
   "files": [
     {
       "path": "src/server/db/__tests__/mf-0067-retry-safe.db.acceptance.test.ts",
-      "sha256": "338ded3673fdf44bcbc0b8d9c67508f497dbd9c934c68b715a7727b44fc47cfe",
+      "sha256": "071de2cd84e1d27b7b968fe8510cd61492659260753fe9bab5d4f0cd209258d6",
       "first_failure": "SC-1..SC-6: PGRST202 (4-arg record_attempt missing), e.g. expected { data: null, code: PGRST202 } to deeply equal { data: true, code: null }; SC-7: signature list differs (3-arg). 2nd run identical (1st run skipped: local auth warming after a Docker pause)."
     },
     {
@@ -19,5 +19,13 @@
       "first_failure": "SC-9: TypeError: .toMatch() expects to receive a string, but got undefined (hooks send no clientAttemptId). 12/12 red."
     }
   ],
-  "history": []
+  "history": [
+    {
+      "at": "2026-11-07T11:22:58.518Z",
+      "reason": "MF-0065 re-freeze (confidence-graded recall): record_attempt gains p_confidence (5-arg signature). Only the SC-7 title and the two signature literals change to (text,text[],text,uuid,text); every other assertion unchanged. Listed in .planning/tasks/MF-0065/LOOP-PLAN.md; approved by the user 2026-11-07 (relayed by the orchestrator after the fresh-context review).",
+      "previous": {
+        "src/server/db/__tests__/mf-0067-retry-safe.db.acceptance.test.ts": "338ded3673fdf44bcbc0b8d9c67508f497dbd9c934c68b715a7727b44fc47cfe"
+      }
+    }
+  ]
 }

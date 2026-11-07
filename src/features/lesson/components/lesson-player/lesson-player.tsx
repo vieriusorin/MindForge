@@ -55,6 +55,8 @@ export function LessonPlayer({
           step={step}
           meta={meta}
           chosen={p.chosen}
+          confidence={p.confidence}
+          onChooseConfidence={p.chooseConfidence}
           feedback={p.feedback}
           announcement={p.announcement}
           guessNote={p.guessNote}

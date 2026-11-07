@@ -2,6 +2,7 @@
 
 import { Sprout } from "lucide-react";
 import Link from "next/link";
+import { ConfidenceTap } from "@/components/confidence-tap";
 import { QuestionCard } from "@/components/question-card";
 import { Button } from "@/components/ui/button";
 import {
@@ -98,6 +99,11 @@ export function SeedChecks({
               {s.error}
             </p>
           )}
+          <ConfidenceTap
+            value={s.confidence}
+            isLocked={s.feedback !== null || s.isPending}
+            onChoose={s.chooseConfidence}
+          />
           {s.feedback ? (
             <Button onClick={s.next} className="ml-auto">
               {s.isLast ? "Finish planting" : "Next check"}

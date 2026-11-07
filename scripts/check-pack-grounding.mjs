@@ -7,7 +7,8 @@
  * flaw-key rule (scripts/lib/cuckoo-flaw-key.mjs), which needs no corpus and so runs first. Since
  * MF-0044 the key-length rule (scripts/lib/key-length.mjs) runs beside it, also corpus-free (MF-0061: no pack
  * grandfathered; official items skip only the length comparison; U-7 adds the per-pack key-rank spread). The
- * corpus rules skip when the corpus is absent (CI, fresh clones).
+ * corpus rules skip when the corpus is absent (CI, fresh clones). Since MF-0065 it also validates each pack's
+ * optional misconceptions.yaml (engine rule `parseMisconceptions`), corpus-free.
  * Exit 1 on any problem.
  */
 import { createHash } from "node:crypto";
@@ -33,6 +34,12 @@ const PATHS = process.env.MF_PATHS_DIR
   ? resolve(process.env.MF_PATHS_DIR)
   : join(ROOT, "paths");
 const CORPUS = join(ROOT, ".cache", "corpus");
+
+/** MF-0065: tags written in a misconception file that failed validation (for the summary only). */
+function countTags(text) {
+  const tagsBlock = text.split(/^tags:\s*$/m)[1] ?? "";
+  return (tagsBlock.match(/^ {4}[A-Za-z0-9]+:/gm) ?? []).length;
+}
 
 // Every cuckoo YAML file under PACKS/<pack>/cuckoos, sorted, as absolute paths.
 function cuckooFiles() {
@@ -125,6 +132,48 @@ for (const path of pathFiles) {
   });
   problems.push(...lines.map((message) => ({ message })));
 }
+
+// MF-0065: misconception tags (`<pack>/misconceptions.yaml`, optional), structural and corpus-free, so CI sees
+// them. The rules live in the engine (parseMisconceptions); this only reads files and reports.
+const { parseMisconceptions } = await engine(
+  "src/engine/misconceptions/index.ts",
+);
+const { loadPackContent } = await engine("src/engine/content/index.ts");
+const tagSummary = { files: 0, tags: 0, problems: 0 };
+for (const dir of readdirSync(PACKS).sort()) {
+  const path = join(PACKS, dir, "misconceptions.yaml");
+  if (!existsSync(path)) continue;
+  tagSummary.files++;
+  const file = relative(ROOT, path);
+  const text = readFileSync(path, "utf8");
+  let issues;
+  try {
+    const pack = await loadPackFile(join(PACKS, dir, "pack.yaml"));
+    const content = await loadPackContent(pack, join(PACKS, dir));
+    const result = parseMisconceptions({
+      file,
+      text,
+      pack,
+      questions: content.questions,
+    });
+    issues = result.issues;
+    if (result.data)
+      tagSummary.tags += Object.values(result.data.tags).reduce(
+        (sum, options) => sum + Object.keys(options).length,
+        0,
+      );
+    else tagSummary.tags += countTags(text);
+  } catch (error) {
+    issues = [
+      `${file}: cannot load its pack or questions: ${error instanceof Error ? error.message : String(error)}`,
+    ];
+  }
+  tagSummary.problems += issues.length;
+  problems.push(...issues.map((message) => ({ message })));
+}
+console.log(
+  `misconceptions: ${tagSummary.files} file(s), ${tagSummary.tags} tag(s), ${tagSummary.problems} problem(s)`,
+);
 
 if (!existsSync(CORPUS)) {
   for (const p of problems) console.error(p.message);

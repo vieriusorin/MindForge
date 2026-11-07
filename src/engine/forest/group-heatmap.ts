@@ -111,12 +111,26 @@ export function summarizeGroupHeatmap(input: {
   return { status: "ready", regions };
 }
 
+/** MF-0065: the attempt as binary grading sees it (no tap). */
+function withoutConfidence({
+  questionId,
+  skillCode,
+  correct,
+  answeredAt,
+}: Attempt): Attempt {
+  return { questionId, skillCode, correct, answeredAt };
+}
+
 /** MF-0011: each member's countable attempts → engine replay → the group heatmap. */
 export function groupHeatmapFromAttempts(
   input: GroupAttempts & { pack: Pack; now: Date },
 ): GroupHeatmap {
+  // MF-0065 (ADR 0007): no group figure ever reads a member's confidence tap, so it is dropped before replay.
   const replay = (m: GroupMemberAttempts) =>
-    memoryBySkill(countableAttempts(m.attempts, m.review), input.now);
+    memoryBySkill(
+      countableAttempts(m.attempts, m.review).map(withoutConfidence),
+      input.now,
+    );
   return summarizeGroupHeatmap({
     pack: input.pack,
     // SC-7: the viewer never feeds the figures, so their attempts are not replayed

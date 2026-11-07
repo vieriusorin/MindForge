@@ -5,7 +5,7 @@
   "files": [
     {
       "path": "src/server/db/__tests__/mf-0032-attempt-hash.db.acceptance.test.ts",
-      "sha256": "0606f4dfc77a3bb61b662118bec53a926f1df85d6e76135a6f222ad88e446921",
+      "sha256": "9954b4f4c8aca503e5628ae7127013e2594ed315618044faebfa14c4a9feece6",
       "first_failure": "SC-1: expected [ { code: PGRST202 }, null ] to deeply equal [ null, true ] (3-arg record_attempt missing); SC-6: column \"content_hash\" does not exist (42703); SC-2: expected PGRST202 to be 55000; SC-7: signature list differs. Same on 2nd run."
     },
     {
@@ -40,6 +40,13 @@
         "src/engine/content/__tests__/mf-0032-answer-hash.acceptance.test.ts": "1e2dc6ee32df2e9f60084abfd1a60537e9956b837bed6dd2482cf832995eb585",
         "src/features/__tests__/mf-0032-changed-message.acceptance.test.ts": "d1c21d17d1ba71d69bf166265f2293932d0a8512c2aa8fd1cb28a100c462a527",
         "src/features/__tests__/mf-0032-answer-hash.acceptance.test.tsx": "150bc6e390cb35b98e6f32d611cbf5fbb8a4b604857c9b619c747a2fb3aace7c"
+      }
+    },
+    {
+      "at": "2026-11-07T11:22:58.518Z",
+      "reason": "MF-0065 re-freeze (confidence-graded recall): record_attempt gains p_confidence (5-arg signature). Only the SC-7 title and the two signature literals change to (text,text[],text,uuid,text); every other assertion unchanged. Listed in .planning/tasks/MF-0065/LOOP-PLAN.md; approved by the user 2026-11-07 (relayed by the orchestrator after the fresh-context review).",
+      "previous": {
+        "src/server/db/__tests__/mf-0032-attempt-hash.db.acceptance.test.ts": "0606f4dfc77a3bb61b662118bec53a926f1df85d6e76135a6f222ad88e446921"
       }
     }
   ]
