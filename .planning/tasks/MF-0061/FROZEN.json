@@ -1,0 +1,31 @@
+{
+  "ticket": "MF-0061",
+  "frozen_at": "2026-11-06T13:56:07Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0061-key-length-retrofit.acceptance.test.ts",
+      "sha256": "3e5ebc7621ee7ebe0757798a31617dccdb14f31cbd350320efb3205b680b2497",
+      "first_failure": "SC-1: expected +0 to be 1 (ccdv-f/prod-prompting/platform-foundations still grandfathered, a 1.20x key exits 0); SC-2: expected 1 to be +0 (an official 1.20x key is length-checked and fails); SC-3: stdout has no 'skipped (official)'. SC-4 green at freeze by design: a regression lock over the 68 keys recorded at 660f1c1. 3 failed | 1 passed, identical on a 2nd run"
+    },
+    {
+      "path": "src/test/__tests__/mf-0061-longest-key-share.acceptance.test.ts",
+      "sha256": "dedda6983e9a2dc47135da6ec6d7558571661280ef2afca4e736bbaaa9ac007f",
+      "first_failure": "U-7 re-freeze, RED against the U-6 rule (35% strictly-longest cap): rank-2 5/10 pack exits 0 (expected +0 to be 1); shortest/tied packs exit 0 (expected +0 to be 1); exactly-40% pack fails the old 35% cap (expected 1 to be +0); 9-question pack fails (old rule has no minimum sample: expected 1 to be +0); repo stdout lacks /key-rank: … 0 problem(s)/. 5 failed, identical on a 2nd run"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-07T10:13:17.941Z",
+      "reason": "U-6 (user, 2026-11-07): new SC-9 (pack-level longest-key share <= 35%) added as a new frozen file; the existing file and its hash are unchanged.",
+      "previous": {}
+    },
+    {
+      "at": "2026-11-07T10:49:49.762Z",
+      "reason": "U-7 (user, 2026-11-07): the SC-9 contract changes from a 35% strictly-longest-key cap to a per-rank cap (no length rank of the key may hold > 40% of a pack, ties share the better rank, packs < 10 questions skipped, failing share never printed equal to the limit). Same file, same name; all five cases rewritten for the rank rule.",
+      "previous": {
+        "src/test/__tests__/mf-0061-longest-key-share.acceptance.test.ts": "c44c4aa38d12774c7772a6c1443acb6acbe1a8a53234f2d0966eb7bb3f63c4bb"
+      }
+    }
+  ]
+}

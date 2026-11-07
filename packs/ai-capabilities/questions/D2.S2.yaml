@@ -8,7 +8,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "The date the model was released and first became available on the Claude API."
+        text: "The date the model was released and became available on the Claude API."
         correct: false
         rationale: "The cutoff describes the model's knowledge from training. Availability and lifecycle facts, such as the retirement date, are listed as separate rows."
       - id: B

@@ -16,7 +16,7 @@ questions:
         correct: false
         rationale: "The guide says to request what you want explicitly rather than relying on the model to infer it from vague prompts."
       - id: C
-        text: "Be specific about the format and constraints, and explain why they matter."
+        text: "Be specific about the format and constraints, and explain why."
         correct: true
         rationale: "Be clear and direct: be specific about the output format and constraints, and add context or motivation so Claude can deliver more targeted responses."
       - id: D
@@ -142,7 +142,7 @@ questions:
         correct: false
         rationale: "Format instructions and examples make output more consistent, but the page sends you to Structured Outputs when JSON must always match a schema."
       - id: B
-        text: "Use Structured Outputs, which constrain the response to follow your JSON schema."
+        text: "Use Structured Outputs, which constrain responses to your JSON schema."
         correct: true
         rationale: "The page says that if you need Claude to always output valid JSON that conforms to a specific schema, use Structured Outputs, which provide guaranteed schema compliance."
       - id: C

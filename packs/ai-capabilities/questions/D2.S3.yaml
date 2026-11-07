@@ -38,7 +38,7 @@ questions:
         correct: true
         rationale: "The docs say more context isn't automatically better: as token count grows, accuracy and recall degrade (context rot), so curating what is in context matters as much as the space available."
       - id: B
-        text: "None: a larger window means the model attends equally well to every single token it is given."
+        text: "None: a larger window means the model attends equally well to every token it is given."
         correct: false
         rationale: "A larger window handles longer prompts, but recall degrades as the token count grows."
       - id: C
@@ -116,7 +116,7 @@ questions:
         correct: true
         rationale: "The transformer lets every token attend to every other token, giving n² pairwise relationships; models also saw fewer long sequences in training. The result is a performance gradient rather than a hard cliff."
       - id: B
-        text: "The model deletes the tokens it rates as unimportant once the window passes half capacity."
+        text: "The model deletes tokens it rates as unimportant once the window passes half capacity."
         correct: false
         rationale: "Nothing is deleted by the model. The article explains the loss as attention being stretched across more pairwise relationships."
       - id: C

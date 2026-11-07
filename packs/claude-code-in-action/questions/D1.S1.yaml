@@ -72,7 +72,7 @@ questions:
         correct: false
         rationale: "You don't need to specify which files to read or what commands to run. Claude finds them with its search and file tools."
       - id: D
-        text: "Read every file in the project first, then run the tests once at the very end of the task."
+        text: "Read every file in the project first, then run the test suite just once, at the very end of the task."
         correct: false
         rationale: "Claude chooses tools based on what it learns along the way, starting from the failing output, and runs the tests again to check its fix."
     source:

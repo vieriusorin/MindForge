@@ -31,21 +31,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Resubmit the entire batch, because a batch with any failures must be rerun as a unit."
+        text: "Resubmit the entire batch, including the succeeded requests, because an expired batch's results are deleted and can no longer be downloaded."
         correct: false
-        rationale: "Each request in a batch has its own result; rerunning succeeded requests wastes cost and time."
+        rationale: "Batch results stay available for 29 days after creation, and each request has its own result; rerunning succeeded requests wastes cost and time."
       - id: B
-        text: "Resubmit the errored and expired requests unchanged in a new batch."
+        text: "Collect the errored and expired requests by custom_id and resubmit all of them unchanged in a new batch, since both failure types are transient."
         correct: false
-        rationale: "Expired requests can be resubmitted, but invalid requests will fail again until the request itself is fixed."
+        rationale: "Expired requests can be resubmitted, but an invalid_request_error is not transient: the request body must be fixed before it is sent again."
       - id: C
-        text: "Use each result's custom_id to match it to its original request, resubmit the expired requests, and fix the invalid requests before resubmitting them."
+        text: "Match each result to its request by custom_id, resubmit the expired requests, and fix the invalid requests before resubmitting them."
         correct: true
         rationale: "custom_id identifies each Messages request in the batch; expired requests were never sent to the model, while invalid_request_error results need a corrected request. Errored and expired requests are not billed."
       - id: D
-        text: "Switch the failed requests to synchronous streaming calls, since batch requests cannot be retried."
+        text: "Send the failed requests again as synchronous streaming calls, since resubmitting them in a new batch would bill the failed attempts a second time."
         correct: false
-        rationale: "Nothing prevents resubmitting requests in a new batch, and moving to synchronous calls gives up the batch cost advantage for a non-urgent job."
+        rationale: "Errored and expired requests are not billed, so a new batch does not charge them twice; moving to synchronous calls gives up the batch cost advantage for a non-urgent job."
     source:
       title: "Batch processing"
       url: "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
@@ -56,19 +56,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Use the streaming Messages API (for example via the SDK helper that consumes the stream and returns the final message), or the Message Batches API if the work is not time-sensitive."
+        text: "Use the streaming Messages API, letting the SDK collect the stream into the final message, or the Message Batches API if the work can wait."
         correct: true
         rationale: "For long-running requests the guidance is to use streaming or the Message Batches API; idle connections can be dropped on long non-streaming calls, and the SDK can consume a stream and return the complete message."
       - id: B
-        text: "Keep the non-streaming call and simply raise the HTTP client's timeout."
+        text: "Keep the non-streaming call with the same large max_tokens value, and raise the HTTP client's timeout well above the longest report generation time."
         correct: false
         rationale: "Some networks drop idle connections regardless of client timeout, and the SDK validates that non-streaming requests are not expected to exceed its timeout."
       - id: C
-        text: "Retry the same non-streaming request in a tight loop until it succeeds."
+        text: "Retry the same non-streaming request in a tight loop with no backoff until one of the attempts finally returns the full long report."
         correct: false
         rationale: "Repeating the same long idle request keeps hitting the same failure mode."
       - id: D
-        text: "Lower max_tokens drastically so every report fits in a short response."
+        text: "Lower max_tokens drastically so that every report fits in a short response, even if the longer reports come back truncated."
         correct: false
         rationale: "Truncating output changes the product requirement instead of fixing how long requests are transported."
     source:

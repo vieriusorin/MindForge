@@ -32,19 +32,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "At startup, query the Models API and automatically use the newest model returned."
+        text: "At startup, query the Models API and automatically switch every service to the newest model in the list that it returns."
         correct: false
         rationale: "Automatically adopting new models makes behavior change without review or evaluation."
       - id: B
-        text: "Let each developer choose the model per call so they can optimize locally."
+        text: "Let each developer keep choosing the model per call in their own service, so each one can optimize cost, latency and quality locally."
         correct: false
         rationale: "Inconsistent per-call choices make behavior unpredictable and hard to audit."
       - id: C
-        text: "Hard-code a different model string in every call site so each is explicit."
+        text: "Hard-code a different model string at every call site across the services, so each call's model is explicit in the code."
         correct: false
         rationale: "Scattered model strings are hard to change consistently and easy to miss during an upgrade."
       - id: D
-        text: "Pin an exact model ID (a pinned snapshot) in version-controlled configuration and change it only through a reviewed change after running evals on the new model."
+        text: "Pin one exact model ID, a pinned snapshot, in version-controlled config, and change it only via a reviewed change after evals."
         correct: true
         rationale: "Claude model IDs are pinned snapshots, so pinning the ID in versioned config keeps behavior stable, and upgrades become deliberate, evaluated changes."
     source:

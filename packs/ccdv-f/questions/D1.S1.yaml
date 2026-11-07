@@ -7,19 +7,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Build an autonomous agent with access to every tool and let it decide on each turn how to handle the ticket."
+        text: "Build an autonomous agent with access to every tool and let it decide on each turn how to handle the ticket and its follow-up steps."
         correct: false
         rationale: "Agents suit open-ended problems where the steps cannot be predicted; they cost more and can compound errors, which is unnecessary when the paths are well defined."
       - id: B
-        text: "Build a manager agent that supervises four sub-agents, each of which plans its own steps dynamically."
+        text: "Build a manager agent that supervises four category sub-agents, each of which plans its own follow-up steps dynamically at runtime."
         correct: false
         rationale: "A supervisor hierarchy adds complexity and unpredictability the task does not need; the guidance is to increase complexity only when simpler solutions fall short."
       - id: C
-        text: "Use a routing workflow: classify the ticket first, then send it down a predefined path with the specialized prompt for that category."
+        text: "Use a routing workflow: classify each ticket first, then send it down a predefined path with that category's specialized prompt."
         correct: true
         rationale: "Routing classifies an input and directs it to a specialized follow-up task, which fits distinct categories that are better handled separately, with the predictability of a workflow's predefined code paths."
       - id: D
-        text: "Put the instructions for all four categories into one large prompt and send every ticket through it."
+        text: "Put the instructions for all four categories into one large prompt and send every ticket through that same combined prompt."
         correct: false
         rationale: "A single combined prompt gives up the separation that routing provides; distinct categories are better handled by their own specialized follow-up tasks."
     source:
@@ -32,19 +32,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "An orchestrator-workers pattern, where a central LLM breaks the request into subtasks at runtime, delegates them to worker LLMs (subagents), and synthesizes the results."
+        text: "An orchestrator-workers pattern: a central LLM breaks the request into subtasks at runtime, delegates them to worker LLMs, and synthesizes the results."
         correct: true
         rationale: "Orchestrator-workers fits tasks whose subtasks cannot be predicted, such as coding changes across an unknown set of files; the subtasks are decided by the orchestrator rather than predefined."
       - id: B
-        text: "Parallelization (sectioning), with a fixed set of subtasks that always run simultaneously."
+        text: "Parallelization (sectioning): split the request into a fixed set of independent subtasks defined in advance, then run them simultaneously."
         correct: false
         rationale: "Sectioning runs predefined independent subtasks in parallel; here the subtasks are not known until the request is analyzed, which is the key difference from orchestrator-workers."
       - id: C
-        text: "Prompt chaining, with a fixed sequence of steps where each step processes the previous step's output."
+        text: "Prompt chaining: a fixed sequence of LLM calls decided in advance, where each call processes the previous call's output, with gate checks between steps."
         correct: false
         rationale: "Prompt chaining suits tasks that decompose cleanly into fixed subtasks; it cannot adapt to an unknown number of files."
       - id: D
-        text: "An evaluator-optimizer loop in which one LLM writes the whole change and another critiques it."
+        text: "An evaluator-optimizer loop: one LLM call drafts the whole multi-file change while a second call evaluates it and returns feedback until the change passes."
         correct: false
         rationale: "Evaluator-optimizer helps when clear evaluation criteria make iterative refinement worthwhile; it does not address dynamically splitting work across an unknown set of files."
     source:

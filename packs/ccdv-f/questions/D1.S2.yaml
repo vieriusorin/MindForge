@@ -8,19 +8,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Call the Messages API through the Client SDK and implement the tool loop, tools, and permission checks by hand."
+        text: "Call the Messages API through the Client SDK from the Python service, and write the tool loop, the file and shell tools, and the permission checks by hand."
         correct: false
         rationale: "With the Client SDK you write the tool loop yourself (or use the beta tool runner) and none of Claude Code's built-in tools, permissions, sessions, or hooks come with it."
       - id: B
-        text: "Have developers run the Claude Code CLI interactively in a terminal on the server."
+        text: "Have developers run the Claude Code CLI interactively in a terminal on the team's server and paste its results into the Python service."
         correct: false
         rationale: "The interactive CLI is built for daily interactive use and one-off terminal tasks, not for embedding an agent inside an application."
       - id: C
-        text: "Use Managed Agents so Anthropic hosts the agent harness and runs the agent loop."
+        text: "Use Managed Agents, configured through the Claude API, so that Anthropic hosts the agent harness and runs the agent loop for the service."
         correct: false
         rationale: "Managed Agents is a hosted harness configured through the Claude API; the requirement is to embed the agent in the team's own Python application process."
       - id: D
-        text: "Use the Claude Agent SDK, which embeds Claude Code's agent loop, built-in tools, permissions, sessions, and hooks in a Python or TypeScript application you operate."
+        text: "Use the Claude Agent SDK to embed Claude Code's agent loop, built-in tools, permissions, sessions, and hooks in the Python service the team operates."
         correct: true
         rationale: "The Agent SDK is the option for embedding Claude Code's agent in your own Python or TypeScript application, in a process you operate, with built-in tools, permissions, sessions, and hooks."
     source:

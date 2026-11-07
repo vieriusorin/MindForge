@@ -112,7 +112,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "It runs: the narrower allow rule is more specific, so it wins over the broad deny."
+        text: "It runs: the narrower allow rule is more specific than Bash(aws *), so it wins over the broad deny."
         correct: false
         rationale: "Rule specificity doesn't change the order. An allow rule can't carve an exception out of a deny rule."
       - id: B

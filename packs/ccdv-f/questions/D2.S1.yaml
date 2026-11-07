@@ -7,19 +7,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "\"The model should be accurate and produce good results for customers.\""
+        text: "\"The model should be accurate, produce good sentiment results for customers, and feel reliable to the support staff who read its labels.\""
         correct: false
         rationale: "This is still vague: it is neither specific about the task nor measurable."
       - id: B
-        text: "\"The model should be at least as good as the best published model on any benchmark.\""
+        text: "\"The model should be at least as good as the best published model on any public benchmark, whatever that benchmark happens to measure.\""
         correct: false
         rationale: "Targets should be achievable and relevant to the application; an arbitrary benchmark comparison is neither tied to this use case nor necessarily realistic."
       - id: C
-        text: "\"On a held-out test set of diverse, representative customer messages, the classifier achieves an F1 score of at least an agreed threshold, improving on the current baseline.\""
+        text: "\"On a held-out set of diverse, representative customer messages, the classifier reaches at least an agreed F1 score, above the current baseline.\""
         correct: true
         rationale: "Good success criteria are specific, measurable, achievable and relevant: a defined task, a quantitative metric, a representative held-out set, and a target grounded in the current baseline."
       - id: D
-        text: "\"The model should never misclassify a message.\""
+        text: "\"On every customer message in production, the classifier should never misclassify sentiment, with zero errors tolerated in any category.\""
         correct: false
         rationale: "A zero-error target is unrealistic for current model capabilities; criteria should be achievable."
     source:
@@ -32,19 +32,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Define several measurable criteria together: task fidelity on a representative test set, a response-time target that fits a live call, a per-call cost budget, and a privacy criterion for handling personal data."
+        text: "Define several measurable criteria: task fidelity on a representative test set, a response time that fits a live call, a per-call cost budget, and a privacy metric."
         correct: true
         rationale: "Most use cases need multidimensional criteria; latency, price and privacy preservation are common criteria alongside task fidelity, and each should be measurable."
       - id: B
-        text: "Define a single accuracy metric, since quality is what customers notice."
+        text: "Define a single accuracy metric on a representative test set, since answer quality is what customers notice, and treat speed, cost and privacy as concerns for a later phase."
         correct: false
         rationale: "A single metric ignores the stated latency, cost and privacy requirements, which are also part of what success means here."
       - id: C
-        text: "Write \"responses must be fast and safe\" and let the team interpret it during implementation."
+        text: "Write \"responses must be fast, affordable and safe\" into the requirements and let the team interpret each word during implementation and testing."
         correct: false
-        rationale: "\"Fast\" and \"safe\" are not measurable; vague criteria cannot be tested or used to compare designs."
+        rationale: "\"Fast\", \"affordable\" and \"safe\" are not measurable; vague criteria cannot be tested or used to compare designs."
       - id: D
-        text: "Specify only the response-time target, because the phone-call constraint is the hardest requirement."
+        text: "Specify only a response-time target in milliseconds, because the phone-call constraint is the hardest requirement and the others follow from it."
         correct: false
         rationale: "Latency alone leaves fidelity, cost and privacy undefined, so a fast but wrong or leaky system would pass."
     source:

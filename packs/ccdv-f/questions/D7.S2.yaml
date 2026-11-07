@@ -7,21 +7,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Rely on the main model alone, since Claude is inherently resilient to jailbreaks."
+        text: "Rely on the main model alone, because Claude is inherently resilient to jailbreaks and an extra screening layer would only add cost and latency."
         correct: false
         rationale: "Claude is resilient, but the guidance recommends additional layers to strengthen guardrails; relying on one layer is not defense in depth."
       - id: B
-        text: "Pre-screen each user message with a lightweight model such as Haiku, using structured outputs to return a simple harmful/not-harmful classification, and treat a refusal from the screen as a harmful verdict."
+        text: "Pre-screen each message with a lightweight model such as Haiku, using structured outputs for a harmful/not-harmful label, and count a refusal as harmful."
         correct: true
         rationale: "A harmlessness screen with a lightweight model constrained to a structured classification is a documented mitigation, and a stop_reason of refusal from the screen should be treated as harmful."
       - id: C
-        text: "Raise the main model's effort so it reasons more carefully about each message."
+        text: "Pre-screen each message with the large main model writing a free-form prose verdict, and let the message through whenever the screen refuses."
         correct: false
-        rationale: "Effort changes how many tokens the model spends; it is not an input-screening guardrail."
+        rationale: "The page screens with a lightweight model and structured outputs for a parseable verdict, and says a refusal from the screen is a harmful verdict, not a pass."
       - id: D
-        text: "Hide the system prompt by base64-encoding it."
+        text: "Check each message against a list of known jailbreak phrases, but only after the main model has already produced and sent its reply to the user."
         correct: false
-        rationale: "Obfuscating the system prompt does not screen inputs or prevent policy violations."
+        rationale: "Input validation filters known injection patterns before the input reaches Claude; checking after the reply screens nothing."
     source:
       title: "Mitigate jailbreaks and prompt injections"
       url: "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"

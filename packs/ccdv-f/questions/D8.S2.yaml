@@ -7,19 +7,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "stdio, exposing the server's standard input and output on a network port."
+        text: "stdio, since it has the lowest overhead and a single stdio server can be shared by many remote clients over the network."
         correct: false
-        rationale: "The stdio transport is for direct communication between local processes on the same machine and typically serves a single client."
+        rationale: "The stdio transport is for direct communication between local processes on the same machine (its performance comes from having no network overhead) and typically serves a single client."
       - id: B
-        text: "Streamable HTTP, using HTTP POST with optional Server-Sent Events and standard HTTP authentication, ideally with OAuth-obtained tokens."
+        text: "Streamable HTTP: HTTP POST with optional Server-Sent Events and standard HTTP auth, ideally with OAuth-obtained tokens."
         correct: true
         rationale: "Streamable HTTP enables remote server communication, supports standard HTTP authentication methods (MCP recommends OAuth), and remote servers using it typically serve many clients."
       - id: C
-        text: "Sampling, so the server can call the clients' language models directly."
+        text: "Sampling, so the central server can request completions from each connecting client's own language model over the network."
         correct: false
         rationale: "Sampling is a client primitive, not a transport, and it is deprecated in the current protocol version."
       - id: D
-        text: "A raw WebSocket connection, which is MCP's default transport for remote servers."
+        text: "A raw WebSocket connection, which MCP specifies as its standard transport for remote servers that serve many clients at once."
         correct: false
         rationale: "MCP defines two transports, stdio and Streamable HTTP; a raw WebSocket is not one of them."
     source:
@@ -32,17 +32,17 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Expose all three as tools so the model can decide when to use each."
+        text: "All three as tools (model-controlled), so the model decides when to read the schema, run a query, or start the report."
         correct: false
         rationale: "Tools are model-controlled actions; read-only context and user-invoked templates have their own primitives with different control models."
       - id: B
-        text: "Schema as a prompt, queries as a resource, report template as a tool."
+        text: "Schema as a prompt (user-controlled), queries as a resource (application-controlled), report template as a tool (model-controlled)."
         correct: false
         rationale: "This inverts the primitives: resources are passive read-only data, tools perform actions, and prompts are user-invoked templates."
       - id: C
-        text: "Put the schema and the report template in the server's tool descriptions, and expose only the query tool."
+        text: "Schema and report template written into the query tool's description, with that query tool as the only primitive exposed."
         correct: false
-        rationale: "Stuffing context into tool descriptions bloats every request and loses the explicit user invocation that prompts provide."
+        rationale: "Database schemas are the page's example of a resource, read-only context the application controls, and a user-started template is a prompt, which needs explicit invocation."
       - id: D
         text: "Schema as a resource (application-controlled), queries as a tool (model-controlled), report template as a prompt (user-controlled)."
         correct: true

@@ -7,19 +7,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Repeat the instructions in capital letters at the start and the end of the prompt."
+        text: "Repeat the instructions in capital letters, marked CRITICAL, at both the start and the end of the prompt so they stand out from the contract."
         correct: false
         rationale: "Emphasis does not tell Claude where instructions end and content begins; the problem is ambiguous boundaries."
       - id: B
-        text: "Wrap each kind of content in its own descriptive XML tag, such as <instructions>, <contract> and <example> tags, and place the long document near the top with the query at the end."
+        text: "Wrap each kind of content in its own XML tag, such as <instructions>, <contract> and <example>, and put the long contract at the top, above the query."
         correct: true
         rationale: "XML tags help Claude parse prompts that mix instructions, context, examples and inputs unambiguously; examples belong in <example> tags, and long documents work best placed above the query and instructions."
       - id: C
-        text: "Remove the samples entirely, since examples always cause copying."
+        text: "Remove the two samples entirely and describe the desired output in prose instead, since examples always lead Claude to copy their phrasing."
         correct: false
         rationale: "Examples are one of the most reliable ways to steer output; the fix is to mark them clearly as examples, not to drop them."
       - id: D
-        text: "Split the contract into many separate user messages without labels."
+        text: "Split the contract into many separate user messages without labels or tags, and keep the instructions and samples as plain paragraphs."
         correct: false
         rationale: "Unlabeled fragments make the boundaries even less clear."
     source:
@@ -32,17 +32,17 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Send a third, more detailed correction in the same session."
+        text: "Send a third, more detailed correction in the same session that spells out exactly what Claude got wrong."
         correct: false
         rationale: "A third correction adds to a conversation that already contains two failed attempts for Claude to keep re-reading."
       - id: B
-        text: "Keep working in the same session, since previous unrelated tasks have no cost."
+        text: "Keep working in the same session, since history from previous unrelated tasks adds no cost to later turns."
         correct: false
         rationale: "Every request sends the whole conversation, so unrelated history keeps costing tokens on every turn."
       - id: C
-        text: "Move the correction into a new Skill so it loads automatically next time."
+        text: "Move the correction into a new Skill so it loads automatically next time, and keep going in this session."
         correct: false
-        rationale: "This does not address the polluted session in front of the developer, and a Skill is for reusable procedures rather than a one-off correction."
+        rationale: "Continuing in this session leaves two failed attempts in the conversation for Claude to keep re-reading; after two failed corrections the advice is /clear and a better prompt."
       - id: D
         text: "Run /clear and start over with one new prompt that folds in what was learned from the failed attempts."
         correct: true

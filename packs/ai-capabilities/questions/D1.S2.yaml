@@ -98,7 +98,7 @@ questions:
         correct: false
         rationale: "The post warns against both pandering and overconfidence; the aim is honesty and open-mindedness, not disagreement for its own sake."
       - id: D
-        text: "Pretraining data that happened to contain more corrections than agreements, which the model copies."
+        text: "Pretraining data that contained more corrections than agreements, which the model then copies."
         correct: false
         rationale: "The post attributes this to deliberately trained character traits; it does not explain it by the balance of the pretraining data."
     source:

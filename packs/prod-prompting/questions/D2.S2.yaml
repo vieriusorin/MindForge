@@ -8,11 +8,11 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Nothing: Claude has already run the tool and the answer will arrive in the next response."
+        text: "Nothing: Claude has already run `get_weather` on Anthropic's side, and the forecast will arrive in the next response."
         correct: false
         rationale: "Client tools run in your application. Claude only returns the structured call; it never runs it for you."
       - id: B
-        text: "Send the result back in a new message with the role `tool`, keyed by the tool's name."
+        text: "Run the tool, then send the output in a new message with the role `tool`, keyed by the tool's `name` field."
         correct: false
         rationale: "The Claude API has no `tool` role; results go in a `user` message as `tool_result` blocks keyed by `tool_use_id`."
       - id: C
@@ -20,7 +20,7 @@ questions:
         correct: true
         rationale: "Extract `name`, `id` and `input`, run the matching tool, then continue the conversation with a `user` message holding a `tool_result` whose `tool_use_id` is the block's `id`."
       - id: D
-        text: "Resend the original request with a higher `max_tokens` so that Claude can finish its answer."
+        text: "Resend the original request with a higher `max_tokens` so that Claude can finish writing its answer about the weather."
         correct: false
         rationale: "`tool_use` is not a truncation; Claude stopped to wait for your tool result."
     source:
@@ -60,15 +60,15 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Skip the `tool_result` and send a plain user text message saying that the tool failed."
+        text: "Skip the `tool_result` and send a plain user text message explaining that the weather service failed."
         correct: false
         rationale: "Every `tool_use` needs its `tool_result` immediately after; skipping it breaks the required pairing."
       - id: B
-        text: "Throw in your server code and end the conversation so the user can retry from scratch."
+        text: "Throw in your server code and end the conversation, so the user can retry the whole request from scratch."
         correct: false
         rationale: "The documented path is to return the error to Claude so it can incorporate it into its reply or adapt."
       - id: C
-        text: "Return a `tool_result` whose content is just \"failed\", leaving `is_error` unset."
+        text: "Return a `tool_result` whose content is just \"failed\", leaving `is_error` unset to keep it short."
         correct: false
         rationale: "A generic message without `is_error` hides what happened; the docs ask for `is_error: true` and an instructive message."
       - id: D
@@ -86,11 +86,11 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Tool results belong in the assistant message that made the call, not in a user message."
+        text: "Tool results belong in the assistant message that made the tool call, not in a separate user message."
         correct: false
         rationale: "`tool_result` blocks go in the `user` message that follows the assistant's `tool_use` message."
       - id: B
-        text: "The `tool_result` blocks must come first in the content array; any text has to go after them."
+        text: "`tool_result` blocks must come first in the content array; any text has to go after them."
         correct: true
         rationale: "In the user message carrying results, `tool_result` blocks must come first; text before them causes a 400 error, while text after them is allowed when only client tools were called."
       - id: C

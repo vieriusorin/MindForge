@@ -7,21 +7,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "A PostToolUse hook on Bash that reports the deletion after it happens."
+        text: "A PostToolUse hook matching Bash that exits with code 2 and writes the reason to stderr when the command was a recursive delete."
         correct: false
-        rationale: "PostToolUse runs after the tool call, so the files would already be deleted."
+        rationale: "PostToolUse cannot block: on exit 2 it only shows stderr to Claude, because the tool already ran and the files are gone."
       - id: B
-        text: "A PreToolUse hook with the matcher Bash that inspects the command and exits with code 2, writing the reason to stderr, when it detects a recursive delete."
+        text: "A PreToolUse hook matching Bash that exits with code 2 and writes the reason to stderr when the command is a recursive delete."
         correct: true
         rationale: "Exiting with code 2 from a PreToolUse hook blocks the tool call, and the hook's stderr is the message fed back to Claude."
       - id: C
-        text: "A Stop hook that checks whether files were deleted when Claude finishes its turn."
+        text: "A Stop hook that exits with code 2 and writes the reason to stderr when the turn's Bash commands included a recursive delete."
         correct: false
-        rationale: "A Stop hook runs when Claude tries to end its turn, long after the destructive command has executed."
+        rationale: "A Stop hook runs when Claude finishes responding, and exit 2 there only keeps Claude working; the delete has already run."
       - id: D
-        text: "An instruction in CLAUDE.md asking Claude never to delete files recursively."
+        text: "A PermissionRequest hook matching Bash that exits with code 2 and writes the reason to stderr when the command is a recursive delete."
         correct: false
-        rationale: "CLAUDE.md is context, not enforced configuration; to block an action regardless of what Claude decides, use a PreToolUse hook."
+        rationale: "Exit code 2 is not honored on PermissionRequest, so the permission flow proceeds unchanged; denying there needs the decision object."
     source:
       title: "Hooks reference"
       url: "https://code.claude.com/docs/en/hooks"

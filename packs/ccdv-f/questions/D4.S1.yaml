@@ -7,19 +7,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Retry both error types immediately with no delay until they succeed."
+        text: "Retry both error types immediately with no delay, resubmitting each failed request unchanged until it finally succeeds."
         correct: false
         rationale: "Immediate retries add load during overload, and a 400 will keep failing because the request itself is wrong."
       - id: B
-        text: "Treat both as permanent failures and drop the affected inputs."
+        text: "Treat both error types as permanent failures, drop the affected inputs, and log them for a manual review at a later time."
         correct: false
         rationale: "529 indicates the API is temporarily overloaded, so those requests can succeed on a later attempt."
       - id: C
-        text: "Retry the 529 errors with exponential backoff, and investigate and fix the requests that produce 400 errors instead of retrying them."
+        text: "Retry the 529s with exponential backoff, and fix the format or content of the requests that return 400 instead of retrying them."
         correct: true
         rationale: "529 means the API is temporarily overloaded, a transient condition suited to backoff retries; 400 means there is an issue with the format or content of the request, which retrying will not fix."
       - id: D
-        text: "Switch to a larger model, since both errors indicate the model could not handle the input."
+        text: "Route those inputs to a different Claude model, since a 529 and a 400 both mean the current model could not handle those particular inputs."
         correct: false
         rationale: "Neither error is a model-quality problem: one is capacity, the other is a malformed or invalid request."
     source:
@@ -32,19 +32,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "The model is producing malformed tool calls; switch to a more capable model."
+        text: "The model now emits malformed tool calls after the change; resend each failed request until the returned tool_use blocks validate."
         correct: false
         rationale: "The failure started after a change in how the application builds messages, and it is a request validation error, not a model-output problem."
       - id: B
-        text: "The tool descriptions are too short; expand them so Claude calls tools correctly."
+        text: "The tool descriptions lack the detail Claude needs to fill in parameters; expand each description so its tool calls come back valid."
         correct: false
-        rationale: "Better descriptions help tool selection but do not fix a message-structure validation error."
+        rationale: "More-detailed descriptions are the fix for invalid tool use such as missing parameters, not for a 400 caused by the order of content blocks."
       - id: C
-        text: "max_tokens is too low; raise it so tool results fit."
+        text: "max_tokens is now too low for the longer user message; raise it so the tool results and the added status text both fit."
         correct: false
         rationale: "max_tokens limits output length and has nothing to do with the order of content blocks in the request."
       - id: D
-        text: "It is an integration-layer bug: in the user message carrying tool results, the tool_result blocks must come first, so move any text after all tool_result blocks."
+        text: "An integration-layer bug: tool_result blocks must come first in that user message's content array, so move the text after them."
         correct: true
         rationale: "In a user message containing tool results, tool_result blocks must come first in the content array and any text must come after them; putting text before them causes a 400 error."
     source:

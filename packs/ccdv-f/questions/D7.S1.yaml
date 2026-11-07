@@ -31,19 +31,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Keep the email in the system prompt, because content there is treated as most authoritative."
+        text: "Keep the email in the system prompt, wrapped in XML tags and labeled with its sender, since content placed there is treated as the most authoritative."
         correct: false
-        rationale: "That is exactly the problem: untrusted content should never be placed where trusted instructions live."
+        rationale: "The page says to deliver third-party content inside tool_result blocks, never in system prompts, so wrapping it in tags does not fix where it lives."
       - id: B
-        text: "Strip the phrase \"ignore previous instructions\" from emails and keep the current structure."
+        text: "Screen each email for known injection phrases such as \"ignore previous instructions\", then keep concatenating each cleaned email body into the system prompt as before."
         correct: false
-        rationale: "Filtering one known phrase is easily bypassed and does not separate untrusted data from instructions."
+        rationale: "Input filtering is an extra screen, but the page says third-party content belongs in tool_result blocks, never in system prompts, so the structure must change."
       - id: C
-        text: "Deliver the email inside a tool_result block, JSON-encoded and labeled with its source (an inbound email from an unknown sender), and state in the system prompt that tool content is untrusted data that must never override instructions."
+        text: "Deliver it JSON-encoded in a tool_result block labeled with its source, and tell Claude that tool content is untrusted data that must never override instructions."
         correct: true
         rationale: "The guidance for indirect injection is to put untrusted content only in tool results, make its nature and source explicit, JSON-encode it so it cannot break out of its delimiters, and state the untrusted-content policy in the system prompt."
       - id: D
-        text: "Put the developer's own triage instructions inside the same tool result as the email so they stay together."
+        text: "Put the email and the developer's own triage instructions together in one JSON-encoded tool_result block, labeled with its source, so Claude reads them as one unit."
         correct: false
         rationale: "Claude treats tool-result content as untrusted, so the developer's instructions placed there might be ignored or flagged; instructions belong in a user turn after the tool_result."
     source:
@@ -56,19 +56,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Add a sentence to the system prompt telling Claude never to reveal the API key."
+        text: "Keep the API key in the system prompt and add a sentence there telling Claude never to reveal it to anyone who asks."
         correct: false
-        rationale: "An instruction is not an enforceable control; the secret is still in context and can be leaked by a successful injection."
+        rationale: "The page's mitigation is not to give Claude access to secrets it doesn't need; an instruction leaves the key in context for a successful injection to leak."
       - id: B
-        text: "Use a larger model that is harder to manipulate."
+        text: "Pre-screen each user message with a lightweight harmlessness model, and keep the current database tool access and the system prompt unchanged."
         correct: false
-        rationale: "Model choice does not limit what an attacker can reach once an injection succeeds."
+        rationale: "Harmlessness screens on user input target direct injection, while this risk arrives in external documents; the page limits damage through least privilege, and full write access plus the pasted key stay usable."
       - id: C
-        text: "Log every tool call for later review but keep the current access."
+        text: "Log every tool call and review the logs each week for signs of injection, while keeping the current database access and the pasted API key."
         correct: false
-        rationale: "Monitoring is useful, but it detects damage after the fact rather than limiting it."
+        rationale: "The page uses monitoring to refine defenses over time, but leaving access and the key unchanged does nothing to limit what a successful injection can do."
       - id: D
-        text: "Apply least privilege: remove secrets the agent does not need from its context, scope the database tool to the minimum read-only operations required, and run tools in a sandbox."
+        text: "Apply least privilege: drop secrets it does not need, scope the database tool to minimal read-only access, and run its tools in a sandbox."
         correct: true
         rationale: "Limiting access to sensitive data and actions means a successful injection can do minimal damage: no unneeded secrets, sandboxed tools, and permissions scoped as narrowly as possible."
     source:

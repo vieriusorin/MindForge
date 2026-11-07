@@ -112,7 +112,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Nothing to do: in `-p` runs Claude Code skips every `.mcp.json` server because nobody is there to approve it."
+        text: "Nothing to do: in `-p` runs Claude Code skips every project-scoped `.mcp.json` server because nobody is there to approve it."
         correct: false
         rationale: "The opposite: in `claude -p` runs Claude Code can't show the approval prompt, so it loads project-scoped servers without asking."
       - id: B

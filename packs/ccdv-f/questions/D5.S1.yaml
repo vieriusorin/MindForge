@@ -7,21 +7,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Only user and assistant text count toward the context window; the error must come from a malformed request."
+        text: "Only user and assistant message text count toward the context window, so the 400 must come from a malformed field elsewhere in the request body."
         correct: false
         rationale: "Tool definitions, tool results, images, documents and the system prompt all count toward the context window."
       - id: B
-        text: "Everything in the request counts, including the system prompt, tool definitions, and every message with its tool results; estimate requests with the token counting API and trim or manage context accordingly."
+        text: "Every part of the request counts: system prompt, tool definitions and each message with its tool results; estimate with the token counting API, then trim."
         correct: true
         rationale: "The context window includes the system prompt, every message including tool results, and tool definitions; if the input alone exceeds the window, the API returns a 400 \"prompt is too long\" error, and the token counting API estimates usage before sending."
       - id: C
-        text: "Prompt caching removes cached tokens from the context window, so caching the tool definitions will fix the error."
+        text: "Prompt caching removes cached tokens from the context window, so caching the large tool definitions and all the earlier tool results will clear the 400 error."
         correct: false
         rationale: "Cached prefixes still occupy the context window; caching changes what you pay, not whether tokens count."
       - id: D
-        text: "Raising max_tokens gives the model more context to work with and will prevent the error."
+        text: "Raising max_tokens gives the model a larger context window to work with, so the same request with its large tool results will then fit."
         correct: false
-        rationale: "max_tokens caps generated output; it does not enlarge the window available for input."
+        rationale: "max_tokens sets output, not the window size; if the input alone already exceeds the context window, the API returns a 400 \"prompt is too long\" on every model."
     source:
       title: "Context windows"
       url: "https://platform.claude.com/docs/en/build-with-claude/context-windows"
@@ -32,21 +32,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Enable fast mode to reduce the cost of each request."
+        text: "Set output_config.effort to max so each label comes back in fewer tokens."
         correct: false
-        rationale: "Fast mode delivers higher output speed at premium pricing, so it raises cost rather than lowering it."
+        rationale: "Max effort is for the absolute highest capability with no constraints on token spending; low is the cheapest and fastest level."
       - id: B
-        text: "Lower temperature to 0 so the model generates fewer tokens."
+        text: "Keep the default effort level, since short requests already use the fewest tokens."
         correct: false
-        rationale: "Temperature is not how you control token use; the effort parameter controls how many tokens Claude uses and applies to every output token."
+        rationale: "The default is not the most efficient level: low gives significant token savings and suits simple, high-volume or latency-sensitive requests once evals show quality holds."
       - id: C
         text: "Set output_config.effort to low and confirm on the evals that quality holds."
         correct: true
         rationale: "Effort trades thoroughness for token efficiency within a single model and affects all output tokens; low is suited to simpler tasks that need the best speed and lowest cost."
       - id: D
-        text: "Increase max_tokens so responses finish sooner."
+        text: "Increase max_tokens so responses finish sooner, as it sets the target length."
         correct: false
-        rationale: "max_tokens is only an upper limit on output; raising it does not make responses shorter or faster."
+        rationale: "max_tokens is a hard limit on total output (thinking plus response text), not a target; effort is what controls how many tokens Claude spends."
     source:
       title: "Effort"
       url: "https://platform.claude.com/docs/en/build-with-claude/effort"

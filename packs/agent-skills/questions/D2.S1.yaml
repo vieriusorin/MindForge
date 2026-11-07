@@ -112,11 +112,11 @@ questions:
     select: 1
     options:
       - id: A
-        text: "The upload succeeds and the extra fields are skipped, just as Claude Code skips unknown fields."
+        text: "The upload succeeds and the extra fields are skipped, as Claude Code skips unknown fields."
         correct: false
         rationale: "Claude Code ignores a field it doesn't recognize, but on the upload path a field the spec doesn't allow causes a hard error instead of being ignored."
       - id: B
-        text: "The upload succeeds and all three fields apply there, since they belong to the Agent Skills spec."
+        text: "The upload succeeds and all three fields apply, since they belong to the Agent Skills spec."
         correct: false
         rationale: "These are Claude Code extensions. Outside Claude Code you can use only name, description, license, compatibility, metadata and allowed-tools."
       - id: C
@@ -124,7 +124,7 @@ questions:
         correct: true
         rationale: "Skills API uploads accept name, description, license, compatibility, metadata and allowed-tools; any other key fails with an Unexpected key(s) error."
       - id: D
-        text: "The upload succeeds once the fields are renamed to camelCase, the API's frontmatter convention."
+        text: "The upload succeeds once the fields are renamed to camelCase, the API's frontmatter style."
         correct: false
         rationale: "The page gives no camelCase convention; the fix it gives is to restrict frontmatter to the spec's six fields, which Claude Code also accepts."
     source:

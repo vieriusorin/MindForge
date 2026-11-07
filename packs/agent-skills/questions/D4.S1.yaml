@@ -116,15 +116,15 @@ questions:
         correct: true
         rationale: "The page says a multi-step procedure should move out of CLAUDE.md into a skill. Skills only load when you invoke them or when Claude determines they're relevant, unlike content that is in context all the time."
       - id: B
-        text: "Move it to a separate file and pull it in with an @path import, so CLAUDE.md stays short."
+        text: "Move it to a separate file pulled in with an @path import, so CLAUDE.md stays short."
         correct: false
         rationale: "Imports help you organise a long file but don't reduce its context cost, because imported files load together with the CLAUDE.md that imports them."
       - id: C
-        text: "Move it to a rules file in ~/.claude/rules/ with no paths field, so it leaves the project."
+        text: "Move it to a rules file in ~/.claude/rules/ with no paths field, out of the project."
         correct: false
         rationale: "Rules without `paths` frontmatter are loaded at launch, and personal rules apply to every project on your machine, so the cost moves rather than going away."
       - id: D
-        text: "Ask Claude to save it to auto memory, so the steps sit in notes instead of in CLAUDE.md."
+        text: "Ask Claude to save it to auto memory, so the steps sit in notes, not in CLAUDE.md."
         correct: false
         rationale: "The start of MEMORY.md is loaded at the start of every conversation too, and auto memory is meant for notes Claude writes, not procedures you author."
     source:

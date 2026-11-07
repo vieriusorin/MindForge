@@ -7,17 +7,17 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Add one example and repeat it several times so Claude sees the format clearly."
+        text: "Add one well-written example and repeat it several times, so Claude sees the target format more clearly."
         correct: false
         rationale: "Repeating a single example gives no diversity, so Claude may pick up unintended patterns from it."
       - id: B
-        text: "Add a long list of rules covering every edge case instead of examples."
+        text: "Replace the prose with a long list of rules that spells out each edge case, leaving out examples of summaries."
         correct: false
-        rationale: "Laundry lists of edge-case rules are less effective than a small set of diverse, canonical examples."
+        rationale: "Examples are one of the most reliable ways to steer format, tone and structure, and diverse examples are how edge cases get covered."
       - id: C
-        text: "Write the format instructions in all capital letters."
+        text: "Write the format instructions in all capital letters, starting with CRITICAL and MUST, so Claude treats them as strict rules."
         correct: false
-        rationale: "Emphasis does not show Claude what good output looks like; examples are one of the most reliable ways to steer format, tone and structure."
+        rationale: "Emphasis does not show Claude what good output looks like; the page favors explaining why over a bare \"NEVER use ellipses\" style command, and examples are one of the most reliable ways to steer format, tone and structure."
       - id: D
         text: "Add 3–5 relevant, diverse examples of transcript-to-summary pairs, wrapped in <example> tags inside <examples>."
         correct: true

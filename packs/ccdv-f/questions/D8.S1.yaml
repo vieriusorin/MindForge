@@ -7,19 +7,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Add more tools, one per narrow action, so each has a very specific purpose."
+        text: "Split each service into many narrow tools, one per action such as create, review and merge, so every tool has a single, very specific purpose."
         correct: false
         rationale: "The guidance is the opposite: consolidate related operations into fewer, more capable tools to reduce selection ambiguity."
       - id: B
-        text: "Force a specific tool on every request with tool_choice."
+        text: "Force the right tool on each request by setting tool_choice to that tool's name, and keep the current one-line descriptions so requests stay small."
         correct: false
-        rationale: "Forcing a tool removes Claude's ability to choose correctly and is not supported on some current models; it does not fix ambiguous definitions."
+        rationale: "Forced tool use is not supported on every model and setting, and one-line descriptions stay ambiguous; the page asks for at least 3–4 sentences per tool."
       - id: C
-        text: "Write detailed descriptions (what each tool does, when to use it and when not, what each parameter means, and its limitations), and prefix tool names with their service, for example crm_search_contacts."
+        text: "Expand each description to 3–4+ sentences (what it does, when to use it and when not, parameters, limits) and prefix names with the service, e.g. crm_search."
         correct: true
         rationale: "Extremely detailed descriptions are by far the most important factor in tool performance, and service-prefixed names make tool selection unambiguous as the library grows."
       - id: D
-        text: "Keep the descriptions short to save tokens and put tool-selection rules in the user's message each time."
+        text: "Keep each description to one line to save tokens, and restate the full tool-selection rules in the user's message on every new request."
         correct: false
         rationale: "Short descriptions leave Claude guessing; the recommendation is at least 3–4 sentences per tool description."
     source:

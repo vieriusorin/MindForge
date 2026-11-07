@@ -36,19 +36,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Give the agent a check it must run, such as the test suite or typecheck, and enforce it with a Stop hook so the turn cannot end until the check actually passes."
+        text: "Give the agent a check like tests or a typecheck, and a Stop hook so the turn does not end until it passes or the block limit is reached."
         correct: true
-        rationale: "Confident output should be verified: a Stop hook is enforced by the harness and sends Claude back to work until the check passes, rather than relying on the model's own claim."
+        rationale: "Confident output should be verified: a Stop hook is enforced by the harness and sends Claude back to work until the check passes or the block limit is reached, rather than relying on the model's own claim."
       - id: B
-        text: "Accept the claim, since the model would not state that tests pass unless it had run them."
+        text: "Accept the claim as written, since the model would not report that all tests pass unless it had already run the whole suite in this session."
         correct: false
         rationale: "A model's statement is not evidence; claims should be backed by a check the harness or team can verify."
       - id: C
-        text: "Ask the agent to rate its confidence from 1 to 10 and accept anything above 8."
+        text: "Ask the agent to review its own diff in the same conversation and rate its confidence from 1 to 10, then accept the fix if it rates above 8."
         correct: false
-        rationale: "A self-reported confidence score is still the model's own claim, not an independent verification."
+        rationale: "A review in the same conversation is swayed by the reasoning that produced the code, and its rating is still the model's own claim; the page asks for a pass-or-fail check and evidence such as the command and its output."
       - id: D
-        text: "Add \"Always run the tests before you finish\" to CLAUDE.md and trust that it happened."
+        text: "Add \"Always run the tests before you finish\" to CLAUDE.md, then trust that the agent followed that line before each completion claim it makes."
         correct: false
         rationale: "A CLAUDE.md line works most of the time but not every time; enforcing a passing check is a job for a Stop hook."
     source:

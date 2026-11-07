@@ -64,15 +64,15 @@ questions:
         correct: true
         rationale: "Claude Code adds the skill's content to the conversation when it is invoked and doesn't re-read the file on later turns. Guidance applied with judgment should be worded for the whole task."
       - id: B
-        text: "Set user-invocable: false so that Claude treats the skill as background knowledge."
+        text: "Set user-invocable: false so Claude reads the skill as background knowledge."
         correct: false
         rationale: "`user-invocable: false` only stops users from invoking the skill. It doesn't change how Claude applies the instructions once they're loaded."
       - id: C
-        text: "Raise skillListingBudgetFraction so the skill's description is no longer cut."
+        text: "Raise skillListingBudgetFraction so the skill's description isn't cut."
         correct: false
         rationale: "`skillListingBudgetFraction` raises the budget for the listing of descriptions. That fixes skills that fail to match, not one that was invoked and then dropped."
       - id: D
-        text: "Run claude plugin validate on the skills directory to find a broken frontmatter."
+        text: "Run claude plugin validate on the skills folder to find broken frontmatter."
         correct: false
         rationale: "`claude plugin validate` finds `SKILL.md` files whose frontmatter doesn't parse. Malformed frontmatter still loads the body, so `/skill-name` works but Claude can't match the `description`. That is a different symptom: here the skill was matched and followed, then dropped on later turns."
     source:

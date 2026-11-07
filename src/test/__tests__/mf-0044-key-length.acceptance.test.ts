@@ -1,6 +1,7 @@
 /**
  * MF-0044 acceptance (frozen): `pnpm check:packs` fails a `select: 1` question whose key is at least 1.15× its
- * longest distractor in characters, skips the grandfathered packs, and fails closed on questions it cannot read.
+ * longest distractor in characters, and fails closed on questions it cannot read. MF-0061 (re-freeze) removed the
+ * grandfather set: SC-3 now asserts a once-grandfathered pack is checked, SC-6 counts the official skip instead.
  * Runs the real script over fixture packs (`MF_PACKS_DIR`), as mf-0041 SC-5 does. Expected values come from
  * GOAL.md SC-1…SC-6, never from the checker.
  */
@@ -97,7 +98,7 @@ describe("MF-0044 key-length rule in check:packs", () => {
     );
   });
 
-  it("SC-3: a grandfathered pack is skipped and counted in the summary", () => {
+  it("SC-3 (MF-0061): a pack MF-0044 grandfathered is now checked and counted in the summary", () => {
     const result = run(
       packs({
         "prod-prompting": {
@@ -105,9 +106,11 @@ describe("MF-0044 key-length rule in check:packs", () => {
         },
       }),
     );
-    expect(result.stderr).not.toContain("prod-prompting.S1.q1");
+    expect(result.stderr).toContain(
+      "prod-prompting.S1.q1: key is 150 chars, longest distractor 100 (1.50×, limit 1.15×)",
+    );
     expect(result.stdout).toContain(
-      "key-length: 0 checked, 0 problem(s), 1 skipped (grandfathered), 0 multi-select not checked",
+      "key-length: 1 checked, 1 problem(s), 0 skipped (official), 0 multi-select not checked",
     );
   });
 
@@ -150,11 +153,11 @@ describe("MF-0044 key-length rule in check:packs", () => {
     expect(result.stdout).toContain("1 multi-select not checked");
   });
 
-  it("SC-6: every shipped pack outside the grandfather set passes; check:packs exits 0 on this repo", () => {
+  it("SC-6 (MF-0061): every shipped pack passes; check:packs exits 0 on this repo", () => {
     const result = run();
     expect(result.status).toBe(0);
     expect(result.stdout).toMatch(
-      /key-length: [1-9]\d* checked, 0 problem\(s\), [1-9]\d* skipped \(grandfathered\)/,
+      /key-length: [1-9]\d* checked, 0 problem\(s\), [1-9]\d* skipped \(official\)/,
     );
   });
 });

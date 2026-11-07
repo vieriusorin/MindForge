@@ -8,7 +8,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Count the prompt's tokens and keep it under a fixed size, since shorter prompts are always clearer."
+        text: "Count the prompt's tokens and keep it under a fixed size, since a shorter prompt is always the clearer one."
         correct: false
         rationale: "The guide never equates clarity with length; it asks for more precision and context, which often makes a prompt longer."
       - id: B
@@ -34,19 +34,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Claude only reads text that sits inside XML tags, so untagged text is ignored."
+        text: "Claude only reads text that sits inside XML tags, so any instruction or example left untagged is ignored."
         correct: false
-        rationale: "Untagged text is still read; tags help Claude tell the parts apart, they are not a filter."
+        rationale: "Untagged text is still read: the guide's own more-effective prompts are plain sentences. Tags help Claude tell the parts apart; they are not a filter."
       - id: B
-        text: "The API rejects prompts over 20k tokens unless every section is wrapped in a tag."
+        text: "The API rejects prompts over 20k tokens unless every section, including the contract, is wrapped in its own tag."
         correct: false
-        rationale: "No such API rule exists; tags are a prompting technique, not a request requirement."
+        rationale: "For 20k+ token inputs the guide only advises structuring the prompt to get the best results; tags are a prompting technique, not a request requirement."
       - id: C
-        text: "Tagged sections are cached automatically, which lowers the cost of every request."
+        text: "Tags let Claude skip the worked examples until it is asked for them, so a long prompt costs fewer tokens to process."
         correct: false
-        rationale: "Caching is controlled by prompt caching settings, not by XML tags in the prompt text."
+        rationale: "Examples are tagged so Claude can distinguish them from instructions, not so it skips them; the guide calls examples one of the most reliable ways to steer output."
       - id: D
-        text: "Tags let Claude tell instructions apart from context and inputs, which reduces misinterpretation; use consistent, descriptive tag names."
+        text: "Tags help Claude parse prompts that mix instructions, context and examples, reducing misinterpretation."
         correct: true
         rationale: "The guide says XML tags help Claude parse complex prompts that mix instructions, context, examples and variable inputs, and advises consistent, descriptive names, nested where content has a hierarchy."
     source:
@@ -60,21 +60,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Explain the reason: the response is read aloud by a text-to-speech engine that cannot pronounce ellipses, so never use them."
+        text: "Explain why: a text-to-speech engine reads the reply aloud and cannot pronounce ellipses, so never use them."
         correct: true
         rationale: "The guide's own example: giving the motivation behind an instruction helps Claude understand the goal, and Claude generalizes from the explanation."
       - id: B
-        text: "Repeat \"NEVER use ellipses\" three times in different parts of the prompt."
+        text: "Repeat \"NEVER use ellipses\" three times in different parts of the prompt so the rule carries more weight."
         correct: false
         rationale: "Repetition adds no information about why the rule exists, so Claude has nothing to generalize from."
       - id: C
-        text: "Remove the rule and strip ellipses in post-processing, since prompts cannot control punctuation."
+        text: "Remove the rule and strip ellipses in post-processing, since a prompt cannot reliably control punctuation or other formatting."
         correct: false
-        rationale: "Post-processing can be a fallback, but the guide shows that adding context to the instruction itself is the more effective prompt."
+        rationale: "The guide presents the instruction with its reason as the more effective prompt, and lists several effective ways to steer output formatting from the prompt itself."
       - id: D
-        text: "Move the rule out of the system prompt and into a single example of a correct answer."
+        text: "Move the rule out of the system prompt and into a single worked example of a correct, ellipsis-free spoken answer."
         correct: false
-        rationale: "Examples steer format, but one example without the reason is a weaker signal than stating the rule with its motivation."
+        rationale: "One example without the reason is a weaker signal than the rule with its motivation; the guide recommends 3 to 5 examples and shows the explained rule as more effective."
     source:
       title: "Prompting best practices"
       url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
@@ -86,19 +86,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "After the question, so Claude reads what it is looking for before it sees the data."
+        text: "After the question and instructions, so Claude knows what it is looking for before it reads 60k tokens of data."
         correct: false
         rationale: "The guide recommends the opposite order: long data first, the query at the end."
       - id: B
-        text: "In a separate request, with a second request asking the question about the first answer."
+        text: "In two requests: first the reports alone, then a follow-up request that asks the question about Claude's reply."
         correct: false
         rationale: "Splitting loses the documents from the context of the question; the guide's advice is about ordering within one prompt."
       - id: C
-        text: "At the top, above the instructions and the question, each report in its own <document> tag with a <source>."
+        text: "At the top, above the instructions and question, each report in its own <document> tag with a <source>."
         correct: true
         rationale: "For 20k+ token inputs the guide says to put long documents near the top and the query at the end, which improved response quality by up to 30 percent in tests, and to wrap each document with its metadata in tags."
       - id: D
-        text: "Anywhere, because position inside the prompt has no effect on response quality."
+        text: "Anywhere in the prompt, because position has no measurable effect on response quality for 20k+ token inputs."
         correct: false
         rationale: "The guide reports a measurable effect of placement on long, multi-document inputs."
     source:
@@ -112,19 +112,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Prefill still works but is slower on new models; raise the request timeout."
+        text: "Prefill still works on new models but responds more slowly, so raise the request timeout and keep the brace."
         correct: false
         rationale: "The guide says requests with a prefilled last assistant turn return a 400 error on these models, so a timeout change cannot help."
       - id: B
-        text: "The prefill is silently ignored, so add a stronger instruction to start with a brace."
+        text: "The prefill is silently ignored on new models, so add a stronger instruction telling Claude to start with a brace."
         correct: false
         rationale: "It is not ignored: the request is rejected with a 400 error."
       - id: C
-        text: "The prefill must move into the system prompt, where assistant text is still allowed."
+        text: "The prefill must move into the system prompt, because assistant messages in earlier turns of the conversation also return a 400 error."
         correct: false
-        rationale: "The system prompt does not continue an assistant message; the guide's migration for formatting is structured outputs or direct instructions."
+        rationale: "The guide says adding assistant messages elsewhere in the conversation is not affected; its migration for formatting is structured outputs or direct instructions."
       - id: D
-        text: "Prefilling the last assistant turn is no longer supported and returns a 400 error; use structured outputs or a direct format instruction."
+        text: "Last-turn prefill is no longer supported and returns a 400 error; switch to structured outputs or a direct format instruction."
         correct: true
         rationale: "From Claude 4.6 models on, prefill on the last assistant turn returns 400; for forcing JSON or classification the guide points to structured outputs or tools with an enum."
     source:
@@ -138,21 +138,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Say what you want instead (for example, flowing prose paragraphs) and remove markdown from the prompt itself, because prompt style influences output style."
+        text: "Ask for flowing prose paragraphs instead, and strip the markdown from the prompt itself, since prompt style can shape output style."
         correct: true
         rationale: "The guide recommends telling Claude what to do rather than what not to do, and matching the prompt's style to the output you want; removing markdown from the prompt can reduce markdown in the output."
       - id: B
-        text: "Write \"DO NOT USE MARKDOWN\" in capitals at the very start and the very end of the prompt."
+        text: "Write \"DO NOT USE MARKDOWN\" in capitals at both the start and the end of the markdown-formatted prompt."
         correct: false
         rationale: "It is still a negative instruction, and the markdown-heavy prompt keeps signalling the opposite style."
       - id: C
-        text: "Raise effort so Claude spends more tokens obeying formatting rules."
+        text: "Raise effort so Claude spends more tokens obeying formatting rules; the markdown in the prompt has no effect on the output."
         correct: false
-        rationale: "Effort controls how much work Claude puts into a response; the guide's fix for format is the wording and style of the prompt."
+        rationale: "The guide says the formatting style used in the prompt might influence Claude's response style; its fix for format is the wording and style of the prompt."
       - id: D
-        text: "Lower max_tokens so there is no room left for list formatting."
+        text: "Lower max_tokens so there is no room left for list formatting, and keep the markdown headings in the prompt as they are."
         correct: false
-        rationale: "max_tokens only caps output length; it truncates answers instead of changing their format."
+        rationale: "max_tokens only caps output length, and a markdown-heavy prompt keeps signalling the style the guide says to match to the output you want."
     source:
       title: "Prompting best practices"
       url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
