@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { changeLine, reviewLine, scoreLine } from "../utils";
+import { changeLine, mixUpCountLine, reviewLine, scoreLine } from "../utils";
 
 const seed = { stage: "seed", wilting: false } as const;
 const sprout = { stage: "sprout", wilting: false } as const;
@@ -61,5 +61,12 @@ describe("lesson-close utils", () => {
         nextReviewAt: new Date("2026-11-03T10:00:00.000Z"),
       }),
     ).toEqual({ text: "Review now: this tree is fading", zone: null });
+  });
+});
+
+describe("mixUpCountLine (MF-0065)", () => {
+  it("words one pick and several", () => {
+    expect(mixUpCountLine(1)).toBe("picked 1 time");
+    expect(mixUpCountLine(3)).toBe("picked 3 times");
   });
 });

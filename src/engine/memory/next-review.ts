@@ -1,4 +1,5 @@
 import { FOREST_THRESHOLDS } from "../forest/tree-stage";
+import { CONFIDENT_MISS_REVIEW_HOURS, confidentMissAt } from "./confident-miss";
 import { replayCard, scheduler } from "./replay";
 import type { Attempt } from "./types";
 
@@ -11,8 +12,18 @@ const MAX_DAYS = 36_500;
  * whole day after the last review at which the replayed card's retrievability drops below the wilt
  * threshold. It reads the same `get_retrievability` as `replayMemory`, so `treeStage` turns wilting at
  * exactly this instant. Null when the skill has no successful recall (a Seed never fades).
+ * MF-0065 (DQ-5): a confident miss brings it forward to at most CONFIDENT_MISS_REVIEW_HOURS after the miss.
  */
 export function nextReviewAt(attempts: readonly Attempt[]): Date | null {
+  const fadeAt = fadeDate(attempts);
+  const missAt = confidentMissAt(attempts);
+  if (!fadeAt || !missAt) return fadeAt;
+  const reviewBy = missAt.getTime() + CONFIDENT_MISS_REVIEW_HOURS * 3_600_000;
+  return reviewBy < fadeAt.getTime() ? new Date(reviewBy) : fadeAt;
+}
+
+/** MF-0064 SC-3: the first whole day after the last review at which the tree fades. */
+function fadeDate(attempts: readonly Attempt[]): Date | null {
   const replayed = replayCard(attempts);
   if (!replayed || replayed.successfulRecalls < 1) return null;
   const { card } = replayed;

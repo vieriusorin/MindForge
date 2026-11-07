@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { StageIcon } from "@/components/stage-icon";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +14,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ReviewLine } from "./components/review-line";
 import type { LessonCloseProps } from "./types";
-import { changeLine, reviewLine, scoreLine } from "./utils";
+import { changeLine, mixUpCountLine, reviewLine, scoreLine } from "./utils";
 
 /** MF-0064: the close screen: each skill's real tree before and after, and its next review date. */
-export function LessonClose({ outcome, mapHref }: LessonCloseProps) {
+export function LessonClose({ outcome, mapHref, mixUp }: LessonCloseProps) {
   return (
     <Card>
       <CardHeader>
@@ -57,6 +57,25 @@ export function LessonClose({ outcome, mapHref }: LessonCloseProps) {
             </li>
           ))}
         </ul>
+        {mixUp && (
+          <>
+            <Separator />
+            <div className="flex items-start gap-3 py-3">
+              <TriangleAlert
+                aria-hidden
+                className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+              />
+              <p className="grid gap-1">
+                <span className="font-semibold leading-snug">
+                  Mix-up to watch: {mixUp.label}
+                </span>
+                <span className="text-sm text-muted-foreground tabular-nums">
+                  {mixUpCountLine(mixUp.count)} in this lesson
+                </span>
+              </p>
+            </div>
+          </>
+        )}
       </CardContent>
       <CardFooter>
         <Button asChild className="min-h-10">

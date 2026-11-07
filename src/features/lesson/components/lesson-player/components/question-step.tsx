@@ -1,3 +1,4 @@
+import { ConfidenceTap } from "@/components/confidence-tap";
 import { QuestionCard } from "@/components/question-card";
 import { Button } from "@/components/ui/button";
 import type { QuestionStepProps } from "../types";
@@ -17,6 +18,8 @@ export function QuestionStep({
   isLast,
   feedbackRef,
   onToggle,
+  confidence,
+  onChooseConfidence,
   onSubmit,
   onNext,
 }: QuestionStepProps) {
@@ -48,6 +51,11 @@ export function QuestionStep({
             </p>
           )}
           {feedback && <WhyPanel step={step} feedback={feedback} />}
+          <ConfidenceTap
+            value={confidence}
+            isLocked={feedback !== null || isPending}
+            onChoose={onChooseConfidence}
+          />
           {feedback ? (
             <Button onClick={onNext} className="ml-auto min-h-10">
               {isLast ? "Finish lesson" : "Next"}

@@ -1,3 +1,5 @@
+import type { Confidence } from "@/engine/memory";
+
 /** MF-0067: the client attempt id held for one submission (an item and the answer chosen for it). */
 export interface HeldAttemptId {
   readonly submission: string;
@@ -22,10 +24,16 @@ export function attemptIdFor({
   return { submission, id: mint() };
 }
 
-/** MF-0067: one key per (item, answer); the answer is the chosen option ids or a cuckoo line. */
+/**
+ * MF-0067: one key per (item, answer); the answer is the chosen option ids or a cuckoo line. MF-0065: the
+ * confidence tap is part of the answer, so a changed tap is a new submission (a new id, never a 23505).
+ */
 export function submissionKey(
   itemId: string,
   answer: readonly string[] | number,
+  confidence: Confidence | null = null,
 ): string {
-  return JSON.stringify([itemId, answer]);
+  return confidence === null
+    ? JSON.stringify([itemId, answer])
+    : JSON.stringify([itemId, answer, confidence]);
 }

@@ -7,8 +7,10 @@ import {
   feedbackMessage,
   toggleChoice,
 } from "@/components/question-card";
+import type { Confidence } from "@/engine/memory";
 import type { AnswerFeedback, PlayableQuestion } from "@/engine/questions";
 import { submissionKey } from "@/lib/attempt-id";
+import { confidenceField, nextConfidence } from "@/lib/confidence";
 import { useAttemptId } from "@/lib/use-attempt-id";
 import { useSingleFlight } from "@/lib/use-single-flight";
 import { answerQuestion } from "../../../actions";
@@ -31,6 +33,9 @@ export interface UseDuelSessionReturn {
   feedbackRef: RefObject<HTMLOutputElement | null>;
   doneRef: RefObject<HTMLHeadingElement | null>;
   toggle: (optionId: string) => void;
+  /** MF-0065: the optional tap before the reveal; null when there is none. */
+  confidence: Confidence | null;
+  chooseConfidence: (confidence: Confidence) => void;
   submit: () => void;
   next: () => void;
 }
@@ -41,6 +46,7 @@ export function useDuelSession(
 ): UseDuelSessionReturn {
   const [index, setIndex] = useState(0);
   const [chosen, setChosen] = useState<string[]>([]);
+  const [confidence, setConfidence] = useState<Confidence | null>(null);
   const [tally, setTally] = useState({ score: 0, answered: 0 });
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const feedbackRef = useRef<HTMLOutputElement | null>(null);
@@ -89,6 +95,12 @@ export function useDuelSession(
     setChosen((c) => toggleChoice(c, optionId, question.select));
   };
 
+  // MF-0065: the tap belongs to the answer; it locks with the verdict and while checking.
+  const chooseConfidence = (tapped: Confidence): void => {
+    if (feedback || mutation.isPending) return;
+    setConfidence((c) => nextConfidence(c, tapped));
+  };
+
   const isSubmittable =
     question !== null &&
     canSubmit({
@@ -105,7 +117,10 @@ export function useDuelSession(
       questionId: question.id,
       chosen,
       contentHash: question.contentHash,
-      clientAttemptId: attempt.idFor(submissionKey(question.id, chosen)),
+      ...confidenceField(confidence),
+      clientAttemptId: attempt.idFor(
+        submissionKey(question.id, chosen, confidence),
+      ),
     });
   };
 
@@ -114,6 +129,7 @@ export function useDuelSession(
     attempt.clear();
     mutation.reset();
     setChosen([]);
+    setConfidence(null);
     setIndex((i) => i + 1);
   };
 
@@ -134,6 +150,8 @@ export function useDuelSession(
     feedbackRef,
     doneRef,
     toggle,
+    confidence,
+    chooseConfidence,
     submit,
     next,
   };

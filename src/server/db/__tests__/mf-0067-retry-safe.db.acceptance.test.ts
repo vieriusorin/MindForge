@@ -318,7 +318,7 @@ describe("MF-0067 record_attempt is retry-safe", () => {
     expect(replayMemory(twice, new Date())?.successfulRecalls).toBe(2);
   });
 
-  it("SC-7: only the 4-arg signature exists; the column, unique key and grants are as specified", async () => {
+  it("SC-7: only the 5-arg signature exists (MF-0065 appends p_confidence); the column, unique key and grants are as specified", async () => {
     const db = sql();
     try {
       const sigs = await db<{ sig: string; auth: boolean; anon: boolean }[]>`
@@ -330,12 +330,12 @@ describe("MF-0067 record_attempt is retry-safe", () => {
         order by 1`;
       expect(sigs).toEqual([
         {
-          sig: "private.record_attempt(text,text[],text,uuid)",
+          sig: "private.record_attempt(text,text[],text,uuid,text)",
           auth: true,
           anon: false,
         },
         {
-          sig: "record_attempt(text,text[],text,uuid)",
+          sig: "record_attempt(text,text[],text,uuid,text)",
           auth: true,
           anon: false,
         },

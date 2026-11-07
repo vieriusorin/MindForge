@@ -90,6 +90,11 @@ describe("WalkSession", () => {
     await user.keyboard(" ");
     expect(screen.getByRole("radio", { name: /First/ })).toBeChecked();
 
+    // MF-0065: the optional confidence tap sits between the options and Check, reachable by Tab.
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Sure" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Not sure" })).toHaveFocus();
     await user.tab();
     expect(screen.getByRole("button", { name: "Check answer" })).toHaveFocus();
     await user.keyboard("{Enter}");
