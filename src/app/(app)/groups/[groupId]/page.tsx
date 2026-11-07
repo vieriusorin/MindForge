@@ -24,6 +24,11 @@ import { ExpeditionCard } from "@/features/expeditions/components/expedition-car
 import { StartExpeditionForm } from "@/features/expeditions/components/start-expedition-form";
 import { Forest } from "@/features/forest/components/forest";
 import { rotateInviteCode } from "@/features/groups/actions";
+import {
+  DiscussionLinkCard,
+  discussionLinkView,
+} from "@/features/groups/components/discussion-link-card";
+import { DiscussionLinkForm } from "@/features/groups/components/discussion-link-form";
 import { GroupHeatmap } from "@/features/groups/components/group-heatmap";
 import {
   GroupPathCard,
@@ -231,6 +236,7 @@ async function GroupSlot({
   const isAdmin = members.some(
     (m) => m.userId === user.id && m.role === "admin",
   );
+  const discussionLink = discussionLinkView(group.discussionUrl);
 
   return (
     <>
@@ -266,6 +272,25 @@ async function GroupSlot({
               now={now}
             />
           </Suspense>
+        </div>
+      ) : null}
+      {/* MF-0063: members see the card only once the admin has set a link. */}
+      {isAdmin || discussionLink ? (
+        <div className="mb-8">
+          <DiscussionLinkCard
+            link={discussionLink}
+            courseName={pack.name}
+            form={
+              isAdmin ? (
+                // Keyed by the link: a fresh form (and mutation state) after each save.
+                <DiscussionLinkForm
+                  key={group.discussionUrl ?? ""}
+                  groupId={group.id}
+                  currentUrl={group.discussionUrl}
+                />
+              ) : undefined
+            }
+          />
         </div>
       ) : null}
       <div className="mb-8">

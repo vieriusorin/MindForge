@@ -3,6 +3,7 @@ import {
   advanceGroupCourseRpcError,
   createGroupRpcError,
   createPathGroupRpcError,
+  discussionLinkRpcError,
   joinGroupRpcError,
   MAX_GROUPS_PER_USER,
   pinRpcError,
@@ -128,5 +129,26 @@ describe("advanceGroupCourseRpcError", () => {
     expect(advanceGroupCourseRpcError({})).toBe(
       "Could not move the group. Try again.",
     );
+  });
+});
+
+describe("discussionLinkRpcError", () => {
+  it("42501 (not the admin) → a form message naming who may change it", () => {
+    expect(discussionLinkRpcError({ code: "42501" })).toEqual({
+      message: "Only the group admin can change the discussion link.",
+    });
+  });
+
+  it("23514 (the DB CHECK) → the url field error", () => {
+    expect(discussionLinkRpcError({ code: "23514" })).toEqual({
+      message: "Use an https:// link, up to 500 characters.",
+      fieldErrors: { url: "Use an https:// link, up to 500 characters." },
+    });
+  });
+
+  it("anything else → try again", () => {
+    expect(discussionLinkRpcError({})).toEqual({
+      message: "Could not save the link. Try again.",
+    });
   });
 });

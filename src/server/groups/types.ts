@@ -32,6 +32,8 @@ export interface GroupDetail {
   createdBy: string;
   /** MF-0059: the Group path this group follows, or null for a pack-only group. */
   pathSlug: string | null;
+  /** MF-0063: the external chat link the admin set, or null. Members only (RLS). */
+  discussionUrl: string | null;
 }
 
 /** MF-0059: what the join page shows before the user joins. */

@@ -1,5 +1,10 @@
 import type { FormError } from "@/lib/action-result";
-import type { CreateGroupValues, CreatePathGroupValues } from "../schemas";
+import {
+  type CreateGroupValues,
+  type CreatePathGroupValues,
+  DISCUSSION_URL_MESSAGE,
+  type DiscussionLinkFormValues,
+} from "../schemas";
 
 /** The part of a PostgREST error we decide on. */
 export interface RpcError {
@@ -93,5 +98,28 @@ export function advanceGroupCourseRpcError(error: RpcError): string {
       return "This group has no next course to move to.";
     default:
       return "Could not move the group. Try again.";
+  }
+}
+
+/**
+ * MF-0063: map a set_group_discussion_url RPC error to what the link form shows. SQLSTATEs from
+ * private.set_group_discussion_url (20261106160000_mf0063_discussion_link.sql): 42501 = not the
+ * group admin (or not signed in), 23514 = the link fails the CHECK.
+ */
+export function discussionLinkRpcError(
+  error: RpcError,
+): FormError<keyof DiscussionLinkFormValues & string> {
+  switch (error.code) {
+    case "42501":
+      return {
+        message: "Only the group admin can change the discussion link.",
+      };
+    case "23514":
+      return {
+        message: DISCUSSION_URL_MESSAGE,
+        fieldErrors: { url: DISCUSSION_URL_MESSAGE },
+      };
+    default:
+      return { message: "Could not save the link. Try again." };
   }
 }

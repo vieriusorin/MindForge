@@ -1,0 +1,22 @@
+{
+  "ticket": "MF-0063",
+  "frozen_at": "2026-11-06T14:00:16Z",
+  "files": [
+    {
+      "path": "src/features/groups/__tests__/mf-0063-discussion-link.acceptance.test.ts",
+      "sha256": "335d3a60a3d53993bf4fc362f9c6bbff4433147b938a00a5b38a81d41e981b94",
+      "first_failure": "SC-1/SC-2: Error: not implemented (DiscussionUrl transform stub, setGroupDiscussionLink stub), 13 cases"
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0063-discussion-link.db.acceptance.test.ts",
+      "sha256": "fa865e3e7959f79642617297d6dfc3bc20721e34ab8a6b783fab053e54a9dce7",
+      "first_failure": "SC-3: PGRST202 set_group_discussion_url not found; 42703 column discussion_url does not exist; SC-4: 42703 on direct update (10 cases, red twice, no leftovers)"
+    },
+    {
+      "path": "src/features/groups/components/discussion-link-form/__tests__/mf-0063-discussion-link-form.acceptance.test.tsx",
+      "sha256": "704357703a9a175759e8a14ca3e61561577cfe08b6b2876b90eaee16bcbbd461",
+      "first_failure": "SC-5: TestingLibraryElementError: Unable to find a label with the text of: Chat link (stub renders null), 7 of 8 cases"
+    }
+  ],
+  "history": []
+}

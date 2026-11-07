@@ -1,5 +1,13 @@
-import type { ActionResult, FormActionResult } from "@/lib/action-result";
-import type { CreateGroupValues, CreatePathGroupValues } from "./schemas";
+import type {
+  ActionResult,
+  FormActionResult,
+  NoData,
+} from "@/lib/action-result";
+import type {
+  CreateGroupValues,
+  CreatePathGroupValues,
+  DiscussionLinkFormValues,
+} from "./schemas";
 
 export type CreateGroupResult = FormActionResult<
   { groupId: string },
@@ -27,3 +35,9 @@ export type JoinGroupResult = ActionResult<{ groupId: string }>;
 
 /** MF-0059: the admin moving the group to the next course of its path. */
 export type AdvanceGroupCourseResult = ActionResult;
+
+/** MF-0063: the admin setting or clearing the group's discussion link. */
+export type SetDiscussionLinkResult = FormActionResult<
+  NoData,
+  DiscussionLinkFormValues
+>;
