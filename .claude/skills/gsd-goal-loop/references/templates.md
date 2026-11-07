@@ -169,11 +169,27 @@ Server-owned facts (MF-0013 retro): a deadline is decided by the DB clock, never
 ```
 ```
 
-`agent` ∈ schema-builder · service-builder · ui-builder · acceptance-writer (or `inline` when the
-project has no role agents). `owns` are globs; EVAL's scope check compares the diff against them
+`agent` ∈ schema-builder · service-builder · ui-builder · acceptance-writer, or `orchestrator` / `inline` for a
+step the main session runs (see below). `owns` are globs; EVAL's scope check compares the diff against them
 (a scope hook, if any, enforces coarser per-role limits). Tasks that may run in parallel need
 disjoint `owns`. `done_when` are commands the orchestrator re-runs itself — a builder's STATUS
 line is a claim.
+
+**Enforced by `pnpm gate:planning` for every ticket after MF-0060** (MF-0060, `scripts/lib/planning-check.mjs`):
+- `checkPlanOwns`, from `stage: plan` on: each task passes MF-0048's per-task check (a known agent, non-empty readable
+  `owns`, no NEVER path for a role agent), and every `owns` glob of a role-agent task lies inside `SCOPES[agent]`
+  (`.claude/hooks/lib/agent-scopes.mjs`); the line names the task, the glob, a witness path and the allowed scope. From
+  `build` on, a missing LOOP-PLAN.md or task block is also a problem.
+- A step the main session runs (scripts, hooks, skills, evidence, package files, docs, `src/dev-seed/**` and anything
+  else no role scope holds) is a task with `"agent": "orchestrator"` (or `"inline"`); a "(orchestrator)" title alone does
+  not exempt it. A verify step is an orchestrator task owning `.planning/tasks/<ID>/LOOP-VERIFY.md`; `verifier`, `fork`
+  and `general-purpose` are not plan agents.
+- `checkChangedFilesOwned`, at `goal_status: complete-pending-manual-commit`: every file the branch changes (diff against
+  the merge base with `main` / `origin/main`, plus untracked) is matched by some task's `owns`. Exempt: `.planning/**`,
+  `package.json`, the ticket's FROZEN.json files and the files its RETRO.md names in backticks under `## Applied`
+  (the heading exactly `## Applied`; each backticked token an exact repo path, no `:line` suffix, no glob; anything else
+  exempts nothing). Owned means owned by a ticket after MF-0060 in the diff: a re-frozen old ticket lends its FROZEN.json
+  exemption, never its plan's `owns`. Without a main ref the rule prints `rule 2 skipped: no main ref`.
 
 Two plan-time checks:
 
