@@ -123,3 +123,58 @@ export interface SeedManifest {
   /** MF-0052 SC-8: your seeded storms. Absent in a manifest written before MF-0052. */
   youStormIds?: string[];
 }
+
+/**
+ * MF-0068: the path personas, planned after the pack worlds from their own PRNG stream, so no draw of
+ * the personas above shifts. Never members of the pack demo groups; never your account.
+ */
+export const PATH_PERSONAS = [
+  "fresh",
+  "halfway",
+  "midpath",
+  "finisher",
+  "lapsed-path",
+  "crammer-path",
+] as const;
+export type PathPersona = (typeof PATH_PERSONAS)[number];
+
+export interface PathLearner {
+  email: string;
+  displayName: string;
+  persona: PathPersona;
+}
+
+/** MF-0068: a `public.path_enrollments` row. */
+export interface PlannedEnrollment {
+  email: string;
+  pathSlug: string;
+  startedAt: Date;
+}
+
+/** MF-0068: a `public.course_completions` row, planned only where `isCourseComplete` held at `completedAt`. */
+export interface PlannedCompletion {
+  email: string;
+  packSlug: string;
+  completedAt: Date;
+  packVersion: number;
+}
+
+/** MF-0068: a group following a path (`groups.path_slug`), on the path's first course as `create_path_group` sets it. */
+export interface PlannedPathGroup {
+  name: string;
+  pathSlug: string;
+  packSlug: string;
+  /** A member; joins as admin. */
+  createdByEmail: string;
+  members: { email: string; joinedAt: Date }[];
+}
+
+/** MF-0068: everything the path scenarios add to a seed run. */
+export interface PathScenarioPlan {
+  path: { slug: string; courses: readonly string[] };
+  learners: PathLearner[];
+  enrollments: PlannedEnrollment[];
+  attempts: PlannedAttempt[];
+  completions: PlannedCompletion[];
+  groups: PlannedPathGroup[];
+}

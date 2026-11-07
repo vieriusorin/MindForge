@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Sql, TransactionSql } from "postgres";
-import type { DemoWorld, SeedManifest } from "./types";
+import type { DemoWorld, PathScenarioPlan, SeedManifest } from "./types";
 
 interface StormGuardContext {
   /** Null before your account exists (then nothing can be spoiled for you). */
@@ -182,6 +182,150 @@ async function assertNoUnfinishedStorm(db: Sql, you: string): Promise<void> {
     );
 }
 
+/**
+ * MF-0068: what only the plan can get wrong about the path scenarios, checked before anything is read or
+ * deleted: every row belongs to a planned path persona on the demo domain, none is yours, and no path
+ * persona is also a pack-world learner.
+ */
+function assertPathPlanShape(
+  paths: PathScenarioPlan,
+  {
+    suffix,
+    you,
+    worldEmails,
+  }: { suffix: string; you: string; worldEmails: ReadonlySet<string> },
+): void {
+  const planned = new Set(paths.learners.map((l) => l.email.toLowerCase()));
+  const rows = [
+    ...paths.learners.map((l) => l.email),
+    ...paths.enrollments.map((e) => e.email),
+    ...paths.attempts.map((t) => t.email),
+    ...paths.completions.map((c) => c.email),
+    ...paths.groups.flatMap((g) => [
+      g.createdByEmail,
+      ...g.members.map((m) => m.email),
+    ]),
+  ].map((e) => e.toLowerCase());
+  for (const email of rows) {
+    if (email === you)
+      throw new Error(
+        "seedDemoWorld: the path scenarios must not write to your account",
+      );
+    if (!email.endsWith(suffix) || !planned.has(email))
+      throw new Error(
+        `seedDemoWorld: ${email} is not a planned path persona on the demo domain`,
+      );
+    if (worldEmails.has(email))
+      throw new Error(
+        `seedDemoWorld: ${email} is both a path persona and a pack-world learner`,
+      );
+  }
+  for (const g of paths.groups)
+    if (!g.members.some((m) => m.email === g.createdByEmail))
+      throw new Error(`seedDemoWorld: ${g.name}'s creator is not a member`);
+}
+
+/**
+ * MF-0068: the DB facts the path scenarios rely on, as the registry holds them now: the path's courses in
+ * the plan's order (`private.path_courses`, written by db:sync-keys), every course pack registered, each
+ * group on a course of the path, and every planned answer a synced question of its pack and skill that is
+ * not rejected. Runs before any delete, and again inside the write transaction.
+ */
+async function assertPathsSeedable(
+  db: Sql | TransactionSql,
+  paths: PathScenarioPlan,
+): Promise<void> {
+  const { slug, courses } = paths.path;
+  const registry = await db<{ pack_slug: string }[]>`
+    select pack_slug from private.path_courses where path_slug = ${slug} order by position`;
+  if (registry.map((r) => r.pack_slug).join(",") !== courses.join(","))
+    throw new Error(
+      `seedDemoWorld: path "${slug}" in the registry differs from paths/${slug}.yaml: run pnpm db:sync-keys`,
+    );
+  const registered = await db<{ slug: string }[]>`
+    select slug from private.packs where slug = any(${[...courses]}::text[])`;
+  if (registered.length !== new Set(courses).size)
+    throw new Error(
+      `seedDemoWorld: a course of path "${slug}" is not registered: run pnpm db:sync-keys`,
+    );
+  for (const g of paths.groups)
+    if (g.pathSlug !== slug || !courses.includes(g.packSlug))
+      throw new Error(
+        `seedDemoWorld: ${g.name} is not on a course of path "${slug}"`,
+      );
+  const ids = [...new Set(paths.attempts.map((t) => t.questionId))];
+  const keys = await db<
+    {
+      question_id: string;
+      pack_slug: string;
+      skill_code: string;
+      state: string;
+    }[]
+  >`
+    select k.question_id, k.pack_slug, k.skill_code, private.item_state(k.question_id) as state
+    from private.question_keys k where k.question_id = any(${ids}::text[])`;
+  const byId = new Map(keys.map((k) => [k.question_id, k]));
+  for (const t of paths.attempts) {
+    const key = byId.get(t.questionId);
+    if (!key || key.pack_slug !== t.packSlug || key.skill_code !== t.skillCode)
+      throw new Error(
+        `seedDemoWorld: ${t.questionId} is not a synced question of ${t.packSlug}: run pnpm db:sync-keys`,
+      );
+    if (key.state === "rejected")
+      throw new Error(
+        `seedDemoWorld: ${t.questionId} was rejected; re-run plans around it`,
+      );
+  }
+}
+
+/** MF-0068: the path personas' rows, inside the seed's transaction (the users exist already). */
+async function writePathScenarios(
+  tx: TransactionSql,
+  paths: PathScenarioPlan,
+  userId: (email: string) => string,
+): Promise<void> {
+  for (const e of paths.enrollments)
+    await tx`
+      insert into public.path_enrollments (user_id, path_slug, started_at)
+      values (${userId(e.email)}, ${e.pathSlug}, ${e.startedAt.toISOString()})`;
+  const rows = paths.attempts.map((t) => ({
+    user_id: userId(t.email),
+    pack_slug: t.packSlug,
+    skill_code: t.skillCode,
+    question_id: t.questionId,
+    chosen: t.chosen,
+    correct: t.correct,
+    answered_at: t.answeredAt.toISOString(),
+  }));
+  if (rows.length > 0)
+    await tx`
+      insert into public.attempts
+        (user_id, pack_slug, skill_code, question_id, chosen, correct, answered_at)
+      select user_id, pack_slug, skill_code, question_id, chosen, correct, answered_at
+      from jsonb_to_recordset(${tx.json(rows)}) as r(
+        user_id uuid, pack_slug text, skill_code text, question_id text,
+        chosen text[], correct boolean, answered_at timestamptz)`;
+  for (const c of paths.completions)
+    await tx`
+      insert into public.course_completions (user_id, pack_slug, completed_at, pack_version)
+      values (${userId(c.email)}, ${c.packSlug}, ${c.completedAt.toISOString()}, ${c.packVersion})`;
+  for (const g of paths.groups) {
+    const creatorId = userId(g.createdByEmail);
+    const [group] = await tx<{ id: string }[]>`
+      insert into public.groups (name, pack_slug, path_slug, invite_code, created_by)
+      values (${g.name}, ${g.packSlug}, ${g.pathSlug}, replace(gen_random_uuid()::text, '-', ''), ${creatorId})
+      returning id`;
+    if (!group)
+      throw new Error("seedDemoWorld: path group insert returned nothing");
+    for (const m of g.members) {
+      const id = userId(m.email);
+      await tx`
+        insert into public.group_members (group_id, user_id, role, joined_at)
+        values (${group.id}, ${id}, ${id === creatorId ? "admin" : "member"}, ${m.joinedAt.toISOString()})`;
+    }
+  }
+}
+
 /** A demo domain must look like a domain, so the delete below can never match every address. */
 export function assertDemoDomain(domain: string): string {
   const clean = domain.trim().toLowerCase();
@@ -234,6 +378,10 @@ export async function seedDemoWorld({
  * that also holds (b), so a late failure restores your rows. Storms are inserted unfinished and graded
  * by `private.finalize_storm`; you having an unfinished storm of your own is refused up front.
  * Returns your seeded attempt and storm ids for the next run.
+ *
+ * MF-0068: `paths` adds the path personas (demo domain, so (a) removes them and every path row they hold),
+ * their enrollments, answers, completions and path groups, in the same transaction. Its checks join the
+ * others before (a) and inside the transaction; no path row is ever written for you.
  */
 export async function seedDemoWorlds({
   sql,
@@ -242,6 +390,7 @@ export async function seedDemoWorlds({
   demoDomain,
   youEmail,
   previous,
+  paths = null,
 }: {
   sql: Sql;
   admin: SupabaseClient;
@@ -249,6 +398,8 @@ export async function seedDemoWorlds({
   demoDomain: string;
   youEmail: string;
   previous: SeedManifest | null;
+  /** MF-0068: the path personas and path groups; absent = none (the MF-0029..MF-0054 callers). */
+  paths?: PathScenarioPlan | null;
 }): Promise<SeedManifest> {
   const learners = sharedLearners(worlds);
   const domain = assertDemoDomain(demoDomain);
@@ -266,6 +417,13 @@ export async function seedDemoWorlds({
       throw new Error(
         `seedDemoWorld: ${learner.email.toLowerCase()} is not on the demo domain`,
       );
+  // MF-0068: the path plan's shape, before anything is read or deleted.
+  if (paths)
+    assertPathPlanShape(paths, {
+      suffix,
+      you,
+      worldEmails: new Set(learners.map((l) => l.email.toLowerCase())),
+    });
   // MF-0052 (c) failure order: every check, for ALL worlds, before the first delete.
   const now = new Date();
   const [youRow] = await sql<{ id: string }[]>`
@@ -280,6 +438,7 @@ export async function seedDemoWorlds({
     await assertWorldSeedable(sql, world);
     await assertStormsSeedable(sql, world, guard(youRow?.id ?? null));
   }
+  if (paths) await assertPathsSeedable(sql, paths);
   await assertNoUnfinishedStorm(sql, you);
 
   // (a) the previous demo world (the admin API cascades their storms, groups and expeditions)
@@ -299,6 +458,13 @@ export async function seedDemoWorlds({
   const idOf = new Map<string, string>([[you, youId]]);
   for (const learner of learners) {
     if (learner.persona === "you") continue;
+    const email = learner.email.toLowerCase();
+    const id = await createConfirmedUser(admin, email);
+    idOf.set(email, id);
+    await sql`update public.profiles set display_name = ${learner.displayName} where id = ${id}`;
+  }
+  // MF-0068: the path personas (demo domain, so the next run's delete removes them with their rows)
+  for (const learner of paths?.learners ?? []) {
     const email = learner.email.toLowerCase();
     const id = await createConfirmedUser(admin, email);
     idOf.set(email, id);
@@ -472,6 +638,11 @@ export async function seedDemoWorlds({
       mine.push(
         ...inserted.filter((r) => r.user_id === youId).map((r) => Number(r.id)),
       );
+    }
+
+    if (paths) {
+      await assertPathsSeedable(tx, paths);
+      await writePathScenarios(tx, paths, userId);
     }
 
     // MF-0054 SC-8: pin your demo groups oldest join first, so your newest join (ccdv-f, MF-0052 SC-1)

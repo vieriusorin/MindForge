@@ -1,0 +1,22 @@
+{
+  "ticket": "MF-0068",
+  "frozen_at": "2026-11-06T20:07:48Z",
+  "files": [
+    {
+      "path": "src/dev-seed/__tests__/mf-0068-plan.acceptance.test.ts",
+      "sha256": "632d72f07319457f38e1b797f2dd336dd849abf079be861c1331ba9209d799a8",
+      "first_failure": "SC-1..SC-4, SC-5a: Error: not implemented (planPathScenarios / planSeed), 10 cases; SC-5b green at freeze (regression lock: fixture hash 27f73e07... recorded from the unchanged planDemoWorld)"
+    },
+    {
+      "path": "src/dev-seed/__tests__/mf-0068-seed.db.acceptance.test.ts",
+      "sha256": "fcbf85a5edf399fb2eb548d95619c1f5b6ae07499f3a7a3515911502cf286743",
+      "first_failure": "SC-6/7/8: beforeAll Error: not implemented (planPathScenarios); SC-7 and SC-8 are regression locks shown RED against broken seeder variants in BUILD"
+    },
+    {
+      "path": "src/dev-seed/__tests__/mf-0068-runbook.acceptance.test.ts",
+      "sha256": "266a24250418ce2c6948e93952b82f1c3cbddc0d90cea8fd2765bc680d71ed17",
+      "first_failure": "SC-9: AssertionError: expected the runbook to contain fresh@mindforge-demo.test"
+    }
+  ],
+  "history": []
+}

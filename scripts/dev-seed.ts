@@ -8,6 +8,9 @@
  * group, backdated joins with the exam pack as your newest group (the sidebar's primary pack), and the
  * account with a non-empty review queue per pack in the closing output.
  *
+ * MF-0068: also six path personas enrolled in the first learning path whose courses are all seeded, in
+ * different path states, and two path groups (6 members; a trio whose heatmap says "not enough data").
+ *
  * Usage: MF_AUTHOR_EMAIL=you@example.com pnpm dev:seed [--pack <slug>]... [--seed 42]
  * Needs the local stack (`pnpm dev:setup`). Refuses SUPABASE_DB_URL and any non-local database.
  */
@@ -17,7 +20,8 @@ import { z } from "zod";
 import { assertLocalSeedTarget } from "@/dev-seed/guard";
 import { loadSeedInputs } from "@/dev-seed/load-seed-inputs";
 import { toSeedManifest } from "@/dev-seed/manifest";
-import { demoGroupName, planDemoWorlds } from "@/dev-seed/plan-demo-world";
+import { demoGroupName } from "@/dev-seed/plan-demo-world";
+import { planSeed } from "@/dev-seed/plan-seed";
 import { resolveSeedPacks } from "@/dev-seed/resolve-seed-packs";
 import { reviewQueueOwners } from "@/dev-seed/review-queue-owners";
 import {
@@ -25,11 +29,13 @@ import {
   seedDemoWorlds,
 } from "@/dev-seed/seed-demo-world";
 import type { SeedManifest } from "@/dev-seed/types";
+import { parsePath } from "@/engine/path";
 import { adminClient, sql, stackEnv } from "@/test/local-stack";
 
 const ROOT = process.cwd();
 const DEMO_DOMAIN = "mindforge-demo.test";
 const PACKS_DIR = join(ROOT, "packs");
+const PATHS_DIR = join(ROOT, "paths");
 const MANIFEST = join(ROOT, ".cache", "dev-seed", "manifest.json");
 function readManifest(youEmail: string): SeedManifest | null {
   try {
@@ -106,7 +112,14 @@ async function main(): Promise<void> {
     demoDomain: DEMO_DOMAIN,
     youEmail,
   });
-  const worlds = planDemoWorlds({
+  // MF-0068: every path file; planSeed takes the first whose courses were all loaded this run.
+  const paths = readdirSync(PATHS_DIR)
+    .filter((name) => name.endsWith(".yaml"))
+    .sort()
+    .map((name) =>
+      parsePath(readFileSync(join(PATHS_DIR, name), "utf8"), `paths/${name}`),
+    );
+  const { worlds, pathScenario, skippedPaths } = planSeed({
     now: new Date(),
     seed,
     youEmail,
@@ -117,6 +130,7 @@ async function main(): Promise<void> {
       if (!inputs) throw new Error(`dev:seed: pack "${slug}" was not loaded`);
       return { ...inputs, groupName: demoGroupName(inputs.pack.name) };
     }),
+    paths,
   });
 
   let owners: Awaited<ReturnType<typeof reviewQueueOwners>> = [];
@@ -128,6 +142,7 @@ async function main(): Promise<void> {
       demoDomain: DEMO_DOMAIN,
       youEmail,
       previous: readManifest(youEmail),
+      paths: pathScenario,
     });
     mkdirSync(join(ROOT, ".cache", "dev-seed"), { recursive: true });
     writeFileSync(
@@ -171,6 +186,21 @@ async function main(): Promise<void> {
   for (const l of worlds[0]?.learners ?? [])
     console.log(
       `  ${l.email}${l.persona === "you" ? "  (you, group admin)" : `  (${l.displayName})`}`,
+    );
+  if (pathScenario) {
+    console.log(
+      `Learning path "${pathScenario.path.slug}": ${pathScenario.attempts.length} answers, ${pathScenario.completions.length} course completions. Sign in as a path persona (nothing path-related is on your account):`,
+    );
+    for (const l of pathScenario.learners)
+      console.log(`  ${l.email}  (${l.displayName}, ${l.persona})`);
+    for (const g of pathScenario.groups)
+      console.log(
+        `  group "${g.name}": ${g.members.length} members, on ${g.packSlug}`,
+      );
+  }
+  if (skippedPaths.length > 0)
+    console.log(
+      `No path scenarios for ${skippedPaths.join(", ")}: one path per run, and only when every course of it is seeded.`,
     );
   console.log("Magic links arrive in Mailpit: http://127.0.0.1:54324");
 }
