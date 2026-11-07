@@ -34,7 +34,7 @@
     },
     {
       "path": "src/features/__tests__/mf-0058-recorder-failure.db.acceptance.test.ts",
-      "sha256": "040f9b27799f0b6560149f99654dfc70e7d0c41edd27526511a5270dcfeaf231",
+      "sha256": "e0b164f25ed90b1739c4dee47bea71635da02255812521b62f66565a623fbb2e",
       "first_failure": "SC-6: recorder vi.fn() not called with ObjectContaining (ok + attempt-row assertions already pass)"
     },
     {
@@ -48,5 +48,13 @@
       "first_failure": "SC-9: Unable to find an accessible element with the role \"link\" and name \"Paths\""
     }
   ],
-  "history": []
+  "history": [
+    {
+      "at": "2026-11-07T09:39:39.244Z",
+      "reason": "MF-0067 re-freeze (retry-safe answers): record_attempt gains p_client_attempt_id (4-arg signature) and the answer inputs require clientAttemptId (uuid). Only fixtures gain the id and SC-7 names the 4-arg signature; every other assertion unchanged. Listed in .planning/tasks/MF-0067/LOOP-PLAN.md; approved by the user 2026-11-07.",
+      "previous": {
+        "src/features/__tests__/mf-0058-recorder-failure.db.acceptance.test.ts": "040f9b27799f0b6560149f99654dfc70e7d0c41edd27526511a5270dcfeaf231"
+      }
+    }
+  ]
 }

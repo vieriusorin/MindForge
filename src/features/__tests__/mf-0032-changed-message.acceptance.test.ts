@@ -18,6 +18,7 @@ const INPUT = {
   questionId: "p.S1.q1",
   chosen: ["B"],
   contentHash: "h1",
+  clientAttemptId: "0b6c2f6e-1d2a-4c3b-8e4f-5a6b7c8d9e0f", // MF-0067: required by the input schema
 };
 
 describe("MF-0032 SC-5: a changed question is worded per mode", () => {

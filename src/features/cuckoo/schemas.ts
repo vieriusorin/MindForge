@@ -7,6 +7,8 @@ export const CuckooAnswerInput = z.strictObject({
   cuckooId: z.string().min(1).max(128),
   line: z.number().int().min(1).max(CUCKOO_MAX_LINES),
   contentHash: z.string().min(1).max(128),
+  /** MF-0067: names this submission; a retry with the same id is recorded once. */
+  clientAttemptId: z.uuid(),
 });
 
 export type CuckooAnswerValues = z.infer<typeof CuckooAnswerInput>;

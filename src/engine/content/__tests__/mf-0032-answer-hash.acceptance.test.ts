@@ -81,7 +81,13 @@ describe("MF-0032 SC-3: checkQuestionAnswer", () => {
 });
 
 describe("MF-0032 SC-4: AnswerInput carries the hash", () => {
-  const base = { packSlug: "p", questionId: "p.S1.q1", chosen: ["B"] };
+  // MF-0067: the input also requires a client attempt id
+  const base = {
+    packSlug: "p",
+    questionId: "p.S1.q1",
+    chosen: ["B"],
+    clientAttemptId: "0b6c2f6e-1d2a-4c3b-8e4f-5a6b7c8d9e0f",
+  };
 
   it("SC-4: an answer with a hash parses and keeps it", () => {
     const parsed = AnswerInput.safeParse({ ...base, contentHash: "h1" });

@@ -8,6 +8,8 @@ import {
   toggleChoice,
 } from "@/components/question-card";
 import type { AnswerFeedback } from "@/engine/questions";
+import { submissionKey } from "@/lib/attempt-id";
+import { useAttemptId } from "@/lib/use-attempt-id";
 import { useSingleFlight } from "@/lib/use-single-flight";
 import { answerWalkQuestion } from "../../../actions";
 import type { WalkStep } from "../../../types";
@@ -45,6 +47,8 @@ export function useWalkSession(
 
   // MF-0026: one attempt per double click (isPending updates a render late).
   const flight = useSingleFlight();
+  // MF-0067: one id per submission, kept for a retry, so a resent answer is recorded once.
+  const attempt = useAttemptId();
 
   const mutation = useMutation({
     mutationFn: answerWalkQuestion,
@@ -92,11 +96,13 @@ export function useWalkSession(
       questionId: step.question.id,
       chosen,
       contentHash: step.question.contentHash,
+      clientAttemptId: attempt.idFor(submissionKey(step.question.id, chosen)),
     });
   };
 
   const next = (): void => {
     hasAdvanced.current = true;
+    attempt.clear();
     mutation.reset();
     setChosen([]);
     setIndex((i) => i + 1);

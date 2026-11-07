@@ -10,6 +10,7 @@
  * `record_attempt`, the review context and the attempts table run for real. Seeds its own pack slug;
  * deletes child-first afterwards.
  */
+import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import type { Question } from "@/engine/questions";
 import {
@@ -112,6 +113,7 @@ describe("MF-0058 SC-6: a failing recorder never fails the attempt", () => {
       questionId: Q,
       chosen: ["B"],
       contentHash: HASH,
+      clientAttemptId: randomUUID(), // MF-0067: required by the input schema
     });
 
     expect(result).toEqual({

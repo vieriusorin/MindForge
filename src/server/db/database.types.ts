@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           answered_at: string;
           chosen: string[];
+          client_attempt_id: string | null;
           content_hash: string | null;
           correct: boolean;
           id: number;
@@ -26,6 +27,7 @@ export type Database = {
         Insert: {
           answered_at?: string;
           chosen: string[];
+          client_attempt_id?: string | null;
           content_hash?: string | null;
           correct: boolean;
           id?: never;
@@ -38,6 +40,7 @@ export type Database = {
         Update: {
           answered_at?: string;
           chosen?: string[];
+          client_attempt_id?: string | null;
           content_hash?: string | null;
           correct?: boolean;
           id?: never;
@@ -423,6 +426,7 @@ export type Database = {
       record_attempt: {
         Args: {
           p_chosen: string[];
+          p_client_attempt_id?: string;
           p_content_hash?: string;
           p_question_id: string;
         };

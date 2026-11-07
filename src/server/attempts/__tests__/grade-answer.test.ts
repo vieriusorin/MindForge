@@ -48,6 +48,7 @@ const INPUT = {
   questionId: "p.S1.q1",
   chosen: ["B"],
   contentHash: "h1",
+  clientAttemptId: "5e1d7a3c-2b4f-4e6a-9d8c-7f0e1a2b3c4d",
 };
 
 const { gradeAnswer } = await import("../grade-answer");
@@ -66,6 +67,7 @@ describe("gradeAnswer (MF-0032)", () => {
       p_question_id: "p.S1.q1",
       p_chosen: ["B"],
       p_content_hash: "h1",
+      p_client_attempt_id: "5e1d7a3c-2b4f-4e6a-9d8c-7f0e1a2b3c4d",
     });
     expect(result).toEqual({
       ok: true,
@@ -140,5 +142,18 @@ describe("gradeAnswer records Course complete (MF-0058 SC-6)", () => {
         rationales: { A: "No", B: "Yes" },
       },
     });
+  });
+});
+
+describe("gradeAnswer (MF-0067)", () => {
+  it("maps a reused attempt id (23505) to not-gradable and records no completion", async () => {
+    rpc.mockReset();
+    recordCourseCompletion.mockReset();
+    rpc.mockResolvedValue({ data: null, error: { code: "23505" } });
+    expect(await gradeAnswer(INPUT)).toEqual({
+      ok: false,
+      error: "not-gradable",
+    });
+    expect(recordCourseCompletion).not.toHaveBeenCalled();
   });
 });

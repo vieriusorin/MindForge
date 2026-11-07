@@ -80,6 +80,7 @@ describe("SeedChecks", () => {
       questionId: "p.S1.2",
       chosen: ["B"],
       contentHash: "h-p.S1.2",
+      clientAttemptId: expect.any(String),
     });
     expect(screen.getByRole("link", { name: "Back to Today" })).toHaveAttribute(
       "href",

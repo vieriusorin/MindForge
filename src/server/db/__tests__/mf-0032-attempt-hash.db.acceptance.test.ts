@@ -188,7 +188,7 @@ describe("MF-0032 record_attempt binds to the content hash", () => {
     expect([fresh.error, fresh.data]).toEqual([null, true]);
   });
 
-  it("SC-7: only the 3-arg signature exists; authenticated may execute it, anon may not", async () => {
+  it("SC-7: only the 4-arg signature exists (MF-0067 adds p_client_attempt_id); authenticated may execute it, anon may not", async () => {
     const db = sql();
     try {
       const rows = await db<{ sig: string; auth: boolean; anon: boolean }[]>`
@@ -200,12 +200,12 @@ describe("MF-0032 record_attempt binds to the content hash", () => {
         order by 1`;
       expect(rows).toEqual([
         {
-          sig: "private.record_attempt(text,text[],text)",
+          sig: "private.record_attempt(text,text[],text,uuid)",
           auth: true,
           anon: false,
         },
         {
-          sig: "record_attempt(text,text[],text)",
+          sig: "record_attempt(text,text[],text,uuid)",
           auth: true,
           anon: false,
         },

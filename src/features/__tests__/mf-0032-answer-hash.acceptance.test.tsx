@@ -50,6 +50,8 @@ const EXPECTED = {
   questionId: "p.S1.1",
   chosen: ["B"],
   contentHash: "h-p.S1.1",
+  // MF-0067: every answer also carries a client attempt id
+  clientAttemptId: expect.any(String),
 };
 
 describe("MF-0032 SC-4: the answer carries the hash the page showed", () => {

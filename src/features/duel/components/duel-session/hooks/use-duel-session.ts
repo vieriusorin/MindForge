@@ -8,6 +8,8 @@ import {
   toggleChoice,
 } from "@/components/question-card";
 import type { AnswerFeedback, PlayableQuestion } from "@/engine/questions";
+import { submissionKey } from "@/lib/attempt-id";
+import { useAttemptId } from "@/lib/use-attempt-id";
 import { useSingleFlight } from "@/lib/use-single-flight";
 import { answerQuestion } from "../../../actions";
 
@@ -47,6 +49,8 @@ export function useDuelSession(
   // MF-0012 SC-1: TanStack reports isPending on a later render, so a second click before it
   // would still see `false`. The shared guard closes that window synchronously (MF-0026).
   const flight = useSingleFlight();
+  // MF-0067: one id per submission, kept for a retry, so a resent answer is recorded once.
+  const attempt = useAttemptId();
 
   const mutation = useMutation({
     mutationFn: answerQuestion,
@@ -101,11 +105,13 @@ export function useDuelSession(
       questionId: question.id,
       chosen,
       contentHash: question.contentHash,
+      clientAttemptId: attempt.idFor(submissionKey(question.id, chosen)),
     });
   };
 
   const next = (): void => {
     hasAdvanced.current = true;
+    attempt.clear();
     mutation.reset();
     setChosen([]);
     setIndex((i) => i + 1);
