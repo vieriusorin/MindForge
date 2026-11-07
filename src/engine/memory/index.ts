@@ -1,5 +1,6 @@
 export { countableAttempts } from "./countable";
 export { memoryBySkill } from "./memory-by-skill";
+export { nextReviewAt } from "./next-review";
 export {
   planWalk,
   WALK_SIZE,

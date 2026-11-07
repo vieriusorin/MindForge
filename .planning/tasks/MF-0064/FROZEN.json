@@ -1,0 +1,46 @@
+{
+  "ticket": "MF-0064",
+  "frozen_at": "2026-11-07T10:14:42Z",
+  "files": [
+    {
+      "path": "src/engine/lesson/__tests__/mf-0064-lesson-plan.acceptance.test.ts",
+      "sha256": "c930be75e75cf1aa42f56d99045a30861e7f2477d43382fbec62f13ce61bc3ac",
+      "first_failure": "SC-1/2: Error: not implemented (planLesson, reaskQuestionIds), 20 of 20 cases"
+    },
+    {
+      "path": "src/engine/memory/__tests__/mf-0064-next-review.acceptance.test.ts",
+      "sha256": "762865352f166f764f817f17d4dbf6665b4377f1d4b095f2e78625d4450bfefe",
+      "first_failure": "SC-3: Error: not implemented (nextReviewAt), 3 of 3"
+    },
+    {
+      "path": "src/engine/lesson/__tests__/mf-0064-lesson-outcome.acceptance.test.ts",
+      "sha256": "cea4f71412ef898e7dd98dd47597aff8372a5bf2c1583e5cf10b5110023d053b",
+      "first_failure": "SC-4: Error: not implemented (lessonOutcome), 7 of 7"
+    },
+    {
+      "path": "src/features/lesson/__tests__/mf-0064-node-entry.acceptance.test.ts",
+      "sha256": "fd79831904cc878beb3fd0e4344ec39bd1f45b1c8d8800e74bd4de107ebb14c4",
+      "first_failure": "SC-5: expected /play/ccdv-f/plant/D1.S2 to be /play/ccdv-f/lesson/D1.S2; NODE_MODE_LABEL plant Seed Planting vs Lesson; lesson routes absent; Water first: nextStep = water A.1 holds, href /play/demo/walk vs /play/demo/lesson/A.1 (4 of 4)"
+    },
+    {
+      "path": "src/features/lesson/components/lesson-player/__tests__/mf-0064-lesson-player.acceptance.test.tsx",
+      "sha256": "08dcbdfe0a62fde9e60b3801e1e33be4e42b68747ed278b86f7aa952d485fe03",
+      "first_failure": "SC-6: Unable to find text Step 1 of 6 / radio First / heading Nothing to learn here yet (player stub renders null), 3 of 3"
+    },
+    {
+      "path": "src/features/lesson/components/lesson-close/__tests__/mf-0064-lesson-close.acceptance.test.tsx",
+      "sha256": "24a5c837f4f074baed409485f8b64725e9d6387b6ec784014c1f5cb381f6118a",
+      "first_failure": "SC-7: Unable to find heading Lesson complete / link Back to course map (close stub renders null), 2 of 2; the no-XP/streak/league half is green by design (absence lock)"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-07T10:17:14Z",
+      "path": "src/features/lesson/components/lesson-player/__tests__/mf-0064-lesson-player.acceptance.test.tsx",
+      "from": "6b7af435964ba4bfadf12ee67bd07994b87f276526ce4bda144e6b9564a7b78c",
+      "to": "08dcbdfe0a62fde9e60b3801e1e33be4e42b68747ed278b86f7aa952d485fe03",
+      "reason": "Coordinator heads-up 2026-11-07: MF-0067 merges first and adds a required clientAttemptId to AnswerInput; the first-call assertion changes toEqual -> toMatchObject (same four literal fields) so the rebase does not break the frozen contract. Still RED (player stub). Approved by the user 2026-11-07.",
+      "approved": "user, 2026-11-07 (relayed by the orchestrator under U-2)"
+    }
+  ]
+}

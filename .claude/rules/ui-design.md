@@ -15,8 +15,9 @@ badges.
   (`pnpm dlx shadcn@latest add <name>`; config in `components.json`, style `radix-nova`).
   If a screen needs a primitive that isn't installed, **add it with the CLI**. Don't build a
   look-alike (a custom nav link, skeleton, avatar, tooltip, pill or chart).
-- Installed: `avatar badge base-node button card chart checkbox dropdown-menu field input label
-  radio-group select separator sheet sidebar skeleton tooltip` (`base-node` from the React Flow UI
+- Installed: `alert alert-dialog avatar badge base-node button card chart checkbox collapsible
+  dropdown-menu field input label progress radio-group select separator sheet sidebar skeleton
+  textarea tooltip` (`base-node` from the React Flow UI
   registry, `https://ui.reactflow.dev/base-node`). Check `src/components/ui/` before adding.
 - `src/components/ui/**` is shadcn-owned. It's formatted, not linted (`biome.json` override).
   Customise a screen through `className` and tokens. Edit the primitive only to change it

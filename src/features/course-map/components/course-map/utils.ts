@@ -53,12 +53,11 @@ export function domainHeaderLine(
 }
 
 /**
- * Why the next step is what it is, in one sentence. MF-0062 review: the water line must not promise
- * the walk contains this skill (`planWalk` ranks by weight × (1 − R) and caps at 10); MF-0064's
- * skill-scoped lesson closes that gap.
+ * Why the next step is what it is, in one sentence. MF-0064: the node opens a lesson scoped to this
+ * skill, so the water line may promise the skill is recalled (the MF-0062 review gap is closed).
  */
 export function nextStepReason(kind: "water" | "next"): string {
   return kind === "water"
-    ? "This skill is fading. Recall it soon to keep it growing: the Daily Walk starts with fading skills."
+    ? "This skill is fading. A short lesson recalls it now to keep it growing."
     : "The next skill to grow on this map.";
 }

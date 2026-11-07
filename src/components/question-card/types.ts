@@ -17,4 +17,9 @@ export interface QuestionCardProps {
   headingRef?: Ref<HTMLHeadingElement>;
   /** Live region, errors and buttons. */
   footer: ReactNode;
+  /**
+   * MF-0064: false keeps each option's verdict but leaves the rationales to the mode (the lesson's
+   * "Why?"). Defaults to true: every other mode shows them inline.
+   */
+  showRationales?: boolean;
 }

@@ -112,7 +112,8 @@ describe("labels", () => {
     expect(nextStepReason("next")).not.toMatch(/fading/);
   });
 
-  it("nextStepReason does not promise the walk contains the named skill (MF-0062 review)", () => {
-    expect(nextStepReason("water")).not.toMatch(/waters it\b/);
+  it("nextStepReason does not send a fading skill to the Daily Walk (MF-0062 review, MF-0064)", () => {
+    expect(nextStepReason("water")).not.toMatch(/Daily Walk/);
+    expect(nextStepReason("water")).toMatch(/lesson/);
   });
 });
