@@ -7,6 +7,7 @@ import {
   Footprints,
   LayoutGrid,
   LogOut,
+  Map as MapIcon,
   Route,
   Swords,
   TreePine,
@@ -37,6 +38,7 @@ export function AppSidebar({
   packName,
   groups,
   groupsLabel = "Pinned",
+  mapHref,
   duelHref,
   walkHref,
   cuckooHref,
@@ -127,6 +129,21 @@ export function AppSidebar({
         <SidebarGroup>
           <SidebarGroupLabel>Play</SidebarGroupLabel>
           <SidebarMenu>
+            {mapHref !== undefined && (
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  // MF-0062: exact match, since every mode lives under the map's own path
+                  isActive={pathname === mapHref}
+                  tooltip="Course map"
+                >
+                  <Link href={mapHref}>
+                    <MapIcon />
+                    <span>Course map</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild

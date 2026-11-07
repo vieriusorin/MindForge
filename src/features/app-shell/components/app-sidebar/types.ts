@@ -9,6 +9,11 @@ export interface AppSidebarProps {
   groups: SidebarGroupLink[];
   /** MF-0054: the section title over `groups` (the layout picks it); omitted = "Pinned". */
   groupsLabel?: "Pinned" | "Recent";
+  /**
+   * MF-0062: the course map of the learner's primary pack: /play/<packSlug>. Optional so the frozen
+   * sidebar tests keep their props; omitted = no Course map item.
+   */
+  mapHref?: string;
   /** Scenario Duel for the learner's primary pack: /play/<packSlug>/duel. */
   duelHref: string;
   /** MF-0009: Daily Walk for the same pack: /play/<packSlug>/walk. */

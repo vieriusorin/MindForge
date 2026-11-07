@@ -33,6 +33,11 @@ export function continueHref(packSlug: string): string {
   return `/play/${packSlug}/walk`;
 }
 
+/** MF-0062: a course row opens that course's map. */
+export function courseMapHref(packSlug: string): string {
+  return `/play/${packSlug}`;
+}
+
 /** The trophy line once every course is complete. A trophy, never a certification. */
 export function trophyLine(completedAt: string | null): string {
   return completedAt

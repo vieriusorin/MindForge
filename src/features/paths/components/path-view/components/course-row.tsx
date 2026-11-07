@@ -1,6 +1,10 @@
+import Link from "next/link";
 import { StageIcon } from "@/components/stage-icon";
 import { Badge } from "@/components/ui/badge";
-import { formatCompletedDate } from "@/features/paths/utils/path-display";
+import {
+  courseMapHref,
+  formatCompletedDate,
+} from "@/features/paths/utils/path-display";
 import type { CourseRowProps } from "../types";
 import {
   fadingLabel,
@@ -21,7 +25,14 @@ export function CourseRow({ course, showHealth }: CourseRowProps) {
       </span>
       <StageIcon stage={STATUS_STAGE[course.status]} />
       <div className="grid min-w-0 flex-1 gap-1">
-        <p className="font-semibold">{course.name}</p>
+        <p className="font-semibold">
+          <Link
+            href={courseMapHref(course.packSlug)}
+            className="underline-offset-4 hover:underline"
+          >
+            {course.name}
+          </Link>
+        </p>
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
           <Badge variant={STATUS_BADGE[course.status]}>
             {STATUS_LABEL[course.status]}

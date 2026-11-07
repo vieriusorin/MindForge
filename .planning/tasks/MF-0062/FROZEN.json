@@ -1,0 +1,32 @@
+{
+  "ticket": "MF-0062",
+  "frozen_at": "2026-11-06T13:59:23Z",
+  "files": [
+    {
+      "path": "src/engine/path/__tests__/mf-0062-course-map.acceptance.test.ts",
+      "sha256": "02251138f5041bb5cd50bcded323a5ffe039b93906c719d96c58f83a37c3c2f9",
+      "first_failure": "SC-1/2/3: Error: not implemented (nodeMode, nextStep, courseMap), 24 of 24 cases"
+    },
+    {
+      "path": "src/features/course-map/__tests__/mf-0062-start-node.acceptance.test.ts",
+      "sha256": "3cf2b2356f6bf356255dde451cf4edc3080d6f0d1f359b33ea06389b28de5e6d",
+      "first_failure": "SC-4: Error: not implemented (startNodeHref, bossStormHref), 3 of 4 cases; the route-exists half of case 4 is green by design (the targets exist today)"
+    },
+    {
+      "path": "src/features/course-map/__tests__/mf-0062-map-parity.acceptance.test.ts",
+      "sha256": "2a6c340171b3a754e805f4aea1ade68d09e45ee1754be68feb0280aa7dec76c5",
+      "first_failure": "SC-5: Error: not implemented (courseMap) x5; ENOENT src/app/(app)/play/[packSlug]/page.tsx"
+    },
+    {
+      "path": "src/features/course-map/components/course-map/__tests__/mf-0062-course-map-view.acceptance.test.tsx",
+      "sha256": "8af04c853fdf8c5d2b657c771f42c089e6e0e55e9dc8cf93e3b024bf54028834",
+      "first_failure": "SC-6: Unable to find role region \"Agentic architecture\" / link \"Scenario Duel: Agent loops\" / text /Every skill is at Sapling/ (view stub renders null), 6 of 8; absence cases (no checkpoint without exam, no XP/streak/league) green by design as regression locks"
+    },
+    {
+      "path": "src/features/app-shell/components/app-sidebar/__tests__/mf-0062-map-link.acceptance.test.tsx",
+      "sha256": "f954c63b50eeb27a32a184ca2c68ac645e7f08dc89401cd2537eb9aa9a8345f1",
+      "first_failure": "SC-7: expected 'Scenario Duel' to be 'Course map'; Unable to find link \"Course map\", 3 of 4; the without-mapHref case is green by design (regression lock)"
+    }
+  ],
+  "history": []
+}
