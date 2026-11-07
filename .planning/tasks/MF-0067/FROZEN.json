@@ -1,0 +1,23 @@
+{
+  "ticket": "MF-0067",
+  "frozen_at": "2026-11-06T19:06:27.079Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/server/db/__tests__/mf-0067-retry-safe.db.acceptance.test.ts",
+      "sha256": "338ded3673fdf44bcbc0b8d9c67508f497dbd9c934c68b715a7727b44fc47cfe",
+      "first_failure": "SC-1..SC-6: PGRST202 (4-arg record_attempt missing), e.g. expected { data: null, code: PGRST202 } to deeply equal { data: true, code: null }; SC-7: signature list differs (3-arg). 2nd run identical (1st run skipped: local auth warming after a Docker pause)."
+    },
+    {
+      "path": "src/features/__tests__/mf-0067-attempt-id-input.acceptance.test.ts",
+      "sha256": "6db964ce480b39a5b3f3017e75a10160a26e1fb0c6e0b2dcfe2a5dc83b242af2",
+      "first_failure": "SC-8: expected { ok: true, feedback } to deeply equal { ok: false, error: Pick an answer first. } (no id required); forwards: expected false to be true (strictObject refuses clientAttemptId). 8/8 red."
+    },
+    {
+      "path": "src/features/__tests__/mf-0067-attempt-id.acceptance.test.tsx",
+      "sha256": "0da785d9984c8a81901bfe5007ba5599da45834567476a30ccf631bb643d3a15",
+      "first_failure": "SC-9: TypeError: .toMatch() expects to receive a string, but got undefined (hooks send no clientAttemptId). 12/12 red."
+    }
+  ],
+  "history": []
+}

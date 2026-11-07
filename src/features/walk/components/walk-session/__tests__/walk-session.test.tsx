@@ -103,6 +103,7 @@ describe("WalkSession", () => {
       questionId: "p.S1.1",
       chosen: ["A"],
       contentHash: "h-p.S1.1",
+      clientAttemptId: expect.any(String),
     });
     expect(screen.getByText("Why B is right")).toBeVisible();
 

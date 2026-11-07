@@ -23,6 +23,8 @@ export interface GradeAnswerInput {
   chosen: string[];
   /** MF-0032: the version the learner's page showed. */
   contentHash: string;
+  /** MF-0067: the submission id; a retry with the same id returns the first grade. */
+  clientAttemptId: string;
 }
 
 /**
@@ -37,6 +39,7 @@ export async function gradeAnswer({
   questionId,
   chosen,
   contentHash,
+  clientAttemptId,
 }: GradeAnswerInput): Promise<
   ActionResult<{ feedback: AnswerFeedback }, GradeError>
 > {
@@ -61,6 +64,7 @@ export async function gradeAnswer({
     p_question_id: question.id,
     p_chosen: chosen,
     p_content_hash: contentHash,
+    p_client_attempt_id: clientAttemptId,
   });
   if (isStaleVersionError(error)) return { ok: false, error: "changed" };
   if (error || typeof data !== "boolean") {

@@ -47,6 +47,7 @@ const INPUT = {
   cuckooId: "p.S1.c1",
   line: 2,
   contentHash: "h1",
+  clientAttemptId: "5e1d7a3c-2b4f-4e6a-9d8c-7f0e1a2b3c4d",
 };
 
 const { gradeCuckoo } = await import("../grade-cuckoo");
@@ -65,6 +66,7 @@ describe("gradeCuckoo (MF-0032)", () => {
       p_question_id: "p.S1.c1",
       p_chosen: ["2"],
       p_content_hash: "h1",
+      p_client_attempt_id: "5e1d7a3c-2b4f-4e6a-9d8c-7f0e1a2b3c4d",
     });
     expect(result.ok).toBe(true);
   });
@@ -127,5 +129,18 @@ describe("gradeCuckoo records Course complete (MF-0058 SC-6)", () => {
         explanation: "Line 2 is an instruction.",
       },
     });
+  });
+});
+
+describe("gradeCuckoo (MF-0067)", () => {
+  it("maps a reused attempt id (23505) to not-gradable and records no completion", async () => {
+    rpc.mockReset();
+    recordCourseCompletion.mockReset();
+    rpc.mockResolvedValue({ data: null, error: { code: "23505" } });
+    expect(await gradeCuckoo(INPUT)).toEqual({
+      ok: false,
+      error: "not-gradable",
+    });
+    expect(recordCourseCompletion).not.toHaveBeenCalled();
   });
 });

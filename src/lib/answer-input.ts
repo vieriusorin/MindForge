@@ -3,6 +3,7 @@ import { z } from "zod";
 /**
  * MF-0009 / MF-0010: one practice answer. Option ids are single capital letters, as in the pack files.
  * MF-0032: `contentHash` is the version the page showed; grading refuses it when the item changed.
+ * MF-0067: `clientAttemptId` names this submission; a retry with the same id is recorded once.
  */
 export const AnswerInput = z.strictObject({
   packSlug: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
@@ -12,6 +13,7 @@ export const AnswerInput = z.strictObject({
     .min(1)
     .max(10),
   contentHash: z.string().min(1).max(128),
+  clientAttemptId: z.uuid(),
 });
 
 export type AnswerValues = z.infer<typeof AnswerInput>;

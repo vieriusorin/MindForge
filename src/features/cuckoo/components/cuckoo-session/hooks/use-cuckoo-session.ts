@@ -3,6 +3,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import type { CuckooFeedback, PlayableCuckoo } from "@/engine/content";
+import { submissionKey } from "@/lib/attempt-id";
+import { useAttemptId } from "@/lib/use-attempt-id";
 import { useSingleFlight } from "@/lib/use-single-flight";
 import { answerCuckoo } from "../../../actions";
 import type { CuckooAnswerValues } from "../../../schemas";
@@ -47,6 +49,8 @@ export function useCuckooSession(
   // MF-0012 SC-1: TanStack reports isPending a render late; the shared guard closes a double-click
   // window (MF-0026).
   const flight = useSingleFlight();
+  // MF-0067: one id per submission, kept for a retry, so a resent answer is recorded once.
+  const attempt = useAttemptId();
 
   const mutation = useMutation({
     // TanStack passes a second (context) argument holding the QueryClient; a Server Action must
@@ -103,11 +107,13 @@ export function useCuckooSession(
       cuckooId: cuckoo.id,
       line: chosenLine,
       contentHash: cuckoo.contentHash,
+      clientAttemptId: attempt.idFor(submissionKey(cuckoo.id, chosenLine)),
     });
   };
 
   const next = (): void => {
     hasAdvanced.current = true;
+    attempt.clear();
     mutation.reset();
     setChosenLine(null);
     setIndex((i) => i + 1);

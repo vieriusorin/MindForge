@@ -5,22 +5,22 @@
   "files": [
     {
       "path": "src/server/db/__tests__/mf-0032-attempt-hash.db.acceptance.test.ts",
-      "sha256": "5f7925090e506830a24fdbb27e90439d720eefeb1a3bdaaa43bc7ee4a7eedc75",
+      "sha256": "0606f4dfc77a3bb61b662118bec53a926f1df85d6e76135a6f222ad88e446921",
       "first_failure": "SC-1: expected [ { code: PGRST202 }, null ] to deeply equal [ null, true ] (3-arg record_attempt missing); SC-6: column \"content_hash\" does not exist (42703); SC-2: expected PGRST202 to be 55000; SC-7: signature list differs. Same on 2nd run."
     },
     {
       "path": "src/engine/content/__tests__/mf-0032-answer-hash.acceptance.test.ts",
-      "sha256": "1e2dc6ee32df2e9f60084abfd1a60537e9956b837bed6dd2482cf832995eb585",
+      "sha256": "4bf95ab49fbc976c0d0b72c5805d94bd31df7430fbebfe652c8c90606067f319",
       "first_failure": "SC-3: Error: not implemented (checkQuestionAnswer stub); SC-4: expected false to be true (AnswerInput strictObject refuses contentHash)"
     },
     {
       "path": "src/features/__tests__/mf-0032-changed-message.acceptance.test.ts",
-      "sha256": "d1c21d17d1ba71d69bf166265f2293932d0a8512c2aa8fd1cb28a100c462a527",
+      "sha256": "915da10ea91f05dc1a0e426a1f31d51955b2ee262536525737de0914f7ff23bf",
       "first_failure": "SC-5: expected error \"This question changed since you opened it. Start a new duel.\", received \"Pick an answer first.\" (input refuses contentHash; no changed message)"
     },
     {
       "path": "src/features/__tests__/mf-0032-answer-hash.acceptance.test.tsx",
-      "sha256": "150bc6e390cb35b98e6f32d611cbf5fbb8a4b604857c9b619c747a2fb3aace7c",
+      "sha256": "25cdaeb502cc3dce560a7a35e3eaac6e2ab8f8081b75fe104180ae44990bbfc2",
       "first_failure": "SC-4: action called without contentHash (- \"contentHash\": \"h-p.S1.1\") in Duel, Walk, Seed Planting"
     }
   ],
@@ -30,6 +30,16 @@
       "reason": "MF-0032 review (changes-requested), user-approved 2026-11-04: the SC-2 case was vacuous (PostgrestBuilder is lazy; the RPC ran after COMMIT). Now the RPC is awaited inside the open sync transaction and the case asserts it answered before COMMIT (isCommittedAtResponse: false) and graded on the committed key (false). Renamed to what it proves; the single-snapshot read is proven by diff review. SC-1/6/7 cases and the post-commit assertions unchanged.",
       "previous": {
         "src/server/db/__tests__/mf-0032-attempt-hash.db.acceptance.test.ts": "1f053913ecb25d082422d07acfb33d75dc750b6852dbbc41275240dee3a0cbf3"
+      }
+    },
+    {
+      "at": "2026-11-07T09:39:39.244Z",
+      "reason": "MF-0067 re-freeze (retry-safe answers): record_attempt gains p_client_attempt_id (4-arg signature) and the answer inputs require clientAttemptId (uuid). Only fixtures gain the id and SC-7 names the 4-arg signature; every other assertion unchanged. Listed in .planning/tasks/MF-0067/LOOP-PLAN.md; approved by the user 2026-11-07.",
+      "previous": {
+        "src/server/db/__tests__/mf-0032-attempt-hash.db.acceptance.test.ts": "5f7925090e506830a24fdbb27e90439d720eefeb1a3bdaaa43bc7ee4a7eedc75",
+        "src/engine/content/__tests__/mf-0032-answer-hash.acceptance.test.ts": "1e2dc6ee32df2e9f60084abfd1a60537e9956b837bed6dd2482cf832995eb585",
+        "src/features/__tests__/mf-0032-changed-message.acceptance.test.ts": "d1c21d17d1ba71d69bf166265f2293932d0a8512c2aa8fd1cb28a100c462a527",
+        "src/features/__tests__/mf-0032-answer-hash.acceptance.test.tsx": "150bc6e390cb35b98e6f32d611cbf5fbb8a4b604857c9b619c747a2fb3aace7c"
       }
     }
   ]

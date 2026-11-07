@@ -21,6 +21,8 @@ export interface GradeCuckooInput {
   cuckooId: string;
   line: number;
   contentHash: string;
+  /** MF-0067: the submission id; a retry with the same id returns the first grade. */
+  clientAttemptId: string;
 }
 
 /**
@@ -34,6 +36,7 @@ export async function gradeCuckoo({
   cuckooId,
   line,
   contentHash,
+  clientAttemptId,
 }: GradeCuckooInput): Promise<
   ActionResult<{ feedback: CuckooFeedback }, GradeCuckooError>
 > {
@@ -60,6 +63,7 @@ export async function gradeCuckoo({
     p_question_id: cuckoo.id,
     p_chosen: [String(line)],
     p_content_hash: contentHash,
+    p_client_attempt_id: clientAttemptId,
   });
   // MF-0032: the registry holds another version (sync ran ahead of this deploy).
   if (isStaleVersionError(error)) return { ok: false, error: "changed" };
