@@ -13,6 +13,7 @@ import {
   CreateGroupInput,
   CreatePathGroupInput,
   JoinGroupInput,
+  SetDiscussionLinkInput,
 } from "./schemas";
 import type {
   AdvanceGroupCourseResult,
@@ -21,12 +22,14 @@ import type {
   JoinGroupResult,
   PinGroupResult,
   RotateInviteResult,
+  SetDiscussionLinkResult,
   UnpinGroupResult,
 } from "./types";
 import {
   advanceGroupCourseRpcError,
   createGroupRpcError,
   createPathGroupRpcError,
+  discussionLinkRpcError,
   joinGroupRpcError,
   pinRpcError,
   rotateInviteRpcError,
@@ -225,5 +228,30 @@ export async function unpinGroup(groupId: unknown): Promise<UnpinGroupResult> {
     p_group_id: parsed.data,
   });
   if (error) return { ok: false, error: pinRpcError(error) };
+  return { ok: true };
+}
+
+/**
+ * MF-0063: the admin sets or clears (`""`) the group's discussion link. Called from
+ * `useDiscussionLinkForm` through `useMutation`. The definer function is the authorization (admin
+ * only, 42501) and its CHECK the last word on the link's shape; the hidden form is neither.
+ */
+export async function setGroupDiscussionLink(
+  input: unknown,
+): Promise<SetDiscussionLinkResult> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/sign-in?next=/groups");
+  const parsed = SetDiscussionLinkInput.safeParse(input);
+  if (!parsed.success)
+    return { ok: false, error: formErrorFromZod(parsed.error) };
+
+  const supabase = await createServerSupabase();
+  const { error } = await supabase.rpc("set_group_discussion_url", {
+    p_group_id: parsed.data.groupId,
+    // @ts-expect-error -- generated RPC args are never nullable (supabase gen types); null clears the link.
+    p_url: parsed.data.url,
+  });
+  if (error) return { ok: false, error: discussionLinkRpcError(error) };
+  refresh();
   return { ok: true };
 }

@@ -56,3 +56,46 @@ export const AdvanceGroupCourseInput = z.strictObject({
   groupId: z.uuid(),
   fromPack: PackSlug,
 });
+
+/** MF-0063: the longest discussion link the DB accepts (`groups_discussion_url_check`). */
+export const DISCUSSION_URL_MAX = 500;
+
+/**
+ * MF-0063: the same rule as the DB CHECK in `20261106160000_mf0063_discussion_link.sql`, so
+ * change both together. https only; an ASCII host with no user-info, so the host the card shows
+ * is the one the link opens; an optional port; then /, ? or # and no whitespace or control
+ * characters. `URL.canParse` is a zod-only tightening the CHECK can't express (review finding 1):
+ * a port over 65535 or an invalid IPv4 host would otherwise save and then render nothing. The two
+ * rules agree on ASCII; on unicode edges (U+FEFF, astral characters, tab trimming) the CHECK is the
+ * looser one, so zod refuses first.
+ */
+const HTTPS_LINK =
+  /^https:\/\/[A-Za-z0-9.-]+(:[0-9]{1,5})?([/?#][^\s\p{Cc}]*)?$/u;
+
+export const DISCUSSION_URL_MESSAGE =
+  "Use an https:// link, up to 500 characters.";
+
+/** MF-0063: a discussion link, trimmed; "" (or only spaces) is `null`, which clears the link. */
+export const DiscussionUrl = z
+  .string()
+  .trim()
+  .refine(
+    (url) =>
+      url === "" ||
+      (url.length <= DISCUSSION_URL_MAX &&
+        HTTPS_LINK.test(url) &&
+        URL.canParse(url)),
+    DISCUSSION_URL_MESSAGE,
+  )
+  .transform((url) => (url === "" ? null : url));
+
+/** MF-0063: the admin's discussion link form. */
+export const DiscussionLinkFormInput = z.strictObject({ url: DiscussionUrl });
+
+export type DiscussionLinkFormValues = z.input<typeof DiscussionLinkFormInput>;
+
+/** MF-0063: `setGroupDiscussionLink`'s input: the form's values plus the group. */
+export const SetDiscussionLinkInput = z.strictObject({
+  groupId: z.uuid(),
+  url: DiscussionUrl,
+});

@@ -155,6 +155,7 @@ export type Database = {
         Row: {
           created_at: string;
           created_by: string;
+          discussion_url: string | null;
           id: string;
           invite_code: string;
           name: string;
@@ -165,6 +166,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           created_by: string;
+          discussion_url?: string | null;
           id?: string;
           invite_code: string;
           name: string;
@@ -174,6 +176,7 @@ export type Database = {
         Update: {
           created_at?: string;
           created_by?: string;
+          discussion_url?: string | null;
           id?: string;
           invite_code?: string;
           name?: string;
@@ -452,6 +455,10 @@ export type Database = {
         }[];
       };
       rotate_invite_code: { Args: { p_group_id: string }; Returns: string };
+      set_group_discussion_url: {
+        Args: { p_group_id: string; p_url: string };
+        Returns: undefined;
+      };
       start_expedition: {
         Args: { p_domain_code: string; p_group_id: string; p_target: number };
         Returns: string;

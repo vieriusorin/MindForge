@@ -44,6 +44,7 @@ Canonical terms. When code, docs or tickets disagree with this file, this file w
 - **Expedition**: a group's shared goal, started by the group admin: a number of correct recalls in one domain of the group's current pack. It runs at the group's own pace, with no end date, until the admin ends it, the group moves to its next course, or the target is reached and the admin starts the next one (MF-0059). Every current member's countable correct attempts in that domain while it runs, made since they joined the group, count. Only the group total is shown, and only in groups of at least 4 members. One runs at a time.
 - **Group path**: the path a group follows, chosen when the group is created and never changed afterwards. Joining such a group enrolls the new member in the path; leaving the path later keeps the membership. Groups created before MF-0059, or for a single pack, have none (MF-0059).
 - **Current course**: the course pack of its path a path group is on, and the pack its heatmap, expedition and review follow. It starts at the path's first course; only the group admin moves it, one course forward, and moving ends a running expedition (MF-0059).
+- **Discussion link**: one external chat link (Slack, Teams, Discord…) a group admin sets on the group page, shown to members next to the current course as "Discuss this course" with its host. https only. MindForge stores no posts, so there is nothing to moderate (MF-0063).
 
 ## Content (continued)
 
