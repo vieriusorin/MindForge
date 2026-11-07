@@ -86,11 +86,11 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Send the request twice each sprint and keep whichever answer the parser accepts."
+        text: "Send the request twice each sprint and keep whichever of the two answers the parser manages to accept."
         correct: false
         rationale: "The guide lists ways to make responses consistent (format, examples, retrieval, chained prompts, keeping Claude in character); re-running and picking a winner is not one of them."
       - id: B
-        text: "Write the request in capital letters so Claude treats the format as mandatory."
+        text: "Write the whole request in capital letters so that Claude treats the output format as mandatory."
         correct: false
         rationale: "The guide's first technique is to define the output format precisely with JSON, XML or a template; emphasis by capitals is not a technique it lists."
       - id: C
@@ -98,7 +98,7 @@ questions:
         correct: true
         rationale: "The guide says to precisely define the output format using JSON, XML or custom templates, and to constrain with examples, which it calls more effective than abstract instructions."
       - id: D
-        text: "Remove all formatting instructions so the model falls back to one standard shape."
+        text: "Remove all formatting instructions so the model falls back to its own single standard output shape."
         correct: false
         rationale: "The guide does the opposite: it makes output consistent by specifying the format you want, not by leaving it out."
     source:

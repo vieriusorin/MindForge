@@ -7,19 +7,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Add another framework layer on top to log the agent's high-level decisions."
+        text: "Add another framework layer on top that logs the agent's high-level decisions, since that summary exposes the prompts and responses sent underneath."
         correct: false
-        rationale: "More abstraction makes the underlying prompts and responses harder, not easier, to see and debug."
+        rationale: "Extra layers of abstraction obscure the underlying prompts and responses rather than exposing them, which makes failures harder to debug."
       - id: B
-        text: "Switch to a larger model so the framework's hidden prompts matter less."
+        text: "Keep the framework but add a gate check between retrieval and answering, so bad intermediate outputs are caught before the final answer is written."
         correct: false
-        rationale: "Model size does not address the observability problem; the team still cannot see what is being sent."
+        rationale: "A programmatic gate checks intermediate steps, but the framework's abstraction still obscures the underlying prompts and responses, which is what makes the failures hard to debug."
       - id: C
-        text: "Turn the feature into a fully autonomous agent so the framework can handle more of the logic."
+        text: "Turn the feature into a fully autonomous agent so the framework can plan its own steps and handle more of the retrieval and answer logic."
         correct: false
         rationale: "Adding autonomy increases complexity and cost for a task that only needs a simple pattern."
       - id: D
-        text: "Implement the pattern directly against the LLM API, which takes only a few lines of code, and if a framework is kept, make sure the team understands the underlying code it generates."
+        text: "Build the pattern directly on the LLM API in a few lines of code, and if a framework is kept, make sure the team understands its underlying code."
         correct: true
         rationale: "Frameworks can obscure the underlying prompts and responses, making them harder to debug; the guidance is to start with LLM APIs directly and, if using a framework, understand what it does underneath."
     source:
@@ -32,21 +32,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Use a model with a larger context window so the whole history fits in one session."
+        text: "Switch to a model with a much larger context window so the whole multi-day history fits into a single session and nothing needs reloading."
         correct: false
         rationale: "The work spans separate sessions, and more context is not automatically better because recall degrades as token count grows."
       - id: B
-        text: "Structured note-taking: have the agent write progress notes (for example a to-do or progress file) outside the context window and read them back at the start of each session."
+        text: "Structured note-taking: the agent keeps progress notes, like a to-do file, outside the context window and reads them back each session."
         correct: true
         rationale: "Structured note-taking persists notes outside the context window and reloads them later; it is best for iterative development with clear milestones."
       - id: C
-        text: "Spawn parallel sub-agents for each milestone and discard their results after they finish."
+        text: "Spawn a parallel sub-agent with a clean context window for each milestone, and discard each sub-agent's results as soon as it has finished."
         correct: false
         rationale: "Sub-agents give clean context for parallel exploration, but discarding their results does nothing to preserve progress across sessions."
       - id: D
-        text: "Raise max_tokens so the agent can write longer answers in each session."
+        text: "Keep the raw tool calls and results from every earlier session in the prompt, so the agent can re-read exactly what it has already done."
         correct: false
-        rationale: "max_tokens limits output length per response; it does not carry state between sessions."
+        rationale: "Raw tool results deep in the history are superfluous content worth clearing, and recall degrades as the token count grows; nothing here persists progress outside the window."
     source:
       title: "Effective context engineering for AI agents"
       url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"

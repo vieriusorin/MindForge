@@ -16,7 +16,7 @@ questions:
         correct: true
         rationale: "A user-defined tool has a `name` (matching ^[a-zA-Z0-9_-]{1,128}$), a detailed plain-text `description`, and an `input_schema` written as JSON Schema; `input_examples` is optional."
       - id: C
-        text: "`name`, `endpoint_url` and `auth_token`, so Claude can call your service directly."
+        text: "`name`, `endpoint_url` and `auth_token`, so Claude can call your service's HTTP API directly."
         correct: false
         rationale: "Claude never calls a client tool's endpoint. It returns a `tool_use` block and your application runs the call."
       - id: D
@@ -34,15 +34,15 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Short, memorable tool names that fit in a single word."
+        text: "Short, memorable tool names of a single word, so each tool is easy to tell apart."
         correct: false
-        rationale: "Names help, especially with namespacing, but the guidance names descriptions, not names, as the most important factor."
+        rationale: "Names help, but the guidance prefixes them with the service (`github_list_prs`) rather than shortening them, and names descriptions as the most important factor."
       - id: B
-        text: "Providing one separate tool for every individual action."
+        text: "Providing a separate tool for each action, such as `create_pr` and `merge_pr`."
         correct: false
         rationale: "The guidance says the opposite: consolidate related operations into fewer, more capable tools to reduce selection ambiguity."
       - id: C
-        text: "Adding `input_examples` to every tool, including the simple ones."
+        text: "Adding schema-validated `input_examples` to every tool, including the simple ones."
         correct: false
         rationale: "Examples are recommended for complex, nested or format-sensitive inputs; clear descriptions come first."
       - id: D
@@ -60,21 +60,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Group related PR operations into one tool with an `action` parameter and prefix names by service, such as `github_list_prs` and `slack_send_message`."
+        text: "Group the PR operations into one tool with an `action` parameter and prefix each name with its service, such as `github_list_prs`."
         correct: true
         rationale: "Fewer, more capable tools reduce selection ambiguity, and service-prefixed names keep selection unambiguous as the tool library grows."
       - id: B
-        text: "Shorten every description to one line so the tool list costs fewer input tokens per request."
+        text: "Shorten every description to a single line so the full 14-tool list costs fewer input tokens, and let the tool names carry the meaning."
         correct: false
         rationale: "Thinner descriptions make selection worse; detailed descriptions are the most important factor in tool performance."
       - id: C
-        text: "Set `tool_choice` to `any` so that Claude is always forced to call one of the tools."
+        text: "Set `tool_choice` to `any` so that Claude is forced to call one of the 14 tools instead of answering in plain prose."
         correct: false
         rationale: "Forcing some tool call does not help Claude tell which tool fits; the documented fix for selection ambiguity is consolidating related operations and namespacing tool names by service."
       - id: D
-        text: "Split each tool further into narrower single-purpose tools so each one does exactly one thing."
+        text: "Split each tool into narrower single-purpose tools, such as separate `create_pr`, `review_pr` and `merge_pr` tools, so each does one thing."
         correct: false
-        rationale: "More near-duplicate tools increase ambiguity; the guidance is to consolidate related operations."
+        rationale: "The guidance names `create_pr`, `review_pr` and `merge_pr` as what not to do: rather than a separate tool per action, group them, because fewer tools reduce selection ambiguity."
     source:
       title: "Define tools"
       url: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"
@@ -112,11 +112,11 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Switch to `tool_choice: {\"type\": \"any\"}`, which only requires some tool rather than a named one."
+        text: "Switch to `tool_choice: {\"type\": \"any\"}`, which these models accept because it requires a call to some tool rather than to a named one."
         correct: false
         rationale: "On Opus 5.5, Sonnet 5.5, Fable 5.1 and Mythos 5.1, both `any` and `tool` return a 400 error."
       - id: B
-        text: "Enable manual extended thinking so the model plans the forced call before it emits it."
+        text: "Enable manual extended thinking (`thinking: {type: \"enabled\"}`) so the model can plan the forced call and its input before emitting it."
         correct: false
         rationale: "Manual extended thinking does not support `any` or `tool` either, and these models reject forced tool use regardless of thinking settings."
       - id: C
@@ -124,7 +124,7 @@ questions:
         correct: true
         rationale: "For models that reject forced tool use, the documented alternative is `auto` with strict tool use for schema-valid inputs, or structured outputs when the response must have a fixed JSON shape."
       - id: D
-        text: "Remove the `tools` parameter and ask for JSON in the prompt, then parse the reply."
+        text: "Remove the `tools` parameter, describe the invoice fields as JSON in the system prompt, then parse and validate the reply."
         correct: false
         rationale: "A prompt-only request gives no schema guarantee; strict tool use or structured outputs are the documented ways to get one."
     source:
@@ -138,19 +138,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "The API prefills the turn: no prose and no thinking before `tool_use`. Use `auto` and say in the user message which tool to use."
+        text: "The API prefills the turn, so no prose or thinking precedes `tool_use`. Use `auto` and name the tool in the user message."
         correct: true
         rationale: "With `any` or `tool` the API prefills the assistant message, so no natural-language text comes before the call and thinking is skipped; `auto` plus an explicit instruction keeps both."
       - id: B
-        text: "Claude writes the explanation first and then emits the `tool_use` block, as the instruction asked."
+        text: "Claude writes the requested explanation first, then emits the `tool_use` block, so no change to the request is needed."
         correct: false
         rationale: "Forced tool use suppresses any natural-language preamble, even when it is explicitly requested."
       - id: C
-        text: "Claude produces a `thinking` block first and then calls the tool with the reasoned input."
+        text: "Claude produces a `thinking` block first, then calls the tool with the reasoned input; add a prompt line asking for prose."
         correct: false
         rationale: "Forcing a tool skips thinking on every model that accepts forced tool use; the response starts with the `tool_use` block."
       - id: D
-        text: "The request fails with a 400 error because the instruction conflicts with `tool_choice`."
+        text: "The request fails with a 400 error, since the instruction conflicts with the `tool_choice` setting; drop the instruction to fix it."
         correct: false
         rationale: "On a supporting model the request succeeds; the instruction is simply not followed before the forced call."
     source:

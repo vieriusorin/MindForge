@@ -5,9 +5,17 @@
   "files": [
     {
       "path": "src/test/__tests__/mf-0044-key-length.acceptance.test.ts",
-      "sha256": "a80b26e51d082b10ebb5fda3e2ba52cdb2484e2ac06cbaf5bf5227b293e091bb",
+      "sha256": "87ffbf847d6b604fb51dc7ec84eba07fd72bbdf15c7a76060ff3dc5f3582ace2",
       "first_failure": "SC-1: expected +0 to be 1 (no key-length rule: a 1.20x key exits 0); SC-2/SC-3/SC-6: stdout has no key-length summary; SC-4: stderr has no select: 1 key-count problem. 5/5, identical on a 2nd run"
     }
   ],
-  "history": []
+  "history": [
+    {
+      "at": "2026-11-07T09:39:04.840Z",
+      "reason": "MF-0061 re-freeze (U-4: the three slugs leave the grandfather set; MF-0044 C-3 reserved this retrofit). SC-3: the prod-prompting 150-char fixture is now checked (expects the 1.50x problem and `1 checked, 1 problem(s), 0 skipped (official)`) instead of skipped; SC-6: regex `skipped \\(grandfathered\\)` -> `skipped \\(official\\)` (MF-0061 C-1: origin official skips only the length comparison); header comment. SC-1, SC-2, SC-4 byte-identical. Approval: orchestrator (U-2) at the pre-merge review; approved by the user 2026-11-07 (MF-0061 U-5).",
+      "previous": {
+        "src/test/__tests__/mf-0044-key-length.acceptance.test.ts": "a80b26e51d082b10ebb5fda3e2ba52cdb2484e2ac06cbaf5bf5227b293e091bb"
+      }
+    }
+  ]
 }

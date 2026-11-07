@@ -64,15 +64,15 @@ questions:
         correct: true
         rationale: "The page says to create a skill when you keep pasting the same checklist or procedure, and that unlike CLAUDE.md content a skill's body loads only when it's used."
       - id: B
-        text: "Move it into CLAUDE.md: procedures belong there, since that file is read only when it is relevant."
+        text: "Move it into CLAUDE.md: procedures belong there, as that file is read only when relevant."
         correct: false
         rationale: "This reverses the page: it names a CLAUDE.md section that has grown into a procedure as a signal to create a skill, because a skill's body loads only when used."
       - id: C
-        text: "Keep pasting it: skills are reserved for the bundled ones that ship inside Claude Code itself."
+        text: "Keep pasting it: skills are reserved for the bundled ones that ship with Claude Code."
         correct: false
         rationale: "You create your own skills by writing a SKILL.md; bundled skills such as /code-review are one kind among personal, project, plugin and enterprise skills."
       - id: D
-        text: "Put it in a hook: hooks are where Claude reads multi-step instructions and follows them with care."
+        text: "Put it in a hook: hooks are where Claude reads multi-step instructions and follows them."
         correct: false
         rationale: "A hook runs every time its event occurs, which suits a rule that must hold every time; a checklist Claude reads and works through is skill content."
     source:

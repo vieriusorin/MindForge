@@ -31,21 +31,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Package it as a Skill: a SKILL.md with a description of when to use it, with the reference documents as supporting files."
+        text: "Package it as a Skill: a SKILL.md whose description says when to use it, with the reference documents as supporting files."
         correct: true
         rationale: "Skills fit repeated procedures; only the description stays in context, the body loads when the skill is used, and supporting files load only as needed."
       - id: B
-        text: "Add the checklist and all reference documents to the project's CLAUDE.md."
+        text: "Add the release checklist and all of the reference documents to the project's CLAUDE.md so every session has them."
         correct: false
         rationale: "CLAUDE.md loads into every session, so the long procedure and references would cost context even when no release is happening."
       - id: C
-        text: "Build an MCP server that returns the checklist text from a tool."
+        text: "Package it as a Skill with disable-model-invocation: true, so Claude loads it on its own whenever a release is being prepared."
         correct: false
-        rationale: "MCP connects Claude to external tools and data sources; a static internal procedure does not need a server to host and maintain."
+        rationale: "With disable-model-invocation: true, Claude cannot invoke the skill on its own and its description is not in context, so it would not pick up the procedure."
       - id: D
-        text: "Write a custom client tool whose description contains the whole checklist."
+        text: "Package it as a Skill, pasting the reference documents into its description, since a description loads only when the skill is invoked."
         correct: false
-        rationale: "Tool definitions are sent with every request, so this pays the full context cost all the time and misuses a tool as a document."
+        rationale: "A skill's description is always in context in a regular session, so documents pasted there cost context in every session; supporting files load only when needed."
     source:
       title: "Extend Claude with skills"
       url: "https://code.claude.com/docs/en/skills"
@@ -56,19 +56,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Write a custom client tool that scrapes search results, and run it in the application."
+        text: "Write a custom client tool that scrapes search results, run it in the application, and send the pages back in a tool_result."
         correct: false
         rationale: "Client tools run in your application, so the team would have to build and operate the search and scraping themselves."
       - id: B
-        text: "Upload a custom Skill that tells Claude how to search the web."
+        text: "Give Claude the bash client tool and have your application run curl against a public search engine, then send the output back."
         correct: false
-        rationale: "Skills on the Claude API run in a sandboxed container with no network access, so a Skill cannot fetch live web results there."
+        rationale: "Tools with Anthropic-defined schemas such as bash are client tools that run in your application, so the team would still run the search itself."
       - id: C
-        text: "Enable the web search server tool, which runs on Anthropic's infrastructure and returns cited results in the same response."
+        text: "Enable the web search server tool, which runs on Anthropic's infrastructure and returns cited results."
         correct: true
         rationale: "Server tools such as web search run on Anthropic's infrastructure with no handler code in your application, and web search returns cited results."
       - id: D
-        text: "Build and deploy an MCP server that wraps a third-party search API."
+        text: "Build and deploy an MCP server that wraps a third-party search API, then attach it through the MCP connector."
         correct: false
         rationale: "An MCP server is a good way to share custom capabilities, but it means building and hosting infrastructure the team wants to avoid."
     source:

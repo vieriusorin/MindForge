@@ -8,21 +8,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Responses constrained to the schema: valid JSON, required fields present, correct types, and no retries for schema violations."
+        text: "Responses constrained to the schema: valid JSON, required fields present, correct types, no retries for violations."
         correct: true
         rationale: "Structured outputs use constrained decoding to guarantee schema-compliant responses: always valid, type safe, no retries for schema violations."
       - id: B
-        text: "A guarantee that every value in the JSON is factually correct."
+        text: "Schema-valid JSON even when a reply is cut off at max_tokens, so a truncated response still parses cleanly downstream."
         correct: false
-        rationale: "The schema constrains the shape, not the truth of the values; correctness still needs evals."
+        rationale: "The docs list a max_tokens cut-off as a case where output may be incomplete and not match the schema; retry with a higher max_tokens."
       - id: C
-        text: "A guarantee that Claude never refuses a request."
+        text: "A guarantee that Claude never refuses a request, because the schema takes precedence over its safety behavior."
         correct: false
-        rationale: "Claude keeps its safety behavior; a refusal can still happen and may not match the schema."
+        rationale: "Claude keeps its safety behavior; a refusal can still happen, and the refusal message takes precedence over the schema."
       - id: D
-        text: "Zero extra input tokens, because the schema is enforced outside the model."
+        text: "Zero extra input tokens and an unchanged prompt cache, because the schema is enforced outside the model."
         correct: false
-        rationale: "Claude receives an extra system prompt describing the format, so input tokens go up slightly."
+        rationale: "Claude receives an extra system prompt describing the format, so input tokens go up slightly, and changing output_config.format invalidates the prompt cache."
     source:
       title: "Structured outputs"
       url: "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
@@ -34,19 +34,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "The model should classify sentiments well."
+        text: "The model should classify sentiments well on the kinds of social posts our users usually write."
         correct: false
-        rationale: "The guide uses this exact phrasing as its bad example: not specific and not measurable."
+        rationale: "The guide uses \"The model should classify sentiments well\" as its bad example; naming the posts does not make it specific or measurable."
       - id: B
-        text: "Outputs should be safe and helpful for our users."
+        text: "Outputs should be safe and helpful for our users, with no toxic replies we would regret."
         correct: false
         rationale: "Too hazy; the guide shows even safety can be quantified, for example a flagged-output rate over a number of trials."
       - id: C
-        text: "F1 of at least 0.85 on a held-out set of 10,000 diverse posts, a 5% gain over the current baseline."
+        text: "F1 of at least 0.85 on 10,000 held-out, diverse posts, a 5% gain over the current baseline."
         correct: true
         rationale: "The guide's good example: specific, measurable, achievable relative to a baseline, and relevant to the use case."
       - id: D
-        text: "Reviewers should feel the classifier is better than before."
+        text: "Reviewers should feel the classifier handles posts noticeably better than the version we ship today."
         correct: false
         rationale: "An unanchored impression is not measurable or consistently applied."
     source:
@@ -60,19 +60,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Property order in structured outputs is random; sort the keys before reading them."
+        text: "Property order in structured outputs is random on each request; retry the call until the fields come back in schema order."
         correct: false
         rationale: "Order is not random: the schema's order is kept within the required group and within the optional group."
       - id: B
-        text: "Required properties come first, then optional ones; mark all properties required, or stop relying on position."
+        text: "Required properties are output first, then optional ones; mark all required, or stop relying on position."
         correct: true
         rationale: "The docs state required properties appear first, followed by optional ones, each in schema order, and suggest making all required or handling the reordering."
       - id: C
-        text: "Properties are always output in alphabetical order; rename them to sort correctly."
+        text: "Properties are output in alphabetical order, not schema order; rename them so they sort correctly."
         correct: false
         rationale: "The docs describe schema order with required properties first, not alphabetical order."
       - id: D
-        text: "Claude reverses the schema order; list the properties backwards."
+        text: "Claude reverses the schema order for objects with optional fields; list the properties backwards."
         correct: false
         rationale: "Nothing reverses the order; the reordering only moves optional properties after required ones."
     source:
@@ -86,15 +86,15 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Human grading of every output, because it is the highest quality."
+        text: "Human grading of every output by experts, because it is the highest-quality and most scalable option."
         correct: false
-        rationale: "Human grading is flexible but slow and expensive; the guide says to avoid it when possible."
+        rationale: "Human grading is flexible and high quality but slow and expensive; the guide says to avoid it when possible, and code-based grading is the scalable one."
       - id: B
-        text: "An LLM grader scoring each answer on a 1 to 5 Likert scale."
+        text: "An LLM grader scoring each answer on a 1 to 5 Likert scale, as the most reliable option."
         correct: false
-        rationale: "LLM grading suits complex judgement; a fixed category has one right answer that code can check."
+        rationale: "The guide rates code-based grading as the most reliable and says to test an LLM grader's reliability first; a fixed category has one right answer that code can check."
       - id: C
-        text: "ROUGE-L overlap between the output and the expected label."
+        text: "ROUGE-L longest-common-subsequence overlap between the output and the expected label, per ticket."
         correct: false
         rationale: "ROUGE-L is the guide's example for summaries, not single categorical labels."
       - id: D
@@ -112,19 +112,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "stop_reason \"end_turn\", which signals the schema was abandoned."
+        text: "stop_reason \"end_turn\", which signals Claude abandoned the schema partway through writing the reply."
         correct: false
-        rationale: "end_turn is a normal completion; the documented mismatch cases have other stop reasons."
+        rationale: "end_turn is a normal completion, not a sign the schema was abandoned; the stop reasons the docs give for a mismatch are refusal and max_tokens (an enum casing slip has no special stop_reason)."
       - id: B
         text: "stop_reason \"refusal\" (handle it as a refusal) or \"max_tokens\" (retry with a higher max_tokens)."
         correct: true
         rationale: "The docs list two invalid-output cases: a refusal, which returns 200 and may not match the schema, and a max_tokens cut-off, which may leave incomplete output and should be retried with more tokens."
       - id: C
-        text: "None: a schema mismatch always comes back as an HTTP 400 error."
+        text: "None: the API reports any schema mismatch as an HTTP 400 error, so a 200 cannot carry one."
         correct: false
         rationale: "A 400 is for invalid schemas or unsupported features; the refusal case returns 200."
       - id: D
-        text: "stop_reason \"tool_use\", which means the JSON was moved into a tool call."
+        text: "stop_reason \"tool_use\", which means Claude moved the JSON out of its text reply and into a tool call."
         correct: false
         rationale: "tool_use signals a tool call; it is not how structured-output mismatches are reported."
     source:
@@ -150,7 +150,7 @@ questions:
         correct: true
         rationale: "The docs say structured outputs do not guarantee the capitalization of enum and const values and recommend case-insensitive comparison."
       - id: D
-        text: "Switch from JSON outputs to strict tool use (strict: true), which matches enum values exactly."
+        text: "Switch from JSON outputs to strict tool use (strict: true), which matches enum values exactly, including case."
         correct: false
         rationale: "The docs say the capitalization caveat applies to both JSON outputs and strict tool use; the documented remedy is case-insensitive comparison."
     source:

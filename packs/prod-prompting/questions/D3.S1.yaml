@@ -64,7 +64,7 @@ questions:
         correct: true
         rationale: "Routing suits distinct categories that are better handled separately; without it, optimizing for one kind of input can hurt the others."
       - id: B
-        text: "Prompt chaining: run every message through refund, technical and general steps in order."
+        text: "Prompt chaining: run every message through refund, technical and general steps in a fixed order."
         correct: false
         rationale: "Chaining fits a task that decomposes into fixed sequential subtasks, not inputs that belong to one of several categories."
       - id: C
@@ -116,13 +116,13 @@ questions:
         correct: false
         rationale: "The guidance asks for the opposite: prioritize transparency by explicitly showing the agent's planning steps."
       - id: B
-        text: "Letting it run until the model says it is done, since stopping early wastes the work so far."
+        text: "Letting it run until the model says it is done, since stopping early wastes the work it has done so far."
         correct: false
         rationale: "Relying only on the model's own completion signal leaves no control when errors compound."
       - id: C
-        text: "Skipping environment feedback between steps to cut latency, and checking only the final result."
+        text: "Skipping environment feedback between steps to cut latency, and having a human review only the final result."
         correct: false
-        rationale: "Agents need ground truth from the environment at each step, such as tool results or code execution, to assess progress."
+        rationale: "Agents need ground truth from the environment at each step, such as tool results or code execution, to assess progress, and to pause for human feedback at checkpoints, not only at the end."
       - id: D
         text: "Stopping conditions such as a maximum number of iterations, plus sandboxed testing and guardrails."
         correct: true

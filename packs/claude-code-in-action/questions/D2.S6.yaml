@@ -46,7 +46,7 @@ questions:
         correct: false
         rationale: "`prompt` is optional. When it is omitted, Claude responds to the trigger phrase instead."
       - id: D
-        text: "It runs once a day on a schedule and opens an issue that summarises the open pull requests."
+        text: "It runs once a day on its default schedule and opens an issue that summarises the open pull requests."
         correct: false
         rationale: "A scheduled run is automation mode with a `prompt` and a cron trigger. Without a `prompt`, the action waits for the trigger phrase."
     source:
@@ -90,7 +90,7 @@ questions:
         correct: false
         rationale: "`--max-turns` caps how much work a run does. It doesn't decide whether GitHub starts workflows on the pushed commits."
       - id: B
-        text: "Give the workflow the `actions: read` permission so Claude can start the CI jobs itself."
+        text: "Give the workflow the `actions: read` permission so Claude can start the CI jobs itself after each push."
         correct: false
         rationale: "`actions: read` lets Claude read CI results on PRs. It doesn't make GitHub trigger workflows on the commits."
       - id: C

@@ -12,15 +12,15 @@ questions:
         correct: true
         rationale: "529 overloaded_error means the API is temporarily overloaded and can occur when the API sees high traffic across all users."
       - id: B
-        text: "Your organization has used up its rate limit for the current minute."
+        text: "Your organization has used up its rate limit for the current minute, so requests are refused."
         correct: false
         rationale: "Hitting a rate limit returns 429 rate_limit_error, not 529."
       - id: C
-        text: "Your request body is larger than the maximum allowed size for the endpoint."
+        text: "Your request body is larger than the maximum allowed number of bytes for the endpoint you called."
         correct: false
         rationale: "An oversized request returns 413 request_too_large."
       - id: D
-        text: "Your API key is malformed, revoked or expired."
+        text: "Your API key is malformed, revoked or expired, so the request cannot be authenticated."
         correct: false
         rationale: "Key problems return 401 authentication_error."
     source:
@@ -34,19 +34,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Retry immediately in a tight loop until a request succeeds."
+        text: "Retry immediately in a tight loop, since capacity refills continuously and a retry may pass."
         correct: false
-        rationale: "The retry-after header gives the seconds to wait; earlier retries will fail."
+        rationale: "The retry-after header gives the seconds to wait; earlier retries will fail even though capacity refills continuously."
       - id: B
-        text: "Treat it as a permanent failure and show the user an error."
+        text: "Treat it as a permanent failure, since a 429 means the monthly spend cap is reached."
         correct: false
-        rationale: "A rate-limit 429 is transient: capacity is replenished continuously, so waiting and retrying works."
+        rationale: "The spend-cap 429 never carries a retry-after header; this one does, so it is a rate limit, capacity is replenished continuously, and waiting and retrying works."
       - id: C
         text: "Wait the number of seconds given in retry-after, then retry the request."
         correct: true
         rationale: "When the response has a retry-after header, wait that many seconds before retrying; earlier retries will fail."
       - id: D
-        text: "Rotate to a new API key so the retry counts against a fresh limit."
+        text: "Rotate to another API key in the same organization so the retry counts against a fresh limit."
         correct: false
         rationale: "Limits are set at the organization level, so another key in the same organization does not reset them."
     source:
@@ -60,7 +60,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "In the system prompt, so the model gives it the highest priority and reads it carefully."
+        text: "In the system prompt inside XML tags, so the model gives it the highest priority and reads it carefully."
         correct: false
         rationale: "Untrusted third-party content should never go into the system prompt, where it would sit alongside your own instructions."
       - id: B
@@ -86,15 +86,15 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Cache reads count double toward ITPM, so caching lowers how much they can send."
+        text: "Cache reads count double toward ITPM, so a high hit rate lowers how much new input they can send."
         correct: false
         rationale: "Cache reads do not count toward ITPM on most models; they are billed at a fraction of the base input price."
       - id: B
-        text: "Nothing changes, because ITPM counts every input token whether cached or not."
+        text: "Nothing changes, because ITPM counts every input token the same way, whether it was cached or not."
         correct: false
         rationale: "That describes combined TPM limits at some providers; for most Claude models only uncached input counts."
       - id: C
-        text: "ITPM is replaced by a separate cache-only limit once caching is enabled."
+        text: "ITPM is replaced by a separate cache-only limit once caching is enabled on the shared prefix."
         correct: false
         rationale: "There is no separate cache limit; input_tokens and cache_creation_input_tokens count toward the same ITPM."
       - id: D
@@ -112,11 +112,11 @@ questions:
     select: 1
     options:
       - id: A
-        text: "A transient overload; the SDK's default two retries should already have fixed it."
+        text: "A transient overload that clears on its own; the SDK's built-in automatic retries should already have handled it."
         correct: false
         rationale: "This 429 does not clear with retries: the docs say retrying, including the SDK's automatic retries, fails until access resumes."
       - id: B
-        text: "The token bucket only refills at the start of each hour, so it will reset on the hour."
+        text: "The token bucket only refills at the start of each hour, so the limit will reset when the next hour begins."
         correct: false
         rationale: "The token bucket replenishes capacity continuously rather than at fixed intervals."
       - id: C
@@ -124,7 +124,7 @@ questions:
         correct: true
         rationale: "A tier spend-cap 429 has no retry-after header and keeps failing, even with SDK retries, until access resumes or a higher limit is granted."
       - id: D
-        text: "The organization reached a spend limit it set itself, below its tier's monthly cap."
+        text: "The organization reached a spend limit it set itself on the Billing page, below its tier's monthly cap."
         correct: false
         rationale: "A spend limit you set returns HTTP 400 invalid_request_error, not a 429; the 429 with no retry-after that keeps failing until access resumes is the tier's monthly spend cap."
     source:
@@ -146,7 +146,7 @@ questions:
         correct: true
         rationale: "Apply least privilege so a successful injection can do minimal damage: no secrets it doesn't need, sandboxed tools, narrowly scoped permissions."
       - id: C
-        text: "Put your own safety instructions inside each tool result so Claude rereads them after every fetch."
+        text: "Append your own safety reminders to each fetched page's tool result so Claude rereads them after every fetch."
         correct: false
         rationale: "Claude treats tool-result content as untrusted, so instructions placed there may be ignored or flagged; send them in a following user turn."
       - id: D

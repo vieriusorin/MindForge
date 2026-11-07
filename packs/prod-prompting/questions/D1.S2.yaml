@@ -8,7 +8,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Exactly one example, because more than one makes Claude copy the examples word for word."
+        text: "Exactly one example, because giving more than one makes Claude copy the examples word for word."
         correct: false
         rationale: "The guide recommends several examples, varied enough that Claude does not pick up unintended patterns."
       - id: B
@@ -34,21 +34,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "How many tokens Claude spends on the whole response: text, tool calls and thinking, trading thoroughness for efficiency."
+        text: "How many tokens Claude spends across text, tool calls and thinking, trading response thoroughness for token efficiency."
         correct: true
         rationale: "Effort trades response thoroughness against token efficiency with one model, and it affects all output tokens, including tool calls and thinking when active."
       - id: B
-        text: "The size of the context window available to the request."
+        text: "The size of the context window available to the request, so a higher level lets more input fit into each call."
         correct: false
         rationale: "Effort changes how much Claude writes and thinks, not how much input fits in the window."
       - id: C
-        text: "How random the next-token choice is, like a temperature setting."
+        text: "How random the next-token choice is, like a temperature setting, with higher levels giving more varied wording."
         correct: false
-        rationale: "Effort is about how much work goes into a response, not about the sampling distribution."
+        rationale: "The docs define effort as how many tokens Claude spends when responding, trading thoroughness against token efficiency, not as a sampling setting."
       - id: D
-        text: "An exact thinking budget in tokens that the model can never exceed."
+        text: "An exact thinking budget in tokens that the model can never exceed, replacing max_tokens as the hard limit on total output."
         correct: false
-        rationale: "The docs call effort a behavioral signal, not a strict token budget; use max_tokens for a hard limit."
+        rationale: "The docs call effort a behavioral signal, not a strict token budget; max_tokens stays the hard limit on total output."
     source:
       title: "Effort"
       url: "https://platform.claude.com/docs/en/build-with-claude/effort"
@@ -60,17 +60,17 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Delete the examples and rely on written instructions alone."
+        text: "Delete the examples and rely on written instructions alone, describing the tone and length wanted for each review type."
         correct: false
         rationale: "Examples are one of the most reliable ways to steer output; the problem is what these examples show, not that there are examples."
       - id: B
-        text: "Move the examples after the review so they are the last thing Claude reads."
+        text: "Add a fifth short, positive example, so the pattern is even clearer and Claude follows the existing format more closely."
         correct: false
-        rationale: "Their position does not change the pattern they teach; four look-alike examples still teach short and upbeat."
+        rationale: "Another look-alike example deepens the unintended pattern; the guide asks for examples that cover edge cases and vary enough to avoid it."
       - id: C
-        text: "Raise the sampling temperature so the summaries vary more."
+        text: "Cut the set down to a single example so Claude has less to copy, keeping it short and positive like the current four."
         correct: false
-        rationale: "More randomness does not teach the missing cases; the examples still show only one kind of review."
+        rationale: "The guide recommends 3 to 5 examples, and one short, positive example still shows only one kind of review."
       - id: D
         text: "Make the examples diverse, including long and negative reviews, so Claude does not learn an unintended pattern."
         correct: true
@@ -86,19 +86,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "max, so every subagent reasons as deeply as possible."
+        text: "max, so every subagent reasons as deeply as possible, with no constraint on how many tokens it spends."
         correct: false
-        rationale: "max removes limits on token spending; the docs reserve it for the hardest problems and note it can add cost for small gains."
+        rationale: "max has no constraints on token spending and the table reserves it for the deepest reasoning and most thorough analysis, not short, cost-sensitive calls."
       - id: B
-        text: "low, the most efficient level, meant for simple tasks that need the best speed and lowest cost, such as subagents."
+        text: "low, the most efficient level, which the effort table suggests for simple, cost-sensitive work like subagents."
         correct: true
         rationale: "The effort table lists low for simpler tasks needing the best speed and lowest costs, naming subagents as the example; the evals confirm quality holds."
       - id: C
-        text: "xhigh, because subagents are part of an agentic system."
+        text: "xhigh, because subagents are part of an agentic system and xhigh is the level built for agentic work."
         correct: false
-        rationale: "xhigh is for long-running agentic and coding work with very large token budgets, not short scoped calls."
+        rationale: "xhigh is for long-running agentic and coding tasks, over 30 minutes with token budgets in the millions, not short scoped calls."
       - id: D
-        text: "Leave effort unset, because the default is always the cheapest level."
+        text: "Leave effort unset, because a request that omits it runs at the model's lowest and cheapest level."
         correct: false
         rationale: "Omitting effort applies the model's default level, which is not low on any model (per the docs at time of writing, high on most and medium on a few)."
     source:
@@ -112,19 +112,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Effort cannot change after the first request; the API returns a 400 error."
+        text: "Effort cannot change after the first request; the API returns a 400 error when a later request sends a new level."
         correct: false
-        rationale: "Effort can change between requests; the issue is what that does to the cache."
+        rationale: "The docs say a new top-level value can be set on the next request; it takes effect and starts the cache over."
       - id: B
-        text: "Changes after the first turn are ignored, so there is no saving but no harm."
+        text: "Changes after the first turn are ignored and the original level is kept, so there is no cost saving but also no harm done."
         correct: false
-        rationale: "The change takes effect; it is not ignored."
+        rationale: "The change takes effect; a new top-level value on the next request starts the cache over."
       - id: C
-        text: "Changing top-level effort between requests invalidates prompt caching; keep it constant in a cached conversation, or use per-message effort where supported."
+        text: "Changing top-level effort between requests invalidates the prompt cache; keep it fixed, or use per-message effort if supported."
         correct: true
         rationale: "The effort docs say changing the top-level value invalidates prompt caching, and per-message effort (beta, on the models the docs list at time of writing) preserves the cache."
       - id: D
-        text: "Effort only changes thinking, so it cannot affect caching or cost."
+        text: "Effort only changes thinking, so it cannot affect caching or cost, and the conversation stays cached between requests either way."
         correct: false
         rationale: "Effort affects all output tokens, and changing the top-level value breaks cache hits."
     source:
@@ -138,21 +138,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "The budget is honored exactly, so it is the right control for a hard cost ceiling."
+        text: "The budget is honored exactly, so budget_tokens stays the right control for a hard ceiling on thinking cost per request."
         correct: false
         rationale: "On Claude 4.7 and later, setting budget_tokens returns a 400 error."
       - id: B
-        text: "The request returns a 400 error; use adaptive thinking, control depth with effort, and use max_tokens as the hard limit."
+        text: "It returns a 400 error; use adaptive thinking, steer depth with effort, and set max_tokens as the hard limit."
         correct: true
         rationale: "The guide says budget_tokens returns 400 on 4.7 and later and recommends lowering effort, or using max_tokens as a hard limit, with adaptive thinking."
       - id: C
-        text: "The parameter is ignored and the model thinks without limit."
+        text: "The parameter is ignored and the model silently falls back to adaptive thinking, with no cap on its thinking tokens."
         correct: false
-        rationale: "It is rejected, not ignored."
+        rationale: "It is rejected with a 400 error, not ignored."
       - id: D
-        text: "budget_tokens must equal max_tokens on these models, or the request fails."
+        text: "It is accepted but deprecated, as on Opus and Sonnet 4.6, so it still caps thinking cost until support is removed later."
         correct: false
-        rationale: "There is no such rule; manual budgets are not accepted at all on these models."
+        rationale: "That describes Opus 4.6 and Sonnet 4.6, where a budget_tokens cap still works but is deprecated; on Claude 4.7 and later, setting budget_tokens returns a 400 error."
     source:
       title: "Prompting best practices"
       url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"

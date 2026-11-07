@@ -34,7 +34,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Keep them: background on the basics makes sure Claude doesn't miss anything."
+        text: "Keep them: background on the basics ensures Claude doesn't miss anything."
         correct: false
         rationale: "The guide's default assumption is that Claude is already very smart. Explaining what it already knows spends tokens without adding anything."
       - id: B
@@ -42,11 +42,11 @@ questions:
         correct: true
         rationale: "The guide says to add only context Claude doesn't already have, and to ask of each paragraph whether it justifies its token cost."
       - id: C
-        text: "Keep them: once the skill loads, its length no longer costs anything at all."
+        text: "Keep them: once the skill loads, its length no longer costs anything."
         correct: false
         rationale: "Once Claude loads `SKILL.md`, every token competes with conversation history and other context."
       - id: D
-        text: "Move them into the description so that they are preloaded in every session."
+        text: "Move them into the description so they are preloaded in every session."
         correct: false
         rationale: "Only the name and description of each skill are preloaded at startup, so padding the description adds to what is pre-loaded instead of saving context."
     source:
@@ -60,15 +60,15 @@ questions:
     select: 1
     options:
       - id: A
-        text: "High freedom: a few heuristics, and trust Claude to find the right approach."
+        text: "High freedom: a few heuristics; trust Claude to find an approach."
         correct: false
         rationale: "High freedom suits tasks where multiple approaches are valid, such as code review. A fragile, fixed sequence is the opposite case."
       - id: B
-        text: "Medium freedom: a pseudocode template that Claude adapts to each database."
+        text: "Medium freedom: a pseudocode template Claude adapts to each database."
         correct: false
         rationale: "Medium freedom fits when a preferred pattern exists and some variation is acceptable. Here variation is the risk."
       - id: C
-        text: "Several alternative tools, so Claude can choose whichever one fits best."
+        text: "Several alternative tools, so Claude can pick whichever fits best."
         correct: false
         rationale: "The guide lists offering too many options as an anti-pattern: give a default instead."
       - id: D
@@ -112,7 +112,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Ship it as is, because a skill's instructions behave the same on any model."
+        text: "Ship it as is, since a skill's instructions behave the same on any model."
         correct: false
         rationale: "Skills act as additions to models, so their effectiveness depends on the underlying model."
       - id: B
@@ -120,11 +120,11 @@ questions:
         correct: true
         rationale: "The guide says to test with all the models you plan to use: check Haiku gets enough guidance, Sonnet is clear and Opus isn't over-explained, and aim for instructions that work with all."
       - id: C
-        text: "Add every detail Haiku might need, even if Opus now reads long explanations."
+        text: "Add every detail Haiku might need, even if Opus reads long explanations."
         correct: false
         rationale: "The guide's check for Opus is whether the skill avoids over-explaining. The goal is instructions that work well with all models, not only the weakest."
       - id: D
-        text: "Keep it on Opus alone, since a skill tuned for one model can't serve others."
+        text: "Keep it on Opus alone, as a skill tuned for one model can't serve others."
         correct: false
         rationale: "The guide expects skills to serve several models: if you plan to use one across models, aim for instructions that work well with all of them."
     source:
@@ -138,11 +138,11 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Tell Claude in SKILL.md to read every bundled file at the start of each task."
+        text: "Tell Claude in SKILL.md to read every bundled file at the start of a task."
         correct: false
         rationale: "Forcing every file to load defeats progressive disclosure: Claude should read additional files only as needed, since every loaded token competes for context."
       - id: B
-        text: "Keep the structure; how Claude moves through the files doesn't affect results."
+        text: "Keep the structure; how Claude moves through files doesn't affect results."
         correct: false
         rationale: "The guide says to watch how Claude navigates a skill: unexpected paths, missed connections and ignored content are signals to restructure."
       - id: C
@@ -150,7 +150,7 @@ questions:
         correct: true
         rationale: "If Claude repeatedly reads the same file, consider putting that content in `SKILL.md`. If it never opens a bundled file, the file may be unnecessary or poorly signaled."
       - id: D
-        text: "Have the authoring instance judge the files from the text, without more tests."
+        text: "Have the authoring instance judge the files from text, without more tests."
         correct: false
         rationale: "The guide's loop alternates refining with one instance and testing with another, and says to iterate on observed behavior rather than assumptions."
     source:

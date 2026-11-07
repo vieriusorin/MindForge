@@ -34,15 +34,15 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Release date, parameter count and the size of the training data."
+        text: "Release date, parameter count and the size of the training data behind each model."
         correct: false
         rationale: "The guide's key criteria do not mention release dates, parameter counts or training-data size; it asks what the application needs."
       - id: B
-        text: "Benchmark leaderboard rank, the model's popularity and its name."
+        text: "Public benchmark leaderboard rank, the model's popularity, and the prestige of its name."
         correct: false
         rationale: "The guide asks you to build benchmark tests for your own use case, not to rank models by public leaderboards or popularity."
       - id: C
-        text: "Context window size alone, because a bigger window means better answers."
+        text: "Context window size alone, because a bigger window means better answers on long inputs."
         correct: false
         rationale: "Context window size is not one of the guide's criteria; the criteria are capabilities, speed, cost and effort."
       - id: D

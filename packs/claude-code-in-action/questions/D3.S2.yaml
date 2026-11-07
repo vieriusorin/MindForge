@@ -34,7 +34,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "A `PreCompact` hook with the matcher `compact` that writes the reminder into the summary."
+        text: "A `PreCompact` hook with the matcher `compact` that writes the reminder into the compaction summary."
         correct: false
         rationale: "`PreCompact` matches on what triggered compaction (`manual` or `auto`), and the guide's re-inject example uses `SessionStart`."
       - id: B
@@ -98,7 +98,7 @@ questions:
         correct: true
         rationale: "On `PostToolUse`, exit 2 shows stderr to Claude; the tool already ran. Claude can't have the edit undone, but it reads the errors and fixes them."
       - id: D
-        text: "A `Notification` hook that runs the type checker each time Claude waits for you to approve a call."
+        text: "A `Notification` hook that runs the type checker each time Claude waits for you to approve a tool call."
         correct: false
         rationale: "`Notification` hooks can't block or feed back: exit code and stderr are ignored on that event."
     source:

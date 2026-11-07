@@ -7,19 +7,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Commit an encrypted API key to the repository and decrypt it at deploy time."
+        text: "Commit an encrypted Claude API key to the repository, decrypt it at deploy time on each runner, and rotate that key on a fixed schedule."
         correct: false
-        rationale: "This is still a long-lived static secret that must be distributed and rotated."
+        rationale: "An API key is a static secret however it is stored; federation is the method meant to eliminate static secrets, with nothing to mint, distribute or rotate."
       - id: B
-        text: "Use the lead developer's personal API key, set to never expire."
+        text: "Use the lead developer's personal API key with its expiration set to Never, stored in the pipeline's secrets manager and the service's config."
         correct: false
         rationale: "A shared personal key acts as one person and breaks when they leave; shared workloads need their own identity."
       - id: C
-        text: "Create a workspace API key and store it in an environment variable on every runner."
+        text: "Create a workspace API key, which belongs to the workspace and outlives any one person, and set it as an environment variable on each runner."
         correct: false
         rationale: "Workspace keys are legacy and are still static secrets; identity-backed keys or federation are preferred."
       - id: D
-        text: "Use Workload Identity Federation, exchanging the platform's identity token for a short-lived Claude API access token tied to a service account."
+        text: "Use Workload Identity Federation to exchange the platform's identity token for a short-lived Claude API token tied to a service account."
         correct: true
         rationale: "Workload Identity Federation is designed for production workloads on cloud platforms and CI/CD where you want to eliminate static secrets; the SDK refreshes the short-lived token automatically."
     source:

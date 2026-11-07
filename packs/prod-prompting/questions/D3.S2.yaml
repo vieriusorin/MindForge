@@ -8,19 +8,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Cached prompt prefixes expiring after five minutes and being processed again."
+        text: "Cached prompt prefixes going stale between separate requests and then being processed again in full."
         correct: false
         rationale: "Context rot is about recall degrading as tokens grow, not about anything expiring."
       - id: B
-        text: "Older messages being silently dropped by the API when a conversation gets long."
+        text: "Older messages being silently dropped by the API once a conversation grows past the window."
         correct: false
         rationale: "Context rot is about the model's recall degrading as context grows, not about content being removed from the request."
       - id: C
-        text: "As the number of tokens in context grows, the model recalls information from it less accurately."
+        text: "The model recalling information from its context less accurately as the token count grows."
         correct: true
         rationale: "Context rot is the observation that recall and accuracy degrade as the token count in the context window increases, so context is a finite resource."
       - id: D
-        text: "Facts in the model's training data going out of date after its knowledge cutoff."
+        text: "Facts in the model's training data slowly going out of date as the world keeps changing after training."
         correct: false
         rationale: "Context is the tokens in the request, the model's working memory, which is different from its training corpus."
     source:
@@ -39,15 +39,15 @@ questions:
         correct: true
         rationale: "Everything in the request counts, including the system prompt, messages with tool results, images and documents, tool definitions, and the output for the turn including thinking."
       - id: B
-        text: "Only the user and assistant text messages; system prompts and tool definitions are free."
+        text: "Only the user and assistant text messages; the system prompt and tool definitions are kept outside the window."
         correct: false
         rationale: "The system prompt and tool definitions are part of the request and count toward the window."
       - id: C
-        text: "Everything except cached tokens, because caching removes them from the window."
+        text: "Everything except cached tokens, because cache reads and cache writes are both left out of the window's count."
         correct: false
         rationale: "Cached prefixes still occupy the context window; caching changes what you pay, not whether they count."
       - id: D
-        text: "Only the input; the response Claude generates has its own separate budget."
+        text: "Only the input messages and tools; the response Claude generates, thinking included, has its own budget."
         correct: false
         rationale: "The window holds the conversation history plus the new output Claude generates for the turn."
     source:
@@ -113,7 +113,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Start as aggressive as possible, then add details back only when users report problems."
+        text: "Start as aggressive as possible to save the most tokens, then add details back only once users start reporting problems."
         correct: false
         rationale: "Overly aggressive compaction can lose subtle context whose importance only shows up later, which users may never trace back."
       - id: B
@@ -121,11 +121,11 @@ questions:
         correct: true
         rationale: "The article recommends tuning on complex agent traces: maximize recall first, then iterate to improve precision by removing superfluous content."
       - id: C
-        text: "Keep every raw tool result verbatim, because those are the ground truth the agent relied on."
+        text: "Keep every raw tool result verbatim in the summary, because those results are the ground truth the agent relied on."
         correct: false
         rationale: "Old raw tool results are named as low-hanging superfluous content; tool result clearing is one of the safest forms of compaction."
       - id: D
-        text: "Summarize only the system prompt and leave the message history untouched."
+        text: "Summarize only the system prompt and leave the message history untouched, so that no recent decision or open bug is lost."
         correct: false
         rationale: "Compaction summarizes the conversation nearing the limit, keeping decisions and open bugs while discarding redundant outputs."
     source:

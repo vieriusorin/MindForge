@@ -7,21 +7,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Move the timestamp and other per-request content after the cached prefix, so the cache breakpoint sits on the last block that is identical across requests."
+        text: "Move the timestamp and other per-request content after the reference document, and set the breakpoint at the end of that static prefix."
         correct: true
         rationale: "Caching matches the full prefix up to the breakpoint and requires identical segments; content that changes every request, such as a timestamp, inside the prefix means the cache never hits."
       - id: B
-        text: "Switch to the 1-hour cache TTL so entries live longer."
+        text: "Switch the cached blocks to the 1-hour cache TTL, so each cache entry outlives the gap between user requests and later calls can read it."
         correct: false
-        rationale: "A longer TTL does not help when the prefix differs on every request."
+        rationale: "Cache hits require 100 percent identical prompt segments up to the breakpoint, so a longer TTL does not help when the timestamp makes the prefix differ on every request."
       - id: C
-        text: "Add more cache breakpoints throughout the conversation."
+        text: "Add up to four cache breakpoints between the timestamp line and the document, so each section of the system prompt is cached separately."
         correct: false
-        rationale: "Extra breakpoints do not fix a prefix that changes at its very start."
+        rationale: "Caching covers the full prefix up to and including the marked block, so every breakpoint after the timestamp still includes it and misses."
       - id: D
-        text: "Disable caching, because large documents cannot be cached."
+        text: "Move the cache breakpoint onto the timestamp line itself, so the entry it writes covers that line plus the reference document that follows it."
         correct: false
-        rationale: "Large reference documents are exactly the kind of stable content caching is meant for."
+        rationale: "Caching covers the prefix up to and including the marked block, so the document after the timestamp is not in the entry, and the changing timestamp makes each request pay for a fresh cache write and never get a read."
     source:
       title: "Prompt caching"
       url: "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"

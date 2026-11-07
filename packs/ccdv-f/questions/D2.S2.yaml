@@ -32,15 +32,15 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Wait for the retirement date and fix whichever services start failing."
+        text: "Wait until the retirement date passes, then fix whichever team's services report errors once their requests to the model fail."
         correct: false
         rationale: "Waiting for failures turns a planned migration into a production incident."
       - id: B
-        text: "Ask Anthropic to extend the retirement date for the organization."
+        text: "Ask Anthropic to extend the retirement date for the organization so that each team can migrate on its own schedule."
         correct: false
         rationale: "This does not identify the callers, and the documented path is to migrate before the retirement date."
       - id: C
-        text: "Search only the main repository for the model's name."
+        text: "Search the main repository's code and config files for the model's name, and treat any team not found there as already migrated."
         correct: false
         rationale: "Other teams' services and configuration may live elsewhere, so a single-repo search can miss callers."
       - id: D

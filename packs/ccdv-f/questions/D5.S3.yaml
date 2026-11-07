@@ -7,21 +7,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "The most capable model available, to guarantee the highest accuracy."
+        text: "The most capable model available, to guarantee the highest accuracy on routing labels."
         correct: false
         rationale: "The most capable models are slower and costlier; they suit demanding reasoning and long-horizon work, not high-volume simple routing."
       - id: B
-        text: "An Opus model at maximum effort, since routing errors are costly."
+        text: "An Opus model at maximum effort, since routing errors cost more than the extra latency."
         correct: false
         rationale: "Opus at maximum effort maximizes capability at the expense of latency and cost, the opposite of what this workload needs."
       - id: C
-        text: "Any model, because model choice does not affect latency or cost."
+        text: "Any model, because model choice affects only accuracy and not the latency or cost."
         correct: false
         rationale: "Models differ in comparative latency and price; choosing a model means balancing capabilities, speed and cost."
       - id: D
-        text: "A Haiku model, then evaluate on real data and upgrade only if there is a capability gap."
+        text: "A Haiku model, then test on real data and upgrade only for a specific capability gap."
         correct: true
-        rationale: "Haiku is positioned for high-volume, latency-sensitive tasks such as classification, extraction and routing, and the efficiency-first approach starts there and upgrades only if needed."
+        rationale: "Haiku has the lowest latency and price, and the efficiency-first approach (best for tight latency, cost-sensitive, high-volume straightforward tasks) starts there and upgrades only if necessary for specific capability gaps."
     source:
       title: "Choosing the right model"
       url: "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model"
@@ -32,21 +32,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Change the model ID in production, since newer models are strictly better and fully backward compatible."
+        text: "Change the model ID in production right away, since newer releases are strictly better and stay fully backward compatible with the existing tool_choice settings."
         correct: false
-        rationale: "Newer releases can include breaking changes; for example, some current models reject forced tool use."
+        rationale: "Newer releases can include breaking changes; integrations that force tool use with tool_choice of type any or tool are told to check them before switching."
       - id: B
-        text: "Review the release's breaking changes, then run the team's own evaluation set with real prompts and data against both models and compare accuracy, quality, edge cases and cost before switching."
+        text: "Review the breaking changes, then run use-case evals on both models with the team's real prompts and data, comparing accuracy, quality, edge cases and cost."
         correct: true
         rationale: "Creating use-case-specific benchmark tests is the most important step when deciding whether to change models, and integrations that force tool use should check the breaking changes before switching."
       - id: C
-        text: "Rely on public benchmark results, since they predict performance on any workload."
+        text: "Rely on public benchmark results for the new release, since leaderboard scores predict accuracy, quality and edge-case handling on any workload or prompt set."
         correct: false
         rationale: "The guidance is to test with your actual prompts and data, because public benchmarks do not reflect your use case."
       - id: D
-        text: "Never upgrade, because any behavior change is a risk."
+        text: "Stay on the current model indefinitely, since any behavior change in a newer release would put the carefully tuned prompts and the forced tool use at risk."
         correct: false
-        rationale: "Older models are eventually deprecated and retired, so avoiding upgrades only delays a forced migration."
+        rationale: "The guidance answers behavior risk with evaluation, not avoidance: build use-case benchmarks, test with your actual prompts and data, and weigh performance and cost before deciding whether to upgrade."
     source:
       title: "Choosing the right model"
       url: "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model"

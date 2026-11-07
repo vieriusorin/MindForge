@@ -16,7 +16,7 @@ questions:
         correct: false
         rationale: "Claude Code has a key for this: `Esc` stops the current response or tool call mid-turn."
       - id: C
-        text: "Let the turn finish first, because stopping mid-turn throws away every edit Claude has made so far."
+        text: "Let the turn finish first, because stopping mid-turn with `Esc` throws away every edit Claude has made so far."
         correct: false
         rationale: "Stopping with `Esc` keeps the work done so far, so there is no reason to wait for a wrong turn to finish."
       - id: D

@@ -8,7 +8,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Run npm update -g; if it finishes without errors, the install and settings are both valid."
+        text: "Run npm update -g; if it finishes without errors, the install and settings are both valid and current."
         correct: false
         rationale: "Updating is not a check, and the docs advise against npm update -g because it may not move you to the newest release."
       - id: B
@@ -64,7 +64,7 @@ questions:
         correct: false
         rationale: "When you ask Claude to remember something, it saves it to auto memory, not to CLAUDE.md."
       - id: B
-        text: "Nowhere: it lasts until /clear, so the only option is to repeat it in every new session."
+        text: "Nowhere: it lasts until /clear, so the only option is to repeat it at the start of every new session."
         correct: false
         rationale: "Auto memory persists across sessions: the first 200 lines or 25KB of MEMORY.md load at the start of every conversation."
       - id: C

@@ -124,7 +124,7 @@ questions:
         correct: true
         rationale: "Given a hint, Claude sometimes works backwards and finds intermediate steps that lead to the target, a form of motivated reasoning. The written steps can be convincing without reflecting the actual computation."
       - id: D
-        text: "It is faithful whenever the final answer is correct, so checking the answer validates the reasoning too."
+        text: "It is faithful whenever the final answer is correct, so checking the answer validates the reasoning."
         correct: false
         rationale: "In the mental-math case Claude gets 36+59 right, yet describes the carry-the-1 algorithm, while internally it used parallel approximate and precise paths. A correct answer does not prove the explanation."
     source:
@@ -146,7 +146,7 @@ questions:
         correct: true
         rationale: "Before starting the second line, Claude began 'thinking' of on-topic words that rhyme with 'grab it', then wrote a line to end with the planned word."
       - id: C
-        text: "The model drafted several complete lines in parallel and then returned the line that scored best."
+        text: "The model drafted several complete lines in parallel, then returned the line that scored best."
         correct: false
         rationale: "The study describes planning a target word and writing toward it, not drafting and ranking whole lines."
       - id: D

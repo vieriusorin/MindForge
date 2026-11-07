@@ -5,7 +5,8 @@
  * It runs the cuckoo rule (scripts/lib/cuckoo-grounding.mjs) and, since MF-0033, the token and leak rules
  * for questions, cards and diagrams (scripts/lib/item-grounding.mjs). Since MF-0041 it also runs the
  * flaw-key rule (scripts/lib/cuckoo-flaw-key.mjs), which needs no corpus and so runs first. Since
- * MF-0044 the key-length rule (scripts/lib/key-length.mjs) runs beside it, also corpus-free. The
+ * MF-0044 the key-length rule (scripts/lib/key-length.mjs) runs beside it, also corpus-free (MF-0061: no pack
+ * grandfathered; official items skip only the length comparison; U-7 adds the per-pack key-rank spread). The
  * corpus rules skip when the corpus is absent (CI, fresh clones).
  * Exit 1 on any problem.
  */
@@ -17,7 +18,11 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkFlawKeys } from "./lib/cuckoo-flaw-key.mjs";
 import { checkCuckooFile } from "./lib/cuckoo-grounding.mjs";
 import { checkItemFile } from "./lib/item-grounding.mjs";
-import { checkKeyLengths } from "./lib/key-length.mjs";
+import {
+  checkKeyLengths,
+  KEY_RANK_MIN_QUESTIONS,
+  keyRankProblems,
+} from "./lib/key-length.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const PACKS = process.env.MF_PACKS_DIR
@@ -52,26 +57,37 @@ const problems = cuckooFiles().flatMap((path) =>
 const flawKeyProblems = problems.length;
 
 // MF-0044: the key-length rule, also corpus-free, over every PACKS/<pack>/questions/*.yaml.
-const keyLength = { checked: 0, problems: 0, grandfathered: 0, multi: 0 };
+const keyLength = { checked: 0, problems: 0, skippedOfficial: 0, multi: 0 };
+// MF-0061 U-7: the key-rank spread is a per-pack rule over the same counts.
+const keyRank = { packs: 0, skipped: 0, problems: 0 };
 for (const pack of readdirSync(PACKS).sort()) {
   const dir = join(PACKS, pack, "questions");
   if (!existsSync(dir)) continue;
+  /** @type {{ checked: number; keyRanks: Record<string, number> }} */
+  const ranks = { checked: 0, keyRanks: {} };
   for (const name of readdirSync(dir).sort()) {
     if (!name.endsWith(".yaml")) continue;
     const path = join(dir, name);
     const result = checkKeyLengths({
       file: relative(ROOT, path),
-      pack,
       text: readFileSync(path, "utf8"),
     });
     problems.push(...result.problems);
     keyLength.checked += result.checked;
     keyLength.problems += result.problems.length;
-    keyLength.grandfathered += result.grandfathered;
+    keyLength.skippedOfficial += result.skippedOfficial;
     keyLength.multi += result.multi;
+    ranks.checked += result.checked;
+    for (const [name, count] of Object.entries(result.keyRanks))
+      ranks.keyRanks[name] = (ranks.keyRanks[name] ?? 0) + count;
   }
+  if (ranks.checked < KEY_RANK_MIN_QUESTIONS) keyRank.skipped++;
+  else keyRank.packs++;
+  const rankProblems = keyRankProblems({ pack, ...ranks });
+  problems.push(...rankProblems);
+  keyRank.problems += rankProblems.length;
 }
-const keyLengthSummary = `key-length: ${keyLength.checked} checked, ${keyLength.problems} problem(s), ${keyLength.grandfathered} skipped (grandfathered), ${keyLength.multi} multi-select not checked`;
+const keyLengthSummary = `key-length: ${keyLength.checked} checked, ${keyLength.problems} problem(s), ${keyLength.skippedOfficial} skipped (official), ${keyLength.multi} multi-select not checked; key-rank: ${keyRank.packs} pack(s) checked, ${keyRank.skipped} skipped (< ${KEY_RANK_MIN_QUESTIONS} questions), ${keyRank.problems} problem(s)`;
 
 // MF-0058 SC-1: every path names known packs with skills, once each. Structural, so it runs before
 // the corpus-absent skip and CI sees it. The engine is TypeScript: load it the way validate-packs does.

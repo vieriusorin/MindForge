@@ -112,7 +112,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "A firmer system prompt; once it states the policy clearly, an injected instruction can no longer succeed."
+        text: "A firmer system prompt that states the policy clearly, so the agent knows to ignore injected text."
         correct: false
         rationale: "Stating the policy is one layer among several. The guide layers screening, structure, least privilege and red-teaming (\"Combine strategies for robust protection\"); a firmer prompt is one layer, not a guarantee."
       - id: B
@@ -138,7 +138,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Drop it: once every claim has a supporting quote, the summary is verified and needs no further checking."
+        text: "Drop it: once every claim has a supporting quote, the summary is verified and needs no more checking."
         correct: false
         rationale: "These techniques significantly reduce hallucinations but do not eliminate them, so a quote-backed summary can still be wrong."
       - id: B

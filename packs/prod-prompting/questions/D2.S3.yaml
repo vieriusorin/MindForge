@@ -12,7 +12,7 @@ questions:
         correct: true
         rationale: "The host creates one MCP client for each MCP server, and each client keeps a dedicated connection to its server; VS Code creates an additional client object for the second server."
       - id: B
-        text: "One: a single shared MCP client multiplexes requests to every connected server."
+        text: "One: a single shared MCP client multiplexes requests over one connection to every connected server."
         correct: false
         rationale: "MCP pairs one client with one server; a second server gets a second client."
       - id: C
@@ -138,7 +138,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "It restarts the connection on a timer, because a tool list can only be read once per session."
+        text: "It restarts the connection on a timer, because a server answers `tools/list` only once per session."
         correct: false
         rationale: "Listings are dynamic by design: `tools/list` can be sent again at any time, and notifications signal when to do so."
       - id: B
@@ -146,11 +146,11 @@ questions:
         correct: true
         rationale: "A server with `tools.listChanged` honours that filter in `subscriptions/listen`; on a list-changed notification the client typically requests the updated list and refreshes its registry. Notifications are best effort, so a client should also poll `tools/list` to stay fresh."
       - id: C
-        text: "It waits for the server to attach the new tool schemas to the next `tools/call` result."
+        text: "It waits for the server to attach the new tool schemas to the `_meta` field of the next `tools/call` result, then swaps them in."
         correct: false
         rationale: "Tool results carry the output of a call, not updated definitions; discovery happens through `tools/list`."
       - id: D
-        text: "It polls `resources/read` on a special URI that the server updates with the latest tool list."
+        text: "It polls `resources/read` on a special URI that the server rewrites with the latest tool list and schemas."
         correct: false
         rationale: "Resources serve context data; tool discovery uses `tools/list` and list-changed notifications."
     source:

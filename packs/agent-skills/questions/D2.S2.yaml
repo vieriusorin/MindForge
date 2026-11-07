@@ -12,15 +12,15 @@ questions:
         correct: true
         rationale: "At startup the agent pre-loads the name and description of every installed skill into its system prompt: just enough to know when each skill should be used."
       - id: B
-        text: "The full SKILL.md of all ten skills, so it can follow any of them without reading files."
+        text: "The full SKILL.md of all ten skills, so it can follow any one without reading files."
         correct: false
         rationale: "The body is the second level: Claude reads the full SKILL.md into context only when it thinks the skill is relevant to the current task."
       - id: C
-        text: "Nothing yet: Claude looks inside the skill folders only after you mention a skill by name."
+        text: "Nothing yet: Claude looks inside the skill folders only after you name a skill."
         correct: false
         rationale: "The metadata is loaded at startup, before any request; that first level is what lets Claude know when a skill applies."
       - id: D
-        text: "The output of each bundled script, since every script runs once when the session starts."
+        text: "The output of each bundled script, since every script runs once at session start."
         correct: false
         rationale: "Scripts are tools Claude runs at its discretion during a task, not at startup; bundled files are the third level, read only as needed."
     source:

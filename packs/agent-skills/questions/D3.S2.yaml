@@ -60,11 +60,11 @@ questions:
     select: 1
     options:
       - id: A
-        text: "\"See analyze_form.py for the field extraction algorithm\", so Claude follows the logic step by step."
+        text: "\"See analyze_form.py for the field extraction algorithm\", so Claude can follow the logic."
         correct: false
         rationale: "That wording tells Claude to read the script as reference, which the guide reserves for complex logic you want understood. It loads the code into context instead of running it."
       - id: B
-        text: "Say nothing about it: Claude executes every script in the skill folder whenever the skill loads."
+        text: "Say nothing about it: Claude executes every script in the skill folder when the skill loads."
         correct: false
         rationale: "The guide asks you to make clear in your instructions whether Claude should run a script or read it. Loading the skill does not by itself run the scripts in its folder."
       - id: C
@@ -72,7 +72,7 @@ questions:
         correct: true
         rationale: "Running is the most common intent, and execution is preferred for most utility scripts. Scripts run through bash without loading their contents into context: only the output consumes tokens."
       - id: D
-        text: "Paste the script into SKILL.md, so Claude can write an equivalent version that fits each request."
+        text: "Paste the script into SKILL.md, so Claude can write a version that fits each request."
         correct: false
         rationale: "Pre-made scripts are more reliable than generated code, save tokens because no code goes into context, and keep results consistent across uses."
     source:
@@ -86,15 +86,15 @@ questions:
     select: 1
     options:
       - id: A
-        text: "details.md is outside the scripts/ folder; move every reference file there so Claude can open it."
+        text: "details.md is outside scripts/; move every reference file there so Claude can open it."
         correct: false
         rationale: "Folders are your choice; the guide only asks for descriptive names organised by domain or feature. scripts/ holds code to run, not rules to read."
       - id: B
-        text: "Reference files must stay under 100 lines; split details.md into several shorter files instead."
+        text: "Reference files must stay under 100 lines; split details.md into several shorter files."
         correct: false
         rationale: "There's no such limit. For reference files longer than 100 lines the guide asks for a table of contents at the top, so Claude sees the full scope even when it previews only part."
       - id: C
-        text: "Claude opens one supporting file per skill; merge advanced.md and details.md into one document."
+        text: "Claude opens one supporting file per skill; merge advanced.md and details.md into one file."
         correct: false
         rationale: "Claude can read as many files as a task needs; the guide's own examples link several reference files from one SKILL.md."
       - id: D
@@ -112,7 +112,7 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Both versions cost the same, because a triggered skill loads every file in its folder at once."
+        text: "Both versions cost the same, because a triggered skill loads every file in its folder."
         correct: false
         rationale: "Triggering loads SKILL.md, not the folder. In the guide's example, Claude reads SKILL.md and then calls bash to read just the file the question needs."
       - id: B
@@ -120,11 +120,11 @@ questions:
         correct: true
         rationale: "This is the guide's progressive-disclosure pattern: Claude reads SKILL.md, follows the link to the one reference file it needs, and the other files stay on the filesystem consuming zero context tokens until needed."
       - id: C
-        text: "Version 2 costs more, since each reference file adds its own name and description at startup."
+        text: "Version 2 costs more, since each reference file adds a name and description at startup."
         correct: false
         rationale: "At startup only the name and description of each skill are pre-loaded. Reference files inside a skill add nothing until Claude reads them."
       - id: D
-        text: "Version 1 is cheaper over time: once read, a long SKILL.md drops out of context after the turn."
+        text: "Version 1 is cheaper over time: once read, a long SKILL.md leaves context after the turn."
         correct: false
         rationale: "Once Claude loads SKILL.md, every token competes with the conversation history and other context. That ongoing cost is why the guide keeps the body short and splits detail into files."
     source:

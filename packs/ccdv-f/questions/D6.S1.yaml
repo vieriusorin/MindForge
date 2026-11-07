@@ -7,21 +7,21 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Switch to a model with a larger context window so nothing needs to be removed."
+        text: "Move to a model with a larger context window, since context pollution stops degrading answers once the window is large enough."
         correct: false
-        rationale: "More context is not automatically better: as token count grows, accuracy and recall degrade (context rot)."
+        rationale: "Context windows of all sizes are expected to stay subject to context pollution and relevance concerns, and recall degrades as token count grows (context rot)."
       - id: B
-        text: "Preload all relevant documents at the start so the agent needs fewer tool calls."
+        text: "Preload all relevant documents at the start, so the agent makes fewer tool calls and its context stays leaner over the run."
         correct: false
         rationale: "Front-loading everything adds even more tokens; just-in-time retrieval with lightweight references keeps context lean."
       - id: C
-        text: "Clear old tool results that are no longer needed (tool result clearing), keeping the rest of the conversation intact."
+        text: "Clear raw tool results deep in the history that are no longer needed, leaving the rest of the conversation intact."
         correct: true
         rationale: "Tool result clearing is described as one of the safest, lightest-touch forms of compaction, removing stale raw tool outputs that consume the attention budget."
       - id: D
-        text: "Increase max_tokens so the agent has room to reason over the accumulated outputs."
+        text: "Keep the raw outputs and list in the system prompt which early results to ignore, so those tokens stop drawing on attention."
         correct: false
-        rationale: "max_tokens caps output length; it does not reduce the bloat in the input context."
+        rationale: "The stale tokens stay in context and keep depleting the attention budget; the goal is the smallest possible set of high-signal tokens, which means removing them."
     source:
       title: "Effective context engineering for AI agents"
       url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
@@ -32,19 +32,19 @@ questions:
     select: 1
     options:
       - id: A
-        text: "Delegate the search to a subagent, which works in its own context window and returns only a summary to the main conversation."
+        text: "Delegate the search to a subagent, which works in its own context and returns only the summary to the main conversation."
         correct: true
         rationale: "Subagents run in their own context window and return only the summary, keeping exploration output out of the main conversation."
       - id: B
-        text: "Run the search in the main conversation and then run /compact to summarize everything."
+        text: "Run the full search in the main conversation and then run /compact, so the long output is summarized after it has been read."
         correct: false
-        rationale: "This first fills the main context with the search output and then spends a large request summarizing the whole conversation; isolation avoids the bloat in the first place."
+        rationale: "Subagents exist for side tasks that would flood the main conversation with search results; /compact acts only after that output has already landed there."
       - id: C
-        text: "Run /clear before the search so there is room for its output."
+        text: "Run /clear before the search so the main conversation has enough free room to hold the full search output."
         correct: false
-        rationale: "/clear discards the context of the main task the search was meant to serve."
+        rationale: "/clear acts on the main conversation and drops the task the search serves, and the verbose output still lands there; a subagent keeps it in its own context."
       - id: D
-        text: "Paste the search results into CLAUDE.md so they load in every session."
+        text: "Paste the search results into CLAUDE.md, so the final list and the raw output load into later sessions as well."
         correct: false
         rationale: "CLAUDE.md loads into every session, so this would make the bloat permanent rather than isolating it."
     source:
