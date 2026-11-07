@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0060",
+  "frozen_at": "2026-11-06T14:00:00.000Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0060-plan-owns.acceptance.test.ts",
+      "sha256": "4aa37eaf641ff2c859a2b30076826ed1c047951d2f8906546aef184af04e1920",
+      "first_failure": "SC-1..SC-4, SC-6: Error: not implemented (stubs in scripts/lib/planning-check.mjs); SC-5: expected 'gate:planning: 1 ticket folders check…' to contain 'gate:planning: rule 2 skipped: no mai…' and to contain 'MF-0061: src/x.ts is changed but in n…' (CLI has no rule 2); SC-7: templates.md lacks '`checkPlanOwns`'. 17 red, 1 green (SC-5 owned case, exit 0 already); full pnpm test: only this file red (1086 passed)"
+    }
+  ],
+  "history": []
+}
