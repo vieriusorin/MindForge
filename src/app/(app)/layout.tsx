@@ -38,6 +38,7 @@ async function Sidebar() {
       packName={pack.name}
       groups={(section?.groups ?? []).map((g) => ({ id: g.id, name: g.name }))}
       groupsLabel={section?.label}
+      mapHref={`/play/${packSlug}`}
       duelHref={`/play/${packSlug}/duel`}
       walkHref={`/play/${packSlug}/walk`}
       cuckooHref={`/play/${packSlug}/cuckoo`}

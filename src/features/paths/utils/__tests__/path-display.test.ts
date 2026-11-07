@@ -4,6 +4,7 @@ import {
   continueHref,
   courseCountLabel,
   courseLine,
+  courseMapHref,
   formatCompletedDate,
   trophyLine,
 } from "../path-display";
@@ -62,5 +63,11 @@ describe("courseCountLabel", () => {
   it("pluralises the course count", () => {
     expect(courseCountLabel(1)).toBe("1 course");
     expect(courseCountLabel(5)).toBe("5 courses");
+  });
+});
+
+describe("courseMapHref", () => {
+  it("opens the course's map (MF-0062)", () => {
+    expect(courseMapHref("subagents")).toBe("/play/subagents");
   });
 });
