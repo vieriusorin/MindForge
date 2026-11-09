@@ -394,6 +394,9 @@ Climb `references/verification.md` from the bottom: oracle unit → DB tests →
 GATE enumerated from `package.json` → LINT → full TEST to a log → browser check for anything a user
 sees. Then VERIFY — the receipt is the evidence. It must say DONE for the current tree before
 Stage 5; quote it, never paraphrase. Failures present in the baseline are pre-existing, not yours.
+Before any review, run `pnpm check:goal-proofs <ID>` and fix what it names: every SC has a `Proof:`, every path,
+test file and `pnpm` script it names exists, and every frozen file is named in GOAL, LOOP-PLAN or LOOP-VERIFY
+(MF-0049; MF-0024 SC-3 named a frozen file that never existed, found only at review).
 High-risk adds a **fresh-context reviewer** (a subagent, or `/code-review`) reading the diff against
 GOAL + LOOP-PLAN — the agent that wrote the code does not sign it off.
 

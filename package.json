@@ -26,6 +26,7 @@
     "content:all": "tsx scripts/generate/content-all.ts",
     "prompts:lock": "tsx scripts/generate/lock-prompts.ts",
     "check:packs": "node scripts/check-pack-grounding.mjs",
+    "check:goal-proofs": "node scripts/check-goal-proofs.mjs",
     "gate:planning": "node scripts/check-planning.mjs",
     "gate:workspace": "node scripts/check-workspace.mjs",
     "ticket:github": "node scripts/ticket-github.mjs",

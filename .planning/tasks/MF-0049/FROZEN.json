@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0049",
+  "frozen_at": "2026-11-06T14:00:00.000Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0049-goal-proofs.acceptance.test.ts",
+      "sha256": "fec15f5142e0fc89adbfcf90229f607226a9d72db3a1cace984ca003f9124b9f",
+      "first_failure": "SC-1..SC-4: expected +0 to be 1 (stub check-goal-proofs.mjs exits 0 on the MF-0024 proof case, an unnamed frozen file, pnpm check:nope and a missing GOAL.md). 4/4; full pnpm test: only this file red (992 passed)"
+    }
+  ],
+  "history": []
+}
