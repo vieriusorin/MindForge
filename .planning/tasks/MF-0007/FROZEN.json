@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "src/server/db/__tests__/mf-0007-review.db.acceptance.test.ts",
-      "sha256": "95f089d72b39432eb1b370bb135167b18e7a088f6f791f2b4a54f9aa838060fb",
+      "sha256": "c2b9e34f941b1f89b82a0747be4ac2789030d3bd3e93d12d1ddff66cc3eff922",
       "first_failure": "SC-1: PostgresError relation \"private.items\" does not exist; SC-2..SC-6: rpc PGRST202 (function not found); SC-7: review_states not in schema cache; identical on 2nd run (fixture + teardown survive)"
     },
     {
@@ -26,6 +26,13 @@
       "reason": "User decision 2026-11-05 (MF-0025 TEST): the sync now removes keys and items of any unregistered pack (MF-0025 C-1 = A). SC-1 fixture count flips from ITEMS.length to 0 (it asserted the old rule), and the fixture items are re-seeded right after it via seedFixtureItems(); SC-1 registry checks and SC-2..SC-7 unchanged. Flipped assertion shown RED against the pre-MF-0025 script: expected 7 to be 0.",
       "files": {
         "src/server/db/__tests__/mf-0007-review.db.acceptance.test.ts": "95f089d72b39432eb1b370bb135167b18e7a088f6f791f2b4a54f9aa838060fb"
+      }
+    },
+    {
+      "at": "2026-11-07T12:25:58Z",
+      "reason": "User decision 2026-11-07 (MF-0066 review, U-a): the sync registers a fifth item kind, order items (item_type order). SC-1 expected-registry kind list gains [\"orders\",\"orders\"]; intent (every item of every pack, a second run changes nothing) unchanged. No assertion removed or weakened. Shown RED before: expected Map{ \u2026(507) } to deeply equal Map{ \u2026(504) } (7/7, SC-2..SC-6 in cascade); patched copy 7/7 green on the local stack.",
+      "files": {
+        "src/server/db/__tests__/mf-0007-review.db.acceptance.test.ts": "c2b9e34f941b1f89b82a0747be4ac2789030d3bd3e93d12d1ddff66cc3eff922"
       }
     }
   ]

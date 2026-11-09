@@ -24,6 +24,10 @@ import {
   KEY_RANK_MIN_QUESTIONS,
   keyRankProblems,
 } from "./lib/key-length.mjs";
+import {
+  checkOrderFile,
+  checkOrderQuoteCount,
+} from "./lib/order-grounding.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const PACKS = process.env.MF_PACKS_DIR
@@ -175,6 +179,22 @@ console.log(
   `misconceptions: ${tagSummary.files} file(s), ${tagSummary.tags} tag(s), ${tagSummary.problems} problem(s)`,
 );
 
+// MF-0066 review: corpus-free floor, one orderedBy quote per adjacent pair of an order's steps.
+for (const pack of readdirSync(PACKS).sort()) {
+  const dir = join(PACKS, pack, "orders");
+  if (!existsSync(dir)) continue;
+  for (const name of readdirSync(dir).sort()) {
+    if (!name.endsWith(".yaml")) continue;
+    const path = join(dir, name);
+    problems.push(
+      ...checkOrderQuoteCount({
+        file: relative(ROOT, path),
+        text: readFileSync(path, "utf8"),
+      }).problems,
+    );
+  }
+}
+
 if (!existsSync(CORPUS)) {
   for (const p of problems) console.error(p.message);
   console.log(
@@ -237,6 +257,27 @@ for (const pack of readdirSync(PACKS).sort()) {
     }
   }
 }
+
+// MF-0066: every orderedBy quote of an order item must be on the page it cites.
+let ordersChecked = 0;
+for (const pack of readdirSync(PACKS).sort()) {
+  const dir = join(PACKS, pack, "orders");
+  if (!existsSync(dir)) continue;
+  for (const name of readdirSync(dir).sort()) {
+    if (!name.endsWith(".yaml")) continue;
+    const path = join(dir, name);
+    const result = checkOrderFile({
+      file: relative(ROOT, path),
+      text: readFileSync(path, "utf8"),
+      corpus,
+    });
+    problems.push(...result.problems);
+    ordersChecked += result.checked;
+  }
+}
+console.log(
+  `check:packs: ${ordersChecked} order(s) checked against their cited page`,
+);
 
 for (const p of problems) console.error(p.message);
 console.log(

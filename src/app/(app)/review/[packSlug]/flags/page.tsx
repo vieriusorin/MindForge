@@ -10,6 +10,7 @@ import { PendingAnalogyList } from "@/features/review/components/pending-analogy
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getItemHashes } from "@/server/content/get-item-hashes";
 import { getPackContent } from "@/server/content/get-pack-content";
+import { getPackOrders } from "@/server/content/get-pack-orders";
 import { getPack } from "@/server/packs/get-pack";
 import { listPacks } from "@/server/packs/list-packs";
 import { listOpenFlags } from "@/server/review/list-open-flags";
@@ -28,16 +29,18 @@ async function FlagsSlot({
     );
   if (!(await listPacks()).some((p) => p.slug === packSlug)) notFound();
 
-  const [pack, content, contentHashes, flags, analogies] = await Promise.all([
-    getPack(packSlug),
-    getPackContent(packSlug),
-    getItemHashes(packSlug),
-    listOpenFlags(packSlug),
-    listPendingAnalogies(packSlug),
-  ]);
+  const [pack, content, orders, contentHashes, flags, analogies] =
+    await Promise.all([
+      getPack(packSlug),
+      getPackContent(packSlug),
+      getPackOrders(packSlug),
+      getItemHashes(packSlug),
+      listOpenFlags(packSlug),
+      listPendingAnalogies(packSlug),
+    ]);
   // MF-0007: maintainers only. The database refuses everyone else, so for them the page doesn't exist.
   if (!flags || !analogies) notFound();
-  const titles = itemTitles(content);
+  const titles = itemTitles({ ...content, orders });
 
   return (
     <>

@@ -1,5 +1,9 @@
 import type { PathContent } from "@/engine/path";
 import { type DemoPackInput, planDemoWorlds } from "./plan-demo-world";
+import {
+  type OrderApprovalPlan,
+  planOrderDiagramApprovals,
+} from "./plan-order-approvals";
 import { planPathScenarios } from "./plan-path-scenarios";
 import type { DemoWorld, PathScenarioPlan } from "./types";
 
@@ -9,6 +13,8 @@ export interface SeedPlan {
   pathScenario: PathScenarioPlan | null;
   /** Paths left out: a course was not seeded this run (a `--pack` run), or another path already took the personas. */
   skippedPaths: string[];
+  /** MF-0066: approvals of the diagrams order items are drawn from (seeded with `withOrderApprovals`). */
+  orderApprovals: OrderApprovalPlan;
 }
 
 /**
@@ -29,7 +35,7 @@ export function planSeed({
   seed: number;
   youEmail: string;
   demoDomain: string;
-  packs: readonly DemoPackInput[];
+  packs: readonly (DemoPackInput & { orderDiagramIds?: readonly string[] })[];
   paths: readonly PathContent[];
   excludeItemIds?: readonly string[];
 }): SeedPlan {
@@ -66,5 +72,16 @@ export function planSeed({
       excludeItemIds,
     });
   }
-  return { worlds, pathScenario, skippedPaths };
+  // MF-0066: planned after (and apart from) the worlds, so MF-0068 SC-5 (worlds unchanged) holds.
+  const orderApprovals = planOrderDiagramApprovals({
+    now,
+    worlds,
+    packs: packs.map((p) => ({
+      packSlug: p.pack.slug,
+      items: p.items,
+      orderDiagramIds: p.orderDiagramIds ?? [],
+    })),
+    excludeItemIds,
+  });
+  return { worlds, pathScenario, skippedPaths, orderApprovals };
 }

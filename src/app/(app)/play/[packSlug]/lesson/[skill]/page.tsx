@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { DiagramFigure } from "@/components/diagram-figure";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { planLesson } from "@/engine/lesson";
+import { lessonSteps, planLesson } from "@/engine/lesson";
 import { confusableSkills } from "@/engine/misconceptions";
 import { LessonPlayer } from "@/features/lesson/components/lesson-player";
 import { lessonHref } from "@/features/lesson/search-params";
@@ -13,7 +13,9 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import { getItemHashes } from "@/server/content/get-item-hashes";
 import { getPackContent } from "@/server/content/get-pack-content";
 import { getPackMisconceptions } from "@/server/content/get-pack-misconceptions";
+import { getPackOrders } from "@/server/content/get-pack-orders";
 import { getReviewContext } from "@/server/content/get-review-context";
+import { orderShuffleSeed } from "@/server/content/order-shuffle-seed";
 import { listMyAttempts } from "@/server/memory/list-my-attempts";
 import { getPack } from "@/server/packs/get-pack";
 import { listPacks } from "@/server/packs/list-packs";
@@ -37,16 +39,25 @@ async function LessonSlot({
 
   const now = new Date();
   // MF-0064 D-L3: the same forest the course map shows decides Seed vs met and the confusable skill.
-  const [pack, forest, content, hashes, review, attempts, misconceptions] =
-    await Promise.all([
-      getPack(packSlug),
-      getMyCourseForest({ userId: user.id, packSlug, now }),
-      getPackContent(packSlug),
-      getItemHashes(packSlug),
-      getReviewContext(user.id, packSlug),
-      listMyAttempts(user.id, packSlug),
-      getPackMisconceptions(packSlug),
-    ]);
+  const [
+    pack,
+    forest,
+    content,
+    orders,
+    hashes,
+    review,
+    attempts,
+    misconceptions,
+  ] = await Promise.all([
+    getPack(packSlug),
+    getMyCourseForest({ userId: user.id, packSlug, now }),
+    getPackContent(packSlug),
+    getPackOrders(packSlug),
+    getItemHashes(packSlug),
+    getReviewContext(user.id, packSlug),
+    listMyAttempts(user.id, packSlug),
+    getPackMisconceptions(packSlug),
+  ]);
   const skills = pack.domains.flatMap((d) => d.skills);
   const skillInfo = skills.find((s) => s.code === skillCode);
   if (!skillInfo) notFound();
@@ -57,19 +68,22 @@ async function LessonSlot({
     misconceptions,
     questions: content.questions,
   });
+  // MF-0066: orders join the plan (served only on an approved diagram); lessonSteps places the step.
   const plan = planLesson({
     skillCode,
     forest,
-    content,
+    content: { ...content, orders },
     review,
     attempts,
     confusable,
   });
   const steps = toPlayerSteps({
-    steps: plan.steps,
+    steps: lessonSteps(plan),
     // MF-0032: each question carries the version this page shows.
     hashes,
     skillNames: new Map(skills.map((s) => [s.code, s.name])),
+    // MF-0066 D-1: each order's shown permutation is keyed by a server secret, never public inputs.
+    orderSeedOf: (orderId) => orderShuffleSeed(user.id, orderId),
   });
   const card = plan.steps.find((s) => s.kind === "card");
   const diagram = plan.steps.find((s) => s.kind === "diagram");

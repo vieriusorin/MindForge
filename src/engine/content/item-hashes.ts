@@ -15,7 +15,13 @@ const RawItems = (kind: keyof ContentFiles) =>
  */
 export function itemHashes(files: ContentFiles): Record<string, string> {
   const hashes: Record<string, string> = {};
-  for (const kind of ["questions", "cards", "diagrams", "cuckoos"] as const) {
+  for (const kind of [
+    "questions",
+    "cards",
+    "diagrams",
+    "cuckoos",
+    "orders",
+  ] as const) {
     for (const file of files[kind] ?? []) {
       const parsed = RawItems(kind).safeParse(YAML.parse(file.text));
       if (!parsed.success) continue;

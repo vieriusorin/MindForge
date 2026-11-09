@@ -1,5 +1,10 @@
 import { join } from "node:path";
-import { itemHashes, loadPackContent, readPackFiles } from "@/engine/content";
+import {
+  itemHashes,
+  loadPackContent,
+  loadPackOrders,
+  readPackFiles,
+} from "@/engine/content";
 import { loadPackFile, type Pack } from "@/engine/pack";
 import type { SeedItem, SeedQuestion } from "./types";
 
@@ -11,6 +16,8 @@ export async function loadSeedInputs(packDir: string): Promise<{
   pack: Pack;
   questions: SeedQuestion[];
   items: SeedItem[];
+  /** MF-0066: the diagrams this pack's order items are drawn from (the seed approves them). */
+  orderDiagramIds: string[];
 }> {
   const pack = await loadPackFile(join(packDir, "pack.yaml"));
   const files = await readPackFiles(packDir);
@@ -54,5 +61,11 @@ export async function loadSeedInputs(packDir: string): Promise<{
       contentHash: hashOf(d.id),
     })),
   ];
-  return { pack, questions, items };
+  const orders = await loadPackOrders(pack, packDir, content);
+  return {
+    pack,
+    questions,
+    items,
+    orderDiagramIds: [...new Set(orders.map((o) => o.diagram))].sort(),
+  };
 }

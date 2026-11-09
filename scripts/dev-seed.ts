@@ -21,6 +21,7 @@ import { assertLocalSeedTarget } from "@/dev-seed/guard";
 import { loadSeedInputs } from "@/dev-seed/load-seed-inputs";
 import { toSeedManifest } from "@/dev-seed/manifest";
 import { demoGroupName } from "@/dev-seed/plan-demo-world";
+import { withOrderApprovals } from "@/dev-seed/plan-order-approvals";
 import { planSeed } from "@/dev-seed/plan-seed";
 import { resolveSeedPacks } from "@/dev-seed/resolve-seed-packs";
 import { reviewQueueOwners } from "@/dev-seed/review-queue-owners";
@@ -119,7 +120,7 @@ async function main(): Promise<void> {
     .map((name) =>
       parsePath(readFileSync(join(PATHS_DIR, name), "utf8"), `paths/${name}`),
     );
-  const { worlds, pathScenario, skippedPaths } = planSeed({
+  const { worlds, pathScenario, skippedPaths, orderApprovals } = planSeed({
     now: new Date(),
     seed,
     youEmail,
@@ -138,7 +139,8 @@ async function main(): Promise<void> {
     const manifest = await seedDemoWorlds({
       sql: db,
       admin: adminClient(),
-      worlds,
+      // MF-0066: the order items' diagrams get two demo approvals, so the demo lessons show order steps.
+      worlds: withOrderApprovals(worlds, orderApprovals.approvals),
       demoDomain: DEMO_DOMAIN,
       youEmail,
       previous: readManifest(youEmail),
@@ -166,6 +168,9 @@ async function main(): Promise<void> {
     console.log(
       `Seeded "${world.group.name}" (${world.group.packSlug}): ${world.attempts.length} answers, ${world.reviews.length} reviews, ${world.storms.length} finished storms, ${world.expedition ? "1 active expedition" : "no expedition"}.`,
     );
+  console.log(
+    `Order items: approved ${new Set(orderApprovals.approvals.map((a) => a.review.itemId)).size} diagram(s) they are drawn from${orderApprovals.skipped.length ? `; left as they are: ${orderApprovals.skipped.map((s) => `${s.itemId} (${s.reason})`).join(", ")}` : ""}.`,
+  );
   console.log(
     "Review queue (your own items never appear in it; sign in as this account to review):",
   );

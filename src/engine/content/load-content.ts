@@ -27,7 +27,7 @@ export class ContentValidationError extends Error {
 }
 
 /** YAML + schema + known skill for one file. Issues are `<file>: <path>: <message>`; null = skip it. */
-function readFileData<S extends z.ZodType<{ skill: string }>>(
+export function readFileData<S extends z.ZodType<{ skill: string }>>(
   file: ContentFile,
   schema: S,
   skills: ReadonlySet<string>,
@@ -152,7 +152,8 @@ export function parseContent(
   return { questions, cards, diagrams, cuckoos };
 }
 
-async function readKind(
+/** The `.yaml` files of one kind folder, sorted, as text. A missing folder means none. */
+export async function readKind(
   packDir: string,
   kind: keyof ContentFiles,
 ): Promise<ContentFile[]> {
@@ -172,15 +173,16 @@ async function readKind(
   );
 }
 
-/** Read `<packDir>/{questions,cards,diagrams,cuckoos}/*.yaml` as text. A missing dir means none. */
+/** Read `<packDir>/{questions,cards,diagrams,cuckoos,orders}/*.yaml` as text. A missing dir means none. */
 export async function readPackFiles(packDir: string): Promise<ContentFiles> {
-  const [questions, cards, diagrams, cuckoos] = await Promise.all([
+  const [questions, cards, diagrams, cuckoos, orders] = await Promise.all([
     readKind(packDir, "questions"),
     readKind(packDir, "cards"),
     readKind(packDir, "diagrams"),
     readKind(packDir, "cuckoos"),
+    readKind(packDir, "orders"),
   ]);
-  return { questions, cards, diagrams, cuckoos };
+  return { questions, cards, diagrams, cuckoos, orders };
 }
 
 /** Read `<packDir>/{questions,cards,diagrams,cuckoos}/*.yaml` and validate them. A missing dir means none. */

@@ -40,6 +40,7 @@ describe("toPlayerSteps", () => {
       steps,
       hashes: { q1: "h1", q9: "h9" },
       skillNames: new Map([["S0", "Agent loops"]]),
+      userId: "u1",
     });
     expect(out.map((s) => s.kind)).toEqual([
       "guess",
@@ -73,6 +74,7 @@ describe("toPlayerSteps", () => {
       ],
       hashes: {},
       skillNames: new Map(),
+      userId: "u1",
     });
     expect(out).toEqual([]);
   });

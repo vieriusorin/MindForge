@@ -1,0 +1,57 @@
+{
+  "ticket": "MF-0066",
+  "frozen_at": "2026-11-07T11:19:07.032Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/engine/content/__tests__/mf-0066-order-content.acceptance.test.ts",
+      "sha256": "5bcf3d31f5b9a11d7a447e089f05fbc15a2ccdfcd45795d772e4097c92c566d0",
+      "first_failure": "SC-10: Error: not implemented (loadPackOrders stub); 4/4 red."
+    },
+    {
+      "path": "src/engine/content/__tests__/mf-0066-order-engine.acceptance.test.ts",
+      "sha256": "d904de1fa0456dc70b3a536b6113501601f2e91a5679e7822f896c81b9fc7b94",
+      "first_failure": "SC-3/SC-4/SC-5: Error: not implemented (toPlayableOrder, checkOrderAnswer, isOrderServable stubs); SC-9: expected null to deeply equal { kind: order, item } / expected {} to deeply equal { mf66.D.S1.order-turn: ... }. 22/22 red."
+    },
+    {
+      "path": "src/engine/content/__tests__/mf-0066-order-schema.acceptance.test.ts",
+      "sha256": "3db2b68a6ca3be353e44ccb80f20232445112e726e3d1e461b09320e4105b67d",
+      "first_failure": "SC-1: Error: not implemented / expected Error: not implemented to be an instance of ContentValidationError (parseOrders, loadPackOrders stubs). 19/19 red."
+    },
+    {
+      "path": "src/engine/lesson/__tests__/mf-0066-order-plan.acceptance.test.ts",
+      "sha256": "8269f2fa51dad0fe2570e9440013a1696103d7bd90b95b974f7759a79a8d2e32",
+      "first_failure": "SC-5: expected undefined to be o1 (plan.order stub null) / Error: not implemented (lessonSteps stub). 10/11 red; SC-5 LESSON_STEP_KINDS contains order is green (stub widened the closed set so typecheck stays green)."
+    },
+    {
+      "path": "src/features/lesson/components/order-step/__tests__/mf-0066-order-step.acceptance.test.tsx",
+      "sha256": "b4f2bc241e084dcb795f77b430226a3f0f700ed96a34470aef2425c9082b942a",
+      "first_failure": "SC-7/SC-8: Error: not implemented (OrderStep stub throws in render); toPlayerSteps: expected [] to deeply equal [ { kind: order, order } ]. 9/9 red."
+    },
+    {
+      "path": "src/features/review/components/review-item/__tests__/mf-0066-order-body.acceptance.test.tsx",
+      "sha256": "b728352ad5e930deaf52caab25b51af81492f9a37cbf4c7911c6692e8be53381",
+      "first_failure": "SC-9: Error: not implemented (OrderBody stub). 1/1 red."
+    },
+    {
+      "path": "src/server/db/__tests__/mf-0066-order-keys.db.acceptance.test.ts",
+      "sha256": "44e1f7eb98d6b8b4ceb43e6b2fd49d001643c5ca8ab036d44f6c733e33b9d5b8",
+      "first_failure": "SC-2: PostgresError: column \"ordered\" does not exist; record_attempt { data: null, code: P0002 } (no order key synced); items probe: order refused 23514; bad order: sync exit 0 (orders not validated); removed: replaced 0. 6/7 red; the question set-equality case is a regression lock, green by design. 2nd run identical (after pnpm db:reset)."
+    },
+    {
+      "path": "src/test/__tests__/mf-0066-order-grounding.acceptance.test.ts",
+      "sha256": "7da7e2669f9b0f5c957eed077030cc5f3c183af28142078ec468bd7ff0e543b9",
+      "first_failure": "SC-6: Error: not implemented (checkOrderFile stub). 5/5 red."
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-07T12:29:17Z",
+      "reason": "MF-0066 fresh-context review should-fix 3, user's standing approval of necessary own re-freezes (orchestrator message 2026-11-07): the shown order was a sort by label (one fixed layout, every shipped item one move from the key; the rotation fallback a learnable tell). It becomes a permutation seeded by orderSeed(userId, orderId), computed server-side, never the key. SC-3 rows now assert the field list, every step once, never the key over 500 seeds, determinism per seed, >=15 distinct layouts for 4 steps and all 5 non-key layouts for 3 steps, and orderSeed stability; SC-8's toPlayerSteps row asserts the seeded copy (toPlayableOrder(item, hash, orderSeed(userId, id))) and that it is not the key. No other row changed; nothing weakened (the old literal sort order is replaced by stronger never-the-key properties). Shown RED against the label-sort implementation: the old code fails 'all 5 non-key permutations of 3 steps appear' (1 layout) and '>= 15 distinct' (1 layout).",
+      "files": {
+        "src/engine/content/__tests__/mf-0066-order-engine.acceptance.test.ts": "d904de1fa0456dc70b3a536b6113501601f2e91a5679e7822f896c81b9fc7b94",
+        "src/features/lesson/components/order-step/__tests__/mf-0066-order-step.acceptance.test.tsx": "b4f2bc241e084dcb795f77b430226a3f0f700ed96a34470aef2425c9082b942a"
+      }
+    }
+  ]
+}

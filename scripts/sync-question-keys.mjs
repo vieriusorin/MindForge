@@ -16,6 +16,8 @@
  * number as the only correct option, and registered with item_type 'cuckoo'.
  * MF-0032: a pack's keys and items are written in ONE transaction (record_attempt binds the two).
  * MF-0025: keys and items of a pack whose folder is gone are deleted with its registry row.
+ * MF-0066: orders (packs/<slug>/orders/*.yaml) are keyed with their step node ids IN ORDER and
+ * `ordered = true` (record_attempt grades them by sequence), and registered with item_type 'order'.
  * MF-0059: also writes the path registry (private.path_courses) from paths/*.yaml, which
  * create_path_group, join_group and advance_group_course read. Every path file is checked before
  * the first write, and the registry is replaced in the same transaction as the pack registry.
@@ -102,7 +104,21 @@ function readKeys(packSlug) {
       correct_options: [String(c.flawLine)],
     })),
   );
-  return [...questions, ...cuckoos];
+  // MF-0066: the steps in file order ARE the key; record_attempt compares the sequence.
+  const orders = readFiles(packSlug, "orders").flatMap(({ file }) =>
+    file.orders.map((o) => ({
+      question_id: o.id,
+      pack_slug: packSlug,
+      skill_code: file.skill,
+      correct_options: o.steps.map((s) => s.node),
+      ordered: true,
+    })),
+  );
+  return [
+    ...questions.map((k) => ({ ...k, ordered: false })),
+    ...cuckoos.map((k) => ({ ...k, ordered: false })),
+    ...orders,
+  ];
 }
 
 /** MF-0013: exam timing and skill -> domain map from packs/<slug>/pack.yaml. */
@@ -125,6 +141,7 @@ const ITEM_KINDS = [
   { kind: "cards", type: "card" },
   { kind: "diagrams", type: "diagram" },
   { kind: "cuckoos", type: "cuckoo" },
+  { kind: "orders", type: "order" },
 ];
 const ORIGINS = ["official", "human", "ai"];
 
@@ -299,12 +316,13 @@ try {
     await sql.begin(async (tx) => {
       for (const k of keys) {
         await tx`
-          insert into private.question_keys (question_id, pack_slug, skill_code, correct_options)
-          values (${k.question_id}, ${k.pack_slug}, ${k.skill_code}, ${k.correct_options})
+          insert into private.question_keys (question_id, pack_slug, skill_code, correct_options, ordered)
+          values (${k.question_id}, ${k.pack_slug}, ${k.skill_code}, ${k.correct_options}, ${k.ordered})
           on conflict (question_id) do update
             set pack_slug = excluded.pack_slug,
                 skill_code = excluded.skill_code,
                 correct_options = excluded.correct_options,
+                ordered = excluded.ordered,
                 updated_at = now()`;
       }
       const keyIds = keys.map((k) => k.question_id);

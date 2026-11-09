@@ -178,3 +178,47 @@ export const CuckooFileSchema = z.strictObject({
   skill: z.string().min(1),
   cuckoos: z.array(CuckooSchema).min(1),
 });
+
+/** MF-0066: steps an order shows (a phone screen; record_attempt allows 10 options). */
+export const ORDER_MIN_STEPS = 3;
+export const ORDER_MAX_STEPS = 8;
+/** MF-0066: record_attempt bounds each option id to 8 characters; a step's option id is its node id. */
+export const ORDER_STEP_ID_MAX = 8;
+
+const OrderSchema = z
+  .strictObject({
+    id: ItemId,
+    title: z.string().trim().min(1),
+    origin: OriginSchema,
+    author: AuthorSchema.optional(),
+    generatedBy: GeneratedBySchema.optional(),
+    level: LevelSchema.optional(),
+    diagram: ItemId,
+    steps: z
+      .array(
+        z.strictObject({
+          node: NodeId.max(
+            ORDER_STEP_ID_MAX,
+            `a step's node id is its answer id: at most ${ORDER_STEP_ID_MAX} characters`,
+          ),
+          label: z.string().trim().min(1),
+        }),
+      )
+      .min(ORDER_MIN_STEPS, `an order needs at least ${ORDER_MIN_STEPS} steps`)
+      .max(ORDER_MAX_STEPS, `an order shows at most ${ORDER_MAX_STEPS} steps`),
+    orderedBy: z
+      .array(z.string().trim().min(1, "an empty quote orders nothing"))
+      .min(1, "an order needs a sentence of its source that orders the steps"),
+    explanation: z.string().trim().min(1),
+    source: z.strictObject({
+      title: z.string().trim().min(1),
+      url: z.url({ protocol: /^https$/ }),
+    }),
+  })
+  .superRefine(refineAuthor)
+  .superRefine(refineGeneratedBy);
+
+export const OrderFileSchema = z.strictObject({
+  skill: z.string().min(1),
+  orders: z.array(OrderSchema).min(1),
+});
