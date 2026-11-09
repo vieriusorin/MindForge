@@ -2,16 +2,27 @@
 /**
  * MF-0001 SC-8: every hook wired in .claude/settings.json loads and runs in THIS repo.
  *  1. every relative import under .claude/hooks resolves to an existing file;
- *  2. every hook command exits 0 with empty stderr on a sample input for its event.
- * Exit 1 on any failure. Usage: node scripts/check-hooks.mjs
+ *  2. every hook command exits 0 with empty stderr on a sample input for its event;
+ *  3. MF-0051: every `pnpm <name>` a hook, the settings, an agent, a rule, a skill's code or CLAUDE.md / AGENTS.md
+ *     names is a package.json script or a pnpm built-in.
+ * Exit 1 on any failure. Usage: node scripts/check-hooks.mjs (MF_CHECK_ROOT=<dir> checks another root).
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import {
+  existsSync,
+  lstatSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+} from "node:fs";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { isPnpmRefFile, unknownPnpmRefs } from "./lib/pnpm-refs.mjs";
 
 // MF-0023: `new URL(...).pathname` is `/C:/…` on Windows, which `resolve` turned into `C:\C:\…`.
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = process.env.MF_CHECK_ROOT
+  ? resolve(process.env.MF_CHECK_ROOT)
+  : resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 // 1. imports
@@ -87,6 +98,41 @@ for (const [event, groups] of Object.entries(settings.hooks ?? {})) {
   }
 }
 console.log(`commands: ${commandCount} hook commands run`);
+
+// 3. pnpm references (MF-0051)
+const scripts = new Set(
+  Object.keys(
+    JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")).scripts ?? {},
+  ),
+);
+// A link's target lives outside the scanned tree, and a tracked one can dangle on CI
+// (`.claude/skills/brag-slim` → untracked `.agents/`), where `statSync` throws ENOENT. Skip links.
+const walkAll = (dir) =>
+  readdirSync(dir).flatMap((n) => {
+    const p = join(dir, n);
+    const s = lstatSync(p);
+    if (s.isSymbolicLink()) return [];
+    return s.isDirectory() ? walkAll(p) : [p];
+  });
+const refFiles = [
+  ...walkAll(join(ROOT, ".claude")),
+  join(ROOT, "CLAUDE.md"),
+  join(ROOT, "AGENTS.md"),
+].filter(existsSync);
+let refFileCount = 0;
+for (const file of refFiles) {
+  const rel = relative(ROOT, file).split(sep).join("/");
+  const kind = isPnpmRefFile(rel);
+  if (!kind) continue;
+  refFileCount++;
+  const text = readFileSync(file, "utf8");
+  for (const { line, name } of unknownPnpmRefs({ ...kind, text, scripts })) {
+    const hit = `${rel}:${line} pnpm ${name} (not a package.json script)`;
+    console.log(`FAIL ${hit}`);
+    failures.push(hit);
+  }
+}
+console.log(`pnpm refs: ${refFileCount} files checked`);
 
 if (failures.length) {
   console.error(`\nFAILED:\n${failures.map((f) => `  - ${f}`).join("\n")}`);

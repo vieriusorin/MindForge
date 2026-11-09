@@ -27,11 +27,10 @@ them for fixtures and conventions.
 
 ## Freeze
 
-Freezing is the user's checkpoint. Print the exact command and stop:
-
-```
-pnpm ticket:freeze <ID> <file> [<file>...]
-```
+Freezing is the user's checkpoint. There is no `ticket:freeze` CLI yet (MF-0080): print the files to
+freeze and what the orchestrator will record, then stop. The record is `.planning/tasks/<ID>/FROZEN.json`:
+one entry per file with its sha256 over LF-normalised content and its first failure line (gsd-goal-loop,
+Project bindings: FREEZE).
 
 Never run `--refreeze`, never edit a frozen file, never write that the user approved something.
 If an SC cannot be tested, say which and why — it needs a different Proof in the GOAL.

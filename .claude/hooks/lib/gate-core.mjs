@@ -65,7 +65,7 @@ export const PROTECTED = [
   },
   {
     test: /^\.planning\/evidence\/[^/]+\.(receipts\.jsonl|eval\.json)$/,
-    reason: "a ticket's receipts — written by `pnpm ticket:verify` / `ticket:eval`, never by hand",
+    reason: "a ticket's receipts — written by the ticket tooling (MF-0080), never by hand",
   },
   { test: /^\.github\//, reason: "CI configuration" },
   { test: /^\.husky\//, reason: "the git hooks" },

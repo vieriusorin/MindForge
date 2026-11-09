@@ -1,0 +1,23 @@
+{
+  "ticket": "MF-0051",
+  "frozen_at": "2026-11-09T08:39:01.158Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0051-pnpm-refs.acceptance.test.ts",
+      "sha256": "459864b1a2c9a829e3a61feda98a00aa311ca5367b4fb5ebbf267e4291d05183",
+      "first_failure": "SC-1 x3 and SC-3: Error: not implemented (stub scripts/lib/pnpm-refs.mjs, new module); SC-2: expected +0 to be 1 (check-hooks ignores MF_CHECK_ROOT and passes on the real repo). SC-3 own red: probe replay finds 18 hits on today tree. 5/5; typecheck 0, lint 0"
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-11-09T09:02:38.066Z",
+      "by": "MF-0051",
+      "path": "src/test/__tests__/mf-0051-pnpm-refs.acceptance.test.ts",
+      "from": "651738c9960ed90b3565c11a5d82d8a1e54bd1fac2ebf42a32565cc0e4800742",
+      "to": "459864b1a2c9a829e3a61feda98a00aa311ca5367b4fb5ebbf267e4291d05183",
+      "approved_by": "user (2026-11-09, MF-0051 review checkpoint)",
+      "reason": "review B-1: the SC-3 walk used statSync, which throws ENOENT on the tracked .claude/skills/brag-slim symlink that dangles on Linux CI; it now uses lstatSync and skips links, like scripts/check-hooks.mjs. Assertions unchanged."
+    }
+  ]
+}

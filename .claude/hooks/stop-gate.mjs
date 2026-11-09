@@ -273,7 +273,7 @@ async function main() {
         );
       if (c.infra.length)
         notes.push(
-          `NOT VERIFIED — the test stack refused connections (pnpm db:test:start):\n${c.infra.map((l) => `  - ${l}`).join("\n")}`,
+          `NOT VERIFIED — the test stack refused connections (start Docker, then pnpm dev:setup):\n${c.infra.map((l) => `  - ${l}`).join("\n")}`,
         );
     }
   } else if (!full) {
@@ -328,6 +328,6 @@ async function main() {
 
 main()
   .catch(() => {
-    // A crashed gate must not trap the session; CI and `pnpm verify` remain the backstop.
+    // A crashed gate must not trap the session; CI and `pnpm typecheck && pnpm lint && pnpm test` remain the backstop.
   })
   .finally(() => process.exit(0));

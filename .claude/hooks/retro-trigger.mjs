@@ -8,7 +8,7 @@
  * Blocks up to CAP times for the same set, then releases with a banner — never loops.
  *
  * Off switch for one session: MF_RETRO=off. Never fails loudly: a broken trigger costs a missed
- * retro, which `pnpm ticket:retro --across` still shows as a ticket without one.
+ * retro, which still shows as a finished ticket folder without a RETRO.md.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
@@ -94,7 +94,7 @@ function main() {
     saveState(stateKey, { ...state, blocks: 0, releasedRed: signature, lastSignature: signature });
     process.stdout.write(
       JSON.stringify({
-        systemMessage: `✗ Retro not done after ${CAP} attempts: ${due.map((d) => d.ticket).join(", ")}. Run \`pnpm ticket:retro <ID>\` and the retro agent next session.`,
+        systemMessage: `✗ Retro not done after ${CAP} attempts: ${due.map((d) => d.ticket).join(", ")}. Run the retro agent for each of them next session.`,
       }),
     );
     return;

@@ -1,6 +1,6 @@
 ---
 name: retro
-description: "Fresh-context retrospective of one finished (or parked) ticket: what went right, what went wrong, the cause from a closed set, and at most two actions — each landing in a gate, a skill, or a memory entry, so the next ticket starts smarter and cheaper. Reads `pnpm ticket:retro <ID>` facts and the ticket's artifacts, never the transcript. Writes only RETRO.md; the orchestrator applies its actions by a closed policy, unattended. Use when the retro-trigger Stop hook asks (gsd-goal-loop Stage 7), and with --across every ~10 tickets."
+description: "Fresh-context retrospective of one finished (or parked) ticket: what went right, what went wrong, the cause from a closed set, and at most two actions — each landing in a gate, a skill, or a memory entry, so the next ticket starts smarter and cheaper. Reads the ticket's recorded facts and artifacts, never the transcript. Writes only RETRO.md; the orchestrator applies its actions by a closed policy, unattended. Use when the retro-trigger Stop hook asks (gsd-goal-loop Stage 7), and with --across every ~10 tickets."
 model: sonnet
 tools: Read, Grep, Glob, Bash, Write
 ---
@@ -15,11 +15,11 @@ future ticket more expensive.
 
 ## Read — in this order, and stop when you have enough
 
-1. `pnpm ticket:retro <ID>` — counts from receipts, freeze history, research, review and session
-   metrics, plus `signals`. Each signal is a place to look, not a verdict.
+1. The facts, gathered by hand until the `ticket:retro` CLI exists (MF-0080): iterations and receipts in
+   `LOOP-VERIFY.md`, the freeze history in `FROZEN.json`, research classes in `research/Q-*.md`, the review
+   verdict in `REVIEW.md`. Each odd number (a re-freeze, a repeated red, a blocking review) is a place to look, not a verdict.
 2. `.planning/tasks/<ID>/GOAL.md` — Concerns, "Decided without a question", Iteration Log.
-3. Only for the signals that fired: the failing receipt logs it points at
-   (`.planning/evidence/<ID>/logs/`), `REVIEW.md`'s blocking findings, the refreeze reasons,
+3. Only for the odd numbers from step 1: the failing receipt output in LOOP-VERIFY.md, `REVIEW.md`'s blocking findings, the refreeze reasons,
    `research/Q-*.md` interpretations.
 4. The memory index `~/.claude/projects/-Users-sorinvieriu-Projects-mind-forge/memory/MEMORY.md` and the
    entries whose titles touch what went wrong. Grep them; read only the matches.
@@ -62,7 +62,7 @@ actions: <comma list from: gate, skill-edit, memory-update, memory-add, memory-d
 lesson_keys: <comma list of short kebab slugs, reused across tickets for the same lesson>
 ---
 ## Numbers
-<the 4–6 lines of `pnpm ticket:retro` that matter, verbatim>
+<the 4–6 facts from step 1 that matter, with their source file>
 
 ## Went right
 - <what, and the evidence> — keep: <where it should be written so it is reused, or "already is: <where>">
@@ -84,8 +84,8 @@ text, the exact entry name. A vague action is a held action. If RETRO.md already
 park, rewrite it to cover the whole ticket and keep its `lesson_keys`.
 
 `lesson_keys`: before inventing a slug, grep `.planning/tasks/*/RETRO.md` for an existing one that
-names the same lesson and reuse it — `pnpm ticket:retro --across` finds a lesson learned twice
-only through a shared key.
+names the same lesson and reuse it — a lesson learned twice is found across retros only
+through a shared key.
 
 At most two actions. If you find more, keep the two that would have saved the most and list the
 rest under "Not worth changing" with one line each. `causes: none` with `actions: none` is a
