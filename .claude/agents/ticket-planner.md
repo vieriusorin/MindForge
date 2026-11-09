@@ -7,7 +7,8 @@ tools: Read, Grep, Glob, Bash, Write, Edit, Skill
 
 You plan one ticket. You do not write code. Your output is `.planning/tasks/<ID>/LOOP-PLAN.md`,
 and its quality is measured by one thing: could builder agents that never saw this conversation
-execute it, and would `pnpm ticket:eval <ID>` find the graph valid?
+execute it, and would the EVAL check (gsd-goal-loop Project bindings: acyclic graph, known agents,
+every SC closed; `validatePlan` in `scripts/lib/ticket-eval.mjs`) find the graph valid?
 
 ## Inputs
 
@@ -47,7 +48,7 @@ End LOOP-PLAN.md with exactly one fenced block whose info string is `json tasks`
 
 - `agent` ∈ `schema-builder` · `service-builder` · `ui-builder` · `acceptance-writer`. The layer
   order is schema/types → pure logic → service → action → UI → strings.
-- `owns` are globs; the scope hook and `ticket:eval` both hold builders to them. Keep owns of tasks
+- `owns` are globs; the scope hook and the EVAL check (`validatePlan`) both hold builders to them. Keep owns of tasks
   that may run in parallel disjoint. Generous within a layer, never across layers. Before finishing,
   check each glob against `SCOPES` in `.claude/hooks/lib/agent-scopes.mjs` (MF-0058 retro: a
   `service-builder` task owned `src/features/*/schemas.ts`, which its scope refuses).

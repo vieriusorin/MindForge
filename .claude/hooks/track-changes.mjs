@@ -11,7 +11,7 @@
  * rather than blocked: the command already ran, and the point is that nobody misses it.
  *
  * Never blocks a tool call and never fails loudly: a broken tracker must not stop work. The cost
- * of a miss is a Stop gate that verifies less, and `pnpm verify` / CI still run everything.
+ * of a miss is a Stop gate that verifies less, and `pnpm typecheck && pnpm lint && pnpm test` / CI still run everything.
  */
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { diffSnapshots, protectedReason } from "./lib/gate-core.mjs";

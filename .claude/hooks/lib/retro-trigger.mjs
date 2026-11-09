@@ -75,7 +75,8 @@ export function retroInstruction(due, autonomous = false) {
 ${list}
 
 Do it now, without asking the user (gsd-goal-loop references/retro.md, "Automatic"):
-  1. pnpm ticket:retro <ID>   (skip if RETRO.md exists and only step 3 is pending)
+  1. Gather the facts from .planning/tasks/<ID>/ (GOAL Iteration Log, FROZEN.json history, LOOP-VERIFY,
+     REVIEW.md, research/) — no ticket:retro CLI yet, MF-0080   (skip if RETRO.md exists and only step 3 is pending)
   2. Agent(retro) with the ticket ID — it writes RETRO.md.
 ${apply}
 Then end the turn with one line per ticket: what was applied, what was held.`;

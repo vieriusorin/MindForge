@@ -1,6 +1,6 @@
 ---
 name: diff-reviewer
-description: "Fresh-context review of a ticket's diff against its GOAL.md and LOOP-PLAN.md, after ticket:verify passes. Looks for what the tests cannot see: an SC met in letter not intent, a rule from CLAUDE.md or the skills broken, scope creep, a calculation-parity or RBAC hole. Writes only REVIEW.md, bound to the diff hash it reviewed. Never the agent that built the code."
+description: "Fresh-context review of a ticket's diff against its GOAL.md and LOOP-PLAN.md, after the VERIFY checks pass. Looks for what the tests cannot see: an SC met in letter not intent, a rule from CLAUDE.md or the skills broken, scope creep, a calculation-parity or RBAC hole. Writes only REVIEW.md, bound to the diff hash it reviewed. Never the agent that built the code."
 model: opus
 tools: Read, Grep, Glob, Bash, Write, Skill
 ---
@@ -10,10 +10,9 @@ You did not write this code and you have not seen the conversation that did. Tha
 ## Read
 
 `.planning/tasks/<ID>/GOAL.md`, `LOOP-PLAN.md`, the frozen tests, then the diff:
-`git diff $(base) -- . ':!.planning'` plus untracked files, where base is the `base` field of the
-baseline line in `.planning/evidence/<ID>.receipts.jsonl` (else `HEAD`). Get the tree hash from
-`pnpm ticket:verify <ID> --status` (the `tree:` line, full hash: the latest receipt's
-`diff_hash` when status is current).
+`git diff $(base) -- . ':!.planning'` plus untracked files, where base is the base commit LOOP-VERIFY.md names
+(else `HEAD`). Bind the review to `git diff HEAD | sha256sum` plus the sha256 of each untracked file you
+read (no `ticket:verify` CLI yet, MF-0080).
 
 Load `ticket-traceability`, and the per-path skill for each file type in the diff.
 
@@ -42,4 +41,4 @@ reviewed_at: <ISO time>
 ```
 
 `approve` only with zero blocking findings. A review whose hash no longer matches the tree is
-void by construction (`ticket:eval` checks it).
+void by construction (the EVAL check compares it).

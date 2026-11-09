@@ -75,7 +75,7 @@ Use when:
 Before starting any TypeScript project:
 
 ```
-- [ ] Use pnpm for package management (faster, disk-efficient)
+- [ ] Manage packages with pnpm (faster, disk-efficient)
 - [ ] Configure ESM-first (type: "module" in package.json)
 - [ ] Enable strict mode in tsconfig.json
 - [ ] Set up ESLint with @typescript-eslint
