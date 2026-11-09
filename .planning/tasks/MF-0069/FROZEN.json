@@ -1,0 +1,13 @@
+{
+  "ticket": "MF-0069",
+  "frozen_at": "2026-11-09T09:19:07.153Z",
+  "hash": "sha256 over LF-normalised content",
+  "files": [
+    {
+      "path": "src/test/__tests__/mf-0069-plan-parsers.acceptance.test.ts",
+      "sha256": "894d950b939ccb2ed85ba43637e66a871881cd7237a3d4dfd741205cd468a0fb",
+      "first_failure": "SC-1..SC-4: Error: not implemented (stub checkPlanParsers, new export); SC-5: stdout lacks the SC-1 line (rule not wired into check-planning.mjs); SC-6: parsers-example markers missing in templates.md. 6/6; typecheck 0, lint 0"
+    }
+  ],
+  "history": []
+}
