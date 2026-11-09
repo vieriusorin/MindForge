@@ -9,6 +9,8 @@
  * MF-0060: also fails a ticket after MF-0060 whose LOOP-PLAN gives a role agent an `owns` glob outside its SCOPES (or
  * NEVER), and, at hand-off, a changed file (git diff against the merge base with main / origin/main, plus untracked)
  * that no task owns. Without a main ref that second rule is skipped with one line (shallow or detached checkouts).
+ * MF-0069: also fails a ticket after MF-0068, from build on, whose LOOP-PLAN owns non-test files under scripts/,
+ * .claude/hooks/ or src/engine/ without a `## Parsers` section saying `None: <reason>` or holding complete ### blocks.
  * Runs in the Stop gate (every `gate:*`) and in CI. Exit 1 on any problem.
  * Usage: node scripts/check-planning.mjs   (MF_TASKS_DIR, MF_EVIDENCE_DIR, MF_REPO_DIR override paths, for tests)
  */
@@ -21,6 +23,7 @@ import {
   checkDesignPreflight,
   checkPlanning,
   checkPlanOwns,
+  checkPlanParsers,
   checkSeeItYourself,
 } from "./lib/planning-check.mjs";
 
@@ -100,6 +103,7 @@ const problems = [
     return existsSync(file) ? readFileSync(file, "utf8") : null;
   }),
   ...checkPlanOwns(entries),
+  ...checkPlanParsers(entries),
   ...checkChangedFilesOwned(entries, changed),
 ];
 if (problems.length > 0) {

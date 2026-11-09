@@ -523,3 +523,198 @@ export function checkChangedFilesOwned(entries, changedFiles) {
     ),
   );
 }
+
+// MF-0069: shipped plans declared parsers in free prose or not at all (3 of 54 had a Parsers section, probe
+// 2026-11-09); the rule governs tickets picked up after MF-0068, MF-0069's own plan first.
+const PARSERS_CUTOFF = "MF-0068";
+const JUDGED_STAGES = new Set(["build", "test", "handoff", "watch"]);
+const PARSER_TREES = ["scripts/**", ".claude/hooks/**", "src/engine/**"];
+const TESTS_SEGMENT = /(?:^|\/)__tests__\//;
+const PARSERS_HINT = '(write "None: <reason>" or one ### block per parser)';
+// A label opens its own line (optionally as a list item, optionally bold); a mention inside prose does not count.
+const LABEL_LINE = /^\s*(?:[-*+]\s+|\d+\.\s+)?/;
+const BLOCK_LABELS = [
+  "Accepted grammar",
+  "Rejected inputs",
+  "Exempt-path test",
+  "Cross-check",
+];
+
+/**
+ * The first owned glob, in task order, that may cover a file in parser territory (scripts/, .claude/hooks/,
+ * src/engine/), outside a `__tests__/` path segment. Braces expand as the gate's own dialect does, a leading `./` is
+ * dropped, and a glob that cannot be expanded counts as in territory (MF-0069 review B-2: fail closed). Non-array
+ * owns and non-string items are left to validatePlan.
+ * @param {readonly unknown[]} tasks
+ * @returns {string | null}
+ */
+function parserTerritoryGlob(tasks) {
+  for (const task of tasks) {
+    const owns = /** @type {{ owns?: unknown }} */ (task)?.owns;
+    if (!Array.isArray(owns)) continue;
+    for (const glob of owns) {
+      if (typeof glob !== "string") continue;
+      const expanded = expandOwns(glob);
+      if (expanded === null) return glob;
+      const inTerritory = expanded
+        .map((g) => g.replace(/^(?:\.\/)+/, ""))
+        .some(
+          (g) =>
+            !TESTS_SEGMENT.test(g) &&
+            PARSER_TREES.some((tree) => globsOverlap(g, tree)),
+        );
+      if (inTerritory) return glob;
+    }
+  }
+  return null;
+}
+
+/**
+ * The lines of the first `## Parsers` section (any spacing, an optional suffix such as `:` or `(none)`) up to the
+ * next `#` or `##` heading, each with whether it sits inside a fence. A fence closes only on the same character with
+ * a run at least as long as the opener; fenced lines are never headings.
+ * @param {string} text LF-normalised
+ * @returns {{ line: string, fenced: boolean }[] | null}
+ */
+function parsersSection(text) {
+  /** @type {{ line: string, fenced: boolean }[] | null} */
+  let section = null;
+  /** @type {string | null} */
+  let fence = null;
+  for (const line of text.split("\n")) {
+    const run = /^\s*(`{3,}|~{3,})/.exec(line)?.[1] ?? null;
+    if (fence !== null) {
+      section?.push({ line, fenced: true });
+      const closes =
+        run !== null &&
+        run[0] === fence[0] &&
+        run.length >= fence.length &&
+        line.trim() === run;
+      if (closes) fence = null;
+      continue;
+    }
+    if (run !== null) {
+      fence = run;
+      section?.push({ line, fenced: true });
+      continue;
+    }
+    const heading = /^#{1,2}\s/.test(line);
+    if (heading && section !== null) break;
+    if (heading && /^##\s+Parsers\b/.test(line)) section = [];
+    else section?.push({ line, fenced: false });
+  }
+  return section;
+}
+
+/**
+ * The text after a label that opens the line (list marker and bold allowed), or null when the line does not open
+ * with it. `Rejected inputs` may be written without a colon.
+ * @param {string} line
+ * @param {string} label
+ * @returns {string | null}
+ */
+function labelText(line, label) {
+  const plain = line.replace(/\*\*/g, "").replace(LABEL_LINE, "");
+  const opens =
+    plain.startsWith(`${label}:`) ||
+    (label === "Rejected inputs" && plain.startsWith(label));
+  return opens ? plain.slice(label.length).replace(/^:/, "").trim() : null;
+}
+
+/** A label line with text after the label on the same line. */
+const hasLabel = (/** @type {string[]} */ lines, /** @type {string} */ label) =>
+  lines.some((l) => (labelText(l, label) ?? "") !== "");
+
+/**
+ * At least 3 data rows (header and `|---|` separators excluded) in the first Markdown table after the `Rejected
+ * inputs` label line and before the next block label (MF-0069 review B-1: a table under `Cross-check:` is not it).
+ * @param {string[]} lines
+ */
+function hasRejectedTable(lines) {
+  const label = lines.findIndex(
+    (l) => labelText(l, "Rejected inputs") !== null,
+  );
+  if (label === -1) return false;
+  let start = label + 1;
+  while (
+    start < lines.length &&
+    !lines[start].trim().startsWith("|") &&
+    !BLOCK_LABELS.some((other) => labelText(lines[start], other) !== null)
+  )
+    start++;
+  let end = start;
+  while (end < lines.length && lines[end].trim().startsWith("|")) end++;
+  const rows = lines
+    .slice(start + 1, end)
+    .filter((l) => !/^\|[\s:|-]+$/.test(l.trim()));
+  return rows.length >= 3;
+}
+
+/**
+ * MF-0069: one line per problem for each ticket after MF-0068, not reserved, at stage build or later, whose LOOP-PLAN
+ * tasks may own a non-test file under scripts/, .claude/hooks/ or src/engine/. Its `## Parsers` section must say
+ * `None: <reason>` (no blocks) or hold `### <name>` blocks, each with `Accepted grammar:`, a Rejected inputs table of
+ * 3+ rows and `Exempt-path test:`, as line-opening labels outside fences. A missing plan or an unreadable task block
+ * is left to `checkPlanOwns`.
+ * @param {readonly PlanEntry[]} entries
+ * @returns {string[]}
+ */
+export function checkPlanParsers(entries) {
+  return entries.flatMap(({ dir, goalText, planText }) => {
+    if (goalText === null || dir <= PARSERS_CUTOFF) return [];
+    const goal = goalText.replace(/\r\n/g, "\n");
+    if (frontValue(goal, "goal_status") === "reserved") return [];
+    if (!JUDGED_STAGES.has(frontValue(goal, "stage") ?? "")) return [];
+    if (planText === null || planText === undefined) return [];
+    const text = planText.replace(/\r\n/g, "\n");
+    const { tasks, errors } = parsePlanTasks(text);
+    if (errors.length > 0) return [];
+    const glob = parserTerritoryGlob(tasks);
+    if (glob === null) return [];
+
+    const section = parsersSection(text);
+    if (section === null)
+      return [
+        `${dir}: LOOP-PLAN owns ${glob} but has no "## Parsers" section ${PARSERS_HINT}`,
+      ];
+
+    /** @type {{ name: string, lines: string[] }[]} */
+    const blocks = [];
+    /** @type {string[]} */
+    const preface = [];
+    for (const { line, fenced } of section) {
+      if (fenced) continue;
+      if (/^###\s/.test(line))
+        blocks.push({ name: line.replace(/^###\s+/, "").trim(), lines: [] });
+      else (blocks.at(-1)?.lines ?? preface).push(line);
+    }
+
+    if (blocks.length === 0) {
+      const first = (preface.find((l) => l.trim() !== "") ?? "")
+        .replace(/\*\*/g, "")
+        .trim();
+      if (!first.startsWith("None:"))
+        return [
+          `${dir}: Parsers section has neither "None: <reason>" nor a ### block`,
+        ];
+      const reason = first.slice("None:".length).trim();
+      return reason === "" || reason.startsWith("<")
+        ? [`${dir}: Parsers section says "None:" without a reason`]
+        : [];
+    }
+
+    return blocks.flatMap(({ name, lines }) => [
+      ...(hasLabel(lines, "Accepted grammar")
+        ? []
+        : [`${dir}: Parsers block "${name}" has no "Accepted grammar:" line`]),
+      ...(hasRejectedTable(lines)
+        ? []
+        : [
+            `${dir}: Parsers block "${name}" has no Rejected inputs table with 3 or more rows`,
+          ]),
+      ...(hasLabel(lines, "Exempt-path test")
+        ? []
+        : [`${dir}: Parsers block "${name}" has no "Exempt-path test:" line`]),
+    ]);
+  });
+}

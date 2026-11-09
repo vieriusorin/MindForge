@@ -113,15 +113,43 @@ a token it cannot match, so this unfilled placeholder fails it (MF-0043)>
 |---|---|---|
 | `<path>/__tests__/<id>-x.acceptance.test.ts:<line>` | <the assertion that breaks → its new value> | <why; approval> |
 
-## Parsers (omit only when no parser, gate or exemption is added or changed)
+## Parsers
 
-<one block per parser, INCLUDING secondary parsers inside a larger change (an `owns:` list, a path pattern, a header
-line), not only the main algorithm. Accepted grammar: <the exact line or token shapes accepted; everything else is an
-error naming the input>. Rejected inputs: <table: input, expected error, test file>. Exempt-path test: <the same
-malformed item inside an exempt set / main-session / grandfather list must still fail; the shape check runs before
-the skip>. Cross-check: <a brute-force or property test against a naive oracle for the main algorithm, as MF-0048 did
-with 3.1M pairs>. See `verification.md` §4 (MF-0048 retro: the owns parser shipped as a blocklist with the exemption
-before the syntax check, though §4 named both traps).>
+<Required (`pnpm gate:planning`, MF-0069) from `build` on when any task owns a non-test file under `scripts/`,
+`.claude/hooks/` or `src/engine/`. Either one line `None: <reason>`, or one `### <name>` block per parser, INCLUDING
+secondary parsers inside a larger change (an `owns:` list, a path pattern, a header line), not only the main
+algorithm. Each block needs: `Accepted grammar:` with the exact shapes accepted on the same line (everything else is
+an error naming the input); a `Rejected inputs` table with 3 or more rows (input, expected error); and
+`Exempt-path test:` (the same malformed item inside an exempt set / main-session / grandfather list must still fail,
+because the shape check runs before the skip; or `none: <reason>`). Add `Cross-check:` for the main algorithm: a
+brute-force or property test against a naive oracle, as MF-0048 did with 3.1M pairs. Rejected inputs must cover
+these classes when they apply (MF-0069 review B-1/B-2: 4th gate-parser-fail-closed repeat): (a) for a parser that
+reads Markdown or text, the label or token inside a code fence (backtick and tilde), inside a table cell, mid-sentence
+and as a substring of a longer word, and the real block after an unclosed or nested fence; (b) for a path or glob
+trigger, the equivalent spellings: brace sets (`{scripts,docs}/x`), `./` prefix, `**/` prefix, a trailing-segment
+match (`scripts/my__tests__/x`), and whether an unparseable form fails closed rather than skipping; (c) a value
+present but placed under the wrong label. Write one row per class that applies, or a line `n/a: <class>, <reason>`.
+See `verification.md` §4
+(MF-0048 retro: the owns parser shipped as a blocklist with the exemption before the syntax check, though §4 named
+both traps).>
+
+<!-- parsers-example -->
+None: <reason, when no task adds or changes a parser, gate or exemption>
+
+### <parser name, e.g. owns globs>
+
+Accepted grammar: <exact token or line shapes, e.g. repo-relative globs of `[a-z0-9._/*{},-]`>; anything else is an error naming the input.
+
+Rejected inputs:
+
+| Input | Expected error |
+|---|---|
+| <`../x`> | <`owns "../x" leaves the repo`> |
+| <`/abs`> | <`owns "/abs" is absolute`> |
+| <`a b`> | <`owns "a b" has a space`> |
+
+Exempt-path test: <the same bad input inside an exempt (main-session) task still fails>, or none: <reason>.
+<!-- /parsers-example -->
 
 ## SC coverage
 
