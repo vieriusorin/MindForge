@@ -64,6 +64,7 @@ export const STEP_META = {
   recall: "Recall",
   confusable: "From an earlier skill",
   reask: "Try again",
+  order: "Put in order",
 } as const satisfies Record<LessonStepKind, string>;
 
 /** The meta line for a step; the confusable one names its earlier skill. */

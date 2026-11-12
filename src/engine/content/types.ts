@@ -22,8 +22,14 @@ export const REVIEW_STATES = [
 ] as const;
 export type ReviewState = (typeof REVIEW_STATES)[number];
 
-/** MF-0007 / MF-0016: the kinds of item a pack holds; each one is reviewed. */
-export const ITEM_TYPES = ["question", "card", "diagram", "cuckoo"] as const;
+/** MF-0007 / MF-0016 / MF-0066: the kinds of item a pack holds; each one is reviewed. */
+export const ITEM_TYPES = [
+  "question",
+  "card",
+  "diagram",
+  "cuckoo",
+  "order",
+] as const;
 export type ItemType = (typeof ITEM_TYPES)[number];
 
 /** Practice modes serve approved + unreviewed; storms prefer approved (CONTEXT.md Playable). */
@@ -131,6 +137,55 @@ export interface CuckooFeedback {
   explanation: string;
 }
 
+/** MF-0066: one step of an order item: a node of its diagram, with that node's label copied in (hashed). */
+export interface OrderStep {
+  node: string;
+  label: string;
+}
+
+/**
+ * MF-0066 (CONTEXT.md Order item): the learner puts the steps of one process in order. The steps are
+ * nodes of one diagram of the same skill, chained by its edges; `steps` in file order IS the key.
+ * Graded like a question (`record_attempt`, by sequence: `question_keys.ordered`).
+ */
+export interface OrderItem {
+  id: string;
+  skill: string;
+  /** What to put in order ("Put one client tool-use turn in order"). */
+  title: string;
+  origin: Origin;
+  author?: string;
+  generatedBy?: GeneratedBy;
+  level?: ItemLevel;
+  /** id of the Diagram (same pack, same skill) the steps are drawn from. */
+  diagram: string;
+  /** The correct order. Never sent to the browser before grading. */
+  steps: OrderStep[];
+  /** Verbatim sentences of `source.url` that order the steps (check:packs, drafter check 3). */
+  orderedBy: string[];
+  explanation: string;
+  source: { title: string; url: string };
+}
+
+/** What the browser may see before answering: the steps in a shown order that is never the key. */
+export interface PlayableOrder {
+  id: string;
+  skillCode: string;
+  origin: Origin;
+  title: string;
+  steps: { id: string; label: string }[];
+  /** The version the learner reads; the answer sends it back (MF-0032). */
+  contentHash: string;
+}
+
+/** Revealed only after the database graded the answer. */
+export interface OrderFeedback {
+  correct: boolean;
+  /** The key order, with labels. */
+  steps: OrderStep[];
+  explanation: string;
+}
+
 /** One content file as read from disk; `name` appears in every error about it. */
 export interface ContentFile {
   name: string;
@@ -143,6 +198,8 @@ export interface ContentFiles {
   diagrams: ContentFile[];
   /** MF-0016: absent = none. */
   cuckoos?: ContentFile[];
+  /** MF-0066: absent = none. */
+  orders?: ContentFile[];
 }
 
 export interface PackContent {
@@ -151,6 +208,11 @@ export interface PackContent {
   diagrams: Diagram[];
   /** MF-0016: optional so pre-cuckoo fixtures (frozen MF-0010/0014 tests) still type; absent = none. */
   cuckoos?: Cuckoo[];
+  /**
+   * MF-0066: loaded in a second stage (`loadPackOrders`, validated against the diagrams), so it is not
+   * part of `LoadedPackContent`; absent = none.
+   */
+  orders?: OrderItem[];
 }
 
 /** MF-0016: what the loader returns; every kind is present. */

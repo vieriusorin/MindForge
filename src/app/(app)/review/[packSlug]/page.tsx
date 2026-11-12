@@ -17,6 +17,7 @@ import { ReviewItem } from "@/features/review/components/review-item";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getItemHashes } from "@/server/content/get-item-hashes";
 import { getPackContent } from "@/server/content/get-pack-content";
+import { getPackOrders } from "@/server/content/get-pack-orders";
 import { listMyGroups } from "@/server/groups/list-my-groups";
 import { getPack } from "@/server/packs/get-pack";
 import { listPacks } from "@/server/packs/list-packs";
@@ -80,14 +81,20 @@ async function ReviewSlot({
       </>
     );
 
-  const [candidates, content, fileHashes, flags] = await Promise.all([
+  const [candidates, content, orders, fileHashes, flags] = await Promise.all([
     listReviewable(packSlug),
     getPackContent(packSlug),
+    getPackOrders(packSlug),
     getItemHashes(packSlug),
     listOpenFlags(packSlug),
   ]);
   // MF-0007 review: only an item whose deployed text is the registry's version is shown and judged.
-  const next = nextReviewItem(candidates, pack, content, fileHashes);
+  const next = nextReviewItem(
+    candidates,
+    pack,
+    { ...content, orders },
+    fileHashes,
+  );
   const skillNames = new Map(
     pack.domains.flatMap((d) => d.skills.map((s) => [s.code, s.name])),
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { OrderStep } from "../order-step";
 import { EmptyLesson } from "./components/empty-lesson";
 import { GuessStep } from "./components/guess-step";
 import { ProgressBar } from "./components/progress-bar";
@@ -67,6 +68,17 @@ export function LessonPlayer({
           feedbackRef={p.feedbackRef}
           onToggle={p.toggle}
           onSubmit={p.submit}
+          onNext={p.next}
+        />
+      );
+      break;
+    case "order":
+      body = (
+        <OrderStep
+          step={step}
+          meta={meta}
+          packSlug={packSlug}
+          isLast={p.isLast}
           onNext={p.next}
         />
       );

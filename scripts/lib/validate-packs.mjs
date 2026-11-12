@@ -7,14 +7,16 @@ import { pathToFileURL } from "node:url";
 register("./ts-resolve.mjs", import.meta.url);
 
 /**
- * Load every pack under `packsDir` (pack.yaml, questions, cards, diagrams) exactly as the app does,
+ * Load every pack under `packsDir` (pack.yaml, questions, cards, diagrams, cuckoos, orders) exactly as the app does,
  * and check each folder is named after its slug (MF-0024).
  * Returns one line per problem, across all packs; empty means every pack is valid.
  */
 export async function validatePacks(root, packsDir, packs) {
   const engine = (path) => import(pathToFileURL(join(root, path)).href);
   const { loadPackFile } = await engine("src/engine/pack/index.ts");
-  const { loadPackContent } = await engine("src/engine/content/index.ts");
+  const { loadPackContent, loadPackOrders } = await engine(
+    "src/engine/content/index.ts",
+  );
   const problems = [];
   for (const slug of packs) {
     const dir = join(packsDir, slug);
@@ -27,7 +29,9 @@ export async function validatePacks(root, packsDir, packs) {
         );
         continue;
       }
-      await loadPackContent(pack, dir);
+      const content = await loadPackContent(pack, dir);
+      // MF-0066: orders validate against the loaded diagrams (second stage).
+      await loadPackOrders(pack, dir, content);
     } catch (error) {
       problems.push(`${slug}: ${error.message}`);
     }

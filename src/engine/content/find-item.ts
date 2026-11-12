@@ -4,6 +4,7 @@ import type {
   Diagram,
   ItemType,
   NatureCard,
+  OrderItem,
   PackContent,
 } from "./types";
 
@@ -12,7 +13,8 @@ export type PackItem =
   | { kind: "question"; item: Question }
   | { kind: "card"; item: NatureCard }
   | { kind: "diagram"; item: Diagram }
-  | { kind: "cuckoo"; item: Cuckoo };
+  | { kind: "cuckoo"; item: Cuckoo }
+  | { kind: "order"; item: OrderItem };
 
 /** The item with this id and type in a pack's content, or null (e.g. the registry is ahead of the files). */
 export function findPackItem(
@@ -32,6 +34,10 @@ export function findPackItem(
     const item = content.diagrams.find((d) => d.id === itemId);
     return item ? { kind: "diagram", item } : null;
   }
+  if (type === "order") {
+    const item = (content.orders ?? []).find((o) => o.id === itemId);
+    return item ? { kind: "order", item } : null;
+  }
   const item = (content.cuckoos ?? []).find((c) => c.id === itemId);
   return item ? { kind: "cuckoo", item } : null;
 }
@@ -50,6 +56,7 @@ export function itemTitles(content: PackContent): Record<string, string> {
     ...content.cards.map((item) => [item.id, item.concept]),
     ...content.diagrams.map((item) => [item.id, item.title]),
     ...(content.cuckoos ?? []).map((item) => [item.id, item.title]),
+    ...(content.orders ?? []).map((item) => [item.id, item.title]),
   ]);
 }
 

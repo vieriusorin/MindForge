@@ -2,6 +2,7 @@ import type {
   Cuckoo,
   Diagram,
   NatureCard,
+  OrderItem,
   Origin,
   PackItem,
 } from "@/engine/content";
@@ -31,6 +32,10 @@ export interface DiagramBodyProps {
 
 export interface CuckooBodyProps {
   cuckoo: Cuckoo;
+}
+
+export interface OrderBodyProps {
+  order: OrderItem;
 }
 
 export interface SourcesProps {

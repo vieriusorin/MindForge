@@ -1,4 +1,4 @@
-import type { Diagram, NatureCard } from "../content/types";
+import type { Diagram, NatureCard, OrderItem } from "../content/types";
 import type { TreeState } from "../forest/tree-stage";
 import type { Question } from "../questions/types";
 
@@ -13,6 +13,7 @@ export const LESSON_STEP_KINDS = [
   "recall",
   "confusable",
   "reask",
+  "order",
 ] as const;
 export type LessonStepKind = (typeof LESSON_STEP_KINDS)[number];
 
@@ -24,6 +25,15 @@ export type LessonStep =
   | { kind: "recall"; question: Question }
   | { kind: "confusable"; question: Question; skillCode: string };
 
+/** MF-0066: the order step, kept out of `LessonStep` so a plan's question/teach steps keep their shape. */
+export interface LessonOrderStep {
+  kind: "order";
+  order: OrderItem;
+}
+
+/** What the player is given: the plan's steps with its order step placed (`lessonSteps`). */
+export type PlannedStep = LessonStep | LessonOrderStep;
+
 export interface LessonPlan {
   skillCode: string;
   /** The skill had no successful recall (a Seed), so the lesson opens with a guess. */
@@ -31,6 +41,8 @@ export interface LessonPlan {
   /** The earlier skill the confusable step asks about, or null when none qualifies. */
   confusableSkill: string | null;
   steps: LessonStep[];
+  /** MF-0066: the skill's order item to ask, or null; `lessonSteps` places it. */
+  order: OrderItem | null;
   /** How many re-asks still fit under LESSON_MAX_INTERACTIONS. */
   maxReasks: number;
 }

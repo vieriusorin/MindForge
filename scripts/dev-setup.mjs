@@ -16,6 +16,7 @@
  * Safe to re-run. Never touches a hosted project.
  */
 import { spawn, spawnSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { createInterface } from "node:readline";
@@ -144,6 +145,10 @@ const after = mergeEnv(before, {
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: env.PUBLISHABLE_KEY, // public by design
   // ADR 0004 / MF-0011: server-only, read by src/server/supabase/secret.ts alone. Never NEXT_PUBLIC_.
   SUPABASE_SECRET_KEY: env.SECRET_KEY,
+  // MF-0066: server-only key for the order items' shuffled layout; generated once, kept on later runs.
+  ORDER_SHUFFLE_SECRET:
+    /^\s*ORDER_SHUFFLE_SECRET=(\S{32,})\s*$/m.exec(before)?.[1] ??
+    randomBytes(32).toString("hex"),
 });
 if (after !== before) writeFileSync(envPath, after);
 console.log(

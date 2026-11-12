@@ -1,3 +1,4 @@
+import type { OrderFeedback, PlayableOrder } from "@/engine/content";
 import type { LessonStepKind } from "@/engine/lesson";
 import type { AnswerFeedback, PlayableQuestion } from "@/engine/questions";
 import type { ActionResult } from "@/lib/action-result";
@@ -12,7 +13,8 @@ export type PlayerStep =
   | { kind: "diagram" }
   | { kind: "recall"; question: PlayableQuestion }
   | { kind: "confusable"; question: PlayableQuestion; skillName: string }
-  | { kind: "reask"; question: PlayableQuestion };
+  | { kind: "reask"; question: PlayableQuestion }
+  | { kind: "order"; order: PlayableOrder };
 
 /** Compile-time check: the player renders exactly the engine's closed set of step kinds. */
 export type PlayerStepKindsMatch = [LessonStepKind] extends [PlayerStep["kind"]]
@@ -24,3 +26,6 @@ export type PlayerStepKindsMatch = [LessonStepKind] extends [PlayerStep["kind"]]
 true satisfies PlayerStepKindsMatch;
 
 export type AnswerLessonItemResult = ActionResult<{ feedback: AnswerFeedback }>;
+
+/** MF-0066: the graded order, its key and why. */
+export type AnswerLessonOrderResult = ActionResult<{ feedback: OrderFeedback }>;

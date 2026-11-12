@@ -1,6 +1,7 @@
+import { isOrderServable } from "../content/order-servable";
 import { planSeedPlanting } from "../content/plan-seed-planting";
 import { isPlayable, reviewStateOf } from "../content/review";
-import type { PackContent, ReviewContext } from "../content/types";
+import type { OrderItem, PackContent, ReviewContext } from "../content/types";
 import type { ForestView } from "../forest/build-forest";
 import { orderSkillItems } from "../memory/order-skill-items";
 import type { Attempt } from "../memory/types";
@@ -50,6 +51,33 @@ function orderedItems(
 }
 
 /**
+ * MF-0066 SC-5: the skill's one order to ask: servable (playable, diagram approved), then by the same rule as
+ * the lesson's items (wrong-last, never answered in file order, least recently answered). Null when none.
+ */
+function pickOrder(
+  skillCode: string,
+  {
+    content,
+    review,
+    attempts,
+  }: Pick<PlanLessonInput, "content" | "review" | "attempts">,
+): OrderItem | null {
+  const diagrams = new Map(content.diagrams.map((d) => [d.id, d]));
+  const servable = (content.orders ?? []).filter((order) => {
+    const diagram = diagrams.get(order.diagram);
+    return (
+      order.skill === skillCode &&
+      diagram !== undefined &&
+      isOrderServable({
+        orderState: reviewStateOf(review, order),
+        diagramState: reviewStateOf(review, diagram),
+      })
+    );
+  });
+  return orderSkillItems(servable, attempts)[0] ?? null;
+}
+
+/**
  * MF-0064 SC-1: the ordered steps of one skill's lesson (GOAL D-L3..D-L8). A Seed opens with an
  * ungraded guess on its first recall item; a met skill opens with that item graded. One question from
  * the nearest earlier skill already met closes the plan. No card, diagram or item: no steps.
@@ -66,6 +94,7 @@ export function planLesson(input: PlanLessonInput): LessonPlan {
     skill: skillCode,
   });
   const recalls = orderedItems(skillCode, input).slice(0, LESSON_RECALL_TARGET);
+  const order = pickOrder(skillCode, input);
 
   if (!card && !diagram && recalls.length === 0) {
     return {
@@ -73,7 +102,8 @@ export function planLesson(input: PlanLessonInput): LessonPlan {
       isNewSkill,
       confusableSkill: null,
       steps: [],
-      maxReasks: 0,
+      order,
+      maxReasks: order ? LESSON_MAX_INTERACTIONS - 1 : 0,
     };
   }
 
@@ -125,6 +155,11 @@ export function planLesson(input: PlanLessonInput): LessonPlan {
     isNewSkill,
     confusableSkill: confusable?.skillCode ?? null,
     steps,
-    maxReasks: Math.max(0, LESSON_MAX_INTERACTIONS - steps.length),
+    order,
+    // MF-0066: the order step is an interaction too.
+    maxReasks: Math.max(
+      0,
+      LESSON_MAX_INTERACTIONS - steps.length - (order ? 1 : 0),
+    ),
   };
 }
